@@ -91,14 +91,13 @@
     - name: Build server
       shell: "{{ item }}"
       args:
-        chdir: /opt/pal
+        chdir: /opt/pal/src-front-end
       with_items:
         - yarn install
         - yarn build
-        - yarn serve
     
     # Need sudo to serve on port 80
     - name: Start server
       shell: sudo yarn serve
       args:
-        chdir: /opt/pal
+        chdir: /opt/pal/src-front-end
