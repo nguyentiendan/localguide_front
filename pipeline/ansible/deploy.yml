@@ -1,0 +1,104 @@
+---
+- hosts: all
+  remote_user: ubuntu
+  gather_facts: no
+  become: yes
+  tasks:
+
+    ################################################################################
+    # Install dependencies
+    ################################################################################
+    - name: Install Python 2
+      raw: "{{ item }}"
+      loop:
+        - sudo apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update
+        - sudo apt-get -y install python-minimal
+    
+    - name: Disable apt-daily.service and apt-daily.timer and apt-daily-upgrade.service and apt-daily-upgrade.timer autoboot
+      systemd:
+        enabled: no
+        name: "{{ item }}"
+      with_items:
+        - apt-daily.service
+        - apt-daily.timer
+        - apt-daily-upgrade.service
+        - apt-daily-upgrade.timer
+
+    - name: Install Yarn repositories key
+      apt_key:
+        url: "https://dl.yarnpkg.com/debian/pubkey.gpg"
+        state: present
+      register: apt_install_result
+      until: apt_install_result is success
+      retries: 5
+      delay: 3
+
+    - name: Update source.list
+      apt_repository:
+        repo: "deb https://dl.yarnpkg.com/debian/ stable main"
+        state: present
+      register: apt_result
+      until: apt_result is success
+      retries: 5
+      delay: 3
+
+    - name: Run apt update
+      apt: update_cache=yes cache_valid_time=3600
+      register: apt_result
+      until: apt_result is success
+      retries: 5
+      delay: 1
+      become: yes
+      ignore_errors: yes
+
+    - name: Configure Node.js APT repository
+      shell: curl -sL https://deb.nodesource.com/setup_10.x | sudo bash
+
+    - name: Install base packages
+      apt:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - build-essential
+        - gcc
+        - g++
+        - make
+        - nodejs
+        - yarn
+
+    ################################################################################
+    # Build and start server
+    ################################################################################
+    - name: Create a directory if it does not exist
+      file:
+        path: /opt/pal
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+    - name: Synchronize source code to server
+      synchronize:
+        use_ssh_args: yes
+        archive: yes
+        times: yes
+        src: ../../src-front-end
+        dest: /opt/pal
+        rsync_opts:
+          - "--chown=ubuntu:ubuntu"
+          - "-e ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+
+    - name: Build server
+      shell: "{{ item }}"
+      args:
+        chdir: /opt/pal
+      with_items:
+        - yarn install
+        - yarn build
+        - yarn serve
+    
+    # Need sudo to serve on port 80
+    - name: Start server
+      shell: sudo yarn serve
+      args:
+        chdir: /opt/pal

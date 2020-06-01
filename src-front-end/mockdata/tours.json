@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "name": "Food Tour",
+    "location": "Vietnam",
+    "picture": "/mocks/tours/tour-2.jpg"
+  }, {
+    "id": 2,
+    "name": "Lantern at night",
+    "location": "Vietnam",
+    "picture": "/mocks/tours/tour-4.jpg"
+  }, {
+    "id": 3,
+    "name": "Forbidden City",
+    "location": "Vietnam",
+    "picture": "/mocks/tours/tour-5.jpg"
+  }, {
+    "id": 4,
+    "name": "Island World",
+    "location": "Vietnam",
+    "picture": "/mocks/tours/tour-1.jpg"
+  }, {
+    "id": 5,
+    "name": "Mountain explorers",
+    "location": "Vietnam",
+    "picture": "/mocks/tours/tour-3.jpg"
+  }
+]

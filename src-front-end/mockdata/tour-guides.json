@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "name": "Tina J",
+    "level": "expert",
+    "avatar": "/mocks/avatars/avatar-3.jpg"
+  }, {
+    "id": 2,
+    "name": "Timber N",
+    "level": "enthusiasm",
+    "avatar": "/mocks/avatars/avatar-2.jpg"
+  }, {
+    "id": 3,
+    "name": "Joly B",
+    "level": "expert",
+    "avatar": "/mocks/avatars/avatar-4.jpg"
+  }, {
+    "id": 4,
+    "name": "Hano M",
+    "level": "enthusiasm",
+    "avatar": "/mocks/avatars/avatar-5.jpg"
+  }, {
+    "id": 5,
+    "name": "Thomas L",
+    "level": "enthusiasm",
+    "avatar": "/mocks/avatars/avatar-1.jpg"
+  }
+]

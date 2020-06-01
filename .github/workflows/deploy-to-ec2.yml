@@ -1,0 +1,32 @@
+name: Deploy
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Setup SSH Keys and known_hosts
+        run: |
+            mkdir -p ~/.ssh
+            echo "${{ secrets.SSH_PRIVATE_KEY_PROJECT_PAL }}" > ~/.ssh/id_rsa
+            chmod 0600 ~/.ssh/id_rsa
+      
+      - name: Run Ansible playbook to deploy frontend to existing EC2
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: pipeline/ansible/deploy.yml
+          directory: ./
+          key: ${{secrets.SSH_PRIVATE_KEY_PROJECT_PAL}}
+          inventory: |
+            [all]
+            18.177.172.158

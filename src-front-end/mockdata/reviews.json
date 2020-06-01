@@ -1,0 +1,20 @@
+{
+  "rate": 4.5,
+  "total": 45,
+  "comments": [
+    {
+      "id": 1,
+      "user": "Mabel Hansen",
+      "avatar": "/mocks/avatars/avatar-3.jpg",
+      "date": "2020-06-01T04:31:04.133Z",
+      "content": "He heard the loud impact before he ever saw the result. It had been so loud that it had actually made him jump back in his seat."
+    }, {
+      "id": 2,
+      "user": "Agusta Michale",
+
+      "avatar": "/mocks/avatars/avatar-5.jpg",
+      "date": "2020-05-30T04:31:04.133Z",
+      "content": "It went through such rapid contortions that the little bear was forced to change his hold on it so many times he became confused in the darkness, and could not, for the life of him, tell whether he held the sheep right side up, or upside down."
+    }
+  ]
+}

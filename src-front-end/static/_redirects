@@ -1,0 +1,2 @@
+# client-only routes
+/user/*  /user/index.html  200
