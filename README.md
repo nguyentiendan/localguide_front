@@ -1,5 +1,7 @@
 # Local Guide Pal website
 
+![Deploy](https://github.com/nguyentiendan/localguide_front/workflows/Deploy/badge.svg)
+
 ## Project structure
 ```
 |_ .github
