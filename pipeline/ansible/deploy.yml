@@ -96,13 +96,22 @@
         - yarn install
         - yarn build
     
-    # Temporary stop + start, need to create a background system service to controll application
-    - name: Stop server
-      shell: sudo kill -9 $(sudo lsof -t -i:80)
-      ignore_errors: yes
-    
-    # Need sudo to serve on port 80
-    - name: Start server
-      shell: sudo nohup yarn serve --host 0.0.0.0 --port 80
-      args:
-        chdir: /opt/pal/src-front-end
+    - name: Update systemd script for new service
+      template:
+        src: project-pal.service.j2
+        dest: "/lib/systemd/system/project-pal.service"
+        owner: root
+        group: root
+        mode: "0755"
+      register: result_service
+
+    - name: Reload systemd
+      command: systemctl daemon-reload
+      when: result_service.changed
+
+    - name: Ensure new service is running and enabled
+      service: 
+        name: 'project-pal'
+        enabled: yes
+        state: restarted
+      become: yes
