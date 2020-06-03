@@ -99,6 +99,7 @@
     # Temporary stop + start, need to create a background system service to controll application
     - name: Stop server
       shell: sudo kill -9 $(sudo lsof -t -i:80)
+      ignore_errors: yes
     
     # Need sudo to serve on port 80
     - name: Start server
