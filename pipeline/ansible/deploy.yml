@@ -96,8 +96,12 @@
         - yarn install
         - yarn build
     
+    # Temporary stop + start, need to create a background system service to controll application
+    - name: Stop server
+      shell: sudo kill -9 $(sudo lsof -t -i:80)
+    
     # Need sudo to serve on port 80
     - name: Start server
-      shell: sudo yarn serve
+      shell: sudo nohup yarn serve --host 0.0.0.0 --port 80
       args:
         chdir: /opt/pal/src-front-end
