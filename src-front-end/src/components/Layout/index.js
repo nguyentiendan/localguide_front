@@ -20,7 +20,7 @@ const DefaultMainContent = styled.main`
   `)}
 `;
 
-const Layout = ({ mainContent: MainContent, children }) => {
+const Layout = ({ mainContent: MainContent, title, subTitle, children }) => {
   const data = useStaticQuery(graphql`
     query SiteTitleQuery {
       site {
@@ -34,7 +34,12 @@ const Layout = ({ mainContent: MainContent, children }) => {
   return (
     <AuthProvider>
       <GlobalStyle />
-      <Header siteTitle={data.site.siteMetadata.title} />
+      <Header
+        siteTitle={data.site.siteMetadata.title}
+        title={title}
+        subTitle={subTitle}
+        wrapper={MainContent}
+      />
       <MainContent>{children}</MainContent>
       <NavigationMenu />
     </AuthProvider>
@@ -43,11 +48,15 @@ const Layout = ({ mainContent: MainContent, children }) => {
 
 Layout.propTypes = {
   mainContent: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({})]),
+  title: PropTypes.string,
+  subTitle: PropTypes.string,
   children: PropTypes.node.isRequired,
 };
 
 Layout.defaultProps = {
   mainContent: DefaultMainContent,
+  title: null,
+  subTitle: null,
 };
 
 export default Layout;

@@ -22,6 +22,10 @@ const SearchInput = styled.input`
   box-shadow: inset 0px 0px 0px 0px white;
   border: none;
   border-radius: 20px;
+
+  &:focus {
+    outline: 0;
+  }
 `;
 
 const SearchIcon = styled(FiSearch)`
@@ -29,13 +33,15 @@ const SearchIcon = styled(FiSearch)`
   right: 1rem;
   top: 50%;
   transform: translateY(-50%);
+
+  cursor: pointer;
 `;
 
 function SearchBox({ className, ...inputProps }) {
   return (
     <Wrapper className={className}>
       <SearchInput {...inputProps} />
-      <SearchIcon />
+      <SearchIcon onClick={inputProps.onClick} />
     </Wrapper>
   );
 }
