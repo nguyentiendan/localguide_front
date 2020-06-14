@@ -66,7 +66,7 @@ module "ec2" {
 
   name          = "project-pal-frontend"
   ami           = data.aws_ami.amazon_linux.id
-  instance_type = "t3.micro"
+  instance_type = "t3.small"
   subnet_id     = tolist(data.aws_subnet_ids.all.ids)[0]
   vpc_security_group_ids      = [module.security_group.this_security_group_id]
   associate_public_ip_address = true

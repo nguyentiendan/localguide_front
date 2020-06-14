@@ -3,11 +3,24 @@ import destinations from '../../mockdata/destinations.json';
 import blogs from '../../mockdata/blogs.json';
 import tours from '../../mockdata/tours.json';
 import reviews from '../../mockdata/reviews.json';
+import { request } from '../utils/http';
 
 export async function getAllTourGuides() {
   // TODO: call API
   return new Promise(resolve => {
     resolve(tourGuides);
+  });
+
+  // return request({
+  //   url: '/account/getAll',
+  //   method: 'GET',
+  // });
+}
+
+export async function getAllReviews() {
+  // TODO: call API
+  return new Promise(resolve => {
+    resolve(reviews);
   });
 }
 
@@ -25,16 +38,71 @@ export async function getAllBlogs() {
   });
 }
 
+export async function getGuideProfile(uid) {
+  return request({
+    url: `/account/get/${uid}`,
+    method: 'GET',
+  });
+}
+
+export async function createTour(tour) {
+  return request({
+    url: `/tour/new`,
+    method: 'POST',
+    authRequired: true,
+    data: tour,
+  });
+}
+
 export async function getAllTours() {
   // TODO: call API
   return new Promise(resolve => {
     resolve(tours);
   });
+
+  // return request({
+  //   url: '/tour/getPopularTour',
+  //   method: 'GET',
+  // });
 }
 
-export async function getAllReviews() {
-  // TODO: call API
-  return new Promise(resolve => {
-    resolve(reviews);
+export async function getTourDetail({ id, uid }) {
+  return request({
+    url: '/tour/getTour',
+    method: 'GET',
+    params: {
+      id,
+      uid,
+    },
+  });
+}
+
+export async function updateTour(tour) {
+  return request({
+    url: '/tour/edit',
+    method: 'POST',
+    data: tour,
+    authRequired: true,
+  });
+}
+
+export async function getRelatedTour() {
+  return request({
+    url: '/tour/getAllTour',
+    method: 'GET',
+  });
+}
+
+export async function getAllCountry() {
+  return request({
+    url: '/country/getAll',
+    method: 'GET',
+  });
+}
+
+export async function getCityOfCountry(countryCode) {
+  return request({
+    url: `/city/getAll/${countryCode}`,
+    method: 'GET',
   });
 }

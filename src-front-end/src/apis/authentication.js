@@ -2,17 +2,17 @@ import { request } from '../utils/http';
 
 export function login(email, password) {
   return request({
-    url: '/login',
+    url: '/user/login',
     method: 'POST',
     data: { email, password },
   });
 }
 
-export function register(email, password, promoCode) {
+export function register({ email, password, fullname }) {
   return request({
-    url: '/register',
+    url: '/account/new',
     method: 'POST',
-    data: { email, password, promoCode },
+    data: { email, password, fullname },
   });
 }
 
@@ -26,25 +26,9 @@ export function getUserProfile() {
 
 export function updateUserProfile(profile) {
   return request({
-    url: '/profile/me',
-    method: 'PUT',
+    url: '/account/edit',
+    method: 'POST',
     authRequired: true,
     data: profile,
-  });
-}
-
-export function changePassword(oldPassword, newPassword) {
-  return request({
-    url: '/profile/change-password',
-    method: 'POST',
-    authRequired: true,
-    data: { oldPassword, newPassword },
-  });
-}
-
-export function activateAccount(activationCode) {
-  return request({
-    url: `/register/activate/${activationCode}`,
-    method: 'POST',
   });
 }

@@ -11,7 +11,7 @@ export async function request({ url, apiVersion, method = 'GET', data, authRequi
   }
 
   const response = await axios({
-    baseURL: `${process.env.GATSBY_API_URL}/${apiVersion || process.env.GATSBY_API_VERSION}`,
+    baseURL: `${process.env.GATSBY_API_URL}/v${apiVersion || process.env.GATSBY_API_VERSION}`,
     url,
     method,
     headers: {

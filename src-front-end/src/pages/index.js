@@ -16,6 +16,7 @@ import TourListItem from '../components/TourListItem';
 import RatingStars from '../components/RatingStars';
 import CommentListItem from '../components/CommentListItem';
 import JoinUsSection from '../components/JoinUsSection';
+import { smallScreenCss } from '../styles/responsive-css';
 
 const ListWrapper = styled.div`
   max-width: ${breakpoints.lg};
@@ -34,6 +35,12 @@ const ListContainer = styled.div`
   & .tour-guide + .tour-guide {
     margin-left: 3rem;
   }
+
+  ${smallScreenCss(`
+    & .tour-guide + .tour-guide {
+      margin-left: 1rem;
+    }
+  `)}
 
   & .destination + .destination,
   & .tour + .tour {
