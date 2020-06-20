@@ -88,6 +88,12 @@
           - "--chown=ubuntu:ubuntu"
           - "-e ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
+    - name: Remove Yarn cache
+      file:
+        path: /opt/pal/src-front-end/.cache
+        state: absent
+      become: yes 
+
     - name: Build server
       shell: "{{ item }}"
       args:

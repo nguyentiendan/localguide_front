@@ -154,7 +154,7 @@ function IndexPage({ data }) {
       <ListWrapper>
         {_.map(reviews.comments, comment => (
           <CommentListItem
-            ke={comment.id}
+            key={comment.id}
             content={comment.content}
             user={comment.user}
             date={comment.date}

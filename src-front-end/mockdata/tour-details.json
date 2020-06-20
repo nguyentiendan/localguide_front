@@ -14,7 +14,7 @@
     "Ancient town",
     "Lantern"
   ],
-  "price": 300,
+  "price": "$300",
   "duration": "2 Days",
   "language": "English",
   "availableTours": 20,
@@ -22,11 +22,17 @@
   "tourSizeTo": 15,
   "rate": 5,
   "transportation": "Sleeper bus",
-  "descriptions": "Get an overview of Hoi An and Da Nang in just 2 days. This private tour is a must for first-time travelers to Vietnam and provides a wonderful introduction to the local culture, food, and sights. Visit the UNESCO-listed Hoi An Ancient Town, enjoy a traditional Vietnamese coffee at a local shop, and feel free to customize your itinerary with your dedicated tour guide.",
+  "description": "Get an overview of Hoi An and Da Nang in just 2 days. This private tour is a must for first-time travelers to Vietnam and provides a wonderful introduction to the local culture, food, and sights. Visit the UNESCO-listed Hoi An Ancient Town, enjoy a traditional Vietnamese coffee at a local shop, and feel free to customize your itinerary with your dedicated tour guide.",
   "tourIncluding": [
     "Transporation: Sleeper bus",
     "Entrance fee for all tour",
     "Meals",
     "Other"
-  ]
+  ],
+  "tourGuide": {
+    "id": "1",
+    "name": "Tina J",
+    "level": "expert",
+    "avatar": "/mocks/avatars/avatar-3.jpg"
+  }
 }
