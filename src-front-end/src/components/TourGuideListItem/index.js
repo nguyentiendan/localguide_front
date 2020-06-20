@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import defaultAvatar from '../../images/avatar-default.jpg';
 
 const Wrapper = styled.div`
   display: flex;
@@ -30,7 +31,7 @@ const Avatar = styled.img`
 
 const TourGuideListItem = ({ className, name, level, avatar }) => (
   <Wrapper className={className}>
-    <Avatar src={avatar} />
+    <Avatar src={avatar || defaultAvatar} />
     <Title>{name}</Title>
     <SubTitle>{level}</SubTitle>
   </Wrapper>

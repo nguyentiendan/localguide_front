@@ -1,26 +1,26 @@
 [
   {
-    "id": 1,
+    "id": "1",
     "name": "Cao Bang",
     "location": "Vietnam",
     "picture": "/mocks/places/cao-bang.jpg"
   }, {
-    "id": 2,
+    "id": "2",
     "name": "Cat Ba",
     "location": "Vietnam",
     "picture": "/mocks/places/cat-ba.jpg"
   }, {
-    "id": 3,
+    "id": "3",
     "name": "Ha Long",
     "location": "Vietnam",
     "picture": "/mocks/places/ha-long.jpg"
   }, {
-    "id": 4,
+    "id": "4",
     "name": "Hoi An",
     "location": "Vietnam",
     "picture": "/mocks/places/hoi-an.jpg"
   }, {
-    "id": 5,
+    "id": "5",
     "name": "Tam Coc",
     "location": "Vietnam",
     "picture": "/mocks/places/tam-coc.jpg"

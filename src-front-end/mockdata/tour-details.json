@@ -1,0 +1,32 @@
+{
+  "id": "1",
+  "name": "Lantern at night",
+  "location": "Hoi An, Vietnam",
+  "pictures": [
+    "/mocks/tours/tour-2.jpg",
+    "/mocks/tours/tour-1.jpg",
+    "/mocks/tours/tour-3.jpg",
+    "/mocks/tours/tour-4.jpg",
+    "/mocks/tours/tour-5.jpg"
+  ],
+  "tags": [
+    "Hoi An",
+    "Ancient town",
+    "Lantern"
+  ],
+  "price": 300,
+  "duration": "2 Days",
+  "language": "English",
+  "availableTours": 20,
+  "tourSizeFrom": 10,
+  "tourSizeTo": 15,
+  "rate": 5,
+  "transportation": "Sleeper bus",
+  "descriptions": "Get an overview of Hoi An and Da Nang in just 2 days. This private tour is a must for first-time travelers to Vietnam and provides a wonderful introduction to the local culture, food, and sights. Visit the UNESCO-listed Hoi An Ancient Town, enjoy a traditional Vietnamese coffee at a local shop, and feel free to customize your itinerary with your dedicated tour guide.",
+  "tourIncluding": [
+    "Transporation: Sleeper bus",
+    "Entrance fee for all tour",
+    "Meals",
+    "Other"
+  ]
+}

@@ -3,7 +3,7 @@ import * as API from './src/apis';
 
 async function createTourGuideNodes({ createNode, createNodeId, createContentDigest }) {
   try {
-    const allTourGuides = await API.getAllTourGuides();
+    const { data: allTourGuides } = await API.getAllTourGuides();
     allTourGuides.forEach(tourGuide => {
       const nodeContent = JSON.stringify(tourGuide);
       const nodeMeta = {
@@ -143,4 +143,29 @@ exports.sourceNodes = async function sourceNodes({ actions, createNodeId, create
     createBlogNodes({ createNode, createNodeId, createContentDigest }),
     createReviewNodes({ createNode, createNodeId, createContentDigest }),
   ]);
+};
+
+exports.createPages = async function createPages({ actions, graphql }) {
+  const { data } = await graphql(`
+    query {
+      allTour {
+        edges {
+          node {
+            rawID
+            slug
+          }
+        }
+      }
+    }
+  `);
+
+  data.allTour.edges.forEach(edge => {
+    const { slug, rawID } = edge.node;
+
+    actions.createPage({
+      path: `tours/${rawID}`,
+      component: require.resolve('./src/templates/TourPage.js'),
+      context: { slug, id: rawID },
+    });
+  });
 };

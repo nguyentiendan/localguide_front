@@ -86,7 +86,7 @@ function IndexPage({ data }) {
           {_.map(tourGuides, tourGuide => (
             <TourGuideListItem
               key={tourGuide.id}
-              name={tourGuide.name}
+              name={tourGuide.fullname}
               level={tourGuide.level}
               avatar={tourGuide.avatar}
               className="tour-guide"
@@ -116,6 +116,7 @@ function IndexPage({ data }) {
           {_.map(tours, tour => (
             <TourListItem
               key={tour.id}
+              id={tour.rawID}
               name={tour.name}
               location={tour.location}
               picture={tour.picture}
@@ -205,7 +206,7 @@ export const pageQuery = graphql`
   query {
     tourGuideNodes: allTourGuide {
       nodes {
-        name
+        fullname
         avatar
         level
         id
@@ -225,6 +226,7 @@ export const pageQuery = graphql`
         location
         picture
         id
+        rawID
       }
     }
     blogNodes: allBlog {

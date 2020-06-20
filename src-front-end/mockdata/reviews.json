@@ -3,13 +3,13 @@
   "total": 45,
   "comments": [
     {
-      "id": 1,
+      "id": "1",
       "user": "Mabel Hansen",
       "avatar": "/mocks/avatars/avatar-3.jpg",
       "date": "2020-06-01T04:31:04.133Z",
       "content": "He heard the loud impact before he ever saw the result. It had been so loud that it had actually made him jump back in his seat."
     }, {
-      "id": 2,
+      "id": "2",
       "user": "Agusta Michale",
 
       "avatar": "/mocks/avatars/avatar-5.jpg",

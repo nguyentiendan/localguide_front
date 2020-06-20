@@ -8,7 +8,7 @@ import GlobalStyle from '../../styles/GlobalStyle';
 import breakpoints from '../../styles/breakpoints';
 import Header from './Header';
 import NavigationMenu from './NavigationMenu';
-import { smallScreenCss } from '../../styles/responsive-css';
+import { bigScreenCss, smallScreenCss } from '../../styles/responsive-css';
 
 const DefaultMainContent = styled.main`
   margin: 0 auto;
@@ -18,9 +18,13 @@ const DefaultMainContent = styled.main`
   ${smallScreenCss(`
     padding-bottom: 72px;
   `)}
+
+  ${bigScreenCss(`
+    padding-top: 48px;
+  `)}
 `;
 
-const Layout = ({ mainContent: MainContent, title, subTitle, children }) => {
+const Layout = ({ mainContent: MainContent, title, subTitle, children, noHeader }) => {
   const data = useStaticQuery(graphql`
     query SiteTitleQuery {
       site {
@@ -34,12 +38,16 @@ const Layout = ({ mainContent: MainContent, title, subTitle, children }) => {
   return (
     <AuthProvider>
       <GlobalStyle />
-      <Header
-        siteTitle={data.site.siteMetadata.title}
-        title={title}
-        subTitle={subTitle}
-        wrapper={MainContent}
-      />
+      {!noHeader && (
+        <Header
+          siteTitle={data.site.siteMetadata.title}
+          title={title}
+          subTitle={subTitle}
+          noHeader={noHeader}
+          wrapper={MainContent}
+        />
+      )}
+
       <MainContent>{children}</MainContent>
       <NavigationMenu />
     </AuthProvider>
@@ -50,6 +58,7 @@ Layout.propTypes = {
   mainContent: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({})]),
   title: PropTypes.string,
   subTitle: PropTypes.string,
+  noHeader: PropTypes.bool,
   children: PropTypes.node.isRequired,
 };
 
@@ -57,6 +66,7 @@ Layout.defaultProps = {
   mainContent: DefaultMainContent,
   title: null,
   subTitle: null,
+  noHeader: false,
 };
 
 export default Layout;

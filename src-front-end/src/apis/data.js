@@ -1,20 +1,15 @@
-import tourGuides from '../../mockdata/tour-guides.json';
 import destinations from '../../mockdata/destinations.json';
 import blogs from '../../mockdata/blogs.json';
 import tours from '../../mockdata/tours.json';
 import reviews from '../../mockdata/reviews.json';
+import tourDetails from '../../mockdata/tour-details.json';
 import { request } from '../utils/http';
 
 export async function getAllTourGuides() {
-  // TODO: call API
-  return new Promise(resolve => {
-    resolve(tourGuides);
+  return request({
+    url: '/account/getAll',
+    method: 'GET',
   });
-
-  // return request({
-  //   url: '/account/getAll',
-  //   method: 'GET',
-  // });
 }
 
 export async function getAllReviews() {
@@ -66,15 +61,21 @@ export async function getAllTours() {
   // });
 }
 
+// eslint-disable-next-line no-unused-vars
 export async function getTourDetail({ id, uid }) {
-  return request({
-    url: '/tour/getTour',
-    method: 'GET',
-    params: {
-      id,
-      uid,
-    },
+  // TODO: call API
+  return new Promise(resolve => {
+    resolve(tourDetails);
   });
+
+  // return request({
+  //   url: '/tour/getTour',
+  //   method: 'GET',
+  //   params: {
+  //     id,
+  //     uid,
+  //   },
+  // });
 }
 
 export async function updateTour(tour) {
