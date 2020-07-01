@@ -1,3 +1,10 @@
+# Run Project
+```
+$ git clone [URL]
+$ yarn
+$ yarn start
+```
+
 # Local Guide Pal website
 
 ![Deploy](https://github.com/nguyentiendan/localguide_front/workflows/Deploy/badge.svg)
