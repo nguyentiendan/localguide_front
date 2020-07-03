@@ -3,7 +3,7 @@ import { Link } from 'gatsby';
 import styled, { css } from 'styled-components';
 import { darken } from 'polished';
 import { MdSort } from 'react-icons/md';
-import { AiOutlineHome, AiOutlineUser, AiOutlineSchedule } from 'react-icons/ai';
+import { AiOutlineHome, AiOutlineSchedule } from 'react-icons/ai';
 import { FiMapPin, FiInbox } from 'react-icons/fi';
 
 import useAuth from '../../utils/useAuth';
@@ -16,18 +16,17 @@ import { bigScreenCss } from '../../styles/responsive-css';
 import colors from '../../styles/colors';
 import NavItem from './NavItem';
 
-const NavigationLink = styled(Link).attrs({ to: '/' })`
+const NavigationLink = styled(Link).attrs(props => ({ to: props.to || '/' }))`
   display: inline-block;
   line-height: 0;
   text-decoration: none;
-  font-weight: bold;
+  color: ${colors.grey[50]};
+  font-weight: normal;
 
-  ${props =>
-    !props.isActive &&
-    `
-    color: ${colors.grey[50]};
-    font-weight: normal;
-  `}
+  &.is-active {
+    color: ${colors.magenta[50]};
+    font-weight: bold;
+  }
 `;
 
 const TopMenuWrapper = styled.header`
@@ -163,21 +162,37 @@ function NavigationMenu() {
       <TopMenuWrapper>
         <TopMenuContainer>
           <BigScreen>
-            <NavigationLink isActive>Home</NavigationLink>
-            <NavigationLink>My Trips</NavigationLink>
-            <NavigationLink>Create Tour</NavigationLink>
-            <NavigationLink>My Inbox</NavigationLink>
+            <NavigationLink activeClassName="is-active">Home</NavigationLink>
+            <NavigationLink activeClassName="is-active" to="/my-trips">
+              My Trips
+            </NavigationLink>
+            <NavigationLink activeClassName="is-active" to="/create-tour">
+              Create Tour
+            </NavigationLink>
+            <NavigationLink activeClassName="is-active" to="/my-inbox">
+              My Inbox
+            </NavigationLink>
           </BigScreen>
           <RightPanel>{isBrowser() && authInfo}</RightPanel>
         </TopMenuContainer>
       </TopMenuWrapper>
       <SmallScreen>
         <BottomMenuWrapper>
-          <NavItem className="nav-item" title="Home" link="/" icon={<AiOutlineHome />} isActive />
-          <NavItem className="nav-item" title="My Trips" link="/" icon={<AiOutlineSchedule />} />
-          <NavItem className="nav-item" title="Create Tour" link="/" icon={<FiMapPin />} />
-          <NavItem className="nav-item" title="My Inbox" link="/" icon={<FiInbox />} />
-          <NavItem className="nav-item" title="My Account" link="/" icon={<AiOutlineUser />} />
+          <NavItem className="nav-item" title="Home" link="/" icon={<AiOutlineHome />} />
+          <NavItem
+            className="nav-item"
+            title="My Trips"
+            link="/my-trips"
+            icon={<AiOutlineSchedule />}
+          />
+          <NavItem
+            className="nav-item"
+            title="Create Tour"
+            link="/create-tour"
+            icon={<FiMapPin />}
+          />
+          <NavItem className="nav-item" title="My Inbox" link="/my-inbox" icon={<FiInbox />} />
+          {/* <NavItem className="nav-item" title="My Account" link="/" icon={<AiOutlineUser />} /> */}
         </BottomMenuWrapper>
       </SmallScreen>
     </>

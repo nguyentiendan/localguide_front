@@ -61,6 +61,10 @@ const Wrapper = styled.button`
     background: ${props => darken(0.04, props.backgroundColor)};
   }
 
+  &:focus {
+    outline: 0;
+  }
+
   ${props =>
     props.disabled &&
     css`

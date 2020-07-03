@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 
+import colors from '../../styles/colors';
 import Spinner from '../Spinner';
 
 const BEFORE_ICON_PADDING = 16;
@@ -39,8 +40,8 @@ const TextInput = styled.input.attrs(props =>
   font: inherit;
   font-size: 1rem;
   padding: 1rem;
-  padding-left: ${props => (props.beforeIcon ? `${BEFORE_ICON_PADDING + 25}px` : '16px')}
-  padding-right: ${props => (props.afterIcon ? `${AFTER_ICON_PADDING + 25}px` : '16px')}
+  padding-left: ${props => (props.beforeIcon ? `${BEFORE_ICON_PADDING + 25}px` : '16px')};
+  padding-right: ${props => (props.afterIcon ? `${AFTER_ICON_PADDING + 25}px` : '16px')};
   cursor: text;
 
   ::placeholder {
@@ -49,6 +50,10 @@ const TextInput = styled.input.attrs(props =>
 
   &:disabled {
     background-color: #e6e6e6;
+  }
+
+  &:focus {
+    outline-color: ${colors.magenta[50]} !important;
   }
 
   ${props =>

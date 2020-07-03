@@ -8,6 +8,8 @@ import GlobalStyle from '../../styles/GlobalStyle';
 import breakpoints from '../../styles/breakpoints';
 import Header from './Header';
 import NavigationMenu from './NavigationMenu';
+import 'antd/dist/antd.less';
+
 import { bigScreenCss, smallScreenCss } from '../../styles/responsive-css';
 
 const DefaultMainContent = styled.main`
