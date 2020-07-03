@@ -1,9 +1,9 @@
 import { request } from '../utils/http';
 
-export function forgotPassword(data) {
+export function forgotPassword(email) {
   return request({
-    url: '/recover-password',
+    url: '/user/resetPass',
     method: 'POST',
-    data,
+    data: { email },
   });
 }
