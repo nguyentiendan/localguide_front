@@ -1,3 +1,5 @@
+const colors = require('./src/styles/colors');
+
 require('dotenv').config({
   path: `.env.${process.env.NODE_ENV}`,
 });
@@ -35,10 +37,20 @@ module.exports = {
         name: 'local-guide-pal',
         short_name: 'tourguide',
         start_url: '/',
-        background_color: '#10abe2',
-        theme_color: '#10abe2',
+        background_color: colors.magenta[50],
+        theme_color: colors.magenta[50],
         display: 'minimal-ui',
         icon: 'src/images/logo-small.png',
+      },
+    },
+    {
+      resolve: `gatsby-plugin-less`,
+      options: {
+        javascriptEnabled: true,
+        modifyVars: {
+          'primary-color': colors.magenta[50],
+          'input-placeholder-color': colors.grey[50],
+        },
       },
     },
   ],
