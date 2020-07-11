@@ -25,9 +25,11 @@ const ProgressBar = ({ steps, currentStepNumber }) => {
 };
 
 ProgressBar.propTypes = {
-  steps: PropTypes.arrayOf({
-    title: PropTypes.string.isRequired,
-  }),
+  steps: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+    })
+  ),
   currentStepNumber: PropTypes.number,
 };
 

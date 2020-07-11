@@ -2,10 +2,13 @@ import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { Input, Row, Col, Select } from 'antd';
+import { Row, Col, Select } from 'antd';
 
 import vnCities from '../../../../mockdata/vietnam-cities.json';
 import jpCities from '../../../../mockdata/japan-cities.json';
+
+const durationOptions = [0.5, ..._.pull(_.times(11, Number), 0)];
+const paxOptions = _.pull(_.times(41, Number), 0);
 
 const Wrapper = styled.div`
   height: 100%;
@@ -22,6 +25,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   const country = useMemo(() => tourCreationInfo.country, [tourCreationInfo]);
   const city = useMemo(() => tourCreationInfo.city, [tourCreationInfo]);
   const duration = useMemo(() => tourCreationInfo.duration, [tourCreationInfo]);
+  const minPax = useMemo(() => tourCreationInfo.minPax, [tourCreationInfo]);
   const maxPax = useMemo(() => tourCreationInfo.maxPax, [tourCreationInfo]);
 
   const updateCountry = useCallback(
@@ -51,6 +55,18 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
         onUpdate({
           ...tourCreationInfo,
           duration: +newDuration,
+        });
+      }
+    },
+    [onUpdate, tourCreationInfo]
+  );
+
+  const updateMinPax = useCallback(
+    newMinPax => {
+      if (newMinPax > 0) {
+        onUpdate({
+          ...tourCreationInfo,
+          minPax: +newMinPax,
         });
       }
     },
@@ -117,26 +133,40 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
       <Row gutter={16}>
         <Col span={10}>
           <SubTitle>Tour Duration</SubTitle>
-          <Input
-            placeholder="Duration"
+          <Select
+            style={{ width: 200 }}
+            placeholder="Select duration"
+            onChange={updateDuration}
             value={duration}
-            onChange={e => updateDuration(e.target.value)}
-            type="number"
-            addonAfter="day(s)"
             size="large"
-            style={{ maxWidth: 170 }}
-          />
+          >
+            {_.map(durationOptions, d => (
+              <Select.Option key={d} value={d}>
+                {`${d === 0.5 ? 'Half' : d} day${d > 1 ? 's' : ''}`}
+              </Select.Option>
+            ))}
+          </Select>
         </Col>
         <Col span={10}>
-          <SubTitle>Maximum pax number</SubTitle>
-          <Input
-            placeholder="Max pax"
-            value={maxPax}
-            onChange={e => updateMaxPax(e.target.value)}
-            type="number"
-            size="large"
-            style={{ maxWidth: 100 }}
-          />
+          <SubTitle>Pax number</SubTitle>
+          <Select placeholder="Select min pax" onChange={updateMinPax} value={minPax} size="large">
+            {_.map(paxOptions, m => (
+              <Select.Option key={m} value={m}>
+                {`${m}`}
+              </Select.Option>
+            ))}
+          </Select>
+          &nbsp;-&nbsp;
+          <Select placeholder="Select max pax" onChange={updateMaxPax} value={maxPax} size="large">
+            {_.map(
+              _.filter(paxOptions, p => p >= minPax),
+              m => (
+                <Select.Option key={m} value={m}>
+                  {`${m}`}
+                </Select.Option>
+              )
+            )}
+          </Select>
         </Col>
       </Row>
     </Wrapper>
@@ -148,6 +178,7 @@ StepLayout.propTypes = {
     country: PropTypes.string,
     city: PropTypes.string,
     duration: PropTypes.number,
+    minPax: PropTypes.number,
     maxPax: PropTypes.number,
   }),
   onUpdate: PropTypes.func,

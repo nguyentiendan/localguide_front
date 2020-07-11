@@ -1,18 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Button from '../Button';
+import { Button, Spin } from 'antd';
 
 const Wrapper = styled.div``;
 
 // eslint-disable-next-line no-unused-vars
-const Navigation = ({ totalSteps, currentStepNumber, onBack, onNext }) => {
+const Navigation = ({ totalSteps, currentStepNumber, onBack, onNext, loading, isNextDisabled }) => {
   return (
     <Wrapper>
-      <Button onClick={onBack}>Back</Button>
-      <Button onClick={onNext} style={{ marginLeft: 20 }}>
+      <Button onClick={onBack} type="primary" size="large" disabled={loading}>
+        Back
+      </Button>
+      <Button
+        onClick={onNext}
+        style={{ marginLeft: 20, marginRight: 20 }}
+        type="primary"
+        size="large"
+        disabled={loading || isNextDisabled}
+      >
         Next
       </Button>
+      {loading && <Spin />}
     </Wrapper>
   );
 };
@@ -22,6 +31,8 @@ Navigation.propTypes = {
   currentStepNumber: PropTypes.number,
   onBack: PropTypes.func,
   onNext: PropTypes.func,
+  loading: PropTypes.bool,
+  isNextDisabled: PropTypes.bool,
 };
 
 Navigation.defaultProps = {
@@ -29,6 +40,8 @@ Navigation.defaultProps = {
   currentStepNumber: 0,
   onBack: () => {},
   onNext: () => {},
+  loading: false,
+  isNextDisabled: false,
 };
 
 export default Navigation;

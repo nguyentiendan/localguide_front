@@ -29,12 +29,12 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     <Wrapper>
       <SubTitle>Description about tour</SubTitle>
       <Input.TextArea
+        autoSize={{ minRows: 8 }}
         placeholder="Description"
         value={tourDescription}
         onChange={e => updateTourDescription(e.target.value)}
         size="large"
-        style={{ maxWidth: 400 }}
-        rows={8}
+        // style={{ maxWidth: 400 }}
       />
     </Wrapper>
   );

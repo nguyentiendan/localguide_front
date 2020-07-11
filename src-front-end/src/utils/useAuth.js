@@ -4,6 +4,7 @@ import { navigate } from 'gatsby';
 
 import { remove } from './storage';
 import { AUTH_TOKEN_KEY, getUserProfile, isAuthenticated } from './auth';
+import { isBrowser } from './browser';
 
 const AuthUserContext = createContext();
 const AuthLogoutContext = createContext();
@@ -67,4 +68,14 @@ export default function useAuth() {
   const logout = useLogout();
 
   return { user, logout };
+}
+
+export function useRequiredUser() {
+  const user = useUser();
+
+  if (!user && isBrowser()) {
+    navigate('/login');
+  }
+
+  return { user };
 }

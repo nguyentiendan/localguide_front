@@ -15,6 +15,7 @@ import breakpoints from '../../styles/breakpoints';
 import { bigScreenCss } from '../../styles/responsive-css';
 import colors from '../../styles/colors';
 import NavItem from './NavItem';
+import UserDropdown from './UserDropdown';
 
 const NavigationLink = styled(Link).attrs(props => ({ to: props.to || '/' }))`
   display: inline-block;
@@ -139,7 +140,7 @@ function NavigationMenu() {
   const { user } = useAuth();
 
   const authInfo = user ? (
-    <></>
+    <UserDropdown />
   ) : (
     <>
       <BigScreen>
@@ -163,15 +164,19 @@ function NavigationMenu() {
         <TopMenuContainer>
           <BigScreen>
             <NavigationLink activeClassName="is-active">Home</NavigationLink>
-            <NavigationLink activeClassName="is-active" to="/my-trips">
-              My Trips
-            </NavigationLink>
-            <NavigationLink activeClassName="is-active" to="/create-tour">
-              Create Tour
-            </NavigationLink>
-            <NavigationLink activeClassName="is-active" to="/my-inbox">
-              My Inbox
-            </NavigationLink>
+            {user && (
+              <>
+                <NavigationLink activeClassName="is-active" to="/my-trips">
+                  My Trips
+                </NavigationLink>
+                <NavigationLink activeClassName="is-active" to="/create-tour">
+                  Create Tour
+                </NavigationLink>
+                <NavigationLink activeClassName="is-active" to="/my-inbox">
+                  My Inbox
+                </NavigationLink>
+              </>
+            )}
           </BigScreen>
           <RightPanel>{isBrowser() && authInfo}</RightPanel>
         </TopMenuContainer>
@@ -179,19 +184,23 @@ function NavigationMenu() {
       <SmallScreen>
         <BottomMenuWrapper>
           <NavItem className="nav-item" title="Home" link="/" icon={<AiOutlineHome />} />
-          <NavItem
-            className="nav-item"
-            title="My Trips"
-            link="/my-trips"
-            icon={<AiOutlineSchedule />}
-          />
-          <NavItem
-            className="nav-item"
-            title="Create Tour"
-            link="/create-tour"
-            icon={<FiMapPin />}
-          />
-          <NavItem className="nav-item" title="My Inbox" link="/my-inbox" icon={<FiInbox />} />
+          {user && (
+            <>
+              <NavItem
+                className="nav-item"
+                title="My Trips"
+                link="/my-trips"
+                icon={<AiOutlineSchedule />}
+              />
+              <NavItem
+                className="nav-item"
+                title="Create Tour"
+                link="/create-tour"
+                icon={<FiMapPin />}
+              />
+              <NavItem className="nav-item" title="My Inbox" link="/my-inbox" icon={<FiInbox />} />
+            </>
+          )}
           {/* <NavItem className="nav-item" title="My Account" link="/" icon={<AiOutlineUser />} /> */}
         </BottomMenuWrapper>
       </SmallScreen>

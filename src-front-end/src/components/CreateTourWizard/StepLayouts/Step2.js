@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { Button, Col, Divider, Input, Row, Tabs, Typography } from 'antd';
+import { Button, Col, Divider, Input, Row, Select, Tabs, Typography } from 'antd';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -19,7 +19,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   const [currentDay, setCurrentDay] = useState(0);
   const duration = useMemo(() => tourCreationInfo.duration || 0, [tourCreationInfo]);
   const tourDayFees = useMemo(() => {
-    const initTourDayFees = _.times(duration, _.constant({}));
+    const initTourDayFees = _.times(Math.ceil(duration), _.constant({}));
     const currentTourDayFees = tourCreationInfo.tourDayFees || [];
     return _.map(
       initTourDayFees,
@@ -27,9 +27,9 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
         currentTourDayFees[i] || {
           ...tourDayFee,
           day: i,
-          transportations: [{ $uuid: uuidv4() }],
-          meals: [{ $uuid: uuidv4() }],
-          others: [{ $uuid: uuidv4() }],
+          transportations: [{ $uuid: uuidv4(), quantity: tourCreationInfo.minPax }],
+          meals: [{ $uuid: uuidv4(), quantity: tourCreationInfo.minPax }],
+          others: [{ $uuid: uuidv4(), quantity: tourCreationInfo.minPax }],
         }
     );
   }, [tourCreationInfo]);
@@ -46,15 +46,28 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     currentDay,
   ]);
   const guideFee = useMemo(() => tourCreationInfo.guideFee, [tourCreationInfo]);
+  const { minPax, maxPax } = tourCreationInfo;
+  const quantityOptions = useMemo(() => _.times(maxPax - minPax + 1, i => i + minPax), [
+    tourCreationInfo,
+  ]);
 
   const total = useMemo(() => {
     let sum = 0;
     if (guideFee) {
       sum += +guideFee;
     }
-    _.forEach([...(transportations || []), ...(meals || []), ...(others || [])], fee => {
-      if (fee && !_.isNil(fee.amount) && !_.isNil(fee.unit)) {
-        sum += +fee.amount * +fee.unit;
+    let totalInputFees = [];
+    _.forEach(tourDayFees, day => {
+      totalInputFees = totalInputFees.concat([
+        ...(day.transportations || []),
+        ...(day.meals || []),
+        ...(day.others || []),
+      ]);
+    });
+
+    _.forEach(totalInputFees, fee => {
+      if (fee && !_.isNil(fee.quantity) && !_.isNil(fee.unit)) {
+        sum += +fee.quantity * +fee.unit;
       }
     });
 
@@ -64,39 +77,33 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   const addNewTransportation = useCallback(() => {
     transportations.push({
       $uuid: uuidv4(),
+      quantity: tourCreationInfo.minPax,
     });
     onUpdate({
       ...tourCreationInfo,
-      tourDayFees: {
-        ...tourDayFees,
-        transportations: [...transportations],
-      },
+      tourDayFees: _.cloneDeep(tourDayFees),
     });
   }, [onUpdate, transportations, tourDayFees]);
 
   const addNewOther = useCallback(() => {
     others.push({
-      $uuid: others.length,
+      $uuid: uuidv4(),
+      quantity: tourCreationInfo.minPax,
     });
     onUpdate({
       ...tourCreationInfo,
-      tourDayFees: {
-        ...tourDayFees,
-        others: [...others],
-      },
+      tourDayFees: _.cloneDeep(tourDayFees),
     });
   }, [onUpdate, others, tourDayFees]);
 
   const addNewMeal = useCallback(() => {
     meals.push({
       $uuid: uuidv4(),
+      quantity: tourCreationInfo.minPax,
     });
     onUpdate({
       ...tourCreationInfo,
-      tourDayFees: {
-        ...tourDayFees,
-        meals: [...meals],
-      },
+      tourDayFees: _.cloneDeep(tourDayFees),
     });
   }, [onUpdate, meals, tourDayFees]);
 
@@ -107,32 +114,15 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
       const currentOther = _.find(others, other => other.$uuid === newUpdateFee.$uuid);
       if (currentTransportation) {
         _.assign(currentTransportation, newUpdateFee);
-        onUpdate({
-          ...tourCreationInfo,
-          tourDayFees: {
-            ...tourDayFees,
-            transportations: [...transportations],
-          },
-        });
       } else if (currentMeal) {
         _.assign(currentMeal, newUpdateFee);
-        onUpdate({
-          ...tourCreationInfo,
-          tourDayFees: {
-            ...tourDayFees,
-            meals: [...meals],
-          },
-        });
       } else if (currentOther) {
         _.assign(currentOther, newUpdateFee);
-        onUpdate({
-          ...tourCreationInfo,
-          tourDayFees: {
-            ...tourDayFees,
-            others: [...others],
-          },
-        });
       }
+      onUpdate({
+        ...tourCreationInfo,
+        tourDayFees: _.cloneDeep(tourDayFees),
+      });
     },
     [onUpdate, transportations, meals, others, tourDayFees]
   );
@@ -141,7 +131,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     newGuideFee => {
       onUpdate({
         ...tourCreationInfo,
-        guideFee: newGuideFee,
+        guideFee: +newGuideFee,
       });
     },
     [onUpdate, tourCreationInfo]
@@ -156,13 +146,13 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
               <Col span={14}>
                 <FieldTitle>Transportation</FieldTitle>
               </Col>
+              <Col span={4}>
+                <FieldTitle>Quantity</FieldTitle>
+              </Col>
               <Col span={5}>
                 <FieldTitle>Unit</FieldTitle>
               </Col>
-              <Col span={4}>
-                <FieldTitle>Amount</FieldTitle>
-              </Col>
-              {_.map(transportations, transportation => (
+              {_.map(tourDayFee.transportations, transportation => (
                 <>
                   <Col span={14} style={{ marginBottom: 8 }}>
                     <Row gutter={16}>
@@ -204,6 +194,25 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                       </Col>
                     </Row>
                   </Col>
+                  <Col span={4}>
+                    <Select
+                      style={{ width: '100%' }}
+                      placeholder="Select quantity"
+                      onChange={val =>
+                        updateTourDayFees({
+                          $uuid: transportation.$uuid,
+                          quantity: val,
+                        })
+                      }
+                      value={transportation.quantity}
+                    >
+                      {_.map(quantityOptions, m => (
+                        <Select.Option key={m} value={m}>
+                          {`${m}`}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Col>
                   <Col span={5}>
                     <Input
                       placeholder="Unit"
@@ -213,20 +222,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                       onChange={e =>
                         updateTourDayFees({
                           $uuid: transportation.$uuid,
-                          unit: e.target.value,
-                        })
-                      }
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <Input
-                      placeholder="Amount"
-                      type="number"
-                      value={transportation.amount}
-                      onChange={e =>
-                        updateTourDayFees({
-                          $uuid: transportation.$uuid,
-                          amount: e.target.value,
+                          unit: +e.target.value,
                         })
                       }
                     />
@@ -234,25 +230,27 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                 </>
               ))}
             </Row>
-            <Row>
-              <Col span={24}>
-                <Button size="small" onClick={() => addNewTransportation()}>
-                  +
-                </Button>
-              </Col>
-            </Row>
+            {tourDayFee.transportations.length <= 3 && (
+              <Row>
+                <Col span={24}>
+                  <Button size="small" onClick={() => addNewTransportation()}>
+                    +
+                  </Button>
+                </Col>
+              </Row>
+            )}
             <br />
             <Row gutter={16}>
               <Col span={14}>
                 <FieldTitle>Entrance & Others fee</FieldTitle>
               </Col>
+              <Col span={4}>
+                <FieldTitle>Quantity</FieldTitle>
+              </Col>
               <Col span={5}>
                 <FieldTitle>Unit</FieldTitle>
               </Col>
-              <Col span={4}>
-                <FieldTitle>Amount</FieldTitle>
-              </Col>
-              {_.map(others, other => (
+              {_.map(tourDayFee.others, other => (
                 <>
                   <Col span={14} style={{ marginBottom: 8 }}>
                     <Input
@@ -266,6 +264,25 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                       }
                     />
                   </Col>
+                  <Col span={4}>
+                    <Select
+                      style={{ width: '100%' }}
+                      placeholder="Select quantity"
+                      onChange={val =>
+                        updateTourDayFees({
+                          $uuid: other.$uuid,
+                          quantity: val,
+                        })
+                      }
+                      value={other.quantity}
+                    >
+                      {_.map(quantityOptions, m => (
+                        <Select.Option key={m} value={m}>
+                          {`${m}`}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Col>
                   <Col span={5}>
                     <Input
                       placeholder="Unit"
@@ -275,20 +292,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                       onChange={e =>
                         updateTourDayFees({
                           $uuid: other.$uuid,
-                          unit: e.target.value,
-                        })
-                      }
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <Input
-                      placeholder="Amount"
-                      type="number"
-                      value={other.amount}
-                      onChange={e =>
-                        updateTourDayFees({
-                          $uuid: other.$uuid,
-                          amount: e.target.value,
+                          unit: +e.target.value,
                         })
                       }
                     />
@@ -296,25 +300,27 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                 </>
               ))}
             </Row>
-            <Row>
-              <Col span={24}>
-                <Button size="small" onClick={() => addNewOther()}>
-                  +
-                </Button>
-              </Col>
-            </Row>
+            {tourDayFee.others.length <= 3 && (
+              <Row>
+                <Col span={24}>
+                  <Button size="small" onClick={() => addNewOther()}>
+                    +
+                  </Button>
+                </Col>
+              </Row>
+            )}
             <br />
             <Row gutter={16}>
               <Col span={14}>
                 <FieldTitle>Meal fee</FieldTitle>
               </Col>
+              <Col span={4}>
+                <FieldTitle>Quantity</FieldTitle>
+              </Col>
               <Col span={5}>
                 <FieldTitle>Unit</FieldTitle>
               </Col>
-              <Col span={4}>
-                <FieldTitle>Amount</FieldTitle>
-              </Col>
-              {_.map(meals, meal => (
+              {_.map(tourDayFee.meals, meal => (
                 <>
                   <Col span={14} style={{ marginBottom: 8 }}>
                     <Row gutter={16}>
@@ -344,6 +350,25 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                       </Col>
                     </Row>
                   </Col>
+                  <Col span={4}>
+                    <Select
+                      style={{ width: '100%' }}
+                      placeholder="Select quantity"
+                      onChange={val =>
+                        updateTourDayFees({
+                          $uuid: meal.$uuid,
+                          quantity: val,
+                        })
+                      }
+                      value={meal.quantity}
+                    >
+                      {_.map(quantityOptions, m => (
+                        <Select.Option key={m} value={m}>
+                          {`${m}`}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Col>
                   <Col span={5}>
                     <Input
                       placeholder="Unit"
@@ -353,20 +378,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                       onChange={e =>
                         updateTourDayFees({
                           $uuid: meal.$uuid,
-                          unit: e.target.value,
-                        })
-                      }
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <Input
-                      placeholder="Amount"
-                      type="number"
-                      value={meal.amount}
-                      onChange={e =>
-                        updateTourDayFees({
-                          $uuid: meal.$uuid,
-                          amount: e.target.value,
+                          unit: +e.target.value,
                         })
                       }
                     />
@@ -374,13 +386,15 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                 </>
               ))}
             </Row>
-            <Row>
-              <Col span={24}>
-                <Button size="small" onClick={() => addNewMeal()}>
-                  +
-                </Button>
-              </Col>
-            </Row>
+            {tourDayFee.meals.length <= 3 && (
+              <Row>
+                <Col span={24}>
+                  <Button size="small" onClick={() => addNewMeal()}>
+                    +
+                  </Button>
+                </Col>
+              </Row>
+            )}
           </Tabs.TabPane>
         ))}
       </Tabs>
@@ -388,7 +402,9 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
       <Divider />
       <Row gutter={16}>
         <Col span={7}>
-          <FieldTitle>{`Tour in ${duration} day${duration > 1 ? 's' : ''} with`}</FieldTitle>
+          <FieldTitle>
+            {`Tour in ${duration === 0.5 ? 'half' : duration} day${duration > 1 ? 's' : ''} with`}
+          </FieldTitle>
         </Col>
         <Col span={4}>
           <FieldTitle style={{ textAlign: 'right' }}>Guide fee</FieldTitle>
@@ -432,34 +448,36 @@ StepLayout.propTypes = {
         day: PropTypes.number,
         transportations: PropTypes.arrayOf(
           PropTypes.shape({
-            $uuid: PropTypes.number,
+            $uuid: PropTypes.string,
             from: PropTypes.string,
             to: PropTypes.string,
             by: PropTypes.string,
             unit: PropTypes.number,
-            amount: PropTypes.number,
+            quantity: PropTypes.number,
           })
         ),
         meals: PropTypes.arrayOf(
           PropTypes.shape({
-            $uuid: PropTypes.number,
+            $uuid: PropTypes.string,
             description: PropTypes.string,
             type: PropTypes.string,
             unit: PropTypes.number,
-            amount: PropTypes.number,
+            quantity: PropTypes.number,
           })
         ),
         others: PropTypes.arrayOf(
           PropTypes.shape({
-            $uuid: PropTypes.number,
+            $uuid: PropTypes.string,
             description: PropTypes.string,
             unit: PropTypes.number,
-            amount: PropTypes.number,
+            quantity: PropTypes.number,
           })
         ),
       })
     ),
     guideFee: PropTypes.number,
+    minPax: PropTypes.number,
+    maxPax: PropTypes.number,
   }),
   onUpdate: PropTypes.func,
 };

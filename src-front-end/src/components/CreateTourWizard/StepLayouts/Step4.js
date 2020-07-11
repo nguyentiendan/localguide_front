@@ -2,12 +2,23 @@ import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { PlusOutlined } from '@ant-design/icons';
-import { Modal, Upload } from 'antd';
+import { Modal, Upload, Row, Col } from 'antd';
 
 import colors from '../../../styles/colors';
+import { uploadCoverPhoto, uploadPhoto } from '../../../apis';
 
 const Wrapper = styled.div`
   height: 100%;
+
+  .cover-photo-upload {
+    .ant-upload-select,
+    .ant-upload-list-picture-card-container,
+    .ant-upload-list-item-list-type-picture-card {
+      float: none;
+      width: 100%;
+      height: 300px;
+    }
+  }
 `;
 
 const Title = styled.h2`
@@ -27,7 +38,7 @@ function getBase64(file) {
   });
 }
 
-const StepLayout = ({ tourCreationInfo, onUpdate }) => {
+const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const coverPhotoList = useMemo(
@@ -70,6 +81,28 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     [onUpdate, photos, tourCreationInfo]
   );
 
+  const handleUploadCoverPhoto = useCallback(
+    file => {
+      if (!tourCreationInfo.id) {
+        return new Promise(() => {});
+      }
+
+      return uploadCoverPhoto({ tourId: tourCreationInfo.id, file });
+    },
+    [tourCreationInfo]
+  );
+
+  const handleUploadPhoto = useCallback(
+    file => {
+      if (!tourCreationInfo.id) {
+        return new Promise(() => {});
+      }
+
+      return uploadPhoto({ tourId: tourCreationInfo.id, file });
+    },
+    [tourCreationInfo]
+  );
+
   const uploadButton = text => (
     <div>
       <PlusOutlined />
@@ -79,7 +112,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
 
   return (
     <Wrapper>
-      <Title>Great progress</Title>
+      <Title>{`Great progress, ${user.Fullname}`}</Title>
       <SubTitle>You can upload photo to finish create tour, or you can upload after.</SubTitle>
       <SubTitle>
         Photos help guests imagine about your place. You can start with one and add more after you
@@ -87,23 +120,32 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
       </SubTitle>
       <br />
 
-      <Upload
-        listType="picture-card"
-        fileList={coverPhotoList}
-        onPreview={handlePreview}
-        onChange={handleCoverPhotoChange}
-      >
-        {coverPhotoList.length >= 1 ? null : uploadButton('Upload cover photo')}
-      </Upload>
-
-      <Upload
-        listType="picture-card"
-        fileList={photos}
-        onPreview={handlePreview}
-        onChange={handlePhotoChange}
-      >
-        {photos.length >= 5 ? null : uploadButton('Upload photo')}
-      </Upload>
+      <Row gutter={16}>
+        <Col span={12}>
+          <Upload
+            className="cover-photo-upload"
+            listType="picture-card"
+            fileList={coverPhotoList}
+            previewFile={getBase64}
+            onPreview={handlePreview}
+            onChange={handleCoverPhotoChange}
+            action={handleUploadCoverPhoto}
+          >
+            {coverPhotoList.length >= 1 ? null : uploadButton('Upload cover photo')}
+          </Upload>
+        </Col>
+        <Col span={12}>
+          <Upload
+            listType="picture-card"
+            fileList={photos}
+            onPreview={handlePreview}
+            onChange={handlePhotoChange}
+            action={handleUploadPhoto}
+          >
+            {photos.length >= 5 ? null : uploadButton('Upload photo')}
+          </Upload>
+        </Col>
+      </Row>
       <Modal visible={previewVisible} footer={null} onCancel={handleCancel}>
         <img alt="preview" style={{ width: '100%' }} src={previewImage} />
       </Modal>
@@ -112,7 +154,11 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
 };
 
 StepLayout.propTypes = {
+  user: PropTypes.shape({
+    Fullname: PropTypes.string,
+  }),
   tourCreationInfo: PropTypes.shape({
+    id: PropTypes.number,
     coverPhoto: PropTypes.shape({}),
     photos: PropTypes.arrayOf(PropTypes.shape({})),
   }),
@@ -120,6 +166,7 @@ StepLayout.propTypes = {
 };
 
 StepLayout.defaultProps = {
+  user: { Fullname: '' },
   tourCreationInfo: {},
   onUpdate: () => {},
 };

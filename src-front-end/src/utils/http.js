@@ -1,13 +1,35 @@
 import axios from 'axios';
+import _ from 'lodash';
 
-import { get } from './storage';
-import { AUTH_TOKEN_KEY } from './auth';
+import { getUserProfile } from './auth';
 
-export async function request({ url, apiVersion, method = 'GET', data, authRequired, ...rest }) {
+export async function request({
+  url,
+  apiVersion,
+  method = 'GET',
+  data,
+  isFormData,
+  authRequired,
+  ...rest
+}) {
   let token = null;
+  let submitData = data;
 
   if (authRequired) {
-    token = get(AUTH_TOKEN_KEY);
+    const user = getUserProfile();
+    token = user.Token;
+    submitData = {
+      uid: user.UID,
+      ...data,
+    };
+  }
+
+  if (isFormData) {
+    const formData = new FormData();
+    _.forEach(submitData, (value, key) => {
+      formData.append(key, value);
+    });
+    submitData = formData;
   }
 
   const response = await axios({
@@ -15,10 +37,10 @@ export async function request({ url, apiVersion, method = 'GET', data, authRequi
     url,
     method,
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': isFormData ? 'multipart/form-data' : 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : null),
     },
-    data,
+    data: submitData,
     ...rest,
   });
 

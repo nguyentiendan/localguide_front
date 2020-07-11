@@ -29,13 +29,14 @@ const Img = styled.img`
   height: 100%;
   width: 100%;
   border-radius: 6px;
+  max-height: 400px;
 `;
 
-const Scene = ({ layout: Layout, tourCreationInfo, onUpdate, imgSrc }) => {
+const Scene = ({ user, layout: Layout, tourCreationInfo, onUpdate, imgSrc }) => {
   return (
     <Wrapper>
       <LayoutWrapper>
-        <Layout tourCreationInfo={tourCreationInfo} onUpdate={onUpdate} />
+        <Layout user={user} tourCreationInfo={tourCreationInfo} onUpdate={onUpdate} />
       </LayoutWrapper>
       {imgSrc && (
         <ImgWrapper>
@@ -47,7 +48,8 @@ const Scene = ({ layout: Layout, tourCreationInfo, onUpdate, imgSrc }) => {
 };
 
 Scene.propTypes = {
-  layout: PropTypes.node.isRequired,
+  user: PropTypes.shape({}).isRequired,
+  layout: PropTypes.func.isRequired,
   tourCreationInfo: PropTypes.shape({}),
   onUpdate: PropTypes.func,
   imgSrc: PropTypes.string,

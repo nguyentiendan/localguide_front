@@ -50,8 +50,28 @@ module.exports = {
         modifyVars: {
           'primary-color': colors.magenta[50],
           'input-placeholder-color': colors.grey[50],
+          'border-radius-base': '4px',
+          'tag-font-size': '@font-size-base',
+          'tag-line-height': '24px',
         },
       },
     },
+    // {
+    //   resolve: 'gatsby-plugin-robots-txt',
+    //   options: {
+    //     resolveEnv: () => process.env.GATSBY_ROBOTS_TXT_ENV || process.env.NODE_ENV,
+    //     env: {
+    //       development: {
+    //         policy: [{ userAgent: '*', disallow: ['/'] }],
+    //       },
+    //       staging: {
+    //         policy: [{ userAgent: '*', disallow: ['/'] }],
+    //       },
+    //       production: {
+    //         policy: [{ userAgent: '*', allow: '/' }],
+    //       },
+    //     },
+    //   },
+    // },
   ],
 };

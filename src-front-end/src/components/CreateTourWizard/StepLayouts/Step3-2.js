@@ -1,9 +1,9 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { Button, Col, Input, Row, TimePicker } from 'antd';
+import { Button, Col, Input, Row, Tabs, TimePicker } from 'antd';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -20,17 +20,44 @@ const OptionalTitle = styled(FieldTitle)`
 `;
 
 const StepLayout = ({ tourCreationInfo, onUpdate }) => {
-  const pickUpAt = useMemo(() => tourCreationInfo.pickUpAt || {}, [tourCreationInfo]);
-  const finishAt = useMemo(() => tourCreationInfo.finishAt || {}, [tourCreationInfo]);
-  const schedule = useMemo(() => tourCreationInfo.schedule || [], [tourCreationInfo]);
+  const [currentDay, setCurrentDay] = useState(0);
+  const duration = useMemo(() => tourCreationInfo.duration || 0, [tourCreationInfo]);
+  const daySchedules = useMemo(() => {
+    const initDaySchedules = _.times(Math.ceil(duration), _.constant({}));
+    const currentDaySchedules = tourCreationInfo.daySchedules || [];
+    return _.map(
+      initDaySchedules,
+      (daySchedule, i) =>
+        currentDaySchedules[i] || {
+          ...daySchedule,
+          day: i,
+          pickUpAt: {},
+          finishAt: {},
+          schedule: [],
+        }
+    );
+  }, [tourCreationInfo]);
+
+  const pickUpAt = useMemo(() => daySchedules[currentDay] && daySchedules[currentDay].pickUpAt, [
+    daySchedules,
+    currentDay,
+  ]);
+  const finishAt = useMemo(() => daySchedules[currentDay] && daySchedules[currentDay].finishAt, [
+    daySchedules,
+    currentDay,
+  ]);
+  const schedule = useMemo(() => daySchedules[currentDay] && daySchedules[currentDay].schedule, [
+    daySchedules,
+    currentDay,
+  ]);
 
   const updatePickUpAt = useCallback(
     newPickUpAt => {
+      const currentDaySchedule = daySchedules[currentDay];
+      _.assign(currentDaySchedule.pickUpAt, newPickUpAt);
       onUpdate({
         ...tourCreationInfo,
-        pickUpAt: {
-          ..._.assign(pickUpAt, newPickUpAt),
-        },
+        daySchedules: _.cloneDeep(daySchedules),
       });
     },
     [onUpdate, pickUpAt, tourCreationInfo]
@@ -38,11 +65,11 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
 
   const updateFinishAt = useCallback(
     newFinishAt => {
+      const currentDaySchedule = daySchedules[currentDay];
+      _.assign(currentDaySchedule.finishAt, newFinishAt);
       onUpdate({
         ...tourCreationInfo,
-        finishAt: {
-          ..._.assign(finishAt, newFinishAt),
-        },
+        daySchedules: _.cloneDeep(daySchedules),
       });
     },
     [onUpdate, pickUpAt, tourCreationInfo]
@@ -50,14 +77,18 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
 
   const updateSchedule = useCallback(
     newSchedule => {
-      const currentSchedule = _.find(schedule, s => s.$uuid === newSchedule.$uuid);
+      const currentDaySchedule = daySchedules[currentDay];
+      const currentSchedule = _.find(
+        currentDaySchedule.schedule,
+        s => s.$uuid === newSchedule.$uuid
+      );
       if (currentSchedule) {
         _.assign(currentSchedule, newSchedule);
-        onUpdate({
-          ...tourCreationInfo,
-          schedule: [...schedule],
-        });
       }
+      onUpdate({
+        ...tourCreationInfo,
+        daySchedules: _.cloneDeep(daySchedules),
+      });
     },
     [onUpdate, schedule, tourCreationInfo]
   );
@@ -68,110 +99,135 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     });
     onUpdate({
       ...tourCreationInfo,
-      schedule: [...schedule],
+      daySchedules: _.cloneDeep(daySchedules),
     });
-  }, [onUpdate, pickUpAt, tourCreationInfo]);
+  }, [onUpdate, schedule, daySchedules]);
 
   return (
     <Wrapper>
       <OptionalTitle>Optional</OptionalTitle>
       <br />
-      <Row gutter={16}>
-        <Col span={4}>
-          <FieldTitle>Pick up at</FieldTitle>
-        </Col>
-        <Col span={11}>
-          <Input
-            placeholder="Place"
-            value={pickUpAt.place}
-            onChange={e => updatePickUpAt({ place: e.target.value })}
-          />
-        </Col>
-        <Col span={3}>
-          <FieldTitle style={{ textAlign: 'right' }}>Time</FieldTitle>
-        </Col>
-        <Col span={5}>
-          <TimePicker value={pickUpAt.time} onChange={time => updatePickUpAt({ time })} />
-        </Col>
-      </Row>
-      <br />
-      {(!schedule || schedule.length <= 0) && (
-        <Row gutter={16} style={{ marginBottom: 8 }}>
-          <Col span={4}>
-            <FieldTitle>Schedule</FieldTitle>
-          </Col>
-          <Col>
-            <Button size="small" onClick={() => addSchedule()} style={{ marginTop: 5 }}>
-              +
-            </Button>
-          </Col>
-        </Row>
-      )}
-
-      {_.map(schedule, (s, i) => (
-        <Row gutter={16} style={{ marginBottom: 8 }} key={s.$uuid}>
-          <Col span={4}>{i === 0 && <FieldTitle>Schedule</FieldTitle>}</Col>
-          <Col span={11}>
-            <Input
-              placeholder="Place"
-              value={s.place}
-              onChange={e => updateSchedule({ $uuid: s.$uuid, place: e.target.value })}
-            />
-          </Col>
-          <Col span={3}>
-            <FieldTitle style={{ textAlign: 'right' }}>Time</FieldTitle>
-          </Col>
-          <Col span={5}>
-            <TimePicker
-              value={s.time}
-              onChange={time => updateSchedule({ $uuid: s.$uuid, time })}
-            />
-          </Col>
-        </Row>
-      ))}
-      {schedule && schedule.length > 0 && (
-        <Row gutter={16}>
-          <Col push={4}>
-            <Button size="small" onClick={() => addSchedule()}>
-              +
-            </Button>
-          </Col>
-        </Row>
-      )}
-      <br />
-      <Row gutter={16}>
-        <Col span={4}>
-          <FieldTitle>Finish at</FieldTitle>
-        </Col>
-        <Col span={11}>
-          <Input placeholder="Place" />
-        </Col>
-        <Col span={3}>
-          <FieldTitle style={{ textAlign: 'right' }}>Time</FieldTitle>
-        </Col>
-        <Col span={5}>
-          <TimePicker value={finishAt.time} onChange={time => updateFinishAt({ time })} />
-        </Col>
-      </Row>
+      <Tabs defaultActiveKey={currentDay} onChange={day => setCurrentDay(day)}>
+        {_.map(daySchedules, daySchedule => (
+          <Tabs.TabPane tab={`Day ${daySchedule.day + 1}`} key={daySchedule.day}>
+            <Row gutter={16}>
+              <Col span={4}>
+                <FieldTitle>Time</FieldTitle>
+              </Col>
+              <Col span={5}>
+                <TimePicker
+                  value={pickUpAt.time}
+                  onChange={time => updatePickUpAt({ time })}
+                  format="HH:mm"
+                  minuteStep={5}
+                />
+              </Col>
+              <Col span={4}>
+                <FieldTitle style={{ textAlign: 'right' }}>Pick up at</FieldTitle>
+              </Col>
+              <Col span={10}>
+                <Input
+                  placeholder="Place"
+                  value={pickUpAt.place}
+                  onChange={e => updatePickUpAt({ place: e.target.value })}
+                />
+              </Col>
+            </Row>
+            <br />
+            {(!schedule || schedule.length <= 0) && (
+              <Row gutter={16} style={{ marginBottom: 8 }}>
+                <Col span={4}>
+                  <FieldTitle>Schedule</FieldTitle>
+                </Col>
+                <Col>
+                  <Button size="small" onClick={() => addSchedule()} style={{ marginTop: 5 }}>
+                    +
+                  </Button>
+                </Col>
+              </Row>
+            )}
+            {_.map(schedule, (s, i) => (
+              <Row gutter={16} style={{ marginBottom: 8 }} key={s.$uuid}>
+                <Col span={4}>{i === 0 && <FieldTitle>Schedule</FieldTitle>}</Col>
+                <Col span={7}>
+                  <TimePicker.RangePicker
+                    value={s.time}
+                    onChange={time => updateSchedule({ $uuid: s.$uuid, time })}
+                    format="HH:mm"
+                    minuteStep={5}
+                    placeholder={['From', 'To']}
+                  />
+                </Col>
+                <Col span={10} push={2}>
+                  <Input
+                    placeholder="Place"
+                    value={s.place}
+                    onChange={e => updateSchedule({ $uuid: s.$uuid, place: e.target.value })}
+                  />
+                </Col>
+              </Row>
+            ))}
+            {schedule && schedule.length > 0 && (
+              <Row gutter={16}>
+                <Col push={4}>
+                  <Button size="small" onClick={() => addSchedule()}>
+                    +
+                  </Button>
+                </Col>
+              </Row>
+            )}
+            <br />
+            <Row gutter={16}>
+              <Col span={4}>
+                <FieldTitle>Time</FieldTitle>
+              </Col>
+              <Col span={5}>
+                <TimePicker
+                  value={finishAt.time}
+                  onChange={time => updateFinishAt({ time })}
+                  format="HH:mm"
+                  minuteStep={5}
+                />
+              </Col>
+              <Col span={4}>
+                <FieldTitle style={{ textAlign: 'right' }}>Finish at</FieldTitle>
+              </Col>
+              <Col span={10}>
+                <Input
+                  placeholder="Place"
+                  value={finishAt.place}
+                  onChange={e => updateFinishAt({ place: e.target.value })}
+                />
+              </Col>
+            </Row>
+          </Tabs.TabPane>
+        ))}
+      </Tabs>
     </Wrapper>
   );
 };
 
 StepLayout.propTypes = {
   tourCreationInfo: PropTypes.shape({
-    pickUpAt: PropTypes.shape({
-      place: PropTypes.string,
-      time: PropTypes.number,
-    }),
-    finishAt: PropTypes.shape({
-      $uuid: PropTypes.string,
-      place: PropTypes.string,
-      time: PropTypes.number,
-    }),
-    schedule: PropTypes.arrayOf(
+    duration: PropTypes.number,
+    daySchedules: PropTypes.arrayOf(
       PropTypes.shape({
-        place: PropTypes.string,
-        time: PropTypes.number,
+        day: PropTypes.number,
+        pickUpAt: PropTypes.shape({
+          place: PropTypes.string,
+          time: PropTypes.number,
+        }),
+        finishAt: PropTypes.shape({
+          place: PropTypes.string,
+          time: PropTypes.number,
+        }),
+        schedule: PropTypes.arrayOf(
+          PropTypes.shape({
+            $uuid: PropTypes.string,
+            place: PropTypes.string,
+            time: PropTypes.number,
+          })
+        ),
       })
     ),
   }),

@@ -107,3 +107,23 @@ export async function getCityOfCountry(countryCode) {
     method: 'GET',
   });
 }
+
+export async function uploadCoverPhoto({ tourId, file }) {
+  return request({
+    url: `/file/uploadCover`,
+    method: 'POST',
+    authRequired: true,
+    data: { id: tourId, uploadFile: file },
+    isFormData: true,
+  });
+}
+
+export async function uploadPhoto({ tourId, file }) {
+  return request({
+    url: `/file/uploadCover`,
+    method: 'POST',
+    authRequired: true,
+    data: { id: tourId, uploadFile: file },
+    isFormData: true,
+  });
+}

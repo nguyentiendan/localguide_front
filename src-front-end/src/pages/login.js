@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, navigate } from 'gatsby';
 import styled from 'styled-components';
+import jwt from 'jsonwebtoken';
 
 import * as API from '../apis';
 import { useLocalStorage } from '../utils/storage';
@@ -119,9 +120,9 @@ function LoginPage() {
     try {
       setLoading(true);
       setErrorMessage('');
-      const data = await API.login(email, password);
+      const { data } = await API.login(email, password);
       setLoading(false);
-      setAuthToken(data.token);
+      setAuthToken(jwt.sign(data, 'tour-guide-pal'));
     } catch (error) {
       setLoading(false);
       if (error.response && error.response.data && error.response.data.message) {
