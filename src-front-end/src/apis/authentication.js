@@ -8,11 +8,11 @@ export function login(email, password) {
   });
 }
 
-export function register({ email, password, fullname }) {
+export function register(fullname, email, password) {
   return request({
     url: '/account/new',
     method: 'POST',
-    data: { email, password, fullname },
+    data: { fullname, email, password },
   });
 }
 
