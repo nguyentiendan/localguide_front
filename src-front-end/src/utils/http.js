@@ -12,14 +12,19 @@ export async function request({
   authRequired,
   ...rest
 }) {
-  let token = null;
+  let token = (rest && rest.token) || null;
   let submitData = data;
 
   if (authRequired) {
     const user = getUserProfile();
-    token = user.Token;
+
+    if (!token) {
+      // eslint-disable-next-line prefer-destructuring
+      token = user.token;
+    }
+
     submitData = {
-      uid: user.UID,
+      uid: (rest && rest.uid) || (user && user.uid),
       ...data,
     };
   }

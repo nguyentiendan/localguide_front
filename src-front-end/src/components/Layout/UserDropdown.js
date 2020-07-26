@@ -6,6 +6,7 @@ import { math } from 'polished';
 import useAuth from '../../utils/useAuth';
 import { hideAt } from '../../utils/responsive';
 import breakpoints from '../../styles/breakpoints';
+import colors from '../../styles/colors';
 import Dropdown from '../Dropdown';
 import Menu from '../Menu';
 
@@ -23,7 +24,7 @@ const StyledDropdown = styled(Dropdown).attrs({
   }
 
   .menu {
-    top: 52px;
+    top: 35px;
 
     @media (max-width: ${breakpoints.sm}) {
       top: 42px;
@@ -47,12 +48,12 @@ function UserDropdown({ avatarSize, ...rest }) {
     return null;
   }
 
-  const userName = user.Fullname || '';
+  const userName = user.fullname || '';
 
   const trigger = (
     <>
       <BigScreen>{`Hi ${userName}`}</BigScreen>
-      <SmallScreen>{`Hi ${userName}`}</SmallScreen>
+      <SmallScreen style={{ color: colors.white }}>{`Hi ${userName}`}</SmallScreen>
     </>
   );
 

@@ -120,9 +120,12 @@ function LoginPage() {
     try {
       setLoading(true);
       setErrorMessage('');
-      const { data } = await API.login(email, password);
+      const {
+        data: { Token, UID },
+      } = await API.login(email, password);
+      const { data: profile } = await API.getUserProfile({ token: Token, uid: UID });
       setLoading(false);
-      setAuthToken(jwt.sign(data, 'tour-guide-pal'));
+      setAuthToken(jwt.sign({ ...profile, token: Token }, 'tour-guide-pal'));
     } catch (error) {
       setLoading(false);
       if (error.response && error.response.data && error.response.data.message) {

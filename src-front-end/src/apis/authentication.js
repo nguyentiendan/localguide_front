@@ -16,11 +16,13 @@ export function register(fullname, email, password) {
   });
 }
 
-export function getUserProfile() {
+export function getUserProfile({ uid, token }) {
   return request({
     url: '/profile/me',
     method: 'GET',
     authRequired: true,
+    uid,
+    token,
   });
 }
 

@@ -395,6 +395,12 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                 </Col>
               </Row>
             )}
+            <br />
+            <Row justify="end">
+              <Col pull={1}>
+                <Button type="primary">{`Save day ${tourDayFee.day + 1}`}</Button>
+              </Col>
+            </Row>
           </Tabs.TabPane>
         ))}
       </Tabs>

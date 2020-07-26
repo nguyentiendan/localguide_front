@@ -1,27 +1,77 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button, Spin } from 'antd';
+import { LeftOutlined } from '@ant-design/icons';
+import { smallScreenCss } from '../../styles/responsive-css';
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  display: flex;
+`;
 
-// eslint-disable-next-line no-unused-vars
+const LayoutWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const EmptySpaceWrapper = styled.div`
+  flex: 0.5;
+  display: flex;
+  align-items: center;
+  padding-top: 5px;
+
+  @media (max-width: 780px) {
+    flex: 0.4;
+  }
+
+  ${smallScreenCss(`
+    display: none;
+  `)}
+`;
+
 const Navigation = ({ totalSteps, currentStepNumber, onBack, onNext, loading, isNextDisabled }) => {
+  const isLastStep = useMemo(() => totalSteps === currentStepNumber, [
+    totalSteps,
+    currentStepNumber,
+  ]);
+
   return (
     <Wrapper>
-      <Button onClick={onBack} type="primary" size="large" disabled={loading}>
-        Back
-      </Button>
-      <Button
-        onClick={onNext}
-        style={{ marginLeft: 20, marginRight: 20 }}
-        type="primary"
-        size="large"
-        disabled={loading || isNextDisabled}
-      >
-        Next
-      </Button>
-      {loading && <Spin />}
+      <LayoutWrapper>
+        <Button
+          onClick={onBack}
+          type="link"
+          size="large"
+          disabled={loading}
+          icon={<LeftOutlined />}
+        >
+          Back
+        </Button>
+        <div>
+          {isLastStep && (
+            <Button
+              onClick={onNext}
+              style={{ marginLeft: 20, marginRight: 20 }}
+              type="primary"
+              size="large"
+              disabled={loading || isNextDisabled}
+            >
+              Preview
+            </Button>
+          )}
+          <Button
+            onClick={onNext}
+            style={{ marginLeft: 20, marginRight: 20 }}
+            type="primary"
+            size="large"
+            disabled={loading || isNextDisabled}
+          >
+            {isLastStep ? `Skip for now` : `Next`}
+          </Button>
+        </div>
+      </LayoutWrapper>
+      <EmptySpaceWrapper>{loading && <Spin />}</EmptySpaceWrapper>
     </Wrapper>
   );
 };
