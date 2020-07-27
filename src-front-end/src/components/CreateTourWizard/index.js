@@ -30,7 +30,8 @@ const CREATE_TOUR_STEPS = [
   },
   {
     title: 'Add photos of tour',
-    layouts: [StepLayout.Step4],
+    layouts: [StepLayout.Step4_1, StepLayout.Step4_2],
+    validation: tour => !tour.id,
   },
 ];
 
@@ -61,6 +62,7 @@ const STEP_LAYOUTS = (() => {
 const TOTAL_STEPS = _.sumBy(CREATE_TOUR_STEPS, step => step.layouts.length);
 
 const transformTourData = tourCreationInfo => ({
+  id: tourCreationInfo.id,
   name: tourCreationInfo.tourName,
   short_desc: tourCreationInfo.tourShortDescription,
   country: tourCreationInfo.country,
@@ -98,7 +100,7 @@ const CreateTourWizard = () => {
     setCurrentStepNumber(1);
   }, []);
 
-  const saveOrUpdateTour = async () => {
+  const saveOrUpdateTour = useCallback(async () => {
     if (!tourCreationInfo || !tourCreationInfo.tourName) {
       return;
     }
@@ -107,7 +109,12 @@ const CreateTourWizard = () => {
     setLoading(true);
     try {
       if (isNew) {
-        await createTour(transformTourData(tourCreationInfo));
+        const { data } = await createTour(transformTourData(tourCreationInfo));
+        setTourCreationInfo({
+          id: data.ID,
+          uid: data.UID,
+          ...tourCreationInfo,
+        });
       } else {
         await updateTour(transformTourData(tourCreationInfo));
       }
@@ -116,7 +123,7 @@ const CreateTourWizard = () => {
       // throw new Error();
     }
     setLoading(false);
-  };
+  }, [tourCreationInfo]);
 
   const goBack = useCallback(async () => {
     if (loading) {
@@ -171,7 +178,10 @@ const CreateTourWizard = () => {
       if (tour.guideFee && tour.guideFee < 0) {
         tour.guideFee = 0;
       }
-      setTourCreationInfo(tour);
+      setTourCreationInfo({
+        ...tourCreationInfo,
+        ...tour,
+      });
     },
     [tourCreationInfo]
   );
@@ -204,10 +214,12 @@ const CreateTourWizard = () => {
             imgSrc={CREATE_TOUR_STEPS[MAIN_STEPS_MAP[currentStepNumber] - 1].image}
           />
           <br />
+          <br />
+          <br />
           <Navigation
             isNextDisabled={isNextDisabled}
-            currentStepNumber={currentStepNumber}
-            totalSteps={TOTAL_STEPS}
+            currentStepNumber={MAIN_STEPS_MAP[currentStepNumber]}
+            totalSteps={CREATE_TOUR_STEPS.length}
             onBack={goBack}
             onNext={goForward}
             loading={loading}

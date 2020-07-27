@@ -2,10 +2,11 @@ import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { PlusOutlined } from '@ant-design/icons';
-import { Modal, Upload, Row, Col } from 'antd';
+import { Modal, Upload, Row, Col, Spin } from 'antd';
 
 import colors from '../../../styles/colors';
 import { uploadCoverPhoto, uploadPhoto } from '../../../apis';
+import { getBase64 } from '../../../utils/commons';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -29,16 +30,8 @@ const SubTitle = styled.h4`
   font-weight: normal;
 `;
 
-function getBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-  });
-}
-
 const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
+  const [loading, setLoading] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const coverPhotoList = useMemo(
@@ -82,23 +75,38 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   );
 
   const handleUploadCoverPhoto = useCallback(
-    file => {
+    async file => {
       if (!tourCreationInfo.id) {
-        return new Promise(() => {});
+        return;
       }
 
-      return uploadCoverPhoto({ tourId: tourCreationInfo.id, file });
+      try {
+        setLoading(true);
+        await uploadCoverPhoto({ tourId: tourCreationInfo.id, file });
+      } catch (e) {
+        // ignored
+      }
+
+      setLoading(false);
     },
-    [tourCreationInfo]
+    [tourCreationInfo, loading]
   );
 
   const handleUploadPhoto = useCallback(
-    file => {
+    async file => {
       if (!tourCreationInfo.id) {
-        return new Promise(() => {});
+        return;
       }
 
-      return uploadPhoto({ tourId: tourCreationInfo.id, file });
+      try {
+        setLoading(true);
+        await uploadPhoto({ tourId: tourCreationInfo.id, file });
+      } catch (e) {
+        // ignored
+      }
+
+      setLoading(false);
+      onUpdate();
     },
     [tourCreationInfo]
   );
@@ -111,51 +119,54 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   );
 
   return (
-    <Wrapper>
-      <Title>{`Great progress, ${user.Fullname}`}</Title>
-      <SubTitle>You can upload photo to finish create tour, or you can upload after.</SubTitle>
-      <SubTitle>
-        Photos help guests imagine about your place. You can start with one and add more after you
-        publish.
-      </SubTitle>
-      <br />
+    <Spin spinning={loading}>
+      <Wrapper>
+        <Title>{`Great progress, ${user && user.fullname}`}</Title>
+        <SubTitle>You can upload photo to finish create tour, or you can upload after.</SubTitle>
+        <SubTitle>
+          Photos help guests imagine about your place. You can start with one and add more after you
+          publish.
+        </SubTitle>
+        <br />
 
-      <Row gutter={16}>
-        <Col span={12}>
-          <Upload
-            className="cover-photo-upload"
-            listType="picture-card"
-            fileList={coverPhotoList}
-            previewFile={getBase64}
-            onPreview={handlePreview}
-            onChange={handleCoverPhotoChange}
-            action={handleUploadCoverPhoto}
-          >
-            {coverPhotoList.length >= 1 ? null : uploadButton('Upload cover photo')}
-          </Upload>
-        </Col>
-        <Col span={12}>
-          <Upload
-            listType="picture-card"
-            fileList={photos}
-            onPreview={handlePreview}
-            onChange={handlePhotoChange}
-            action={handleUploadPhoto}
-          >
-            {photos.length >= 5 ? null : uploadButton('Upload photo')}
-          </Upload>
-        </Col>
-      </Row>
-      <Modal visible={previewVisible} footer={null} onCancel={handleCancel}>
-        <img alt="preview" style={{ width: '100%' }} src={previewImage} />
-      </Modal>
-    </Wrapper>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Upload
+              className="cover-photo-upload"
+              listType="picture-card"
+              fileList={coverPhotoList}
+              previewFile={getBase64}
+              onPreview={handlePreview}
+              onChange={handleCoverPhotoChange}
+              action={handleUploadCoverPhoto}
+            >
+              {coverPhotoList.length >= 1 ? null : uploadButton('Upload cover photo')}
+            </Upload>
+          </Col>
+          <Col span={12}>
+            <Upload
+              listType="picture-card"
+              fileList={photos}
+              previewFile={getBase64}
+              onPreview={handlePreview}
+              onChange={handlePhotoChange}
+              action={handleUploadPhoto}
+            >
+              {photos.length >= 5 ? null : uploadButton('Upload photo')}
+            </Upload>
+          </Col>
+        </Row>
+        <Modal visible={previewVisible} footer={null} onCancel={handleCancel}>
+          <img alt="preview" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
+      </Wrapper>
+    </Spin>
   );
 };
 
 StepLayout.propTypes = {
   user: PropTypes.shape({
-    Fullname: PropTypes.string,
+    fullname: PropTypes.string,
   }),
   tourCreationInfo: PropTypes.shape({
     id: PropTypes.number,
@@ -166,7 +177,7 @@ StepLayout.propTypes = {
 };
 
 StepLayout.defaultProps = {
-  user: { Fullname: '' },
+  user: { fullname: '' },
   tourCreationInfo: {},
   onUpdate: () => {},
 };

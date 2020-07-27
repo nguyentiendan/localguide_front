@@ -137,8 +137,6 @@ function VerifyPage() {
       try {
         setLoading(true);
         setError('');
-        console.log(email);
-        console.log(activeCode);
         const { message, status } = await API.verify(email, activeCode);
         setLoading(false);
 

@@ -20,8 +20,6 @@ export function register(fullname, email, password) {
 
 // Verify account
 export function verify(email, activeCode) {
-  console.log(email);
-  console.log(activeCode);
   return request({
     url: '/account/active',
     method: 'POST',
@@ -30,11 +28,13 @@ export function verify(email, activeCode) {
 }
 
 // Get profile
-export function getUserProfile() {
+export function getUserProfile({ uid, token }) {
   return request({
     url: '/profile/me',
     method: 'GET',
     authRequired: true,
+    uid,
+    token,
   });
 }
 

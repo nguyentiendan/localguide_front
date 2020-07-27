@@ -40,7 +40,7 @@ const TourGuideListItem = ({ className, name, level, avatar }) => (
 TourGuideListItem.propTypes = {
   className: PropTypes.string,
   name: PropTypes.string.isRequired,
-  level: PropTypes.string.isRequired,
+  level: PropTypes.number.isRequired,
   avatar: PropTypes.string.isRequired,
 };
 

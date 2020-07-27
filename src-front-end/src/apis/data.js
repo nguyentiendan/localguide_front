@@ -120,10 +120,27 @@ export async function uploadCoverPhoto({ tourId, file }) {
 
 export async function uploadPhoto({ tourId, file }) {
   return request({
-    url: `/file/uploadCover`,
+    url: `/file/uploadOneFile`,
     method: 'POST',
     authRequired: true,
     data: { id: tourId, uploadFile: file },
     isFormData: true,
+  });
+}
+
+export async function updateCaption({ caption, name, tourId, uid }) {
+  return request({
+    url: `/tour/updateCaption`,
+    method: 'POST',
+    authRequired: true,
+    data: { caption, fileName: name, id: tourId, uid },
+  });
+}
+
+export async function getTourPhotos({ tourId, uid }) {
+  return request({
+    url: `/tour/getAllPhoto`,
+    method: 'GET',
+    params: { uid, id: tourId },
   });
 }

@@ -21,9 +21,9 @@ const RatingStars = ({ className, rate }) => {
   const stars = [];
   for (let i = 0; i < rate; i++) {
     if (rate - i <= 0.5) {
-      stars.push(<HalfStar />);
+      stars.push(<HalfStar key={i} />);
     } else {
-      stars.push(<FullStar />);
+      stars.push(<FullStar key={i} />);
     }
   }
   return <Wrapper className={className}>{stars}</Wrapper>;

@@ -37,7 +37,7 @@ const SectionHeader = ({ className, title, subTitle, subTitleHref }) => (
 
 SectionHeader.propTypes = {
   className: PropTypes.string,
-  title: PropTypes.oneOf([PropTypes.string, PropTypes.node]).isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
   subTitle: PropTypes.string,
   subTitleHref: PropTypes.func,
 };
