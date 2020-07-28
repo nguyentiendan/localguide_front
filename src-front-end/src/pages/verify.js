@@ -152,7 +152,8 @@ function VerifyPage() {
           setErrorMessage(message);
         }
       } catch (err) {
-        console.log('An error has occurred.');
+        setLoading(false);
+        setErrorMessage('An error has occurred.');
       }
     }
   };
