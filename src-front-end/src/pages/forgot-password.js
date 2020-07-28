@@ -69,7 +69,7 @@ const Actions = styled.div`
 `;
 
 const ForgotPassButton = styled(Button)`
-  padding-left: 5.25rem;
+  padding-left: 6.25rem;
   padding-right: 4.25rem;
   width: 100%;
   text-align: center;
@@ -78,12 +78,6 @@ const ForgotPassButton = styled(Button)`
     margin: 0 0 1rem 0;
     justify-content: center;
   }
-`;
-
-const ErrorMessage = styled.div`
-  padding-top: 15px;
-  color: red;
-  text-align: center;
 `;
 
 const Text = styled.div`
@@ -104,31 +98,50 @@ function ForgotPassPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const sendPassAgain = async () => {
+  // validate signup form
+  const isValid = () => {
+    let isOK = true;
+    setErrorMessage('');
+
+    const pattern = new RegExp(
+      /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
+    );
+    if (email && !pattern.test(email)) {
+      isOK = false;
+      setErrorMessage('Please enter valid email');
+    }
+
+    if (!email) {
+      isOK = false;
+      setErrorMessage('Email is required');
+    }
+
+    return isOK;
+  };
+
+  const handleOnSubmit = async () => {
     if (loading) {
       return;
     }
-    if (email === '') {
-      return;
-    }
-    try {
-      setLoading(true);
-      setErrorMessage('');
-      const data = await API.forgotPassword(email);
-      setLoading(false);
-      if (data.status === true) {
-        /* show popup */
-      } else {
-        setErrorMessage(data.message);
-      }
-    } catch (error) {
-      setLoading(false);
-      if (error.response && error.response.data && error.response.data.message) {
-        setErrorMessage(error.response.data.message);
-      } else {
+    if (isValid()) {
+      try {
+        setLoading(true);
+        setErrorMessage('');
+        const { message, status } = await API.forgotPassword(email);
+        setLoading(false);
+        if (status === true) {
+          setEmail('');
+          setErrorMessage('');
+          // TODO : show popup after send pass
+          alert(message);
+        } else {
+          setLoading(false);
+          setErrorMessage(message);
+        }
+      } catch (error) {
+        setLoading(false);
         setErrorMessage('An error has occurred.');
       }
-      console.error(error);
     }
   };
 
@@ -139,17 +152,17 @@ function ForgotPassPage() {
         <Header>Forgot Password</Header>
         <Body>
           <Text>You forgot your password? Here you can easily retrieve a new password.</Text>
-          <ErrorMessage>{errorMessage}</ErrorMessage>
           <Field>
             <Input
               label="Email"
               placeholder="Your email address"
               value={email}
               hasError={!!errorMessage}
+              message={errorMessage}
               onChange={event => setEmail(event.target.value)}
               onKeyDown={event => {
                 if (event.keyCode === ENTER) {
-                  sendPassAgain();
+                  handleOnSubmit();
                 }
               }}
             />
@@ -159,9 +172,9 @@ function ForgotPassPage() {
               size="default"
               loading={loading}
               disabled={loading}
-              onClick={sendPassAgain}
+              onClick={handleOnSubmit}
             >
-              Request new password
+              Send new password
             </ForgotPassButton>
           </Actions>
           <LoginLink to="/login/">Login </LoginLink>
