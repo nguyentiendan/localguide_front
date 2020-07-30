@@ -101,39 +101,83 @@ const ForgotPasswordLink = styled(Link)`
   }
 `;
 
+const ErrorMessage = styled.div`
+  padding-top: 15px;
+  padding-bottom: 15px;
+  color: red;
+  font-weight: bold;
+  text-align: center;
+`;
+
 function LoginPage() {
   const [authToken, setAuthToken] = useLocalStorage(AUTH_TOKEN_KEY);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [error, setError] = useState({
+    email: '',
+    password: '',
+  });
 
   if (authToken) {
     navigate('/');
   }
 
+  // validate signup form
+  const isValid = () => {
+    let isOK = true;
+    setErrorMessage('');
+
+    if (!password) {
+      isOK = false;
+      setError({ password: 'Password is required' });
+    }
+
+    const pattern = new RegExp(
+      /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
+    );
+    if (email && !pattern.test(email)) {
+      isOK = false;
+      setError({ email: 'Please enter valid email' });
+    }
+
+    if (!email) {
+      isOK = false;
+      setError({ email: 'Email is required' });
+    }
+
+    return isOK;
+  };
+
   const handleLogin = async () => {
     if (loading) {
       return;
     }
+    if (isValid()) {
+      try {
+        setLoading(true);
+        setErrorMessage('');
+        setError('');
+        const {
+          data: { Token, UID },
+          message,
+          status,
+        } = await API.login(email, password);
 
-    try {
-      setLoading(true);
-      setErrorMessage('');
-      const {
-        data: { Token, UID },
-      } = await API.login(email, password);
-      const { data: profile } = await API.getUserProfile({ token: Token, uid: UID });
-      setLoading(false);
-      setAuthToken(jwt.sign({ ...profile, token: Token }, 'tour-guide-pal'));
-    } catch (error) {
-      setLoading(false);
-      if (error.response && error.response.data && error.response.data.message) {
-        setErrorMessage(error.response.data.message);
-      } else {
+        if (status === true) {
+          const { data: profile } = await API.getUserProfile({ token: Token, uid: UID });
+          setLoading(false);
+          setErrorMessage('');
+          setAuthToken(jwt.sign({ ...profile, token: Token }, 'tour-guide-pal'));
+        } else {
+          setLoading(false);
+          setErrorMessage(message);
+        }
+      } catch (err) {
+        setLoading(false);
         setErrorMessage('An error has occurred.');
       }
-      console.error(error);
     }
   };
 
@@ -143,12 +187,14 @@ function LoginPage() {
       <Card>
         <Header>Login</Header>
         <Body>
+          <ErrorMessage>{errorMessage}</ErrorMessage>
           <Field>
             <Input
               label="Email"
               placeholder="Your email address"
               value={email}
-              hasError={!!errorMessage}
+              hasError={!!error.email}
+              message={error.email}
               onChange={event => setEmail(event.target.value)}
               onKeyDown={event => {
                 if (event.keyCode === ENTER) {
@@ -163,8 +209,8 @@ function LoginPage() {
               label="Password"
               placeholder="**********"
               value={password}
-              hasError={!!errorMessage}
-              message={errorMessage}
+              hasError={!!error.password}
+              message={error.password}
               onChange={event => setPassword(event.target.value)}
               onKeyDown={event => {
                 if (event.keyCode === ENTER) {
