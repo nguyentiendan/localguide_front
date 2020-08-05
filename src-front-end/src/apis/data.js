@@ -108,7 +108,7 @@ export async function getCityOfCountry(countryCode) {
 
 export async function uploadCoverPhoto({ tourId, file }) {
   return request({
-    url: `/file/uploadCover`,
+    url: `/tour/uploadCover`,
     method: 'POST',
     authRequired: true,
     data: { id: tourId, uploadFile: file },
@@ -118,7 +118,7 @@ export async function uploadCoverPhoto({ tourId, file }) {
 
 export async function uploadPhoto({ tourId, file }) {
   return request({
-    url: `/file/uploadOneFile`,
+    url: `/tour/uploadOneFile`,
     method: 'POST',
     authRequired: true,
     data: { id: tourId, uploadFile: file },
