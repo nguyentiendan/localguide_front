@@ -84,7 +84,8 @@ async function createBlogNodes({ createNode, createNodeId, createContentDigest }
 
 async function createTourNodes({ createNode, createNodeId, createContentDigest }) {
   try {
-    const allTours = await API.getAllTours();
+    const { data: allTours } = await API.getAllTours();
+    console.log(allTours);
     allTours.forEach(tour => {
       const nodeContent = JSON.stringify(tour);
       const nodeMeta = {

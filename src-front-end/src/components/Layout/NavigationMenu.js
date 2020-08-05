@@ -108,7 +108,6 @@ const SignupLink = styled(Link).attrs({ to: '/signup/' })`
 const LoginLink = styled(Link).attrs({ to: '/login/' })`
   ${linkButton};
   margin: 0 0.375rem 0 1rem;
-  border: 1px solid #b7b5bd;
   color: #78757a;
   font-size: 0.875rem;
 

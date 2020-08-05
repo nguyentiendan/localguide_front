@@ -114,10 +114,11 @@ function IndexPage({ location, data }) {
           {_.map(tours, tour => (
             <TourListItem
               key={tour.id}
-              id={tour.id}
+              id={tour.rawID}
               name={tour.name}
-              location={tour.location}
-              picture={tour.picture}
+              country={tour.country}
+              city={tour.city}
+              picture={tour.cover}
               className="tour"
             />
           ))}
@@ -224,9 +225,11 @@ export const pageQuery = graphql`
     tourNodes: allTour {
       nodes {
         name
-        location
-        picture
+        country
+        city
+        cover
         id
+        rawID
       }
     }
     blogNodes: allBlog {

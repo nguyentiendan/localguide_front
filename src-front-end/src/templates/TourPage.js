@@ -317,13 +317,13 @@ function TourPage({ data }) {
           />
           <NavItem
             className="nav-item"
-            title={`${tourDetails.availableTours} Tours`}
+            title={`${tourDetails.availableTours || 0} Tours`}
             icon={<FaSuitcase />}
             isActive
           />
           <NavItem
             className="nav-item"
-            title={`${tourDetails.tourSizeFrom}-${tourDetails.tourSizeTo}`}
+            title={`${tourDetails.tourSizeFrom || 0}-${tourDetails.tourSizeTo || 0}`}
             icon={<FaUsers />}
             isActive
           />
@@ -386,12 +386,13 @@ TourPage.propTypes = {
 export default TourPage;
 
 export const pageQuery = graphql`
-  query($id: String!) {
+  query($id: Int!) {
     tour(rawID: { eq: $id }) {
       id
       name
-      location
-      picture
+      country
+      city
+      cover
     }
     reviews {
       rate

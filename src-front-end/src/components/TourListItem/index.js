@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
 import colors from '../../styles/colors';
+import defaultTourImage from '../../images/tour-default.png';
 
 const Wrapper = styled.div`
   display: flex;
@@ -31,21 +32,22 @@ const Picture = styled.img`
   margin-bottom: 0.75rem;
 `;
 
-const TourListItem = ({ className, id, name, location, picture }) => (
+const TourListItem = ({ className, id, name, country, city, cover }) => (
   <Wrapper className={className}>
     <Link to={`/tours/${id}`}>
-      <Picture src={picture} />
+      <Picture src={cover || defaultTourImage} />
       <Title>{name}</Title>
-      <SubTitle>{location}</SubTitle>
+      <SubTitle>{`${country} - ${city}`}</SubTitle>
     </Link>
   </Wrapper>
 );
 
 TourListItem.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
-  location: PropTypes.string.isRequired,
-  picture: PropTypes.string.isRequired,
+  country: PropTypes.string.isRequired,
+  city: PropTypes.string.isRequired,
+  cover: PropTypes.string.isRequired,
   className: PropTypes.string,
 };
 
