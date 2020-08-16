@@ -30,7 +30,16 @@ const EmptySpaceWrapper = styled.div`
   `)}
 `;
 
-const Navigation = ({ totalSteps, currentStepNumber, onBack, onNext, loading, isNextDisabled }) => {
+const Navigation = ({
+  totalSteps,
+  currentStepNumber,
+  onBack,
+  onNext,
+  loading,
+  isNextDisabled,
+  isFinished,
+  onFinish,
+}) => {
   const isLastStep = useMemo(() => totalSteps === currentStepNumber, [
     totalSteps,
     currentStepNumber,
@@ -60,15 +69,28 @@ const Navigation = ({ totalSteps, currentStepNumber, onBack, onNext, loading, is
               Preview
             </Button>
           )}
-          <Button
-            onClick={onNext}
-            style={{ marginLeft: 20, marginRight: 20 }}
-            type="primary"
-            size="large"
-            disabled={loading || isNextDisabled}
-          >
-            {isLastStep ? `Skip for now` : `Next`}
-          </Button>
+          {!isFinished && (
+            <Button
+              onClick={onNext}
+              style={{ marginLeft: 20, marginRight: 20 }}
+              type="primary"
+              size="large"
+              disabled={loading || isNextDisabled}
+            >
+              {isLastStep ? `Skip for now` : `Next`}
+            </Button>
+          )}
+          {isFinished && (
+            <Button
+              onClick={onFinish}
+              style={{ marginLeft: 20, marginRight: 20 }}
+              type="primary"
+              size="large"
+              disabled={loading || isNextDisabled}
+            >
+              Done
+            </Button>
+          )}
         </div>
       </LayoutWrapper>
       <EmptySpaceWrapper>{loading && <Spin />}</EmptySpaceWrapper>
@@ -83,6 +105,8 @@ Navigation.propTypes = {
   onNext: PropTypes.func,
   loading: PropTypes.bool,
   isNextDisabled: PropTypes.bool,
+  isFinished: PropTypes.bool,
+  onFinish: PropTypes.func,
 };
 
 Navigation.defaultProps = {
@@ -92,6 +116,8 @@ Navigation.defaultProps = {
   onNext: () => {},
   loading: false,
   isNextDisabled: false,
+  isFinished: false,
+  onFinish: () => {},
 };
 
 export default Navigation;

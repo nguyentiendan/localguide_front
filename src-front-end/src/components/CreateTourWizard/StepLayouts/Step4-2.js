@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { Col, Modal, Row, Spin, Input, Upload } from 'antd';
+import { Button, Col, Modal, Row, Spin, Input, Upload, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
 import * as API from '../../../apis';
@@ -37,20 +37,32 @@ const Img = styled.img`
   object-fit: cover;
 `;
 
-const mockCoverPhoto = '/mocks/blogs/backpackers.png';
-
-const ImgEditor = ({ src, caption, name, updateCaption }) => {
+const ImgEditor = ({ src, caption, name, updateCaption, deletePhoto }) => {
   const handleUpdateCaption = useCallback(
     e => {
       updateCaption(e.target.value, name);
     },
     [name, caption, updateCaption]
   );
+  const handleDeletePhoto = useCallback(() => {
+    deletePhoto(name);
+  }, [name, deletePhoto]);
+
+  if (!src) {
+    return <></>;
+  }
 
   return (
     <ImgEditorWrapper>
       <Img alt="preview" style={{ width: '100%' }} src={src} />
-      <Input placeholder="Caption" onBlur={handleUpdateCaption} />
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <Input placeholder="Caption" onBlur={handleUpdateCaption} />
+        {deletePhoto && (
+          <Button onClick={handleDeletePhoto} block danger>
+            Delete Photo
+          </Button>
+        )}
+      </Space>
     </ImgEditorWrapper>
   );
 };
@@ -60,6 +72,7 @@ ImgEditor.propTypes = {
   caption: PropTypes.string,
   name: PropTypes.string,
   updateCaption: PropTypes.func,
+  deletePhoto: PropTypes.func,
 };
 
 ImgEditor.defaultProps = {
@@ -67,6 +80,7 @@ ImgEditor.defaultProps = {
   caption: '',
   name: '',
   updateCaption: () => {},
+  deletePhoto: null,
 };
 
 const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
@@ -74,6 +88,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [photos, setPhotos] = useState([]);
+  const [coverPhoto, setCoverPhoto] = useState('');
 
   const tourId = useMemo(() => {
     return tourCreationInfo && tourCreationInfo.id;
@@ -100,12 +115,28 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     [tourId, uid]
   );
 
+  const deletePhoto = useCallback(
+    async name => {
+      setLoading(true);
+      try {
+        await API.deletePhoto({ name, tourId, uid });
+      } catch (e) {
+        // ignored
+      }
+      setLoading(false);
+      onUpdate();
+    },
+    [tourId, uid]
+  );
+
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
         const { data } = await API.getTourPhotos({ tourId, uid });
+        const { data: coverPhotoUrl } = await API.getTourCoverPhoto({ tourId, uid });
         setPhotos(data);
+        setCoverPhoto(coverPhotoUrl);
       } catch (e) {
         // ignored
       }
@@ -147,7 +178,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
         <br />
         <Row>
           <Col span={24}>
-            <ImgEditor src={mockCoverPhoto} caption="" />
+            <ImgEditor src={coverPhoto} caption="" />
           </Col>
         </Row>
         <br />
@@ -159,6 +190,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                 name={photo.name}
                 caption={photo.caption}
                 updateCaption={updateCaption}
+                deletePhoto={deletePhoto}
               />
             </Col>
           ))}

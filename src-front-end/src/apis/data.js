@@ -142,3 +142,20 @@ export async function getTourPhotos({ tourId, uid }) {
     params: { uid, id: tourId },
   });
 }
+
+export async function getTourCoverPhoto({ tourId, uid }) {
+  return request({
+    url: `/tour/getCoverPhoto`,
+    method: 'GET',
+    params: { uid, id: tourId },
+  });
+}
+
+export async function deletePhoto({ name, tourId }) {
+  return request({
+    url: `/tour/deletePhoto`,
+    method: 'DELETE',
+    authRequired: true,
+    data: { fileName: name, id: tourId },
+  });
+}

@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 // import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
+import { navigate } from 'gatsby';
 
 import StartCreateTour from './StartCreateTour';
 import ProgressBar from './ProgressBar';
@@ -153,6 +154,13 @@ const CreateTourWizard = () => {
     }
   }, [currentStepNumber, loading, tourCreationInfo]);
 
+  const navigateToHomePage = useCallback(async () => {
+    if (loading) {
+      return;
+    }
+    await navigate('/');
+  }, [loading]);
+
   const onUpdate = useCallback(
     newTourCreationInfo => {
       const tour = { ...newTourCreationInfo };
@@ -223,6 +231,8 @@ const CreateTourWizard = () => {
             onBack={goBack}
             onNext={goForward}
             loading={loading}
+            isFinished={currentStepNumber === TOTAL_STEPS}
+            onFinish={navigateToHomePage}
           />
         </Wrapper>
       )}
