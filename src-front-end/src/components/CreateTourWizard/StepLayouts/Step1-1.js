@@ -1,10 +1,12 @@
-import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { Tag, Input } from 'antd';
+import { Tag, Input, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+
 import colors from '../../../styles/colors';
+import * as API from '../../../apis';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -19,14 +21,15 @@ const SubTitle = styled.h3`
   font-weight: normal;
 `;
 
-const DEFAULT_TAGS = ['Beautiful nature', 'Mountain', 'History', 'Philosophy', 'Wine'];
-
 const StepLayout = ({ tourCreationInfo, onUpdate }) => {
+  const [loading, setLoading] = useState(false);
   const [newTagInputVisible, setNewTagInputVisible] = useState(false);
   const [newTagValue, setNewTagValue] = useState('');
+  const [defaultTags, setDefaultTags] = useState([]);
   const newTagInputRef = useRef();
-  const tagOptions = useMemo(() => _.union(DEFAULT_TAGS, tourCreationInfo.tags || []), [
+  const tagOptions = useMemo(() => _.union(defaultTags, tourCreationInfo.tags || []), [
     tourCreationInfo,
+    defaultTags,
   ]);
   const tourName = useMemo(() => tourCreationInfo.tourName, [tourCreationInfo]);
   const tourShortDescription = useMemo(() => tourCreationInfo.tourShortDescription, [
@@ -36,6 +39,9 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
 
   const updateTourName = useCallback(
     newTourName => {
+      if (newTourName.length > 255) {
+        return;
+      }
       onUpdate({
         ...tourCreationInfo,
         tourName: newTourName,
@@ -45,10 +51,13 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   );
 
   const updateTourShortDescription = useCallback(
-    newtourShortDescription => {
+    newTourShortDescription => {
+      if (newTourShortDescription.length > 255) {
+        return;
+      }
       onUpdate({
         ...tourCreationInfo,
-        tourShortDescription: newtourShortDescription,
+        tourShortDescription: newTourShortDescription,
       });
     },
     [onUpdate, tourCreationInfo]
@@ -96,60 +105,75 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     }
   }, [newTagInputVisible]);
 
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const { data } = await API.getAllTags();
+        setDefaultTags(_.map(data, d => d.tag));
+      } catch (e) {
+        // ignore
+      }
+      setLoading(false);
+    })();
+  }, []);
+
   return (
-    <Wrapper>
-      <Title>Let’s get create your great tour!</Title>
-      <SubTitle>Your tour name?</SubTitle>
-      <Input
-        placeholder="Tour name"
-        value={tourName}
-        onChange={e => updateTourName(e.target.value)}
-        size="large"
-        style={{ maxWidth: 400 }}
-      />
-      <br />
-      <br />
-      <Input
-        placeholder="Short description about tour"
-        value={tourShortDescription}
-        onChange={e => updateTourShortDescription(e.target.value)}
-        size="large"
-        style={{ maxWidth: 400 }}
-      />
-      <br />
-      <br />
-      <br />
-      <SubTitle>Appealing points of the tour</SubTitle>
-      {_.map(tagOptions, tagOption => (
-        <Tag
-          key={tagOption}
-          color={_.includes(selectedTags, tagOption) ? colors.magenta[50] : colors.magenta[20]}
-          onClick={() => updateSelectedTags(tagOption)}
-          style={{ marginBottom: '0.5rem' }}
-        >
-          {tagOption}
-        </Tag>
-      ))}
-      <br />
-      {newTagInputVisible && (
+    <Spin spinning={loading}>
+      <Wrapper>
+        <Title>Let’s get create your great tour!</Title>
+        <SubTitle>Your tour name?</SubTitle>
         <Input
-          ref={newTagInputRef}
-          type="text"
-          size="small"
-          style={{ width: 78 }}
-          value={newTagValue}
-          onChange={handleInputChange}
-          onBlur={handleInputConfirm}
-          onPressEnter={handleInputConfirm}
+          placeholder="Tour name"
+          value={tourName}
+          onChange={e => updateTourName(e.target.value)}
+          size="large"
+          style={{ maxWidth: 400 }}
         />
-      )}
-      {!newTagInputVisible && (
-        <Tag onClick={showInput} className="site-tag-plus">
-          <PlusOutlined />
-          &nbsp;Type your own
-        </Tag>
-      )}
-    </Wrapper>
+        <br />
+        <br />
+        <Input
+          placeholder="Short description about tour"
+          value={tourShortDescription}
+          onChange={e => updateTourShortDescription(e.target.value)}
+          size="large"
+          style={{ maxWidth: 400 }}
+        />
+        <br />
+        <br />
+        <br />
+        <SubTitle>Appealing points of the tour</SubTitle>
+        {_.map(tagOptions, tagOption => (
+          <Tag
+            key={tagOption}
+            color={_.includes(selectedTags, tagOption) ? colors.magenta[50] : colors.magenta[20]}
+            onClick={() => updateSelectedTags(tagOption)}
+            style={{ marginBottom: '0.5rem' }}
+          >
+            {tagOption}
+          </Tag>
+        ))}
+        <br />
+        {newTagInputVisible && (
+          <Input
+            ref={newTagInputRef}
+            type="text"
+            size="small"
+            style={{ width: 78 }}
+            value={newTagValue}
+            onChange={handleInputChange}
+            onBlur={handleInputConfirm}
+            onPressEnter={handleInputConfirm}
+          />
+        )}
+        {!newTagInputVisible && (
+          <Tag onClick={showInput} className="site-tag-plus">
+            <PlusOutlined />
+            &nbsp;Type your own
+          </Tag>
+        )}
+      </Wrapper>
+    </Spin>
   );
 };
 

@@ -159,3 +159,10 @@ export async function deletePhoto({ name, tourId }) {
     data: { fileName: name, id: tourId },
   });
 }
+
+export async function getAllTags() {
+  return request({
+    url: `/tag/getAllTag`,
+    method: 'GET',
+  });
+}
