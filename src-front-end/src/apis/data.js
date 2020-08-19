@@ -166,3 +166,21 @@ export async function getAllTags() {
     method: 'GET',
   });
 }
+
+export async function createTourFee({ tourId, day, transport, meal, other }) {
+  return request({
+    url: `/tourFee/create`,
+    method: 'POST',
+    authRequired: true,
+    data: { tourId, day, transport, meal, other },
+  });
+}
+
+export async function createTourSchedule({ tourId, day, pickup, schedule }) {
+  return request({
+    url: `/tourSchedule/create`,
+    method: 'POST',
+    authRequired: true,
+    data: { tourId, day, pickup, schedule },
+  });
+}

@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { Button, Col, Divider, Input, Row, Select, Tabs, Typography } from 'antd';
+import { Button, Col, Divider, Input, Row, Select, Spin, Tabs, Typography } from 'antd';
+
+import * as API from '../../../apis';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -16,6 +18,7 @@ const FieldTitle = styled.h4`
 `;
 
 const StepLayout = ({ tourCreationInfo, onUpdate }) => {
+  const [loading, setLoading] = useState(false);
   const [currentDay, setCurrentDay] = useState(0);
   const duration = useMemo(() => tourCreationInfo.duration || 0, [tourCreationInfo]);
   const tourDayFees = useMemo(() => {
@@ -137,317 +140,359 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     [onUpdate, tourCreationInfo]
   );
 
+  const saveTourFee = useCallback(
+    async tourDayFee => {
+      if (loading) {
+        return;
+      }
+      setLoading(true);
+      try {
+        await API.createTourFee({
+          tourId: tourCreationInfo.id,
+          day: tourDayFee.day + 1,
+          transport: _.map(tourDayFee.transportations, trans => ({
+            from: trans.from,
+            to: trans.to,
+            vehicle: trans.by,
+            quantity: trans.quantity,
+            unit: trans.unit,
+          })),
+          meal: _.map(tourDayFee.meals, meal => ({
+            name: meal.description,
+            time: meal.type,
+            quantity: meal.quantity,
+            unit: meal.unit,
+          })),
+          other: _.map(tourDayFee.others, other => ({
+            name: other.description,
+            quantity: other.quantity,
+            unit: other.unit,
+          })),
+        });
+      } catch (e) {
+        // ignore
+      }
+      setLoading(false);
+    },
+    [tourCreationInfo, tourDayFees, loading]
+  );
+
   return (
-    <Wrapper>
-      <Tabs defaultActiveKey={currentDay} onChange={day => setCurrentDay(day)}>
-        {_.map(tourDayFees, tourDayFee => (
-          <Tabs.TabPane tab={`Day ${tourDayFee.day + 1}`} key={tourDayFee.day}>
-            <Row gutter={16}>
-              <Col span={14}>
-                <FieldTitle>Transportation</FieldTitle>
-              </Col>
-              <Col span={4}>
-                <FieldTitle>Quantity</FieldTitle>
-              </Col>
-              <Col span={5}>
-                <FieldTitle>Unit</FieldTitle>
-              </Col>
-              {_.map(tourDayFee.transportations, transportation => (
-                <>
-                  <Col span={14} style={{ marginBottom: 8 }}>
-                    <Row gutter={16}>
-                      <Col span={8}>
-                        <Input
-                          placeholder="From"
-                          value={transportation.from}
-                          onChange={e =>
-                            updateTourDayFees({
-                              $uuid: transportation.$uuid,
-                              from: e.target.value,
-                            })
-                          }
-                        />
-                      </Col>
-                      <Col span={8}>
-                        <Input
-                          placeholder="To"
-                          value={transportation.to}
-                          onChange={e =>
-                            updateTourDayFees({
-                              $uuid: transportation.$uuid,
-                              to: e.target.value,
-                            })
-                          }
-                        />
-                      </Col>
-                      <Col span={8}>
-                        <Input
-                          placeholder="By"
-                          value={transportation.by}
-                          onChange={e =>
-                            updateTourDayFees({
-                              $uuid: transportation.$uuid,
-                              by: e.target.value,
-                            })
-                          }
-                        />
-                      </Col>
-                    </Row>
+    <Spin spinning={loading}>
+      <Wrapper>
+        <Tabs defaultActiveKey={currentDay} onChange={day => setCurrentDay(day)}>
+          {_.map(tourDayFees, tourDayFee => (
+            <Tabs.TabPane tab={`Day ${tourDayFee.day + 1}`} key={tourDayFee.day}>
+              <Row gutter={16}>
+                <Col span={14}>
+                  <FieldTitle>Transportation</FieldTitle>
+                </Col>
+                <Col span={4}>
+                  <FieldTitle>Quantity</FieldTitle>
+                </Col>
+                <Col span={5}>
+                  <FieldTitle>Unit</FieldTitle>
+                </Col>
+                {_.map(tourDayFee.transportations, transportation => (
+                  <>
+                    <Col span={14} style={{ marginBottom: 8 }}>
+                      <Row gutter={16}>
+                        <Col span={8}>
+                          <Input
+                            placeholder="From"
+                            value={transportation.from}
+                            onChange={e =>
+                              updateTourDayFees({
+                                $uuid: transportation.$uuid,
+                                from: e.target.value,
+                              })
+                            }
+                          />
+                        </Col>
+                        <Col span={8}>
+                          <Input
+                            placeholder="To"
+                            value={transportation.to}
+                            onChange={e =>
+                              updateTourDayFees({
+                                $uuid: transportation.$uuid,
+                                to: e.target.value,
+                              })
+                            }
+                          />
+                        </Col>
+                        <Col span={8}>
+                          <Input
+                            placeholder="By"
+                            value={transportation.by}
+                            onChange={e =>
+                              updateTourDayFees({
+                                $uuid: transportation.$uuid,
+                                by: e.target.value,
+                              })
+                            }
+                          />
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col span={4}>
+                      <Select
+                        style={{ width: '100%' }}
+                        placeholder="Select quantity"
+                        onChange={val =>
+                          updateTourDayFees({
+                            $uuid: transportation.$uuid,
+                            quantity: val,
+                          })
+                        }
+                        value={transportation.quantity}
+                      >
+                        {_.map(quantityOptions, m => (
+                          <Select.Option key={m} value={m}>
+                            {`${m}`}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Col>
+                    <Col span={5}>
+                      <Input
+                        placeholder="Unit"
+                        type="number"
+                        suffix="¥"
+                        value={transportation.unit}
+                        onChange={e =>
+                          updateTourDayFees({
+                            $uuid: transportation.$uuid,
+                            unit: +e.target.value,
+                          })
+                        }
+                      />
+                    </Col>
+                  </>
+                ))}
+              </Row>
+              {tourDayFee.transportations.length <= 3 && (
+                <Row>
+                  <Col span={24}>
+                    <Button size="small" onClick={() => addNewTransportation()}>
+                      +
+                    </Button>
                   </Col>
-                  <Col span={4}>
-                    <Select
-                      style={{ width: '100%' }}
-                      placeholder="Select quantity"
-                      onChange={val =>
-                        updateTourDayFees({
-                          $uuid: transportation.$uuid,
-                          quantity: val,
-                        })
-                      }
-                      value={transportation.quantity}
-                    >
-                      {_.map(quantityOptions, m => (
-                        <Select.Option key={m} value={m}>
-                          {`${m}`}
-                        </Select.Option>
-                      ))}
-                    </Select>
+                </Row>
+              )}
+              <br />
+              <Row gutter={16}>
+                <Col span={14}>
+                  <FieldTitle>Entrance & Others fee</FieldTitle>
+                </Col>
+                <Col span={4}>
+                  <FieldTitle>Quantity</FieldTitle>
+                </Col>
+                <Col span={5}>
+                  <FieldTitle>Unit</FieldTitle>
+                </Col>
+                {_.map(tourDayFee.others, other => (
+                  <>
+                    <Col span={14} style={{ marginBottom: 8 }}>
+                      <Input
+                        placeholder="Snack in the train"
+                        value={other.description}
+                        onChange={e =>
+                          updateTourDayFees({
+                            $uuid: other.$uuid,
+                            description: e.target.value,
+                          })
+                        }
+                      />
+                    </Col>
+                    <Col span={4}>
+                      <Select
+                        style={{ width: '100%' }}
+                        placeholder="Select quantity"
+                        onChange={val =>
+                          updateTourDayFees({
+                            $uuid: other.$uuid,
+                            quantity: val,
+                          })
+                        }
+                        value={other.quantity}
+                      >
+                        {_.map(quantityOptions, m => (
+                          <Select.Option key={m} value={m}>
+                            {`${m}`}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Col>
+                    <Col span={5}>
+                      <Input
+                        placeholder="Unit"
+                        type="number"
+                        suffix="¥"
+                        value={other.unit}
+                        onChange={e =>
+                          updateTourDayFees({
+                            $uuid: other.$uuid,
+                            unit: +e.target.value,
+                          })
+                        }
+                      />
+                    </Col>
+                  </>
+                ))}
+              </Row>
+              {tourDayFee.others.length <= 3 && (
+                <Row>
+                  <Col span={24}>
+                    <Button size="small" onClick={() => addNewOther()}>
+                      +
+                    </Button>
                   </Col>
-                  <Col span={5}>
-                    <Input
-                      placeholder="Unit"
-                      type="number"
-                      suffix="¥"
-                      value={transportation.unit}
-                      onChange={e =>
-                        updateTourDayFees({
-                          $uuid: transportation.$uuid,
-                          unit: +e.target.value,
-                        })
-                      }
-                    />
+                </Row>
+              )}
+              <br />
+              <Row gutter={16}>
+                <Col span={14}>
+                  <FieldTitle>Meal fee</FieldTitle>
+                </Col>
+                <Col span={4}>
+                  <FieldTitle>Quantity</FieldTitle>
+                </Col>
+                <Col span={5}>
+                  <FieldTitle>Unit</FieldTitle>
+                </Col>
+                {_.map(tourDayFee.meals, meal => (
+                  <>
+                    <Col span={14} style={{ marginBottom: 8 }}>
+                      <Row gutter={16}>
+                        <Col span={16}>
+                          <Input
+                            placeholder="City or restaurant name"
+                            value={meal.description}
+                            onChange={e =>
+                              updateTourDayFees({
+                                $uuid: meal.$uuid,
+                                description: e.target.value,
+                              })
+                            }
+                          />
+                        </Col>
+                        <Col span={8}>
+                          <Input
+                            placeholder="Lunch"
+                            value={meal.type}
+                            onChange={e =>
+                              updateTourDayFees({
+                                $uuid: meal.$uuid,
+                                type: e.target.value,
+                              })
+                            }
+                          />
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col span={4}>
+                      <Select
+                        style={{ width: '100%' }}
+                        placeholder="Select quantity"
+                        onChange={val =>
+                          updateTourDayFees({
+                            $uuid: meal.$uuid,
+                            quantity: val,
+                          })
+                        }
+                        value={meal.quantity}
+                      >
+                        {_.map(quantityOptions, m => (
+                          <Select.Option key={m} value={m}>
+                            {`${m}`}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Col>
+                    <Col span={5}>
+                      <Input
+                        placeholder="Unit"
+                        type="number"
+                        suffix="¥"
+                        value={meal.unit}
+                        onChange={e =>
+                          updateTourDayFees({
+                            $uuid: meal.$uuid,
+                            unit: +e.target.value,
+                          })
+                        }
+                      />
+                    </Col>
+                  </>
+                ))}
+              </Row>
+              {tourDayFee.meals.length <= 3 && (
+                <Row>
+                  <Col span={24}>
+                    <Button size="small" onClick={() => addNewMeal()}>
+                      +
+                    </Button>
                   </Col>
-                </>
-              ))}
-            </Row>
-            {tourDayFee.transportations.length <= 3 && (
-              <Row>
-                <Col span={24}>
-                  <Button size="small" onClick={() => addNewTransportation()}>
-                    +
+                </Row>
+              )}
+              <br />
+              <Row justify="end">
+                <Col pull={1}>
+                  <Button type="primary" onClick={() => saveTourFee(tourDayFee)}>
+                    {`Save day ${tourDayFee.day + 1}`}
                   </Button>
                 </Col>
               </Row>
-            )}
-            <br />
-            <Row gutter={16}>
-              <Col span={14}>
-                <FieldTitle>Entrance & Others fee</FieldTitle>
-              </Col>
-              <Col span={4}>
-                <FieldTitle>Quantity</FieldTitle>
-              </Col>
-              <Col span={5}>
-                <FieldTitle>Unit</FieldTitle>
-              </Col>
-              {_.map(tourDayFee.others, other => (
-                <>
-                  <Col span={14} style={{ marginBottom: 8 }}>
-                    <Input
-                      placeholder="Snack in the train"
-                      value={other.description}
-                      onChange={e =>
-                        updateTourDayFees({
-                          $uuid: other.$uuid,
-                          description: e.target.value,
-                        })
-                      }
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <Select
-                      style={{ width: '100%' }}
-                      placeholder="Select quantity"
-                      onChange={val =>
-                        updateTourDayFees({
-                          $uuid: other.$uuid,
-                          quantity: val,
-                        })
-                      }
-                      value={other.quantity}
-                    >
-                      {_.map(quantityOptions, m => (
-                        <Select.Option key={m} value={m}>
-                          {`${m}`}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Col>
-                  <Col span={5}>
-                    <Input
-                      placeholder="Unit"
-                      type="number"
-                      suffix="¥"
-                      value={other.unit}
-                      onChange={e =>
-                        updateTourDayFees({
-                          $uuid: other.$uuid,
-                          unit: +e.target.value,
-                        })
-                      }
-                    />
-                  </Col>
-                </>
-              ))}
-            </Row>
-            {tourDayFee.others.length <= 3 && (
-              <Row>
-                <Col span={24}>
-                  <Button size="small" onClick={() => addNewOther()}>
-                    +
-                  </Button>
-                </Col>
-              </Row>
-            )}
-            <br />
-            <Row gutter={16}>
-              <Col span={14}>
-                <FieldTitle>Meal fee</FieldTitle>
-              </Col>
-              <Col span={4}>
-                <FieldTitle>Quantity</FieldTitle>
-              </Col>
-              <Col span={5}>
-                <FieldTitle>Unit</FieldTitle>
-              </Col>
-              {_.map(tourDayFee.meals, meal => (
-                <>
-                  <Col span={14} style={{ marginBottom: 8 }}>
-                    <Row gutter={16}>
-                      <Col span={16}>
-                        <Input
-                          placeholder="City or restaurant name"
-                          value={meal.description}
-                          onChange={e =>
-                            updateTourDayFees({
-                              $uuid: meal.$uuid,
-                              description: e.target.value,
-                            })
-                          }
-                        />
-                      </Col>
-                      <Col span={8}>
-                        <Input
-                          placeholder="Lunch"
-                          value={meal.type}
-                          onChange={e =>
-                            updateTourDayFees({
-                              $uuid: meal.$uuid,
-                              type: e.target.value,
-                            })
-                          }
-                        />
-                      </Col>
-                    </Row>
-                  </Col>
-                  <Col span={4}>
-                    <Select
-                      style={{ width: '100%' }}
-                      placeholder="Select quantity"
-                      onChange={val =>
-                        updateTourDayFees({
-                          $uuid: meal.$uuid,
-                          quantity: val,
-                        })
-                      }
-                      value={meal.quantity}
-                    >
-                      {_.map(quantityOptions, m => (
-                        <Select.Option key={m} value={m}>
-                          {`${m}`}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Col>
-                  <Col span={5}>
-                    <Input
-                      placeholder="Unit"
-                      type="number"
-                      suffix="¥"
-                      value={meal.unit}
-                      onChange={e =>
-                        updateTourDayFees({
-                          $uuid: meal.$uuid,
-                          unit: +e.target.value,
-                        })
-                      }
-                    />
-                  </Col>
-                </>
-              ))}
-            </Row>
-            {tourDayFee.meals.length <= 3 && (
-              <Row>
-                <Col span={24}>
-                  <Button size="small" onClick={() => addNewMeal()}>
-                    +
-                  </Button>
-                </Col>
-              </Row>
-            )}
-            <br />
-            <Row justify="end">
-              <Col pull={1}>
-                <Button type="primary">{`Save day ${tourDayFee.day + 1}`}</Button>
-              </Col>
-            </Row>
-          </Tabs.TabPane>
-        ))}
-      </Tabs>
-      <br />
-      <Divider />
-      <Row gutter={16}>
-        <Col span={7}>
-          <FieldTitle>
-            {`Tour in ${duration === 0.5 ? 'half' : duration} day${duration > 1 ? 's' : ''} with`}
-          </FieldTitle>
-        </Col>
-        <Col span={4}>
-          <FieldTitle style={{ textAlign: 'right' }}>Guide fee</FieldTitle>
-        </Col>
-        <Col span={4}>
-          <Input
-            placeholder="Fee"
-            type="number"
-            suffix="¥"
-            value={guideFee}
-            onChange={e => updateGuideFee(e.target.value)}
-          />
-        </Col>
-        <Col span={3}>
-          <FieldTitle style={{ textAlign: 'right' }}>Total</FieldTitle>
-        </Col>
-        <Col span={5}>
-          <Input
-            placeholder="Total"
-            type="number"
-            suffix="¥"
-            style={{ pointerEvents: 'none' }}
-            value={total}
-          />
-        </Col>
-      </Row>
-      <Row gutter={16} justify="end" style={{ marginTop: 8 }}>
-        <Col pull={1}>
-          <Typography.Text type="danger">15% Administration fee is added</Typography.Text>
-        </Col>
-      </Row>
-    </Wrapper>
+            </Tabs.TabPane>
+          ))}
+        </Tabs>
+        <br />
+        <Divider />
+        <Row gutter={16}>
+          <Col span={7}>
+            <FieldTitle>
+              {`Tour in ${duration === 0.5 ? 'half' : duration} day${duration > 1 ? 's' : ''} with`}
+            </FieldTitle>
+          </Col>
+          <Col span={4}>
+            <FieldTitle style={{ textAlign: 'right' }}>Guide fee</FieldTitle>
+          </Col>
+          <Col span={4}>
+            <Input
+              placeholder="Fee"
+              type="number"
+              suffix="¥"
+              value={guideFee}
+              onChange={e => updateGuideFee(e.target.value)}
+            />
+          </Col>
+          <Col span={3}>
+            <FieldTitle style={{ textAlign: 'right' }}>Total</FieldTitle>
+          </Col>
+          <Col span={5}>
+            <Input
+              placeholder="Total"
+              type="number"
+              suffix="¥"
+              style={{ pointerEvents: 'none' }}
+              value={total}
+            />
+          </Col>
+        </Row>
+        <Row gutter={16} justify="end" style={{ marginTop: 8 }}>
+          <Col pull={1}>
+            <Typography.Text type="danger">15% Administration fee is added</Typography.Text>
+          </Col>
+        </Row>
+      </Wrapper>
+    </Spin>
   );
 };
 
 StepLayout.propTypes = {
   tourCreationInfo: PropTypes.shape({
+    id: PropTypes.number,
     duration: PropTypes.number,
     tourDayFees: PropTypes.arrayOf(
       PropTypes.shape({

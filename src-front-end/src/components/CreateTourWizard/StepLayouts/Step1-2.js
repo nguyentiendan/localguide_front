@@ -134,7 +134,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
           placeholder="Select a country"
           optionFilterProp="children"
           onChange={updateCountry}
-          value={{ value: countryCode }}
+          value={countryCode && { value: countryCode }}
           size="large"
           filterOption={(input, option) =>
             option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
