@@ -3,7 +3,6 @@ import React, { useState, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { navigate } from 'gatsby';
-import moment from 'moment';
 
 import StartCreateTour from './StartCreateTour';
 import ProgressBar from './ProgressBar';
@@ -11,7 +10,7 @@ import Scene from './Scene';
 import Navigation from './Navigation';
 import StepLayout from './StepLayouts';
 import { smallScreenCss } from '../../styles/responsive-css';
-import { createTour, updateTour, createTourSchedule } from '../../apis';
+import { createTour, updateTour } from '../../apis';
 import { useRequiredUser } from '../../utils/useAuth';
 
 const CREATE_TOUR_STEPS = [
@@ -79,23 +78,6 @@ const transformTourData = tourCreationInfo => ({
   tag: tourCreationInfo.tags.join(','),
 });
 
-const transformTourSchedule = ({ day, pickUpAt, finishAt, schedule }) => ({
-  day: day + 1,
-  pickup: [
-    {
-      pickuptime: pickUpAt.time && moment(pickUpAt.time).format('HH:mm'),
-      pickuplocation: pickUpAt.place,
-      finishtime: finishAt.time && moment(finishAt.time).format('HH:mm'),
-      finishlocation: finishAt.place,
-    },
-  ],
-  schedule: _.map(schedule, ({ time, place }) => ({
-    from: time && time[0] && moment(time[0]).format('HH:mm'),
-    to: time && time[1] && moment(time[1]).format('HH:mm'),
-    location: place,
-  })),
-});
-
 const Wrapper = styled.div`
   width: 100%;
   padding-top: 2rem;
@@ -136,11 +118,6 @@ const CreateTourWizard = () => {
         });
       } else {
         await updateTour(transformTourData(tourCreationInfo));
-        const { daySchedules } = tourCreationInfo;
-        const promises = _.map(daySchedules, daySchedule =>
-          createTourSchedule(transformTourSchedule(daySchedule))
-        );
-        await Promise.all(promises);
       }
     } catch (ignore) {
       setLoading(false);

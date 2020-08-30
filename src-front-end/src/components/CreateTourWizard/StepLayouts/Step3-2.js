@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { Button, Col, Input, Row, Tabs, TimePicker } from 'antd';
+import { Button, Col, Input, Row, Spin, Tabs, TimePicker } from 'antd';
+import moment from 'moment';
+
+import { createTourSchedule } from '../../../apis';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -19,7 +22,25 @@ const OptionalTitle = styled(FieldTitle)`
   font-style: italic;
 `;
 
+const transformTourSchedule = ({ day, pickUpAt, finishAt, schedule }) => ({
+  day: day + 1,
+  pickup: [
+    {
+      pickuptime: pickUpAt.time && moment(pickUpAt.time).format('HH:mm'),
+      pickuplocation: pickUpAt.place,
+      finishtime: finishAt.time && moment(finishAt.time).format('HH:mm'),
+      finishlocation: finishAt.place,
+    },
+  ],
+  schedule: _.map(schedule, ({ time, place }) => ({
+    from: time && time[0] && moment(time[0]).format('HH:mm'),
+    to: time && time[1] && moment(time[1]).format('HH:mm'),
+    location: place,
+  })),
+});
+
 const StepLayout = ({ tourCreationInfo, onUpdate }) => {
+  const [loading, setLoading] = useState(false);
   const [currentDay, setCurrentDay] = useState(0);
   const duration = useMemo(() => tourCreationInfo.duration || 0, [tourCreationInfo]);
   const daySchedules = useMemo(() => {
@@ -103,107 +124,130 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     });
   }, [onUpdate, schedule, daySchedules]);
 
+  const saveDaySchedule = useCallback(
+    async daySchedule => {
+      setLoading(true);
+      try {
+        await createTourSchedule(transformTourSchedule(daySchedule));
+      } catch (e) {
+        // ignore
+      }
+      setLoading(false);
+    },
+    [onUpdate, schedule, daySchedules]
+  );
+
   return (
-    <Wrapper>
-      <OptionalTitle>Optional</OptionalTitle>
-      <br />
-      <Tabs defaultActiveKey={currentDay} onChange={day => setCurrentDay(day)}>
-        {_.map(daySchedules, daySchedule => (
-          <Tabs.TabPane tab={`Day ${daySchedule.day + 1}`} key={daySchedule.day}>
-            <Row gutter={16}>
-              <Col span={4}>
-                <FieldTitle>Time</FieldTitle>
-              </Col>
-              <Col span={5}>
-                <TimePicker
-                  value={pickUpAt.time}
-                  onChange={time => updatePickUpAt({ time })}
-                  format="HH:mm"
-                  minuteStep={5}
-                />
-              </Col>
-              <Col span={4}>
-                <FieldTitle style={{ textAlign: 'right' }}>Pick up at</FieldTitle>
-              </Col>
-              <Col span={10}>
-                <Input
-                  placeholder="Place"
-                  value={pickUpAt.place}
-                  onChange={e => updatePickUpAt({ place: e.target.value })}
-                />
-              </Col>
-            </Row>
-            <br />
-            {(!schedule || schedule.length <= 0) && (
-              <Row gutter={16} style={{ marginBottom: 8 }}>
+    <Spin spinning={loading}>
+      <Wrapper>
+        <OptionalTitle>Optional</OptionalTitle>
+        <br />
+        <Tabs defaultActiveKey={currentDay} onChange={day => setCurrentDay(day)}>
+          {_.map(daySchedules, daySchedule => (
+            <Tabs.TabPane tab={`Day ${daySchedule.day + 1}`} key={daySchedule.day}>
+              <Row gutter={16}>
                 <Col span={4}>
-                  <FieldTitle>Schedule</FieldTitle>
+                  <FieldTitle>Time</FieldTitle>
                 </Col>
-                <Col>
-                  <Button size="small" onClick={() => addSchedule()} style={{ marginTop: 5 }}>
-                    +
-                  </Button>
-                </Col>
-              </Row>
-            )}
-            {_.map(schedule, (s, i) => (
-              <Row gutter={16} style={{ marginBottom: 8 }} key={s.$uuid}>
-                <Col span={4}>{i === 0 && <FieldTitle>Schedule</FieldTitle>}</Col>
-                <Col span={7}>
-                  <TimePicker.RangePicker
-                    value={s.time}
-                    onChange={time => updateSchedule({ $uuid: s.$uuid, time })}
+                <Col span={5}>
+                  <TimePicker
+                    value={pickUpAt.time}
+                    onChange={time => updatePickUpAt({ time })}
                     format="HH:mm"
                     minuteStep={5}
-                    placeholder={['From', 'To']}
                   />
                 </Col>
-                <Col span={10} push={2}>
+                <Col span={4}>
+                  <FieldTitle style={{ textAlign: 'right' }}>Pick up at</FieldTitle>
+                </Col>
+                <Col span={10}>
                   <Input
                     placeholder="Place"
-                    value={s.place}
-                    onChange={e => updateSchedule({ $uuid: s.$uuid, place: e.target.value })}
+                    value={pickUpAt.place}
+                    onChange={e => updatePickUpAt({ place: e.target.value })}
                   />
                 </Col>
               </Row>
-            ))}
-            {schedule && schedule.length > 0 && (
+              <br />
+              {(!schedule || schedule.length <= 0) && (
+                <Row gutter={16} style={{ marginBottom: 8 }}>
+                  <Col span={4}>
+                    <FieldTitle>Schedule</FieldTitle>
+                  </Col>
+                  <Col>
+                    <Button size="small" onClick={() => addSchedule()} style={{ marginTop: 5 }}>
+                      +
+                    </Button>
+                  </Col>
+                </Row>
+              )}
+              {_.map(schedule, (s, i) => (
+                <Row gutter={16} style={{ marginBottom: 8 }} key={s.$uuid}>
+                  <Col span={4}>{i === 0 && <FieldTitle>Schedule</FieldTitle>}</Col>
+                  <Col span={7}>
+                    <TimePicker.RangePicker
+                      value={s.time}
+                      onChange={time => updateSchedule({ $uuid: s.$uuid, time })}
+                      format="HH:mm"
+                      minuteStep={5}
+                      placeholder={['From', 'To']}
+                    />
+                  </Col>
+                  <Col span={10} push={2}>
+                    <Input
+                      placeholder="Place"
+                      value={s.place}
+                      onChange={e => updateSchedule({ $uuid: s.$uuid, place: e.target.value })}
+                    />
+                  </Col>
+                </Row>
+              ))}
+              {schedule && schedule.length > 0 && (
+                <Row gutter={16}>
+                  <Col push={4}>
+                    <Button size="small" onClick={() => addSchedule()}>
+                      +
+                    </Button>
+                  </Col>
+                </Row>
+              )}
+              <br />
               <Row gutter={16}>
-                <Col push={4}>
-                  <Button size="small" onClick={() => addSchedule()}>
-                    +
+                <Col span={4}>
+                  <FieldTitle>Time</FieldTitle>
+                </Col>
+                <Col span={5}>
+                  <TimePicker
+                    value={finishAt.time}
+                    onChange={time => updateFinishAt({ time })}
+                    format="HH:mm"
+                    minuteStep={5}
+                  />
+                </Col>
+                <Col span={4}>
+                  <FieldTitle style={{ textAlign: 'right' }}>Finish at</FieldTitle>
+                </Col>
+                <Col span={10}>
+                  <Input
+                    placeholder="Place"
+                    value={finishAt.place}
+                    onChange={e => updateFinishAt({ place: e.target.value })}
+                  />
+                </Col>
+              </Row>
+              <br />
+              <Row justify="end">
+                <Col pull={1}>
+                  <Button type="primary" onClick={() => saveDaySchedule(daySchedule)}>
+                    {`Save day ${daySchedule.day + 1}`}
                   </Button>
                 </Col>
               </Row>
-            )}
-            <br />
-            <Row gutter={16}>
-              <Col span={4}>
-                <FieldTitle>Time</FieldTitle>
-              </Col>
-              <Col span={5}>
-                <TimePicker
-                  value={finishAt.time}
-                  onChange={time => updateFinishAt({ time })}
-                  format="HH:mm"
-                  minuteStep={5}
-                />
-              </Col>
-              <Col span={4}>
-                <FieldTitle style={{ textAlign: 'right' }}>Finish at</FieldTitle>
-              </Col>
-              <Col span={10}>
-                <Input
-                  placeholder="Place"
-                  value={finishAt.place}
-                  onChange={e => updateFinishAt({ place: e.target.value })}
-                />
-              </Col>
-            </Row>
-          </Tabs.TabPane>
-        ))}
-      </Tabs>
-    </Wrapper>
+            </Tabs.TabPane>
+          ))}
+        </Tabs>
+      </Wrapper>
+    </Spin>
   );
 };
 
