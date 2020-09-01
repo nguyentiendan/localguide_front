@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import _ from 'lodash';
 import { navigate } from 'gatsby';
 
+import { Modal } from 'antd';
 import StartCreateTour from './StartCreateTour';
 import ProgressBar from './ProgressBar';
 import Scene from './Scene';
@@ -12,6 +13,7 @@ import StepLayout from './StepLayouts';
 import { smallScreenCss } from '../../styles/responsive-css';
 import { createTour, updateTour } from '../../apis';
 import { useRequiredUser } from '../../utils/useAuth';
+import TourPreview from '../TourPreview';
 
 const CREATE_TOUR_STEPS = [
   {
@@ -31,7 +33,7 @@ const CREATE_TOUR_STEPS = [
   },
   {
     title: 'Add photos of tour',
-    layouts: [StepLayout.Step4_1, StepLayout.Step4_2],
+    layouts: [StepLayout.Step4],
     validation: tour => !tour.id,
   },
 ];
@@ -90,6 +92,7 @@ const Wrapper = styled.div`
 const CreateTourWizard = () => {
   const { user } = useRequiredUser();
   const [loading, setLoading] = useState(false);
+  const [previewVisible, setPreviewVisible] = useState(false);
   const [tourCreationInfo, setTourCreationInfo] = useState({
     duration: 1,
     minPax: 1,
@@ -205,6 +208,16 @@ const CreateTourWizard = () => {
     return false;
   }, [tourCreationInfo, currentStepNumber]);
 
+  const canSkipped = useMemo(() => {
+    return (
+      !tourCreationInfo.coverPhoto || !tourCreationInfo.photos || tourCreationInfo.photos.length < 1
+    );
+  }, [tourCreationInfo]);
+
+  const onPreview = useCallback(() => {
+    setPreviewVisible(true);
+  }, [tourCreationInfo]);
+
   return (
     <>
       {currentStepNumber === 0 && <StartCreateTour onStart={startCreateTour} />}
@@ -230,10 +243,18 @@ const CreateTourWizard = () => {
             totalSteps={CREATE_TOUR_STEPS.length}
             onBack={goBack}
             onNext={goForward}
+            onPreview={onPreview}
             loading={loading}
             isFinished={currentStepNumber === TOTAL_STEPS}
+            canSkipped={canSkipped}
             onFinish={navigateToHomePage}
           />
+
+          <Modal visible={previewVisible} footer={null} onCancel={() => setPreviewVisible(false)}>
+            {previewVisible && (
+              <TourPreview uid={tourCreationInfo.uid} tourId={tourCreationInfo.id} />
+            )}
+          </Modal>
         </Wrapper>
       )}
     </>

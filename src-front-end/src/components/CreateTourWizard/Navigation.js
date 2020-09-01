@@ -35,9 +35,11 @@ const Navigation = ({
   currentStepNumber,
   onBack,
   onNext,
+  onPreview,
   loading,
   isNextDisabled,
   isFinished,
+  canSkipped,
   onFinish,
 }) => {
   const isLastStep = useMemo(() => totalSteps === currentStepNumber, [
@@ -60,7 +62,7 @@ const Navigation = ({
         <div>
           {isLastStep && (
             <Button
-              onClick={onNext}
+              onClick={onPreview}
               style={{ marginLeft: 20, marginRight: 20 }}
               type="primary"
               size="large"
@@ -77,7 +79,7 @@ const Navigation = ({
               size="large"
               disabled={loading || isNextDisabled}
             >
-              {isLastStep ? `Skip for now` : `Next`}
+              Next
             </Button>
           )}
           {isFinished && (
@@ -88,7 +90,7 @@ const Navigation = ({
               size="large"
               disabled={loading || isNextDisabled}
             >
-              Done
+              {canSkipped ? `Skip for now` : `Done`}
             </Button>
           )}
         </div>
@@ -103,9 +105,11 @@ Navigation.propTypes = {
   currentStepNumber: PropTypes.number,
   onBack: PropTypes.func,
   onNext: PropTypes.func,
+  onPreview: PropTypes.func,
   loading: PropTypes.bool,
   isNextDisabled: PropTypes.bool,
   isFinished: PropTypes.bool,
+  canSkipped: PropTypes.bool,
   onFinish: PropTypes.func,
 };
 
@@ -114,9 +118,11 @@ Navigation.defaultProps = {
   currentStepNumber: 0,
   onBack: () => {},
   onNext: () => {},
+  onPreview: () => {},
   loading: false,
   isNextDisabled: false,
   isFinished: false,
+  canSkipped: false,
   onFinish: () => {},
 };
 
