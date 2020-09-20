@@ -168,9 +168,13 @@ function NavigationMenu() {
                 <NavigationLink activeClassName="is-active" to="/my-trips">
                   My Trips
                 </NavigationLink>
-                <NavigationLink activeClassName="is-active" to="/create-tour">
-                  Create Tour
-                </NavigationLink>
+                {
+                  user.role !== 3 && (
+                    <NavigationLink activeClassName="is-active" to="/create-tour">
+                      Create Tour
+                    </NavigationLink>
+                  )
+                }
                 <NavigationLink activeClassName="is-active" to="/my-inbox">
                   My Inbox
                 </NavigationLink>

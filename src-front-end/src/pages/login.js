@@ -160,7 +160,7 @@ function LoginPage() {
         setErrorMessage('');
         setError('');
         const {
-          data: { Token, UID },
+          data: { Token, UID, Role },
           message,
           status,
         } = await API.login(email, password);
@@ -169,7 +169,7 @@ function LoginPage() {
           const { data: profile } = await API.getUserProfile({ token: Token, uid: UID });
           setLoading(false);
           setErrorMessage('');
-          setAuthToken(jwt.sign({ ...profile, token: Token }, 'tour-guide-pal'));
+          setAuthToken(jwt.sign({ ...profile, role: Role, token: Token }, 'tour-guide-pal'));
         } else {
           setLoading(false);
           setErrorMessage(message);
