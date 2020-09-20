@@ -154,6 +154,7 @@ exports.createPages = async function createPages({ actions, graphql }) {
           node {
             rawID
             slug
+            uid
           }
         }
       }
@@ -161,12 +162,19 @@ exports.createPages = async function createPages({ actions, graphql }) {
   `);
 
   data.allTour.edges.forEach(edge => {
-    const { slug, rawID } = edge.node;
+    const { slug, rawID, uid } = edge.node;
 
     actions.createPage({
-      path: `tours/${rawID}`,
+      path: `tours/${uid}/${rawID}`,
       component: require.resolve('./src/templates/TourPage.js'),
       context: { slug, id: rawID },
     });
+  });
+
+  actions.createPage({
+    path: `tours`,
+    matchPath: `tours/:uid/:id`,
+    component: require.resolve('./src/templates/TourPage.js'),
+    context: { id: -999 },
   });
 };

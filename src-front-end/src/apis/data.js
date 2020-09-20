@@ -61,11 +61,6 @@ export async function getAllTours() {
 
 // eslint-disable-next-line no-unused-vars
 export async function getTourDetail({ id, uid }) {
-  // TODO: call API
-  // return new Promise(resolve => {
-  //   resolve(tourDetails);
-  // });
-
   return request({
     url: '/tour/getTour',
     method: 'GET',

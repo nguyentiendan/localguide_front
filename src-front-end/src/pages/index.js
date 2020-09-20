@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { graphql } from 'gatsby';
 import Img from 'gatsby-image';
 import styled from 'styled-components';
 import _ from 'lodash';
 
+import { Spin } from 'antd';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';
 import SectionHeader from '../components/SectionHeader';
@@ -17,6 +18,7 @@ import RatingStars from '../components/RatingStars';
 import CommentListItem from '../components/CommentListItem';
 import JoinUsSection from '../components/JoinUsSection';
 import { smallScreenCss } from '../styles/responsive-css';
+import * as API from '../apis';
 
 const ListWrapper = styled.div`
   max-width: ${breakpoints.lg};
@@ -72,28 +74,60 @@ function IndexPage({ data }) {
     reviews = { comments: [] },
     exploreTourImg,
   } = data;
-  const tourGuides = _.map(tourGuideNodes.nodes, node => node);
+  const [loadingTours, setLoadingTours] = useState(false);
+  const [loadingTourGuides, setLoadingTourGuides] = useState(false);
+  const [tourGuides, setTourGuides] = useState(_.map(tourGuideNodes.nodes, node => node));
+  const [tours, setTours] = useState(_.map(tourNodes.nodes, node => node));
   const destinations = _.map(destinationNodes.nodes, node => node);
-  const tours = _.map(tourNodes.nodes, node => node);
   const blogs = _.map(blogNodes.nodes, node => node);
+
+  useEffect(() => {
+    const refreshAllTours = async () => {
+      try {
+        setLoadingTours(true);
+        const { data: allTours } = await API.getAllTours();
+        setTours(allTours);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingTours(false);
+      }
+    };
+    const refreshAllTourGuides = async () => {
+      try {
+        setLoadingTourGuides(true);
+        const { data: allTourGuides } = await API.getAllTourGuides();
+        setTourGuides(allTourGuides);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingTourGuides(false);
+      }
+    };
+
+    refreshAllTours();
+    refreshAllTourGuides();
+  }, []);
 
   return (
     <Layout>
       <SEO title="Home" />
       <SectionHeader title="Tour Guide" subTitle="View all" />
-      <ListWrapper>
-        <ListContainer>
-          {_.map(tourGuides, tourGuide => (
-            <TourGuideListItem
-              key={tourGuide.id}
-              name={tourGuide.fullname}
-              level={tourGuide.level}
-              avatar={tourGuide.avatar}
-              className="tour-guide"
-            />
-          ))}
-        </ListContainer>
-      </ListWrapper>
+      <Spin spinning={loadingTourGuides}>
+        <ListWrapper>
+          <ListContainer>
+            {_.map(tourGuides, tourGuide => (
+              <TourGuideListItem
+                key={tourGuide.id}
+                name={tourGuide.fullname}
+                level={tourGuide.level}
+                avatar={tourGuide.avatar}
+                className="tour-guide"
+              />
+            ))}
+          </ListContainer>
+        </ListWrapper>
+      </Spin>
 
       <SectionHeader title="Destinations we love" subTitle="View all" />
       <ListWrapper>
@@ -111,21 +145,24 @@ function IndexPage({ data }) {
       </ListWrapper>
 
       <SectionHeader title="Popular Tour" subTitle="View all" />
-      <ListWrapper>
-        <ListContainer>
-          {_.map(tours, tour => (
-            <TourListItem
-              key={tour.id}
-              id={tour.rawID}
-              name={tour.name}
-              country={tour.country}
-              city={tour.city}
-              picture={tour.cover}
-              className="tour"
-            />
-          ))}
-        </ListContainer>
-      </ListWrapper>
+      <Spin spinning={loadingTours}>
+        <ListWrapper>
+          <ListContainer>
+            {_.map(tours, tour => (
+              <TourListItem
+                key={tour.id}
+                id={tour.rawID}
+                uid={tour.uid}
+                name={tour.name}
+                country={tour.country}
+                city={tour.city}
+                picture={tour.cover}
+                className="tour"
+              />
+            ))}
+          </ListContainer>
+        </ListWrapper>
+      </Spin>
 
       <SectionHeader title="Blog" subTitle="View all" />
       <ListWrapper>
@@ -228,6 +265,7 @@ export const pageQuery = graphql`
         city
         cover
         id
+        uid
         rawID
       }
     }

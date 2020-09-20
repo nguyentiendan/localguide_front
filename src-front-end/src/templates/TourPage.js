@@ -174,9 +174,9 @@ const GalleryWrapper = styled.div`
   }
 `;
 
-function TourPage({ data }) {
-  const { tour, reviews = { comments: [] } } = data;
-  const [tourDetails, setTourDetails] = useState(tour);
+function TourPage({ data, id, uid }) {
+  const { tour, reviews = { comments: [] } } = data || {};
+  const [tourDetails, setTourDetails] = useState(tour || {});
   const [thumbnailWidths, setThumbnailWidths] = useState([]);
   const [loading, setLoading] = useState(false);
   const galleryWrapperComp = useRef();
@@ -185,7 +185,15 @@ function TourPage({ data }) {
     const fetchTourDetails = async () => {
       try {
         setLoading(true);
-        const response = await API.getTourDetail({ id: tour.id, uid: tour.uid });
+        const query = {};
+        if (tour.id && tour.uid) {
+          query.id = tour.id;
+          query.uid = tour.uid;
+        } else if (id && uid) {
+          query.id = id;
+          query.uid = uid;
+        }
+        const response = await API.getTourDetail(query);
         setLoading(false);
         setTourDetails(response);
       } catch (error) {
@@ -381,6 +389,13 @@ TourPage.propTypes = {
       comments: PropTypes.arrayOf(PropTypes.shape({})),
     }),
   }).isRequired,
+  id: PropTypes.number,
+  uid: PropTypes.string,
+};
+
+TourPage.defaultProps = {
+  id: undefined,
+  uid: undefined,
 };
 
 export default TourPage;

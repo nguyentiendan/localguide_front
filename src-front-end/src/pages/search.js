@@ -115,6 +115,7 @@ function IndexPage({ location, data }) {
             <TourListItem
               key={tour.id}
               id={tour.rawID}
+              uid={tour.uid}
               name={tour.name}
               country={tour.country}
               city={tour.city}
@@ -229,6 +230,7 @@ export const pageQuery = graphql`
         city
         cover
         id
+        uid
         rawID
       }
     }
