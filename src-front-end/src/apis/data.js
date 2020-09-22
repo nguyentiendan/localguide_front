@@ -130,19 +130,19 @@ export async function updateCaption({ caption, name, tourId, uid }) {
   });
 }
 
-export async function getTourPhotos({ tourId, uid }) {
+export async function getTourPhotos({ id, uid }) {
   return request({
     url: `/tour/getAllPhoto`,
     method: 'GET',
-    params: { uid, id: tourId },
+    params: { uid, id },
   });
 }
 
-export async function getTourCoverPhoto({ tourId, uid }) {
+export async function getTourCoverPhoto({ id, uid }) {
   return request({
     url: `/tour/getCoverPhoto`,
     method: 'GET',
-    params: { uid, id: tourId },
+    params: { uid, id },
   });
 }
 

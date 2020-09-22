@@ -46,3 +46,7 @@ export function updateUserProfile(profile) {
     data: profile,
   });
 }
+
+export function changePassword(password, newPassword) {
+  return new Promise(resolve => resolve() || password || newPassword);
+}

@@ -151,12 +151,12 @@ function IndexPage({ data }) {
             {_.map(tours, tour => (
               <TourListItem
                 key={tour.id}
-                id={tour.rawID}
+                id={tour.id}
                 uid={tour.uid}
+                cover={tour.cover}
                 name={tour.name}
                 country={tour.country}
                 city={tour.city}
-                picture={tour.cover}
                 className="tour"
               />
             ))}
