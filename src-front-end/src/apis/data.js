@@ -61,11 +61,6 @@ export async function getAllTours() {
 
 // eslint-disable-next-line no-unused-vars
 export async function getTourDetail({ id, uid }) {
-  // TODO: call API
-  // return new Promise(resolve => {
-  //   resolve(tourDetails);
-  // });
-
   return request({
     url: '/tour/getTour',
     method: 'GET',
@@ -135,19 +130,19 @@ export async function updateCaption({ caption, name, tourId, uid }) {
   });
 }
 
-export async function getTourPhotos({ tourId, uid }) {
+export async function getTourPhotos({ id, uid }) {
   return request({
     url: `/tour/getAllPhoto`,
     method: 'GET',
-    params: { uid, id: tourId },
+    params: { uid, id },
   });
 }
 
-export async function getTourCoverPhoto({ tourId, uid }) {
+export async function getTourCoverPhoto({ id, uid }) {
   return request({
     url: `/tour/getCoverPhoto`,
     method: 'GET',
-    params: { uid, id: tourId },
+    params: { uid, id },
   });
 }
 

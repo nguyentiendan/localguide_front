@@ -6,12 +6,12 @@ import Gallery from 'react-grid-gallery';
 import { AiOutlineSchedule } from 'react-icons/ai';
 import { FaSuitcase, FaMoneyBill, FaUsers } from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
+import { Spin } from 'antd';
 import _ from 'lodash';
 
 import * as API from '../apis';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';
-import Spinner from '../components/Spinner';
 import SmallScreen from '../components/Responsive/SmallScreen';
 import BigScreen from '../components/Responsive/BigScreen';
 import RatingStars from '../components/RatingStars';
@@ -23,6 +23,7 @@ import NavItem from '../components/Layout/NavItem';
 import Button from '../components/Button';
 import { bigScreenCss, smallScreenCss } from '../styles/responsive-css';
 import TourGuideListItem from '../components/TourGuideListItem';
+import { getCndResourceUrl } from '../utils/commons';
 
 const Title = styled.h1`
   font-weight: bold;
@@ -174,28 +175,44 @@ const GalleryWrapper = styled.div`
   }
 `;
 
-function TourPage({ data }) {
-  const { tour, reviews = { comments: [] } } = data;
-  const [tourDetails, setTourDetails] = useState(tour);
+function TourPage({ data, id, uid }) {
+  const { tour, reviews = { comments: [] } } = data || {};
+  const [tourDetails, setTourDetails] = useState(tour || {});
+  const [tourPhotos, setTourPhotos] = useState([]);
   const [thumbnailWidths, setThumbnailWidths] = useState([]);
   const [loading, setLoading] = useState(false);
   const galleryWrapperComp = useRef();
+
+  const tourQuery = useMemo(() => {
+    const query = {};
+    if (tour && tour.rawID && tour.uid) {
+      query.id = tour.rawID;
+      query.uid = tour.uid;
+    } else if (id && uid) {
+      query.id = id;
+      query.uid = uid;
+    }
+    return query;
+  }, [tour, id, uid]);
 
   useEffect(() => {
     const fetchTourDetails = async () => {
       try {
         setLoading(true);
-        const response = await API.getTourDetail({ id: tour.id, uid: tour.uid });
-        setLoading(false);
-        setTourDetails(response);
+        const { data: details } = await API.getTourDetail(tourQuery);
+        setTourDetails(_.mapKeys(details[0], (v, k) => _.camelCase(k)));
+
+        const { data: photos } = await API.getTourPhotos(tourQuery);
+        setTourPhotos(photos);
       } catch (error) {
-        setLoading(false);
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchTourDetails();
-  }, []);
+  }, [tourQuery]);
 
   useLayoutEffect(() => {
     if (!galleryWrapperComp || !galleryWrapperComp.current || !tourDetails.pictures) {
@@ -232,136 +249,145 @@ function TourPage({ data }) {
     return () => window.removeEventListener('resize', updateSize);
   }, [galleryWrapperComp, tourDetails]);
 
-  const tourGuide = useMemo(() => tourDetails.tourGuide || {}, [tourDetails]);
-
   return (
     <Layout noHeader>
       <SEO title={tourDetails.name} />
 
-      <SmallScreen>
-        <br />
-        <Title>{tourDetails.name}</Title>
-        <SubTitle>
-          Day Trips
+      <Spin spinning={loading}>
+        <SmallScreen>
+          <br />
+          <Title>{tourDetails.name}</Title>
+          <SubTitle>
+            Day Trips
+            <Gap />
+            <RatingStars rate={5} style={{ verticalAlign: 'text-bottom' }} />
+          </SubTitle>
+          <SubTitle>
+            Transportation:
+            {tourDetails.transportation}
+          </SubTitle>
+        </SmallScreen>
+
+        <GalleryWrapper ref={galleryWrapperComp}>
+          {tourPhotos && (
+            <Gallery
+              enableImageSelection={false}
+              images={_.map(tourPhotos, (pic, i) => ({
+                src: getCndResourceUrl(pic.name),
+                thumbnail: getCndResourceUrl(pic.name),
+                thumbnailWidth: thumbnailWidths[i],
+                thumbnailHeight: 175,
+              }))}
+            />
+          )}
+        </GalleryWrapper>
+
+        <BigScreen>
+          <Title>{tourDetails.name}</Title>
+          <SubTitle>
+            Day Trips
+            <Gap />
+            <RatingStars rate={5} style={{ verticalAlign: 'text-bottom' }} />
+          </SubTitle>
+          <SubTitle>
+            Transportation:
+            {tourDetails.transportation}
+          </SubTitle>
+        </BigScreen>
+
+        <HeaderWrapper>
+          <LocationWrapper>
+            <SectionTitle>
+              {tourDetails.city &&
+                tourDetails.country &&
+                `${tourDetails.city}, ${tourDetails.country}`}
+            </SectionTitle>
+            <TagWrapper>
+              {tourDetails.tag &&
+                _.map(tourDetails.tag.split(';'), tag => <Tag key={tag}>{tag}</Tag>)}
+            </TagWrapper>
+          </LocationWrapper>
+          <TourGuideWrapper>
+            <TourGuideListItem
+              // level={tourDetails.level}
+              level={undefined}
+              avatar={tourDetails.avatar}
+              name={tourDetails.fullname}
+            />
+          </TourGuideWrapper>
+        </HeaderWrapper>
+
+        <SectionTitle>Price</SectionTitle>
+        <PriceWrapper>
+          <PriceMenuWrapper>
+            <NavItem
+              className="nav-item"
+              title={`${tourDetails.total}`}
+              icon={<FaMoneyBill />}
+              isActive
+            />
+            <NavItem
+              className="nav-item"
+              title={`${tourDetails.day} day${tourDetails.day > 1 ? 's' : ''}`}
+              icon={<AiOutlineSchedule />}
+              isActive
+            />
+            <NavItem
+              className="nav-item"
+              // title={tourDetails.language}
+              title=""
+              icon={<MdGTranslate />}
+              isActive
+            />
+            <NavItem
+              className="nav-item"
+              // title={`${tourDetails.availableTours || 0} Tours`}
+              title=""
+              icon={<FaSuitcase />}
+              isActive
+            />
+            <NavItem
+              className="nav-item"
+              title={`${tourDetails.minPax || 0}-${tourDetails.maxPax || 0}`}
+              icon={<FaUsers />}
+              isActive
+            />
+          </PriceMenuWrapper>
+          <BookButton>Book</BookButton>
+        </PriceWrapper>
+        <SectionTitle>Tour description</SectionTitle>
+        <DescriptionWrapper>{tourDetails.shortDesc}</DescriptionWrapper>
+
+        <SectionTitle>
+          <TourIcon />
           <Gap />
-          <RatingStars rate={5} style={{ verticalAlign: 'text-bottom' }} />
-        </SubTitle>
-        <SubTitle>
-          Transportation:
-          {tourDetails.transportation}
-        </SubTitle>
-      </SmallScreen>
+          Tour including:
+        </SectionTitle>
+        <ul>
+          {_.map(tourDetails.tourIncluding, i => (
+            <TourIncludingListItem key={i}>{i}</TourIncludingListItem>
+          ))}
+        </ul>
 
-      {loading && <Spinner />}
-
-      <GalleryWrapper ref={galleryWrapperComp}>
-        {tourDetails.pictures && (
-          <Gallery
-            enableImageSelection={false}
-            images={_.map(tourDetails.pictures, (pic, i) => ({
-              src: pic,
-              thumbnail: pic,
-              thumbnailWidth: thumbnailWidths[i],
-              thumbnailHeight: 175,
-            }))}
-          />
-        )}
-      </GalleryWrapper>
-
-      <BigScreen>
-        <Title>{tourDetails.name}</Title>
-        <SubTitle>
-          Day Trips
-          <Gap />
-          <RatingStars rate={5} style={{ verticalAlign: 'text-bottom' }} />
-        </SubTitle>
-        <SubTitle>
-          Transportation:
-          {tourDetails.transportation}
-        </SubTitle>
-      </BigScreen>
-
-      <HeaderWrapper>
-        <LocationWrapper>
-          <SectionTitle>{tourDetails.location}</SectionTitle>
-          <TagWrapper>
-            {_.map(tourDetails.tags, tag => (
-              <Tag key={tag}>{tag}</Tag>
-            ))}
-          </TagWrapper>
-        </LocationWrapper>
-        <TourGuideWrapper>
-          <TourGuideListItem
-            level={tourGuide.level}
-            avatar={tourGuide.avatar}
-            name={tourGuide.name}
-          />
-        </TourGuideWrapper>
-      </HeaderWrapper>
-
-      <SectionTitle>Price</SectionTitle>
-      <PriceWrapper>
-        <PriceMenuWrapper>
-          <NavItem className="nav-item" title={tourDetails.price} icon={<FaMoneyBill />} isActive />
-          <NavItem
-            className="nav-item"
-            title={tourDetails.duration}
-            icon={<AiOutlineSchedule />}
-            isActive
-          />
-          <NavItem
-            className="nav-item"
-            title={tourDetails.language}
-            icon={<MdGTranslate />}
-            isActive
-          />
-          <NavItem
-            className="nav-item"
-            title={`${tourDetails.availableTours || 0} Tours`}
-            icon={<FaSuitcase />}
-            isActive
-          />
-          <NavItem
-            className="nav-item"
-            title={`${tourDetails.tourSizeFrom || 0}-${tourDetails.tourSizeTo || 0}`}
-            icon={<FaUsers />}
-            isActive
-          />
-        </PriceMenuWrapper>
-        <BookButton>Book</BookButton>
-      </PriceWrapper>
-      <SectionTitle>Tour description</SectionTitle>
-      <DescriptionWrapper>{tourDetails.description}</DescriptionWrapper>
-
-      <SectionTitle>
-        <TourIcon />
-        <Gap />
-        Tour including:
-      </SectionTitle>
-      <ul>
-        {_.map(tourDetails.tourIncluding, i => (
-          <TourIncludingListItem key={i}>{i}</TourIncludingListItem>
-        ))}
-      </ul>
-
-      <SectionHeader
-        title={
-          // eslint-disable-next-line react/jsx-wrap-multilines
-          <>{`Reviews (${reviews.total})`}</>
-        }
-      />
-      <ListWrapper>
-        {_.map(reviews.comments, comment => (
-          <CommentListItem
-            key={comment.id}
-            content={comment.content}
-            user={comment.user}
-            date={comment.date}
-            avatar={comment.avatar}
-            className="comment"
-          />
-        ))}
-      </ListWrapper>
+        <SectionHeader
+          title={
+            // eslint-disable-next-line react/jsx-wrap-multilines
+            <>{`Reviews (${reviews.total})`}</>
+          }
+        />
+        <ListWrapper>
+          {_.map(reviews.comments, comment => (
+            <CommentListItem
+              key={comment.id}
+              content={comment.content}
+              user={comment.user}
+              date={comment.date}
+              avatar={comment.avatar}
+              className="comment"
+            />
+          ))}
+        </ListWrapper>
+      </Spin>
     </Layout>
   );
 }
@@ -381,6 +407,13 @@ TourPage.propTypes = {
       comments: PropTypes.arrayOf(PropTypes.shape({})),
     }),
   }).isRequired,
+  id: PropTypes.number,
+  uid: PropTypes.string,
+};
+
+TourPage.defaultProps = {
+  id: undefined,
+  uid: undefined,
 };
 
 export default TourPage;
@@ -389,10 +422,20 @@ export const pageQuery = graphql`
   query($id: Int!) {
     tour(rawID: { eq: $id }) {
       id
+      rawID
+      uid
       name
       country
       city
       cover
+      content
+      day
+      guidefee
+      maxpax
+      minpax
+      short_desc
+      tag
+      total
     }
     reviews {
       rate

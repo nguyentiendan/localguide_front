@@ -32,9 +32,9 @@ const Picture = styled.img`
   margin-bottom: 0.75rem;
 `;
 
-const TourListItem = ({ className, id, name, country, city, cover }) => (
+const TourListItem = ({ className, id, uid, name, country, city, cover }) => (
   <Wrapper className={className}>
-    <Link to={`/tours/${id}`}>
+    <Link to={`/tours/${uid}/${id}`}>
       <Picture src={cover || defaultTourImage} />
       <Title>{name}</Title>
       <SubTitle>{`${country} - ${city}`}</SubTitle>
@@ -44,6 +44,7 @@ const TourListItem = ({ className, id, name, country, city, cover }) => (
 
 TourListItem.propTypes = {
   id: PropTypes.number.isRequired,
+  uid: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   country: PropTypes.string.isRequired,
   city: PropTypes.string.isRequired,
