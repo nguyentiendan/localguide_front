@@ -23,7 +23,7 @@ import NavItem from '../components/Layout/NavItem';
 import Button from '../components/Button';
 import { bigScreenCss, smallScreenCss } from '../styles/responsive-css';
 import TourGuideListItem from '../components/TourGuideListItem';
-import { getCndResourceUrl } from '../utils/commons';
+import { getCndResourceUrl, safeFuncCall } from '../utils/commons';
 
 const Title = styled.h1`
   font-weight: bold;
@@ -141,6 +141,7 @@ const BookButton = styled(Button)`
 
 const DescriptionWrapper = styled.div`
   color: ${colors.grey[60]};
+  padding-top: 10px;
 `;
 
 const TourIcon = styled(FaSuitcase)`
@@ -155,8 +156,33 @@ const Gap = styled.div`
 `;
 
 const TourIncludingListItem = styled.li`
-  margin-bottom: 0rem;
+  margin-bottom: 0;
   color: ${colors.grey[60]};
+`;
+
+const TourDescriptionDay = styled.div`
+  font-weight: bold;
+  margin-bottom: 0;
+  color: ${colors.grey[60]};
+`;
+
+const TourDescription = styled.ul`
+  margin: 5px 0 15px 23px;
+  color: ${colors.grey[60]};
+`;
+
+const TourDescriptionTitle = styled.div`
+  font-weight: bold;
+  color: ${colors.grey[60]};
+`;
+
+const TourDescriptionItem = styled.li`
+  margin: 0;
+  color: ${colors.grey[60]};
+
+  &:first-letter {
+    text-transform: uppercase;
+  }
 `;
 
 const GalleryWrapper = styled.div`
@@ -178,6 +204,7 @@ const GalleryWrapper = styled.div`
 function TourPage({ data, id, uid }) {
   const { tour, reviews = { comments: [] } } = data || {};
   const [tourDetails, setTourDetails] = useState(tour || {});
+  const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
   const [tourPhotos, setTourPhotos] = useState([]);
   const [thumbnailWidths, setThumbnailWidths] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -199,11 +226,38 @@ function TourPage({ data, id, uid }) {
     const fetchTourDetails = async () => {
       try {
         setLoading(true);
-        const { data: details } = await API.getTourDetail(tourQuery);
+        const { data: details } = await safeFuncCall(() => API.getTourDetail(tourQuery));
         setTourDetails(_.mapKeys(details[0], (v, k) => _.camelCase(k)));
-
-        const { data: photos } = await API.getTourPhotos(tourQuery);
+        const { data: photos } = await safeFuncCall(() => API.getTourPhotos(tourQuery));
         setTourPhotos(photos);
+
+        const descDays = {};
+        const { data: transport } = await safeFuncCall(() => API.getTourFeeTransport(tourQuery));
+        _.forEach(transport, ({ Trans: transports }, day) => {
+          descDays[day] = descDays[day] || {};
+          descDays[day].transports = transports;
+        });
+        const { data: meal } = await safeFuncCall(() => API.getTourFeeMeal(tourQuery));
+        _.forEach(meal, ({ Meal: meals }, day) => {
+          descDays[day] = descDays[day] || {};
+          descDays[day].meals = meals;
+        });
+        const { data: other } = await safeFuncCall(() => API.getTourFeeOther(tourQuery));
+        _.forEach(other, ({ Other: others }, day) => {
+          descDays[day] = descDays[day] || {};
+          descDays[day].others = others;
+        });
+        const { data: pickup } = await safeFuncCall(() => API.getTourSchedulePickUp(tourQuery));
+        _.forEach(pickup, ({ Pickup: pickups }, day) => {
+          descDays[day] = descDays[day] || {};
+          descDays[day].pickups = pickups;
+        });
+        const { data: schedule } = await safeFuncCall(() => API.getTourSchedule(tourQuery));
+        _.forEach(schedule, ({ Schedule: schedules }, day) => {
+          descDays[day] = descDays[day] || {};
+          descDays[day].schedules = schedules;
+        });
+        setTourDescriptionDays(descDays);
       } catch (error) {
         console.error(error);
       } finally {
@@ -215,14 +269,14 @@ function TourPage({ data, id, uid }) {
   }, [tourQuery]);
 
   useLayoutEffect(() => {
-    if (!galleryWrapperComp || !galleryWrapperComp.current || !tourDetails.pictures) {
+    if (!galleryWrapperComp || !galleryWrapperComp.current || !tourPhotos) {
       return () => {};
     }
     const updateSize = _.debounce(() => {
       const wrapperWidth = galleryWrapperComp.current.offsetWidth;
       const maxColumn = Math.round(wrapperWidth / 275);
       const minColumn = 2;
-      const maxRows = Math.ceil(tourDetails.pictures.length / ((maxColumn + minColumn) / 2));
+      const maxRows = Math.ceil(tourPhotos.length / ((maxColumn + minColumn) / 2));
       let widths = [];
       for (let i = 0; i < maxRows; i++) {
         const randomColumns = Math.floor(Math.random() * (maxColumn - minColumn + 1) + minColumn);
@@ -230,7 +284,7 @@ function TourPage({ data, id, uid }) {
         const maxWidth = (wrapperWidth * 1.25) / randomColumns;
         const rowWidths = [];
         for (let j = 0; j < randomColumns; j++) {
-          if (widths.length === tourDetails.pictures.length - 1) {
+          if (widths.length === tourPhotos.length - 1) {
             rowWidths.push(wrapperWidth - _.sum(rowWidths));
             break;
           } else if (j === randomColumns - 1) {
@@ -247,7 +301,7 @@ function TourPage({ data, id, uid }) {
     updateSize();
 
     return () => window.removeEventListener('resize', updateSize);
-  }, [galleryWrapperComp, tourDetails]);
+  }, [galleryWrapperComp, tourPhotos]);
 
   return (
     <Layout noHeader>
@@ -262,11 +316,16 @@ function TourPage({ data, id, uid }) {
             <Gap />
             <RatingStars rate={5} style={{ verticalAlign: 'text-bottom' }} />
           </SubTitle>
-          <SubTitle>
-            Transportation:
-            {tourDetails.transportation}
-          </SubTitle>
         </SmallScreen>
+
+        <BigScreen>
+          <Title>{tourDetails.name}</Title>
+          <SubTitle>
+            Day Trips
+            <Gap />
+            <RatingStars rate={5} style={{ verticalAlign: 'text-bottom' }} />
+          </SubTitle>
+        </BigScreen>
 
         <GalleryWrapper ref={galleryWrapperComp}>
           {tourPhotos && (
@@ -281,19 +340,6 @@ function TourPage({ data, id, uid }) {
             />
           )}
         </GalleryWrapper>
-
-        <BigScreen>
-          <Title>{tourDetails.name}</Title>
-          <SubTitle>
-            Day Trips
-            <Gap />
-            <RatingStars rate={5} style={{ verticalAlign: 'text-bottom' }} />
-          </SubTitle>
-          <SubTitle>
-            Transportation:
-            {tourDetails.transportation}
-          </SubTitle>
-        </BigScreen>
 
         <HeaderWrapper>
           <LocationWrapper>
@@ -356,18 +402,100 @@ function TourPage({ data, id, uid }) {
           <BookButton>Book</BookButton>
         </PriceWrapper>
         <SectionTitle>Tour description</SectionTitle>
-        <DescriptionWrapper>{tourDetails.shortDesc}</DescriptionWrapper>
+        <DescriptionWrapper>
+          <ul>
+            {_.map(
+              tourDescriptionDays,
+              ({ transports, meals, others, pickups, schedules }, day) => (
+                <li key={day}>
+                  <TourDescriptionDay>{`Day ${day}:`}</TourDescriptionDay>
+                  {transports && (
+                    <TourDescription>
+                      <TourDescriptionTitle>Transportations:</TourDescriptionTitle>
+                      {_.map(transports, ({ from, to, vehicle }, i) => (
+                        <TourDescriptionItem key={i}>
+                          {`${from} - ${to} ${vehicle}`}
+                        </TourDescriptionItem>
+                      ))}
+                    </TourDescription>
+                  )}
 
-        <SectionTitle>
-          <TourIcon />
-          <Gap />
-          Tour including:
-        </SectionTitle>
-        <ul>
-          {_.map(tourDetails.tourIncluding, i => (
-            <TourIncludingListItem key={i}>{i}</TourIncludingListItem>
-          ))}
-        </ul>
+                  {meals && (
+                    <TourDescription>
+                      <TourDescriptionTitle>Meals:</TourDescriptionTitle>
+                      {_.map(meals, ({ time, name }, i) => (
+                        <TourDescriptionItem key={i}>{`${time} at ${name}`}</TourDescriptionItem>
+                      ))}
+                    </TourDescription>
+                  )}
+                  {others && (
+                    <TourDescription>
+                      <TourDescriptionTitle>Other:</TourDescriptionTitle>
+                      {_.map(others, ({ name }, i) => (
+                        <TourDescriptionItem key={i}>{`${name}`}</TourDescriptionItem>
+                      ))}
+                    </TourDescription>
+                  )}
+                  {pickups && (
+                    <TourDescription>
+                      <TourDescriptionTitle>Pickup:</TourDescriptionTitle>
+                      {_.map(
+                        pickups,
+                        (
+                          {
+                            pickup_time: pickupTime,
+                            pickup_location: pickupLocation,
+                            finish_time: finishTime,
+                            finish_location: finishLocation,
+                          },
+                          i
+                        ) =>
+                          _.map(
+                            [
+                              { time: pickupTime, location: pickupLocation, mes: 'pick up at' },
+                              { time: finishTime, location: finishLocation, mes: 'finish at' },
+                            ],
+                            ({ time, location, mes }, j) => (
+                              <TourDescriptionItem key={`${i}-${j}`}>
+                                {`${time} ${mes} ${location}`}
+                              </TourDescriptionItem>
+                            )
+                          )
+                      )}
+                    </TourDescription>
+                  )}
+                  {schedules && (
+                    <TourDescription>
+                      <TourDescriptionTitle>Schedule:</TourDescriptionTitle>
+                      {_.map(schedules, ({ from, to, location }, i) => (
+                        <TourDescriptionItem key={i}>
+                          {`${from} - ${to} ${location}`}
+                        </TourDescriptionItem>
+                      ))}
+                    </TourDescription>
+                  )}
+                </li>
+              )
+            )}
+          </ul>
+        </DescriptionWrapper>
+
+        {tourDetails.tourIncluding && (
+          <>
+            <SectionTitle>
+              <TourIcon />
+              <Gap />
+              Tour including:
+            </SectionTitle>
+            <ul>
+              {_.map(tourDetails.tourIncluding, i => (
+                <TourIncludingListItem key={i}>{i}</TourIncludingListItem>
+              ))}
+            </ul>
+          </>
+        )}
+        <br />
+        <br />
 
         <SectionHeader
           title={

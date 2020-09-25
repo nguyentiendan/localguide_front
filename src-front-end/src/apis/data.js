@@ -59,10 +59,64 @@ export async function getAllTours() {
   });
 }
 
-// eslint-disable-next-line no-unused-vars
 export async function getTourDetail({ id, uid }) {
   return request({
     url: '/tour/getTour',
+    method: 'GET',
+    params: {
+      id,
+      uid,
+    },
+  });
+}
+
+export async function getTourFeeTransport({ id, uid }) {
+  return request({
+    url: '/tourFee/getTransport',
+    method: 'GET',
+    params: {
+      id,
+      uid,
+    },
+  });
+}
+
+export async function getTourFeeMeal({ id, uid }) {
+  return request({
+    url: '/tourFee/getMeal',
+    method: 'GET',
+    params: {
+      id,
+      uid,
+    },
+  });
+}
+
+export async function getTourFeeOther({ id, uid }) {
+  return request({
+    url: '/tourFee/getOther',
+    method: 'GET',
+    params: {
+      id,
+      uid,
+    },
+  });
+}
+
+export async function getTourSchedulePickUp({ id, uid }) {
+  return request({
+    url: '/tourSchedule/getPickup',
+    method: 'GET',
+    params: {
+      id,
+      uid,
+    },
+  });
+}
+
+export async function getTourSchedule({ id, uid }) {
+  return request({
+    url: '/tourSchedule/getSchedule',
     method: 'GET',
     params: {
       id,

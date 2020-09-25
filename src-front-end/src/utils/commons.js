@@ -10,3 +10,12 @@ export function getBase64(file) {
     reader.onerror = error => reject(error);
   });
 }
+
+export async function safeFuncCall(func) {
+  try {
+    return await func.call();
+  } catch (e) {
+    console.error(e);
+  }
+  return new Promise(resolve => resolve());
+}
