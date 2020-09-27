@@ -26,10 +26,10 @@ const transformTourSchedule = ({ day, pickUpAt, finishAt, schedule }) => ({
   day: day + 1,
   pickup: [
     {
-      pickuptime: pickUpAt.time && moment(pickUpAt.time).format('HH:mm'),
-      pickuplocation: pickUpAt.place,
-      finishtime: finishAt.time && moment(finishAt.time).format('HH:mm'),
-      finishlocation: finishAt.place,
+      pickupTime: pickUpAt.time && moment(pickUpAt.time).format('HH:mm'),
+      pickupLocation: pickUpAt.place,
+      finishTime: finishAt.time && moment(finishAt.time).format('HH:mm'),
+      finishLocation: finishAt.place,
     },
   ],
   schedule: _.map(schedule, ({ time, place }) => ({
