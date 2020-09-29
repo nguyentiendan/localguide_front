@@ -20,6 +20,10 @@ const FieldTitle = styled.h4`
 const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   const [loading, setLoading] = useState(false);
   const [currentDay, setCurrentDay] = useState(0);
+  const currencySymbol = useMemo(
+    () => (tourCreationInfo._country && tourCreationInfo._country.symbol) || '',
+    [tourCreationInfo]
+  );
   const duration = useMemo(() => tourCreationInfo.duration || 0, [tourCreationInfo]);
   const tourDayFees = useMemo(() => {
     const initTourDayFees = _.times(Math.ceil(duration), _.constant({}));
@@ -150,24 +154,43 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
         await API.createTourFee({
           tourId: tourCreationInfo.id,
           day: tourDayFee.day + 1,
-          transport: _.map(tourDayFee.transportations, trans => ({
-            from: trans.from,
-            to: trans.to,
-            vehicle: trans.by,
-            quantity: trans.quantity,
-            unit: trans.unit,
-          })),
-          meal: _.map(tourDayFee.meals, meal => ({
-            name: meal.description,
-            time: meal.type,
-            quantity: meal.quantity,
-            unit: meal.unit,
-          })),
-          other: _.map(tourDayFee.others, other => ({
-            name: other.description,
-            quantity: other.quantity,
-            unit: other.unit,
-          })),
+          transport: _.chain(tourDayFee.transportations)
+            .filter(
+              trans =>
+                trans.from &&
+                trans.to &&
+                trans.by &&
+                !_.isNil(trans.quantity) &&
+                !_.isNil(trans.unit)
+            )
+            .map(trans => ({
+              from: trans.from,
+              to: trans.to,
+              vehicle: trans.by,
+              quantity: trans.quantity,
+              unit: `${trans.unit}`,
+            }))
+            .value(),
+          meal: _.chain(tourDayFee.meals)
+            .filter(
+              meal =>
+                meal.description && meal.type && !_.isNil(meal.quantity) && !_.isNil(meal.unit)
+            )
+            .map(meal => ({
+              name: meal.description,
+              time: meal.type,
+              quantity: meal.quantity,
+              unit: `${meal.unit}`,
+            }))
+            .value(),
+          other: _.chain(tourDayFee.others)
+            .filter(other => other.description && !_.isNil(other.quantity) && !_.isNil(other.unit))
+            .map(other => ({
+              name: other.description,
+              quantity: other.quantity,
+              unit: `${other.unit}`,
+            }))
+            .value(),
         });
       } catch (e) {
         // ignore
@@ -258,7 +281,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                       <Input
                         placeholder="Unit"
                         type="number"
-                        suffix="¥"
+                        suffix={currencySymbol}
                         value={transportation.unit}
                         onChange={e =>
                           updateTourDayFees({
@@ -328,7 +351,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                       <Input
                         placeholder="Unit"
                         type="number"
-                        suffix="¥"
+                        suffix={currencySymbol}
                         value={other.unit}
                         onChange={e =>
                           updateTourDayFees({
@@ -414,7 +437,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                       <Input
                         placeholder="Unit"
                         type="number"
-                        suffix="¥"
+                        suffix={currencySymbol}
                         value={meal.unit}
                         onChange={e =>
                           updateTourDayFees({
@@ -462,7 +485,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
             <Input
               placeholder="Fee"
               type="number"
-              suffix="¥"
+              suffix={currencySymbol}
               value={guideFee}
               onChange={e => updateGuideFee(e.target.value)}
             />
@@ -474,7 +497,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
             <Input
               placeholder="Total"
               type="number"
-              suffix="¥"
+              suffix={currencySymbol}
               style={{ pointerEvents: 'none' }}
               value={total}
             />
@@ -529,6 +552,9 @@ StepLayout.propTypes = {
     guideFee: PropTypes.number,
     minPax: PropTypes.number,
     maxPax: PropTypes.number,
+    _country: PropTypes.shape({
+      symbol: PropTypes.string,
+    }),
   }),
   onUpdate: PropTypes.func,
 };

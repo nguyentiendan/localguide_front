@@ -32,11 +32,14 @@ const transformTourSchedule = ({ day, pickUpAt, finishAt, schedule }) => ({
       finishLocation: finishAt.place,
     },
   ],
-  schedule: _.map(schedule, ({ time, place }) => ({
-    from: time && time[0] && moment(time[0]).format('HH:mm'),
-    to: time && time[1] && moment(time[1]).format('HH:mm'),
-    location: place,
-  })),
+  schedule: _.chain(schedule)
+    .filter(({ time, place }) => time && time[0] && time[1] && place)
+    .map(({ time, place }) => ({
+      from: time && time[0] && moment(time[0]).format('HH:mm'),
+      to: time && time[1] && moment(time[1]).format('HH:mm'),
+      location: place,
+    }))
+    .value(),
 });
 
 const StepLayout = ({ tourCreationInfo, onUpdate }) => {

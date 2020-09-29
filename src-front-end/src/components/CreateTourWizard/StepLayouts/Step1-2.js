@@ -40,12 +40,13 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     selectedCountry => {
       onUpdate({
         ...tourCreationInfo,
+        _country: _.find(countryOptions, c => c.code === selectedCountry.value),
         country: selectedCountry.label,
         city: undefined,
       });
       setSelectedCountryCode(selectedCountry.value);
     },
-    [onUpdate, tourCreationInfo]
+    [countryOptions, onUpdate, tourCreationInfo]
   );
 
   const updateCity = useCallback(
