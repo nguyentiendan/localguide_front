@@ -558,10 +558,10 @@ export const pageQuery = graphql`
       cover
       content
       day
-      guidefee
-      maxpax
-      minpax
-      short_desc
+      guideFee
+      maxPax
+      minPax
+      shortDesc
       tag
       total
     }
