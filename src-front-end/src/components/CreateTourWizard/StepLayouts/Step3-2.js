@@ -131,13 +131,16 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     async daySchedule => {
       setLoading(true);
       try {
-        await createTourSchedule(transformTourSchedule(daySchedule));
+        await createTourSchedule({
+          tourId: tourCreationInfo.id,
+          ...transformTourSchedule(daySchedule),
+        });
       } catch (e) {
         // ignore
       }
       setLoading(false);
     },
-    [onUpdate, schedule, daySchedules]
+    [onUpdate, schedule, daySchedules, tourCreationInfo]
   );
 
   return (
@@ -256,6 +259,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
 
 StepLayout.propTypes = {
   tourCreationInfo: PropTypes.shape({
+    id: PropTypes.number,
     duration: PropTypes.number,
     daySchedules: PropTypes.arrayOf(
       PropTypes.shape({
