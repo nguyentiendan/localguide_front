@@ -32,13 +32,9 @@ const StyledDropdown = styled(Dropdown).attrs({
   }
 `;
 
-const UserInfo = styled.div`
-  padding: 14px 14px 20px 14px;
-  border-bottom: 1px solid #f6f6f6;
-`;
-
-const UserName = styled.div`
-  font-size: 0.875rem;
+const Delimiter = styled.hr`
+  height: 1px;
+  margin: 5px 0;
 `;
 
 function UserDropdown({ avatarSize, ...rest }) {
@@ -59,11 +55,28 @@ function UserDropdown({ avatarSize, ...rest }) {
 
   return (
     <StyledDropdown trigger={trigger} position="right" {...rest}>
-      <UserInfo>
-        <UserName>{userName}</UserName>
-      </UserInfo>
-
       <Menu>
+        {user.role === 3 && (
+          <Menu.Item>
+            Admin settings
+          </Menu.Item>
+        )}
+        {(user.role === 1 || user.role === 2) && (
+          <Menu.Item>
+            Profile
+          </Menu.Item>
+        )}
+        {(user.role === 2) && (
+          <Menu.Item>
+            Tour list
+          </Menu.Item>
+        )}
+        {(user.role === 1 || user.role === 2) && (
+          <Menu.Item>
+            Change password
+          </Menu.Item>
+        )}
+        <Delimiter/>
         <Menu.Item danger onClick={logout}>
           Logout
         </Menu.Item>
