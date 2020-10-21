@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { math } from 'polished';
 
+import { Link } from 'gatsby';
 import useAuth from '../../utils/useAuth';
 import { hideAt } from '../../utils/responsive';
 import breakpoints from '../../styles/breakpoints';
@@ -58,25 +59,17 @@ function UserDropdown({ avatarSize, ...rest }) {
       <Menu>
         {user.role === 3 && (
           <Menu.Item>
-            Admin settings
+            <Link to="/admin">Admin settings</Link>
           </Menu.Item>
         )}
-        {(user.role === 1 || user.role === 2) && (
+        {user.role === 1 && <Menu.Item>Profile</Menu.Item>}
+        {user.role === 2 && (
           <Menu.Item>
-            Profile
+            <Link to="/my-tours">Tour list</Link>
           </Menu.Item>
         )}
-        {(user.role === 2) && (
-          <Menu.Item>
-            Tour list
-          </Menu.Item>
-        )}
-        {(user.role === 1 || user.role === 2) && (
-          <Menu.Item>
-            Change password
-          </Menu.Item>
-        )}
-        <Delimiter/>
+        {(user.role === 1 || user.role === 2) && <Menu.Item>Change password</Menu.Item>}
+        <Delimiter />
         <Menu.Item danger onClick={logout}>
           Logout
         </Menu.Item>

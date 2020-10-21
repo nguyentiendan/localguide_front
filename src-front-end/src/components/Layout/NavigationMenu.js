@@ -3,8 +3,9 @@ import { Link } from 'gatsby';
 import styled, { css } from 'styled-components';
 import { darken } from 'polished';
 import { MdSort } from 'react-icons/md';
-import { AiOutlineHome, AiOutlineSchedule } from 'react-icons/ai';
-import { FiMapPin, FiInbox } from 'react-icons/fi';
+import { AiOutlineHome } from 'react-icons/ai';
+// import { AiOutlineSchedule } from 'react-icons/ai';
+// import { FiMapPin, FiInbox } from 'react-icons/fi';
 
 import useAuth from '../../utils/useAuth';
 import { isBrowser } from '../../utils/browser';
@@ -163,8 +164,9 @@ function NavigationMenu() {
         <TopMenuContainer>
           <BigScreen>
             <NavigationLink activeClassName="is-active">Home</NavigationLink>
-            {user && (
-              <>
+            {/*
+                {user && (
+                <>
                 <NavigationLink activeClassName="is-active" to="/my-trips">
                   My Trips
                 </NavigationLink>
@@ -179,7 +181,9 @@ function NavigationMenu() {
                   My Inbox
                 </NavigationLink>
               </>
-            )}
+              
+              )}
+              */}
           </BigScreen>
           <RightPanel>{isBrowser() && authInfo}</RightPanel>
         </TopMenuContainer>
@@ -187,6 +191,7 @@ function NavigationMenu() {
       <SmallScreen>
         <BottomMenuWrapper>
           <NavItem className="nav-item" title="Home" link="/" icon={<AiOutlineHome />} />
+          {/*
           {user && (
             <>
               <NavItem
@@ -204,6 +209,7 @@ function NavigationMenu() {
               <NavItem className="nav-item" title="My Inbox" link="/my-inbox" icon={<FiInbox />} />
             </>
           )}
+          */}
           {/* <NavItem className="nav-item" title="My Account" link="/" icon={<AiOutlineUser />} /> */}
         </BottomMenuWrapper>
       </SmallScreen>
