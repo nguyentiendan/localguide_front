@@ -9,6 +9,16 @@ export function login(email, password) {
   });
 }
 
+// Logout api
+export function logout(uid) {
+  return request({
+    url: '/user/logout',
+    method: 'POST',
+    authRequired: true,
+    data: { uid },
+  });
+}
+
 // Create new account
 export function register(fullname, email, password) {
   return request({
