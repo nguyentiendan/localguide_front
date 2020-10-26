@@ -5,6 +5,7 @@ import { navigate } from 'gatsby';
 import { remove } from './storage';
 import { AUTH_TOKEN_KEY, getUserProfile, isAuthenticated } from './auth';
 import { isBrowser } from './browser';
+import * as API from '../apis';
 
 const AuthUserContext = createContext();
 const AuthLogoutContext = createContext();
@@ -14,6 +15,7 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     setUser(null);
+    API.logout(user.uid); // call logout API
     remove(AUTH_TOKEN_KEY);
     navigate('/login');
   };

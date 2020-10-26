@@ -65,7 +65,7 @@ function UserDropdown({ avatarSize, ...rest }) {
         {user.role === 1 && <Menu.Item>Profile</Menu.Item>}
         {user.role === 2 && (
           <Menu.Item>
-            <Link to="/my-tours">Tour list</Link>
+            <Link to="/my-tours">Guide Admin</Link>
           </Menu.Item>
         )}
         {(user.role === 1 || user.role === 2) && <Menu.Item>Change password</Menu.Item>}
