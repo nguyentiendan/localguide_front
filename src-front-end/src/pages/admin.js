@@ -5,6 +5,7 @@ import { navigate } from 'gatsby';
 import Layout from '../components/Layout';
 import TabTitle from '../components/TabTitle';
 import Tours from '../components/Admin/Tours';
+import Profile from '../components/Admin/Profile';
 import { isAuthenticated } from '../utils/auth';
 
 // function AdminPage() {
@@ -39,7 +40,7 @@ const AdminPage = () => {
           Guides
         </Tabs.TabPane>
         <Tabs.TabPane tab={<TabTitle title="Profile" />} key="3">
-          Profile
+          <Profile />
         </Tabs.TabPane>
         <Tabs.TabPane tab={<TabTitle title="Guests" />} key="4">
           Guests
