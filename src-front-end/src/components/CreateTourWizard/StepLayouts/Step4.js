@@ -2,8 +2,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Row, Space, Spin, Upload } from 'antd';
+import { PlusOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Modal, Col, Input, Row, Space, Spin, Upload } from 'antd';
 
 import colors from '../../../styles/colors';
 import * as API from '../../../apis';
@@ -11,7 +11,6 @@ import { uploadCoverPhoto, uploadPhoto } from '../../../apis';
 
 const Wrapper = styled.div`
   height: 100%;
-
   .cover-photo-upload {
     .ant-upload-select,
     .ant-upload-list-picture-card-container,
@@ -40,7 +39,45 @@ const Img = styled.img`
   object-fit: cover;
 `;
 
-const ImgEditor = ({ src, caption, name, updateCaption, deletePhoto, type }) => {
+const ActionImageWraper = styled.div`
+  position: relative;
+  & > div {
+    position: absolute;
+    border-radius: 4px;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: none;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  &&:hover div {
+    display: flex;
+  }
+  .styled-icon-zoom-image {
+    margin-right: 10px;
+  }
+  .styled-icon {
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 16px;
+  }
+`;
+
+const ImgEditor = ({
+  src,
+  caption,
+  name,
+  updateCaption,
+  deletePhoto,
+  // type,
+  setZoomImage,
+  zoomImage,
+}) => {
   const handleUpdateCaption = useCallback(
     e => {
       updateCaption(e.target.value, name);
@@ -54,22 +91,30 @@ const ImgEditor = ({ src, caption, name, updateCaption, deletePhoto, type }) => 
   if (!src) {
     return <></>;
   }
-
-  let photoType = '';
-  if (type) {
-    photoType = `${type} `;
-  }
-
+  // let photoType = '';
+  // if (type) {
+  //   photoType = `${type} `;
+  // }
   return (
     <ImgEditorWrapper>
-      <Img alt="preview" style={{ width: '100%' }} src={src} />
+      <ActionImageWraper>
+        <Img alt="preview" style={{ width: '100%' }} src={src} />
+        <div>
+          <EyeOutlined
+            className="styled-icon-zoom-image styled-icon"
+            onClick={() =>
+              setZoomImage({
+                ...zoomImage,
+                previewVisible: true,
+                url: src,
+              })
+            }
+          />
+          <DeleteOutlined className="styled-icon" onClick={handleDeletePhoto} />
+        </div>
+      </ActionImageWraper>
       <Space direction="vertical" style={{ width: '100%' }}>
         <Input placeholder="Caption" onBlur={handleUpdateCaption} />
-        {deletePhoto && (
-          <Button onClick={handleDeletePhoto} block danger>
-            {`Delete ${photoType}Photo`}
-          </Button>
-        )}
       </Space>
     </ImgEditorWrapper>
   );
@@ -81,7 +126,9 @@ ImgEditor.propTypes = {
   name: PropTypes.string,
   updateCaption: PropTypes.func,
   deletePhoto: PropTypes.func,
-  type: PropTypes.string,
+  // type: PropTypes.string,
+  zoomImage: PropTypes.shape({}),
+  setZoomImage: PropTypes.func,
 };
 
 ImgEditor.defaultProps = {
@@ -90,12 +137,17 @@ ImgEditor.defaultProps = {
   name: '',
   updateCaption: () => {},
   deletePhoto: null,
-  type: undefined,
+  // type: undefined,
+  setZoomImage: () => {},
+  zoomImage: {},
 };
 
 const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const [loading, setLoading] = useState(false);
-
+  const [zoomImage, setZoomImage] = useState({
+    previewVisible: false,
+    url: '',
+  });
   const tourId = useMemo(() => {
     return tourCreationInfo && tourCreationInfo.id;
   }, [tourCreationInfo]);
@@ -105,7 +157,6 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   }, [user]);
 
   const { coverPhoto, photos = [] } = tourCreationInfo;
-
   const handleCoverPhotoChange = useCallback(
     uploadedCoverPhoto => {
       onUpdate({
@@ -131,7 +182,6 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
       if (!tourCreationInfo.id) {
         return;
       }
-
       try {
         setLoading(true);
         const uploadedRes = await uploadCoverPhoto({ tourId: tourCreationInfo.id, file });
@@ -150,7 +200,6 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
       if (!tourCreationInfo.id) {
         return;
       }
-
       try {
         setLoading(true);
         const uploadedRes = await uploadPhoto({ tourId: tourCreationInfo.id, file });
@@ -219,7 +268,6 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
       <div className="ant-upload-text">{text}</div>
     </div>
   );
-
   return (
     <Spin spinning={loading}>
       <Wrapper>
@@ -231,8 +279,8 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
         </SubTitle>
         <br />
 
-        <Row gutter={32}>
-          <Col span={6}>
+        <Row gutter={32} style={{ flexDirection: 'column' }}>
+          <Col span={5}>
             {coverPhoto && (
               <ImgEditor
                 src={coverPhoto.name}
@@ -240,6 +288,8 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                 updateCaption={updateCaption}
                 deletePhoto={deleteCoverPhoto}
                 type="Cover"
+                zoomImage={zoomImage}
+                setZoomImage={setZoomImage}
               />
             )}
 
@@ -262,14 +312,23 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                     caption={photo.caption}
                     updateCaption={updateCaption}
                     deletePhoto={deletePhoto}
+                    zoomImage={zoomImage}
+                    setZoomImage={setZoomImage}
                   />
                 </Col>
               ))}
             </Row>
-            <Upload listType="picture-card" fileList={[]} action={handleUploadPhoto}>
+            <Upload listType="picture-card" fileList={[]} action={handleUploadPhoto} multiple>
               {photos.length >= 5 ? null : uploadButton('Upload photo')}
             </Upload>
           </Col>
+          <Modal
+            visible={zoomImage.previewVisible}
+            footer={null}
+            onCancel={() => setZoomImage({ ...zoomImage, previewVisible: false })}
+          >
+            <img alt="example" style={{ width: '100%' }} src={zoomImage.url} />
+          </Modal>
         </Row>
       </Wrapper>
     </Spin>
