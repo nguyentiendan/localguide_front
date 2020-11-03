@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Divider, Row, Col, Form, Input, Button, Table, Tag, Space, Badge } from 'antd';
 import moment from 'moment';
 import colors from '../../../styles/colors';
+import * as API from '../../../apis';
+import { getUserProfile } from '../../../utils/auth';
 
 const Wrapper = styled.div``;
-const FilterWrapper = styled.div`
+const FilterWrapper = styled(Form)`
   label {
     width: 75px;
   }
@@ -21,44 +23,11 @@ const STATUS = {
   DELETED: 'DELETED',
 };
 
-const data = [
-  {
-    key: '1',
-    name: 'Tokyo city tour',
-    feedback: 0,
-    price: 1200,
-    duration: 2,
-    pax: 1,
-    updatedDate: new Date(2020, 8, 8),
-    status: STATUS.APPROVED,
-  },
-  {
-    key: '2',
-    name: 'Osaka city tour',
-    feedback: 5,
-    price: 200,
-    duration: 1,
-    pax: 1,
-    updatedDate: new Date(2020, 8, 20),
-    status: STATUS.WAITING_FOR_APPROVAL,
-  },
-  {
-    key: '3',
-    name: 'Nagoya city tour',
-    feedback: 0,
-    price: 100,
-    duration: 1,
-    pax: 1,
-    updatedDate: new Date(2020, 8, 10),
-    status: STATUS.DELETED,
-  },
-];
-
 const columns = [
   {
     title: 'Tour name',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'Name',
+    key: 'Name',
     render: (name, tour) => (
       <Badge count={tour.feedback} offset={[15, 0]}>
         <TourTitle>{name}</TourTitle>
@@ -67,27 +36,27 @@ const columns = [
   },
   {
     title: 'Price',
-    dataIndex: 'price',
-    key: 'price',
+    dataIndex: 'Price',
+    key: 'Price',
   },
   {
     title: 'Duration',
-    dataIndex: 'duration',
-    key: 'duration',
+    dataIndex: 'Duration',
+    key: 'Duration',
   },
   {
     title: 'Pax',
-    key: 'pax',
-    dataIndex: 'pax',
+    key: 'MinPax',
+    dataIndex: 'MinPax',
   },
   {
     title: 'Updated Date',
-    key: 'updatedDate',
-    render: (updatedDate, tour) => moment(tour.updatedDate).format('YYYY-MM-DD'),
+    key: 'UpdatedAt',
+    render: (updatedDate, tour) => moment(tour.UpdatedAt).format('YYYY-MM-DD'),
   },
   {
     title: 'Status',
-    key: 'status',
+    key: 'Status',
     render: (status, tour) => (
       <Space size="middle">
         {tour.status === STATUS.APPROVED && <Tag color="success">APPROVED</Tag>}
@@ -101,6 +70,23 @@ const columns = [
 ];
 
 function Tours() {
+  const [data, setData] = useState([]);
+  const [loadingAllTour, setLoadingAllTour] = useState(false);
+  const user = getUserProfile();
+  useEffect(() => {
+    const getAllTours = async () => {
+      try {
+        setLoadingAllTour(true);
+        const res = await API.adminGetAllTour({ uid: user.uid, token: user.token });
+        setData(res.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingAllTour(false);
+      }
+    };
+    getAllTours();
+  }, []);
   return (
     <Wrapper>
       <FilterWrapper>
@@ -139,7 +125,7 @@ function Tours() {
       <br />
       <ListWrapper>
         <Divider orientation="left">Tour List</Divider>
-        <Table columns={columns} dataSource={data} />
+        <Table columns={columns} dataSource={data} loading={loadingAllTour} rowKey="Name" />
       </ListWrapper>
     </Wrapper>
   );

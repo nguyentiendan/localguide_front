@@ -233,3 +233,12 @@ export async function createTourSchedule({ tourId, day, pickup, schedule }) {
     data: { tourId, day, pickup, schedule },
   });
 }
+
+export async function adminGetAllTour({ uid, token }) {
+  return request({
+    url: `/admin/tour/${uid}?page=1`,
+    method: 'GET',
+    authRequired: true,
+    token,
+  });
+}
