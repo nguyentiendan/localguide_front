@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
@@ -79,9 +79,11 @@ const ImgEditor = ({
   name,
   updateCaption,
   deletePhoto,
-  // type,
+  type,
   setZoomImage,
   zoomImage,
+  index,
+  myRef,
 }) => {
   const handleUpdateCaption = useCallback(
     e => {
@@ -89,10 +91,13 @@ const ImgEditor = ({
     },
     [name, caption, updateCaption]
   );
-  const handleDeletePhoto = useCallback(() => {
+  const handleDeletePhoto = () => {
+    if (type !== 'Cover') {
+      // eslint-disable-next-line react/prop-types
+      myRef.current.state.fileList.splice(index, 1);
+    }
     deletePhoto(name);
-  }, [name, deletePhoto]);
-
+  };
   if (!src) {
     return <></>;
   }
@@ -131,9 +136,11 @@ ImgEditor.propTypes = {
   name: PropTypes.string,
   updateCaption: PropTypes.func,
   deletePhoto: PropTypes.func,
-  // type: PropTypes.string,
+  type: PropTypes.string,
   zoomImage: PropTypes.shape({}),
   setZoomImage: PropTypes.func,
+  index: PropTypes.number,
+  myRef: PropTypes.shape({}),
 };
 
 ImgEditor.defaultProps = {
@@ -141,10 +148,12 @@ ImgEditor.defaultProps = {
   caption: '',
   name: '',
   updateCaption: () => {},
-  deletePhoto: null,
-  // type: undefined,
+  deletePhoto: () => {},
+  type: '',
   setZoomImage: () => {},
   zoomImage: {},
+  myRef: {},
+  index: 0,
 };
 
 const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
@@ -153,6 +162,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     previewVisible: false,
     url: '',
   });
+  const removeImage = useRef(null);
 
   const tourId = useMemo(() => {
     return tourCreationInfo && tourCreationInfo.id;
@@ -164,67 +174,58 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
 
   const { coverPhoto, photos = [] } = tourCreationInfo;
 
-  const handleCoverPhotoChange = useCallback(
-    uploadedCoverPhoto => {
-      onUpdate({
-        ...tourCreationInfo,
-        coverPhoto: { ...uploadedCoverPhoto },
+  const handleCoverPhotoChange = uploadedCoverPhoto => {
+    onUpdate({
+      ...tourCreationInfo,
+      coverPhoto: { ...uploadedCoverPhoto },
+    });
+  };
+
+  const handlePhotosChange = uploadedPhotos => {
+    onUpdate({
+      ...tourCreationInfo,
+      photos: uploadedPhotos,
+    });
+  };
+
+  const handleUploadCoverPhoto = async file => {
+    if (!tourCreationInfo.id) {
+      return;
+    }
+    try {
+      setLoading(true);
+      const uploadedRes = await uploadCoverPhoto({ tourId: tourCreationInfo.id, file });
+      handleCoverPhotoChange(uploadedRes.data[0]);
+    } catch (e) {
+      // ignored
+    }
+
+    setLoading(false);
+  };
+
+  const handleUploadPhoto = async info => {
+    if (!tourCreationInfo.id) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      let fileList = [...info.fileList];
+      fileList = fileList.slice(-5);
+      removeImage.current.state.fileList = fileList;
+      fileList = fileList.map(file => {
+        return file.originFileObj;
       });
-    },
-    [onUpdate, coverPhoto, tourCreationInfo]
-  );
-
-  const handlePhotosChange = useCallback(
-    uploadedPhotos => {
-      onUpdate({
-        ...tourCreationInfo,
-        photos: _.concat(photos, uploadedPhotos).filter(v => !!v),
+      const uploadedRes = await uploadMultiPhoto({
+        tourId: tourCreationInfo.id,
+        file: fileList,
       });
-    },
-    [onUpdate, photos, tourCreationInfo]
-  );
-
-  const handleUploadCoverPhoto = useCallback(
-    async file => {
-      if (!tourCreationInfo.id) {
-        return;
-      }
-      try {
-        setLoading(true);
-        const uploadedRes = await uploadCoverPhoto({ tourId: tourCreationInfo.id, file });
-        handleCoverPhotoChange(uploadedRes.data[0]);
-      } catch (e) {
-        // ignored
-      }
-
       setLoading(false);
-    },
-    [tourCreationInfo, loading]
-  );
-
-  const handleUploadPhoto = useCallback(
-    async info => {
-      if (!tourCreationInfo.id) {
-        return;
-      }
-
-      try {
-        const image = [];
-        info.fileList.forEach(file => {
-          image.push(file.originFileObj);
-        });
-        setLoading(true);
-
-        const uploadedRes = await uploadMultiPhoto({ tourId: tourCreationInfo.id, file: image });
-        handlePhotosChange(uploadedRes.data);
-      } catch (e) {
-        // ignored
-      }
-
-      setLoading(false);
-    },
-    [tourCreationInfo]
-  );
+      handlePhotosChange(uploadedRes.data);
+    } catch (e) {
+      // ignored
+    }
+  };
 
   const updateCaption = useCallback(
     async (caption, name) => {
@@ -238,42 +239,36 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     },
     [tourId, uid]
   );
+  const deletePhoto = async name => {
+    setLoading(true);
+    try {
+      await API.deletePhoto({ name, tourId, uid });
+      const removedPhotos = [...photos];
+      _.remove(removedPhotos, photo => photo.name === name);
+      onUpdate({
+        ...tourCreationInfo,
+        photos: removedPhotos,
+      });
+    } catch (e) {
+      // ignored
+    }
+    setLoading(false);
+  };
 
-  const deletePhoto = useCallback(
-    async name => {
-      setLoading(true);
-      try {
-        await API.deletePhoto({ name, tourId, uid });
-        const removedPhotos = [...photos];
-        _.remove(removedPhotos, photo => photo.name === name);
-        onUpdate({
-          ...tourCreationInfo,
-          photos: removedPhotos,
-        });
-      } catch (e) {
-        // ignored
-      }
-      setLoading(false);
-    },
-    [tourId, uid, photos]
-  );
-
-  const deleteCoverPhoto = useCallback(
-    async name => {
-      setLoading(true);
-      try {
-        await API.deletePhoto({ name, tourId, uid });
-        onUpdate({
-          ...tourCreationInfo,
-          coverPhoto: undefined,
-        });
-      } catch (e) {
-        // ignored
-      }
-      setLoading(false);
-    },
-    [tourId, uid]
-  );
+  const deleteCoverPhoto = async name => {
+    console.log('asdfkakadksf');
+    setLoading(true);
+    try {
+      await API.deletePhoto({ name, tourId, uid });
+      onUpdate({
+        ...tourCreationInfo,
+        coverPhoto: undefined,
+      });
+    } catch (e) {
+      // ignored
+    }
+    setLoading(false);
+  };
 
   const uploadButton = text => (
     <div>
@@ -298,6 +293,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
             {coverPhoto && (
               <ImgEditor
                 src={coverPhoto.name}
+                name={coverPhoto.name}
                 caption={coverPhoto.caption}
                 updateCaption={updateCaption}
                 deletePhoto={deleteCoverPhoto}
@@ -318,7 +314,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
           </Col>
           <Col span={18}>
             <Row gutter={16}>
-              {_.map(photos, photo => (
+              {_.map(photos, (photo, index) => (
                 <Col key={photo.name} span={6}>
                   <ImgEditor
                     src={photo.name}
@@ -328,11 +324,13 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                     deletePhoto={deletePhoto}
                     zoomImage={zoomImage}
                     setZoomImage={setZoomImage}
+                    myRef={removeImage}
+                    index={index}
                   />
                 </Col>
               ))}
             </Row>
-            <Upload listType="picture-card" onChange={handleUploadPhoto} multiple>
+            <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
               {photos.length >= 5 ? null : uploadButton('Upload photo')}
             </Upload>
           </Col>
