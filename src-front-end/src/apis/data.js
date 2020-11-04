@@ -175,6 +175,16 @@ export async function uploadPhoto({ tourId, file }) {
   });
 }
 
+export async function uploadMultiPhoto({ tourId, file }) {
+  return request({
+    url: `/tour/uploadMultiFile`,
+    method: 'POST',
+    authRequired: true,
+    data: { id: tourId, uploadFiles: file },
+    isFormData: true,
+  });
+}
+
 export async function updateCaption({ caption, name, tourId, uid }) {
   return request({
     url: `/tour/updateCaption`,

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
@@ -7,8 +7,7 @@ import { Modal, Col, Input, Row, Space, Spin, Upload } from 'antd';
 
 import colors from '../../../styles/colors';
 import * as API from '../../../apis';
-import { getCndResourceUrl } from '../../../utils/commons';
-import { uploadCoverPhoto, uploadPhoto } from '../../../apis';
+import { uploadCoverPhoto, uploadMultiPhoto } from '../../../apis';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -18,6 +17,11 @@ const Wrapper = styled.div`
     .ant-upload-list-item-list-type-picture-card {
       float: none;
       width: 100%;
+    }
+  }
+  && {
+    .ant-upload-list-picture-card-container {
+      display: none;
     }
   }
 `;
@@ -149,8 +153,6 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     previewVisible: false,
     url: '',
   });
-  const [photos, setPhotos] = useState([]);
-  const { coverPhoto } = tourCreationInfo;
 
   const tourId = useMemo(() => {
     return tourCreationInfo && tourCreationInfo.id;
@@ -160,18 +162,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     return user && user.uid;
   }, [user]);
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const { data } = await API.getTourPhotos({ id: tourId, uid });
-        setPhotos(data || []);
-      } catch (e) {
-        // ignored
-      }
-      setLoading(false);
-    })();
-  }, [tourId, uid, tourCreationInfo]);
+  const { coverPhoto, photos = [] } = tourCreationInfo;
 
   const handleCoverPhotoChange = useCallback(
     uploadedCoverPhoto => {
@@ -181,6 +172,16 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
       });
     },
     [onUpdate, coverPhoto, tourCreationInfo]
+  );
+
+  const handlePhotosChange = useCallback(
+    uploadedPhotos => {
+      onUpdate({
+        ...tourCreationInfo,
+        photos: _.concat(photos, uploadedPhotos).filter(v => !!v),
+      });
+    },
+    [onUpdate, photos, tourCreationInfo]
   );
 
   const handleUploadCoverPhoto = useCallback(
@@ -202,24 +203,27 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   );
 
   const handleUploadPhoto = useCallback(
-    async file => {
+    async info => {
       if (!tourCreationInfo.id) {
         return;
       }
+
       try {
-        setLoading(true);
-        const uploadedRes = await uploadPhoto({ tourId: tourCreationInfo.id, file });
-        onUpdate({
-          ...tourCreationInfo,
-          photos: _.concat(photos, uploadedRes.data),
+        const image = [];
+        info.fileList.forEach(file => {
+          image.push(file.originFileObj);
         });
+        setLoading(true);
+
+        const uploadedRes = await uploadMultiPhoto({ tourId: tourCreationInfo.id, file: image });
+        handlePhotosChange(uploadedRes.data);
       } catch (e) {
         // ignored
       }
 
       setLoading(false);
     },
-    [tourCreationInfo, onUpdate]
+    [tourCreationInfo]
   );
 
   const updateCaption = useCallback(
@@ -277,6 +281,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
       <div className="ant-upload-text">{text}</div>
     </div>
   );
+
   return (
     <Spin spinning={loading}>
       <Wrapper>
@@ -316,7 +321,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
               {_.map(photos, photo => (
                 <Col key={photo.name} span={6}>
                   <ImgEditor
-                    src={getCndResourceUrl(photo.name)}
+                    src={photo.name}
                     name={photo.name}
                     caption={photo.caption}
                     updateCaption={updateCaption}
@@ -327,7 +332,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                 </Col>
               ))}
             </Row>
-            <Upload listType="picture-card" fileList={[]} action={handleUploadPhoto} multiple>
+            <Upload listType="picture-card" onChange={handleUploadPhoto} multiple>
               {photos.length >= 5 ? null : uploadButton('Upload photo')}
             </Upload>
           </Col>

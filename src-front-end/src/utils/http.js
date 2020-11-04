@@ -32,7 +32,13 @@ export async function request({
   if (isFormData) {
     const formData = new FormData();
     _.forEach(submitData, (value, key) => {
-      formData.append(key, value);
+      if (key === 'uploadFiles') {
+        _.forEach(value, v => {
+          formData.append(key, v);
+        });
+      } else {
+        formData.append(key, value);
+      }
     });
     submitData = formData;
   }
