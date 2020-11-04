@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Divider, Row, Col, Form, Input, Button, Table, Tag, Space, Badge } from 'antd';
 import moment from 'moment';
+import { Link } from 'gatsby';
+
 import colors from '../../../styles/colors';
 import * as API from '../../../apis';
 import { getUserProfile } from '../../../utils/auth';
@@ -18,9 +20,9 @@ const TourTitle = styled.span`
 `;
 
 const STATUS = {
-  APPROVED: 'APPROVED',
-  WAITING_FOR_APPROVAL: 'WAITING_FOR_APPROVAL',
-  DELETED: 'DELETED',
+  APPROVED: 1,
+  WAITING_FOR_APPROVAL: 0,
+  DELETED: 2,
 };
 
 const columns = [
@@ -30,24 +32,31 @@ const columns = [
     key: 'Name',
     render: (name, tour) => (
       <Badge count={tour.feedback} offset={[15, 0]}>
-        <TourTitle>{name}</TourTitle>
+        <Link to={`tours/${tour.UID}/${tour.ID}`}>
+          <TourTitle>{name}</TourTitle>
+        </Link>
       </Badge>
     ),
   },
   {
+    title: 'Post by',
+    dataIndex: 'Fullname',
+    key: 'Fullname',
+  },
+  {
     title: 'Price',
-    dataIndex: 'Price',
-    key: 'Price',
+    dataIndex: 'Total',
+    key: 'Total',
   },
   {
     title: 'Duration',
-    dataIndex: 'Duration',
-    key: 'Duration',
+    dataIndex: 'Day',
+    key: 'Day',
   },
   {
     title: 'Pax',
-    key: 'MinPax',
-    dataIndex: 'MinPax',
+    key: 'MaxPax',
+    dataIndex: 'MaxPax',
   },
   {
     title: 'Updated Date',
@@ -59,11 +68,11 @@ const columns = [
     key: 'Status',
     render: (status, tour) => (
       <Space size="middle">
-        {tour.status === STATUS.APPROVED && <Tag color="success">APPROVED</Tag>}
-        {tour.status === STATUS.WAITING_FOR_APPROVAL && (
+        {tour.Status === STATUS.APPROVED && <Tag color="success">APPROVED</Tag>}
+        {tour.Status === STATUS.WAITING_FOR_APPROVAL && (
           <Tag color="warning">WAITING FOR APPROVAL</Tag>
         )}
-        {tour.status === STATUS.DELETED && <Tag color="error">DELETED</Tag>}
+        {tour.Status === STATUS.DELETED && <Tag color="error">DELETED</Tag>}
       </Space>
     ),
   },
