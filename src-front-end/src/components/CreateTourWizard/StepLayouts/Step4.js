@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
@@ -7,6 +7,7 @@ import { Modal, Col, Input, Row, Space, Spin, Upload } from 'antd';
 
 import colors from '../../../styles/colors';
 import * as API from '../../../apis';
+import { getCndResourceUrl } from '../../../utils/commons';
 import { uploadCoverPhoto, uploadPhoto } from '../../../apis';
 
 const Wrapper = styled.div`
@@ -148,6 +149,9 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     previewVisible: false,
     url: '',
   });
+  const [photos, setPhotos] = useState([]);
+  const { coverPhoto } = tourCreationInfo;
+
   const tourId = useMemo(() => {
     return tourCreationInfo && tourCreationInfo.id;
   }, [tourCreationInfo]);
@@ -156,7 +160,19 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     return user && user.uid;
   }, [user]);
 
-  const { coverPhoto, photos = [] } = tourCreationInfo;
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const { data } = await API.getTourPhotos({ id: tourId, uid });
+        setPhotos(data || []);
+      } catch (e) {
+        // ignored
+      }
+      setLoading(false);
+    })();
+  }, [tourId, uid, tourCreationInfo]);
+
   const handleCoverPhotoChange = useCallback(
     uploadedCoverPhoto => {
       onUpdate({
@@ -165,16 +181,6 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
       });
     },
     [onUpdate, coverPhoto, tourCreationInfo]
-  );
-
-  const handlePhotosChange = useCallback(
-    uploadedPhotos => {
-      onUpdate({
-        ...tourCreationInfo,
-        photos: _.concat(photos, uploadedPhotos).filter(v => !!v),
-      });
-    },
-    [onUpdate, photos, tourCreationInfo]
   );
 
   const handleUploadCoverPhoto = useCallback(
@@ -203,14 +209,17 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
       try {
         setLoading(true);
         const uploadedRes = await uploadPhoto({ tourId: tourCreationInfo.id, file });
-        handlePhotosChange(uploadedRes.data);
+        onUpdate({
+          ...tourCreationInfo,
+          photos: _.concat(photos, uploadedRes.data),
+        });
       } catch (e) {
         // ignored
       }
 
       setLoading(false);
     },
-    [tourCreationInfo]
+    [tourCreationInfo, onUpdate]
   );
 
   const updateCaption = useCallback(
@@ -307,7 +316,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
               {_.map(photos, photo => (
                 <Col key={photo.name} span={6}>
                   <ImgEditor
-                    src={photo.name}
+                    src={getCndResourceUrl(photo.name)}
                     name={photo.name}
                     caption={photo.caption}
                     updateCaption={updateCaption}
