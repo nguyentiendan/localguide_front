@@ -61,9 +61,30 @@ export async function getAllTours() {
 
 export async function getGuideAllTours({ uid }) {
   return request({
-    url: `/tour/guideAllTour?uid=${uid}`,
+    url: `guide/tour/${uid}?page=1`,
     method: 'GET',
     authRequired: true,
+  });
+}
+
+export async function getAllFeedback({ uid, id }) {
+  return request({
+    url: `admin/tourFeedback/getAll?uid=${uid}&id=${id}`,
+    method: 'GET',
+    authRequired: true,
+  });
+}
+
+export async function createReplyFeedback({ uid, feedbackId, content }) {
+  return request({
+    url: `admin/tourFeedback/create`,
+    method: 'POST',
+    authRequired: true,
+    data: {
+      uid,
+      feedbackId,
+      content,
+    },
   });
 }
 
