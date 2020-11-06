@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import moment from 'moment';
+import { Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 
 import colors from '../../styles/colors';
 
@@ -26,13 +28,10 @@ const SubTitle = styled.h5`
   margin-bottom: 0.5rem;
 `;
 
-const Avatar = styled.img`
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: center;
-  margin-right: 1.5rem;
+const AvatarWrapper = styled(Avatar)`
+  && {
+    margin-right: 1.5rem;
+  }
 `;
 
 const Delimiter = styled.div`
@@ -44,7 +43,7 @@ const Content = styled.div``;
 
 const CommentListItem = ({ className, user, avatar, date, content }) => (
   <Wrapper className={className}>
-    <Avatar src={avatar} />
+    <AvatarWrapper src={avatar} icon={<UserOutlined />} size="large" />
     <ContentWrapper>
       <Title>{user}</Title>
       <SubTitle>{moment(date).fromNow()}</SubTitle>

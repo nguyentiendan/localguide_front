@@ -31,9 +31,9 @@ export async function getAllBlogs() {
   });
 }
 
-export async function getGuideProfile(uid) {
+export async function getGuideProfile({ uid, guideId }) {
   return request({
-    url: `/account/get/${uid}`,
+    url: `/account/guide/${uid}/${guideId}`,
     method: 'GET',
   });
 }

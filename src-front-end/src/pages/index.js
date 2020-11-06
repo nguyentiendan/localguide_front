@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { graphql } from 'gatsby';
+import { graphql, Link } from 'gatsby';
 import Img from 'gatsby-image';
 import styled from 'styled-components';
 import _ from 'lodash';
@@ -116,15 +116,19 @@ function IndexPage({ data }) {
       <Spin spinning={loadingTourGuides}>
         <ListWrapper>
           <ListContainer>
-            {_.map(tourGuides, tourGuide => (
-              <TourGuideListItem
-                key={tourGuide.id}
-                name={tourGuide.fullname}
-                level={tourGuide.level}
-                avatar={tourGuide.avatar}
-                className="tour-guide"
-              />
-            ))}
+            {_.map(tourGuides, tourGuide => {
+              return (
+                <Link to={`/guide?uid=${tourGuide.uid}&id=${tourGuide.id}`}>
+                  <TourGuideListItem
+                    key={tourGuide.id}
+                    name={tourGuide.fullname}
+                    level={tourGuide.level}
+                    avatar={tourGuide.avatar}
+                    className="tour-guide"
+                  />
+                </Link>
+              );
+            })}
           </ListContainer>
         </ListWrapper>
       </Spin>
