@@ -49,7 +49,7 @@ const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid }) => {
     <Badge style={{ width: '100%' }}>
       <Card
         hoverable
-        style={{ width: '100%', cursor: 'pointer', minWidth: 300 }}
+        style={{ width: '100%', cursor: 'pointer', minWidth: 300, minHeight: 496 }}
         cover={<Image src={coverImg} onClick={() => navigate(`/edit-tour?q=${id}`)} />}
         actions={[
           <MessageOutlined key="feedback" onClick={() => setShowModal(true)} />,
