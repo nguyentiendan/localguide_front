@@ -175,6 +175,16 @@ export async function uploadPhoto({ tourId, file }) {
   });
 }
 
+export async function uploadAvatar({ uid, file }) {
+  return request({
+    url: `/account/uploadAvatar`,
+    method: 'POST',
+    authRequired: true,
+    data: { uid, uploadFile: file },
+    isFormData: true,
+  });
+}
+
 export async function updateCaption({ caption, name, tourId, uid }) {
   return request({
     url: `/tour/updateCaption`,
@@ -231,5 +241,43 @@ export async function createTourSchedule({ tourId, day, pickup, schedule }) {
     method: 'POST',
     authRequired: true,
     data: { tourId, day, pickup, schedule },
+  });
+}
+
+export async function getAdminProfile({ uid }) {
+  return request({
+    url: `account/admin/${uid}`,
+    method: 'GET',
+  });
+}
+
+export async function editProfile(data) {
+  return request({
+    url: 'account/edit',
+    method: 'POST',
+    authRequired: true,
+    data,
+  });
+}
+
+export async function getAllInterest() {
+  return request({
+    url: '/interest/getAllInterest',
+    method: 'GET',
+  });
+}
+
+export async function getAllExtra() {
+  return request({
+    url: '/extra/getAllExtra',
+    method: 'GET',
+    authRequired: true,
+  });
+}
+
+export async function getAllLang() {
+  return request({
+    url: '/lang/getAllLang',
+    method: 'GET',
   });
 }
