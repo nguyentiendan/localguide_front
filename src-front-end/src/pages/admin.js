@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Tabs } from 'antd';
 import { navigate } from 'gatsby';
@@ -6,7 +6,7 @@ import Layout from '../components/Layout';
 import TabTitle from '../components/TabTitle';
 import Tours from '../components/Admin/Tours';
 import Profile from '../components/Admin/Profile';
-import { isAuthenticated } from '../utils/auth';
+import { isAuthenticated, getUserProfile } from '../utils/auth';
 
 // function AdminPage() {
 const AdminPage = () => {
@@ -15,7 +15,7 @@ const AdminPage = () => {
   //  console.log("ABC")
   //  navigate('/login');
   // }
-
+  const [userProfile] = useState(getUserProfile());
   useEffect(() => {
     function check() {
       if (!isAuthenticated()) {
@@ -40,7 +40,7 @@ const AdminPage = () => {
           Guides
         </Tabs.TabPane>
         <Tabs.TabPane tab={<TabTitle title="Profile" />} key="3">
-          <Profile />
+          <Profile uid={userProfile?.uid} />
         </Tabs.TabPane>
         <Tabs.TabPane tab={<TabTitle title="Guests" />} key="4">
           Guests
