@@ -59,11 +59,20 @@ export async function getAllTours() {
   });
 }
 
-export async function getGuideAllTours({ uid }) {
+export async function getGuideAllTours({ uid, page }) {
   return request({
-    url: `guide/tour/${uid}?page=1`,
+    url: `guide/tour/${uid}?page=${page}`,
     method: 'GET',
     authRequired: true,
+  });
+}
+
+export async function deleteTour({ id, uid }) {
+  return request({
+    url: `guide/deleteTour`,
+    method: 'DELETE',
+    authRequired: true,
+    data: { uid, id },
   });
 }
 

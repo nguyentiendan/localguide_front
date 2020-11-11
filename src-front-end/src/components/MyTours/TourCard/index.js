@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { navigate, Link } from 'gatsby';
@@ -14,7 +15,7 @@ const Image = styled.img`
   object-fit: cover;
 `;
 
-const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid }) => {
+const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid, handleDeleteTour }) => {
   const [showModal, setShowModal] = useState(false);
   const [loadingCreateFeedback, setLoadingCreateFeedback] = useState(false);
 
@@ -51,11 +52,18 @@ const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid }) => {
         hoverable
         style={{ width: '100%', cursor: 'pointer', minWidth: 300, minHeight: 496 }}
         cover={<Image src={coverImg} onClick={() => navigate(`/edit-tour?q=${id}`)} />}
-        actions={[
-          <MessageOutlined key="feedback" onClick={() => setShowModal(true)} />,
-          <EditOutlined key="edit" onClick={() => navigate(`/edit-tour?q=${id}`)} />,
-          <DeleteOutlined key="delete" />,
-        ]}
+        actions={
+          status
+            ? [
+              <MessageOutlined key="feedback" onClick={() => setShowModal(true)} />,
+              <EditOutlined key="edit" onClick={() => navigate(`/edit-tour?q=${id}`)} />,
+              ]
+            : [
+              <MessageOutlined key="feedback" onClick={() => setShowModal(true)} />,
+              <EditOutlined key="edit" onClick={() => navigate(`/edit-tour?q=${id}`)} />,
+              <DeleteOutlined key="delete" onClick={() => handleDeleteTour({ uid, id })} />,
+              ]
+        }
       >
         <Link to={`/edit-tour?q=${id}`}>
           <Card.Meta
@@ -93,11 +101,13 @@ TourCard.propTypes = {
   id: PropTypes.number.isRequired,
   status: PropTypes.number.isRequired,
   uid: PropTypes.string.isRequired,
+  handleDeleteTour: PropTypes.func,
 };
 
 TourCard.defaultProps = {
   avatarImg: '',
   coverImg: '',
+  handleDeleteTour: () => {},
 };
 
 export default TourCard;
