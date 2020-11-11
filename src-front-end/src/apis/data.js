@@ -84,6 +84,14 @@ export async function getAllFeedback({ uid, id }) {
   });
 }
 
+export async function getAllFeedbackOfGuide({ uid, id }) {
+  return request({
+    url: `guide/tourFeedback/getAll?uid=${uid}&id=${id}`,
+    method: 'GET',
+    authRequired: true,
+  });
+}
+
 export async function createReplyFeedback({ uid, feedbackId, content }) {
   return request({
     url: `admin/tourFeedback/create`,

@@ -15,6 +15,27 @@ const Image = styled.img`
   object-fit: cover;
 `;
 
+const comments = [
+  {
+    author: 'Han Solo',
+    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+    content: "Thanks. Great service.",
+    // datetime: moment().fromNow(),
+  },
+  {
+    author: 'Han Solo',
+    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+    content: "Thanks. Great service.",
+    // datetime: moment().fromNow(),
+  },
+  {
+    author: 'Han Solo',
+    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+    content: "Thanks. Great service.",
+    // datetime: moment().fromNow(),
+  }
+];
+
 const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid, handleDeleteTour }) => {
   const [showModal, setShowModal] = useState(false);
   const [loadingCreateFeedback, setLoadingCreateFeedback] = useState(false);
@@ -22,7 +43,7 @@ const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid, handleDele
   useEffect(() => {
     const fetchAllFeedback = async () => {
       if (showModal) {
-        const res = await API.getAllFeedback({ uid, id });
+        const res = await API.getAllFeedbackOfGuide({ uid, id });
         console.log(res);
       }
     };
@@ -57,12 +78,12 @@ const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid, handleDele
             ? [
               <MessageOutlined key="feedback" onClick={() => setShowModal(true)} />,
               <EditOutlined key="edit" onClick={() => navigate(`/edit-tour?q=${id}`)} />,
-              ]
+            ]
             : [
               <MessageOutlined key="feedback" onClick={() => setShowModal(true)} />,
               <EditOutlined key="edit" onClick={() => navigate(`/edit-tour?q=${id}`)} />,
               <DeleteOutlined key="delete" onClick={() => handleDeleteTour({ uid, id })} />,
-              ]
+            ]
         }
       >
         <Link to={`/edit-tour?q=${id}`}>
@@ -85,6 +106,7 @@ const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid, handleDele
         footer={null}
       >
         <FeedbackPanel
+          comments={comments}
           createFeedback={createFeedback}
           loadingCreateFeedback={loadingCreateFeedback}
         />
@@ -107,7 +129,7 @@ TourCard.propTypes = {
 TourCard.defaultProps = {
   avatarImg: '',
   coverImg: '',
-  handleDeleteTour: () => {},
+  handleDeleteTour: () => { },
 };
 
 export default TourCard;
