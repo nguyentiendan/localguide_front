@@ -1,11 +1,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Form, Input, Select, Button, InputNumber, Row, Col } from 'antd';
+import { Form, Input, Select, Button, InputNumber, Row, Col, Spin, notification } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import styled from 'styled-components';
 
 import * as API from '../../../apis';
 import TagInterests from '../../HandleTag/Interests';
 import UploadAvatar from '../../Input/UploadAvatar';
+
+const FormWrapper = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  && {
+    .ant-form-item {
+      width: 100%;
+    }
+  }
+`;
 
 const { Option } = Select;
 
@@ -23,7 +35,7 @@ const formItemLayout = {
       span: 24,
     },
     sm: {
-      span: 8, // input box size
+      span: 12, // input box size
     },
   },
 };
@@ -40,7 +52,7 @@ const tailFormItemLayout = {
   },
 };
 
-const GuideProfile = ({ uid }) => {
+const AdminProfile = ({ uid }) => {
   const [form] = Form.useForm();
   const { country, fullname, mobile, job, age, education, experience } = form.getFieldsValue();
   const [profile, setProfile] = useState({});
@@ -61,6 +73,7 @@ const GuideProfile = ({ uid }) => {
   const [language, setLanguage] = useState({
     tags: [],
   });
+
   const fetchAdminProfile = useCallback(async () => {
     setIsloading(true);
     const res = await API.getGuideProfile(uid);
@@ -77,16 +90,6 @@ const GuideProfile = ({ uid }) => {
   useEffect(() => {
     fetchAdminProfile();
   }, [fetchAdminProfile]);
-
-  useEffect(() => {
-    const fetchCity = async () => {
-      if (profile.country || country) {
-        const resCity = await API.getCityOfCountry(profile.country || country);
-        setRootCity(resCity.data);
-      }
-    };
-    fetchCity();
-  }, [profile.country, API.getCityOfCountry, setRootCity, country]);
 
   useEffect(() => {
     (async () => {
@@ -110,6 +113,20 @@ const GuideProfile = ({ uid }) => {
     })();
   }, [API.getAllInterest, API.getAllExtra, API.getAllLang, setDefaultTags]);
 
+  const handleSelectCountryAndCity = value => {
+    form.setFieldsValue({ country: value });
+    const fetchCity = async () => {
+      if (profile.country || country) {
+        setIsloading(true);
+        const resCity = await API.getCityOfCountry(value || profile.country);
+        setRootCity(resCity.data);
+        form.setFieldsValue({ city: null });
+        setIsloading(false);
+      }
+    };
+    fetchCity();
+  };
+
   const onFinish = async values => {
     setIsloading(true);
     await API.editProfile({
@@ -119,204 +136,214 @@ const GuideProfile = ({ uid }) => {
       extras: extras.tags?.join(';'),
       language: language.tags?.join(';'),
     });
+    notification.success({ message: 'You have successfully updated your profile.' });
     setIsloading(false);
   };
 
   return (
-    <Form {...formItemLayout} form={form} name="Profile" onFinish={onFinish} scrollToFirstError>
-      <Form.Item name="avatar">
-        <UploadAvatar uid={uid} src={profile.avatar} />
-      </Form.Item>
-
-      <Form.Item
-        name="fullname"
-        label="Full Name"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your Full Name!',
-          },
-        ]}
-        initialValue={
-          profile.fullname && form.setFieldsValue({ fullname: fullname || profile.fullname })
-        }
+    <Spin spinning={isloading}>
+      <FormWrapper
+        {...formItemLayout}
+        form={form}
+        name="Profile"
+        onFinish={onFinish}
+        scrollToFirstError
       >
-        <Input />
-      </Form.Item>
+        <Form.Item name="avatar">
+          <UploadAvatar uid={uid} src={profile.avatar} />
+        </Form.Item>
 
-      <Form.Item
-        name="email"
-        label="E-mail"
-        rules={[
-          {
-            type: 'email',
-            message: 'The input is not valid E-mail!',
-          },
-          {
-            required: true,
-            message: 'Please input your E-mail!',
-          },
-        ]}
-        initialValue={profile.email && form.setFieldsValue({ email: profile.email })}
-      >
-        <Input disabled={profile.email} />
-      </Form.Item>
+        <Form.Item
+          name="fullname"
+          label="Full Name"
+          rules={[
+            {
+              required: true,
+              message: 'Please input your Full Name!',
+            },
+          ]}
+          initialValue={
+            profile.fullname && form.setFieldsValue({ fullname: fullname || profile.fullname })
+          }
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item
-        name="mobile"
-        label="Mobile"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your Mobile phone!',
-          },
-        ]}
-        initialValue={profile.mobile && form.setFieldsValue({ mobile: mobile || profile.mobile })}
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item
+          name="email"
+          label="E-mail"
+          rules={[
+            {
+              type: 'email',
+              message: 'The input is not valid E-mail!',
+            },
+            {
+              required: true,
+              message: 'Please input your E-mail!',
+            },
+          ]}
+          initialValue={profile.email && form.setFieldsValue({ email: profile.email })}
+        >
+          <Input disabled={profile.email} />
+        </Form.Item>
 
-      <Form.Item
-        name="job"
-        label="Your job"
-        initialValue={profile.job && form.setFieldsValue({ job: job || profile.job })}
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item
+          name="mobile"
+          label="Mobile"
+          rules={[
+            {
+              required: true,
+              message: 'Please input your Mobile phone!',
+            },
+          ]}
+          initialValue={profile.mobile && form.setFieldsValue({ mobile: mobile || profile.mobile })}
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item name="gender" label="Gender" style={{ marginBottom: 0 }}>
-        <Row gutter={8}>
-          <Col span={12}>
-            <Select
-              placeholder="Gender"
-              key={profile.sex}
-              defaultValue={!!profile.sex}
-              onChange={value => {
-                form.setFieldsValue({ sex: value });
-              }}
-            >
-              <Option value>Male</Option>
-              <Option value={false}>Female</Option>
-            </Select>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="age"
-              label="Age"
-              initialValue={profile.age && form.setFieldsValue({ age: age || profile.age })}
-              style={{ flexGrow: 0.15 }}
-            >
-              <InputNumber />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item>
+        <Form.Item
+          name="job"
+          label="Your job"
+          initialValue={profile.job && form.setFieldsValue({ job: job || profile.job })}
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item name="country" label="Country" style={{ marginBottom: 0 }}>
-        <Row gutter={8}>
-          <Col span={12}>
-            <Select
-              placeholder="Country"
-              key={profile.country}
-              defaultValue={profile.country}
-              onChange={value => form.setFieldsValue({ country: value })}
-            >
-              {rootCountry?.map(item => (
-                <Option value={item.code} key={item.code}>
-                  {item.name}
-                </Option>
-              ))}
-            </Select>
-          </Col>
-          <Col span={12}>
-            <Form.Item name="city" label="City">
+        <Form.Item name="sex" label="Gender" style={{ marginBottom: 0 }}>
+          <Row gutter={8}>
+            <Col span={12}>
               <Select
-                placeholder="City"
-                key={profile.city}
-                defaultValue={profile.city}
+                placeholder="Gender"
+                key={profile.sex}
+                defaultValue={profile.sex ? 1 : 0}
                 onChange={value => {
-                  form.setFieldsValue({ city: value });
+                  form.setFieldsValue({ sex: value });
                 }}
               >
-                {rootCity?.map(item => (
-                  <Option value={item.city_name} key={item.city_name}>
-                    {item.city_name}
+                <Option value={1}>Male</Option>
+                <Option value={0}>Female</Option>
+              </Select>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="age"
+                label="Age"
+                initialValue={profile.age && form.setFieldsValue({ age: age || profile.age })}
+                style={{ flexGrow: 0.15 }}
+              >
+                <InputNumber />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form.Item>
+
+        <Form.Item name="country" label="Country" style={{ marginBottom: 0 }}>
+          <Row gutter={8}>
+            <Col span={12}>
+              <Select
+                placeholder="Country"
+                key={profile.country}
+                defaultValue={profile.country}
+                initialValue={profile.country}
+                onChange={handleSelectCountryAndCity}
+              >
+                {rootCountry?.map(item => (
+                  <Option value={item.code} key={item.code}>
+                    {item.name}
                   </Option>
                 ))}
               </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="city" label="City">
+                <Select
+                  placeholder="City"
+                  key={profile.city}
+                  defaultValue={profile.city}
+                  onChange={value => {
+                    form.setFieldsValue({ city: value });
+                  }}
+                >
+                  {rootCity?.map(item => (
+                    <Option value={item.city_name} key={item.city_name}>
+                      {item.city_name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form.Item>
 
-      <Form.Item
-        name="education"
-        label="Education"
-        initialValue={
-          profile.education && form.setFieldsValue({ education: education || profile.education })
-        }
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item
+          name="education"
+          label="Education"
+          initialValue={
+            profile.education && form.setFieldsValue({ education: education || profile.education })
+          }
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item
-        name="language"
-        label="Language"
-        initialValue={profile.language && form.setFieldsValue({ language: profile.language })}
-      >
-        <TagInterests
-          createInfo={language}
-          setCreateInfo={setLanguage}
-          defaultTags={defaultTags.language}
-        />
-      </Form.Item>
+        <Form.Item
+          name="language"
+          label="Language"
+          initialValue={profile.language && form.setFieldsValue({ language: profile.language })}
+        >
+          <TagInterests
+            createInfo={language}
+            setCreateInfo={setLanguage}
+            defaultTags={defaultTags.language}
+          />
+        </Form.Item>
 
-      <Form.Item
-        name="interests"
-        label="Interests"
-        initialValue={profile.interests && form.setFieldsValue({ interests: profile.interests })}
-      >
-        <TagInterests
-          createInfo={interests}
-          setCreateInfo={setInterests}
-          defaultTags={defaultTags.interests}
-        />
-      </Form.Item>
+        <Form.Item
+          name="interests"
+          label="Interests"
+          initialValue={profile.interests && form.setFieldsValue({ interests: profile.interests })}
+        >
+          <TagInterests
+            createInfo={interests}
+            setCreateInfo={setInterests}
+            defaultTags={defaultTags.interests}
+          />
+        </Form.Item>
 
-      <Form.Item
-        name="extras"
-        label="Extras"
-        initialValue={profile.extras && form.setFieldsValue({ extras: profile.extras })}
-      >
-        <TagInterests
-          createInfo={extras}
-          setCreateInfo={setExtras}
-          defaultTags={defaultTags.extras}
-        />
-      </Form.Item>
+        <Form.Item
+          name="extras"
+          label="Extras"
+          initialValue={profile.extras && form.setFieldsValue({ extras: profile.extras })}
+        >
+          <TagInterests
+            createInfo={extras}
+            setCreateInfo={setExtras}
+            defaultTags={defaultTags.extras}
+          />
+        </Form.Item>
 
-      <Form.Item
-        name="experience"
-        label="Experience"
-        initialValue={
-          profile.experience &&
-          form.setFieldsValue({ experience: experience || profile.experience })
-        }
-      >
-        <Input.TextArea />
-      </Form.Item>
+        <Form.Item
+          name="experience"
+          label="Experience"
+          initialValue={
+            profile.experience &&
+            form.setFieldsValue({ experience: experience || profile.experience })
+          }
+        >
+          <Input.TextArea rows={4} />
+        </Form.Item>
 
-      <Form.Item {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit" loading={isloading}>
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </FormWrapper>
+    </Spin>
   );
 };
 
-GuideProfile.propTypes = {
+AdminProfile.propTypes = {
   uid: PropTypes.string.isRequired,
 };
 
-export default GuideProfile;
+export default AdminProfile;

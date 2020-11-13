@@ -18,8 +18,8 @@ const UploadCustom = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
+  width: 128px;
+  height: 128px;
   border-radius: 50%;
   cursor: pointer;
   background-position: center;
