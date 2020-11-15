@@ -33,7 +33,7 @@ export async function getAllBlogs() {
 
 export async function getGuideProfile(uid) {
   return request({
-    url: `/account/get/${uid}`,
+    url: `/account/guideView/${uid}`,
     method: 'GET',
   });
 }

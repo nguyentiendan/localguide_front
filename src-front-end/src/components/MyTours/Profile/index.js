@@ -76,14 +76,14 @@ const AdminProfile = ({ uid }) => {
 
   const fetchAdminProfile = useCallback(async () => {
     setIsloading(true);
-    const res = await API.getAdminProfile({ uid });
+    const res = await API.getGuideProfile(uid);
     const resCountry = await API.getAllCountry();
-    setInterests({ ...interests, tags: res.data?.interest.split(';') });
-    setExtras({ ...extras, tags: res.data?.extras.split(';') });
-    setLanguage({ ...language, tags: res.data?.language.split(';') });
+    setInterests({ ...interests, tags: res.guide?.interest.split(';') });
+    setExtras({ ...extras, tags: res.guide?.extras.split(';') });
+    setLanguage({ ...language, tags: res.guide?.language.split(';') });
 
     setRootCountry(resCountry.data);
-    setProfile(res.data);
+    setProfile(res.guide);
     setIsloading(false);
   }, [API.getAdminProfile, API.getAllCountry, setIsloading, setProfile, setRootCountry]);
 

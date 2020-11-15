@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Tabs } from 'antd';
 import Layout from '../components/Layout';
 import TabTitle from '../components/TabTitle';
 import Tours from '../components/MyTours/Tours';
+import Profile from '../components/MyTours/Profile';
+import { getUserProfile } from '../utils/auth';
 
 function AdminPage() {
+  const [userProfile] = useState(getUserProfile());
+
   return (
     <Layout noHeader>
       <Tabs defaultActiveKey="1">
@@ -13,7 +17,7 @@ function AdminPage() {
           <Tours />
         </Tabs.TabPane>
         <Tabs.TabPane tab={<TabTitle title="Profile" />} key="2">
-          Profile
+          <Profile uid={userProfile?.uid} />
         </Tabs.TabPane>
         <Tabs.TabPane tab={<TabTitle title="My Bookings" />} key="3">
           My Bookings
