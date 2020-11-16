@@ -35,6 +35,7 @@ export async function getGuideProfile(uid) {
   return request({
     url: `/account/guideView/${uid}`,
     method: 'GET',
+    authRequired: true,
   });
 }
 
@@ -265,6 +266,7 @@ export async function getAdminProfile({ uid }) {
   return request({
     url: `account/admin/${uid}`,
     method: 'GET',
+    authRequired: true,
   });
 }
 

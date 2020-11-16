@@ -215,13 +215,13 @@ const AdminProfile = ({ uid }) => {
               <Select
                 placeholder="Gender"
                 key={profile.sex}
-                defaultValue={profile.sex ? 1 : 0}
+                defaultValue={profile.sex === '0' ? '0' : '1'}
                 onChange={value => {
                   form.setFieldsValue({ sex: value });
                 }}
               >
-                <Option value={1}>Male</Option>
-                <Option value={0}>Female</Option>
+                <Option value="1">Male</Option>
+                <Option value="0">Female</Option>
               </Select>
             </Col>
             <Col span={12}>
