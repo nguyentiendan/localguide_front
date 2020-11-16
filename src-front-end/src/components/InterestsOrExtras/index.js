@@ -18,8 +18,8 @@ export default function InterestsOrExtras({ data, title }) {
       <b>{title}:</b>
       <div>
         {data &&
-          _.map(data.split(';'), tag => (
-            <Tag color="#f12f60" style={{ marginBottom: 20 }}>
+          _.map(data.split(';'), (tag, index) => (
+            <Tag color="#f12f60" style={{ marginBottom: 20 }} key={index}>
               {tag}
             </Tag>
           ))}

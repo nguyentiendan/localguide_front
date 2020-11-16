@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Avatar, Tag } from 'antd';
 import { UserOutlined, CrownOutlined } from '@ant-design/icons';
@@ -16,6 +16,7 @@ import { smallScreenCss } from '../styles/responsive-css';
 import CommentListItem from '../components/CommentListItem';
 import RatingStars from '../components/RatingStars';
 import DestinationListItem from '../components/DestinationListItem';
+import { getCndResourceUrl, resizeImageGallery } from '../utils/commons';
 import Layout from '../components/Layout';
 import InterestsOrExtras from '../components/InterestsOrExtras';
 import * as API from '../apis';
@@ -170,55 +171,28 @@ const ListContainer = styled.div`
   }
 `;
 
-const IMAGES = [
-  {
-    src:
-      'https://cdn.24h.com.vn/upload/3-2020/images/2020-09-21/Khoi-nghiep-o-tuoi-20-nu-doanh-nhan-9X-co-thu-nhap-on-dinh-nho-kinh-doanh-online-khanh-linh-1-1600677158-502-width500height700.jpg',
-    thumbnail:
-      'https://cdn.24h.com.vn/upload/3-2020/images/2020-09-21/Khoi-nghiep-o-tuoi-20-nu-doanh-nhan-9X-co-thu-nhap-on-dinh-nho-kinh-doanh-online-khanh-linh-1-1600677158-502-width500height700.jpg',
-  },
-  {
-    src: 'https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_b.jpg',
-    thumbnail: 'https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_n.jpg',
-  },
-  {
-    src: 'https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_b.jpg',
-    thumbnail: 'https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_n.jpg',
-  },
-  {
-    src: 'https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_b.jpg',
-    thumbnail: 'https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_n.jpg',
-  },
-  {
-    src: 'https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_b.jpg',
-    thumbnail: 'https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_n.jpg',
-  },
-  {
-    src: 'https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_b.jpg',
-    thumbnail: 'https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_n.jpg',
-  },
-  {
-    src:
-      'https://cdn.24h.com.vn/upload/3-2020/images/2020-09-21/Khoi-nghiep-o-tuoi-20-nu-doanh-nhan-9X-co-thu-nhap-on-dinh-nho-kinh-doanh-online-khanh-linh-1-1600677158-502-width500height700.jpg',
-    thumbnail:
-      'https://cdn.24h.com.vn/upload/3-2020/images/2020-09-21/Khoi-nghiep-o-tuoi-20-nu-doanh-nhan-9X-co-thu-nhap-on-dinh-nho-kinh-doanh-online-khanh-linh-1-1600677158-502-width500height700.jpg',
-  },
-  {
-    src: 'https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_b.jpg',
-    thumbnail: 'https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_n.jpg',
-  },
-  {
-    src: 'https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_b.jpg',
-    thumbnail: 'https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_n.jpg',
-  },
-];
-
 function User({ location }) {
-  const [profile, setProfile] = useState({});
+  const [profile, setProfile] = useState({
+    guide: {},
+    reviews: [],
+    tours: [],
+  });
+  const [photos, setPhotos] = useState({});
+  const [thumbnailWidths, setThumbnailWidths] = useState([]);
+  const galleryWrapperComp = useRef();
   const dataQueryParams = qs.parse(location.search);
+
+  useLayoutEffect(() => {
+    resizeImageGallery({
+      useRef: galleryWrapperComp,
+      photos: photos?.customDataPhotos,
+      useStateSetWidth: setThumbnailWidths,
+    });
+  }, [galleryWrapperComp, photos?.customDataPhotos, resizeImageGallery, setThumbnailWidths]);
+
   useEffect(() => {
     const fetchData = async () => {
-      const res = await API.getGuideProfile({
+      const res = await API.getGuideProfileOverview({
         uid: dataQueryParams.uid,
         guideId: dataQueryParams.id,
       });
@@ -226,6 +200,27 @@ function User({ location }) {
     };
     fetchData();
   }, [setProfile, dataQueryParams.uid, dataQueryParams.id]);
+
+  useEffect(() => {
+    const fetchPhotos = async () => {
+      const res = await API.getPhotosGuide({
+        uid: dataQueryParams.uid,
+      });
+      const customDataPhotos = _.map(res.data, (photo, i) => {
+        return {
+          src: getCndResourceUrl(photo.name),
+          thumbnail: getCndResourceUrl(photo.name),
+          caption: photo.caption,
+          thumbnailWidth: thumbnailWidths[i],
+          thumbnailHeight: 175,
+        };
+      });
+      setPhotos({
+        customDataPhotos,
+      });
+    };
+    fetchPhotos();
+  }, [setProfile, API.getPhotosGuide]);
 
   const handleLevelGuide = level => {
     switch (level) {
@@ -293,7 +288,7 @@ function User({ location }) {
           <div className="details__information mt-40">
             <div className="details__information__item">
               <FaSuitcase style={{ fontSize: '26px' }} />
-              <h3>{profile.guide?.language.split(';').join(', ')}</h3>
+              <h3>{profile.guide?.language?.split(';').join(', ')}</h3>
             </div>
             <div className="details__information__item">
               <FaSuitcase style={{ fontSize: '26px' }} />
@@ -321,9 +316,13 @@ function User({ location }) {
             <p>{profile.guide?.specialities}</p>
           </div>
         </InfoIntroduction>
-        <ListWrapper>
-          <SectionHeader title="Photo" />
-          <Gallery images={IMAGES} />
+        <ListWrapper ref={galleryWrapperComp}>
+          {photos?.customDataPhotos && (
+            <>
+              <SectionHeader title="Photo" />
+              <Gallery enableImageSelection={false} images={photos?.customDataPhotos} />
+            </>
+          )}
         </ListWrapper>
         <SectionHeader title="Related Tour" subTitle="View all" />
         <ListWrapper>

@@ -1,23 +1,27 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Row, Space, Spin, Upload } from 'antd';
+import { PlusOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Modal, Col, Input, Row, Space, Spin, Upload } from 'antd';
 
 import colors from '../../../styles/colors';
 import * as API from '../../../apis';
-import { uploadCoverPhoto, uploadPhoto } from '../../../apis';
+import { uploadCoverPhoto, uploadMultiPhoto } from '../../../apis';
 
 const Wrapper = styled.div`
   height: 100%;
-
   .cover-photo-upload {
     .ant-upload-select,
     .ant-upload-list-picture-card-container,
     .ant-upload-list-item-list-type-picture-card {
       float: none;
       width: 100%;
+    }
+  }
+  && {
+    .ant-upload-list-picture-card-container {
+      display: none;
     }
   }
 `;
@@ -40,36 +44,87 @@ const Img = styled.img`
   object-fit: cover;
 `;
 
-const ImgEditor = ({ src, caption, name, updateCaption, deletePhoto, type }) => {
+const ActionImageWraper = styled.div`
+  position: relative;
+  & > div {
+    position: absolute;
+    border-radius: 4px;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: none;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  &&:hover div {
+    display: flex;
+  }
+  .styled-icon-zoom-image {
+    margin-right: 10px;
+  }
+  .styled-icon {
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 16px;
+  }
+`;
+
+const ImgEditor = ({
+  src,
+  caption,
+  name,
+  updateCaption,
+  deletePhoto,
+  type,
+  setZoomImage,
+  zoomImage,
+  index,
+  myRef,
+}) => {
   const handleUpdateCaption = useCallback(
     e => {
       updateCaption(e.target.value, name);
     },
     [name, caption, updateCaption]
   );
-  const handleDeletePhoto = useCallback(() => {
+  const handleDeletePhoto = () => {
+    if (type !== 'Cover') {
+      // eslint-disable-next-line react/prop-types
+      myRef.current.state.fileList.splice(index, 1);
+    }
     deletePhoto(name);
-  }, [name, deletePhoto]);
-
+  };
   if (!src) {
     return <></>;
   }
-
-  let photoType = '';
-  if (type) {
-    photoType = `${type} `;
-  }
-
+  // let photoType = '';
+  // if (type) {
+  //   photoType = `${type} `;
+  // }
   return (
     <ImgEditorWrapper>
-      <Img alt="preview" style={{ width: '100%' }} src={src} />
+      <ActionImageWraper>
+        <Img alt="preview" style={{ width: '100%' }} src={src} />
+        <div>
+          <EyeOutlined
+            className="styled-icon-zoom-image styled-icon"
+            onClick={() =>
+              setZoomImage({
+                ...zoomImage,
+                previewVisible: true,
+                url: src,
+              })
+            }
+          />
+          <DeleteOutlined className="styled-icon" onClick={handleDeletePhoto} />
+        </div>
+      </ActionImageWraper>
       <Space direction="vertical" style={{ width: '100%' }}>
         <Input placeholder="Caption" onBlur={handleUpdateCaption} />
-        {deletePhoto && (
-          <Button onClick={handleDeletePhoto} block danger>
-            {`Delete ${photoType}Photo`}
-          </Button>
-        )}
       </Space>
     </ImgEditorWrapper>
   );
@@ -82,6 +137,10 @@ ImgEditor.propTypes = {
   updateCaption: PropTypes.func,
   deletePhoto: PropTypes.func,
   type: PropTypes.string,
+  zoomImage: PropTypes.shape({}),
+  setZoomImage: PropTypes.func,
+  index: PropTypes.number,
+  myRef: PropTypes.shape({}),
 };
 
 ImgEditor.defaultProps = {
@@ -89,12 +148,21 @@ ImgEditor.defaultProps = {
   caption: '',
   name: '',
   updateCaption: () => {},
-  deletePhoto: null,
-  type: undefined,
+  deletePhoto: () => {},
+  type: '',
+  setZoomImage: () => {},
+  zoomImage: {},
+  myRef: {},
+  index: 0,
 };
 
 const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const [loading, setLoading] = useState(false);
+  const [zoomImage, setZoomImage] = useState({
+    previewVisible: false,
+    url: '',
+  });
+  const removeImage = useRef(null);
 
   const tourId = useMemo(() => {
     return tourCreationInfo && tourCreationInfo.id;
@@ -106,63 +174,58 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
 
   const { coverPhoto, photos = [] } = tourCreationInfo;
 
-  const handleCoverPhotoChange = useCallback(
-    uploadedCoverPhoto => {
-      onUpdate({
-        ...tourCreationInfo,
-        coverPhoto: { ...uploadedCoverPhoto },
+  const handleCoverPhotoChange = uploadedCoverPhoto => {
+    onUpdate({
+      ...tourCreationInfo,
+      coverPhoto: { ...uploadedCoverPhoto },
+    });
+  };
+
+  const handlePhotosChange = uploadedPhotos => {
+    onUpdate({
+      ...tourCreationInfo,
+      photos: uploadedPhotos,
+    });
+  };
+
+  const handleUploadCoverPhoto = async file => {
+    if (!tourCreationInfo.id) {
+      return;
+    }
+    try {
+      setLoading(true);
+      const uploadedRes = await uploadCoverPhoto({ tourId: tourCreationInfo.id, file });
+      handleCoverPhotoChange(uploadedRes.data[0]);
+    } catch (e) {
+      // ignored
+    }
+
+    setLoading(false);
+  };
+
+  const handleUploadPhoto = async info => {
+    if (!tourCreationInfo.id) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      let fileList = [...info.fileList];
+      fileList = fileList.slice(-5);
+      removeImage.current.state.fileList = fileList;
+      fileList = fileList.map(file => {
+        return file.originFileObj;
       });
-    },
-    [onUpdate, coverPhoto, tourCreationInfo]
-  );
-
-  const handlePhotosChange = useCallback(
-    uploadedPhotos => {
-      onUpdate({
-        ...tourCreationInfo,
-        photos: _.concat(photos, uploadedPhotos).filter(v => !!v),
+      const uploadedRes = await uploadMultiPhoto({
+        tourId: tourCreationInfo.id,
+        file: fileList,
       });
-    },
-    [onUpdate, photos, tourCreationInfo]
-  );
-
-  const handleUploadCoverPhoto = useCallback(
-    async file => {
-      if (!tourCreationInfo.id) {
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const uploadedRes = await uploadCoverPhoto({ tourId: tourCreationInfo.id, file });
-        handleCoverPhotoChange(uploadedRes.data[0]);
-      } catch (e) {
-        // ignored
-      }
-
       setLoading(false);
-    },
-    [tourCreationInfo, loading]
-  );
-
-  const handleUploadPhoto = useCallback(
-    async file => {
-      if (!tourCreationInfo.id) {
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const uploadedRes = await uploadPhoto({ tourId: tourCreationInfo.id, file });
-        handlePhotosChange(uploadedRes.data);
-      } catch (e) {
-        // ignored
-      }
-
-      setLoading(false);
-    },
-    [tourCreationInfo]
-  );
+      handlePhotosChange(uploadedRes.data);
+    } catch (e) {
+      // ignored
+    }
+  };
 
   const updateCaption = useCallback(
     async (caption, name) => {
@@ -176,42 +239,36 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     },
     [tourId, uid]
   );
+  const deletePhoto = async name => {
+    setLoading(true);
+    try {
+      await API.deletePhoto({ name, tourId, uid });
+      const removedPhotos = [...photos];
+      _.remove(removedPhotos, photo => photo.name === name);
+      onUpdate({
+        ...tourCreationInfo,
+        photos: removedPhotos,
+      });
+    } catch (e) {
+      // ignored
+    }
+    setLoading(false);
+  };
 
-  const deletePhoto = useCallback(
-    async name => {
-      setLoading(true);
-      try {
-        await API.deletePhoto({ name, tourId, uid });
-        const removedPhotos = [...photos];
-        _.remove(removedPhotos, photo => photo.name === name);
-        onUpdate({
-          ...tourCreationInfo,
-          photos: removedPhotos,
-        });
-      } catch (e) {
-        // ignored
-      }
-      setLoading(false);
-    },
-    [tourId, uid, photos]
-  );
-
-  const deleteCoverPhoto = useCallback(
-    async name => {
-      setLoading(true);
-      try {
-        await API.deletePhoto({ name, tourId, uid });
-        onUpdate({
-          ...tourCreationInfo,
-          coverPhoto: undefined,
-        });
-      } catch (e) {
-        // ignored
-      }
-      setLoading(false);
-    },
-    [tourId, uid]
-  );
+  const deleteCoverPhoto = async name => {
+    console.log('asdfkakadksf');
+    setLoading(true);
+    try {
+      await API.deletePhoto({ name, tourId, uid });
+      onUpdate({
+        ...tourCreationInfo,
+        coverPhoto: undefined,
+      });
+    } catch (e) {
+      // ignored
+    }
+    setLoading(false);
+  };
 
   const uploadButton = text => (
     <div>
@@ -231,15 +288,18 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
         </SubTitle>
         <br />
 
-        <Row gutter={32}>
-          <Col span={6}>
+        <Row gutter={32} style={{ flexDirection: 'column' }}>
+          <Col span={5}>
             {coverPhoto && (
               <ImgEditor
                 src={coverPhoto.name}
+                name={coverPhoto.name}
                 caption={coverPhoto.caption}
                 updateCaption={updateCaption}
                 deletePhoto={deleteCoverPhoto}
                 type="Cover"
+                zoomImage={zoomImage}
+                setZoomImage={setZoomImage}
               />
             )}
 
@@ -254,7 +314,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
           </Col>
           <Col span={18}>
             <Row gutter={16}>
-              {_.map(photos, photo => (
+              {_.map(photos, (photo, index) => (
                 <Col key={photo.name} span={6}>
                   <ImgEditor
                     src={photo.name}
@@ -262,14 +322,25 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                     caption={photo.caption}
                     updateCaption={updateCaption}
                     deletePhoto={deletePhoto}
+                    zoomImage={zoomImage}
+                    setZoomImage={setZoomImage}
+                    myRef={removeImage}
+                    index={index}
                   />
                 </Col>
               ))}
             </Row>
-            <Upload listType="picture-card" fileList={[]} action={handleUploadPhoto}>
+            <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
               {photos.length >= 5 ? null : uploadButton('Upload photo')}
             </Upload>
           </Col>
+          <Modal
+            visible={zoomImage.previewVisible}
+            footer={null}
+            onCancel={() => setZoomImage({ ...zoomImage, previewVisible: false })}
+          >
+            <img alt="example" style={{ width: '100%' }} src={zoomImage.url} />
+          </Modal>
         </Row>
       </Wrapper>
     </Spin>

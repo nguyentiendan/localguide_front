@@ -57,12 +57,13 @@ CommentListItem.propTypes = {
   className: PropTypes.string,
   user: PropTypes.string.isRequired,
   avatar: PropTypes.string.isRequired,
-  date: PropTypes.string.isRequired,
+  date: PropTypes.string,
   content: PropTypes.string.isRequired,
 };
 
 CommentListItem.defaultProps = {
   className: '',
+  date: '',
 };
 
 export default CommentListItem;
