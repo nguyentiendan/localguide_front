@@ -149,7 +149,7 @@ const AdminProfile = ({ uid }) => {
         onFinish={onFinish}
         scrollToFirstError
       >
-        <Form.Item name="avatar">
+        <Form.Item name="avatar" style={{ justifyContent: 'flex-end' }}>
           <UploadAvatar uid={uid} src={profile.avatar} />
         </Form.Item>
 
