@@ -19,6 +19,7 @@ import {
   getTourEditGuide,
   getAllCostTourEdit,
   getAllScheduleTourEdit,
+  getTourPhotos,
 } from '../../apis';
 import { useRequiredUser } from '../../utils/useAuth';
 import TourPreview from '../TourPreview';
@@ -112,13 +113,19 @@ const CreateTourWizard = ({ location }) => {
   const startCreateTour = useCallback(() => {
     setCurrentStepNumber(1);
   }, []);
-  const saveOrUpdateTour = useCallback(async () => {
+  const saveOrUpdateTour = async () => {
     if (!tourCreationInfo || !tourCreationInfo.tourName) {
       return;
     }
-
     const isNew = !tourCreationInfo.id || !tourCreationInfo.uid;
     setLoading(true);
+    const editTourCreationInfo = {
+      ...tourCreationInfo,
+      tags:
+        typeof tourCreationInfo.tags === 'string'
+          ? tourCreationInfo.tags.split()
+          : tourCreationInfo.tags,
+    };
     try {
       if (isNew) {
         const { data } = await createTour(transformTourData(tourCreationInfo));
@@ -128,14 +135,14 @@ const CreateTourWizard = ({ location }) => {
           ...tourCreationInfo,
         });
       } else {
-        await updateTour(transformTourData(tourCreationInfo));
+        await updateTour(transformTourData(editTourCreationInfo));
       }
     } catch (ignore) {
       setLoading(false);
       // throw new Error();
     }
     setLoading(false);
-  }, [tourCreationInfo]);
+  };
 
   const goBack = useCallback(async () => {
     if (loading) {
@@ -151,7 +158,7 @@ const CreateTourWizard = ({ location }) => {
     }
   }, [currentStepNumber, loading, tourCreationInfo]);
 
-  const goForward = useCallback(async () => {
+  const goForward = async () => {
     if (loading) {
       return;
     }
@@ -163,7 +170,7 @@ const CreateTourWizard = ({ location }) => {
     } catch (e) {
       // ignore
     }
-  }, [currentStepNumber, loading, tourCreationInfo]);
+  };
 
   const navigateToHomePage = useCallback(async () => {
     if (loading) {
@@ -204,7 +211,6 @@ const CreateTourWizard = ({ location }) => {
     },
     [tourCreationInfo]
   );
-
   const isNextDisabled = useMemo(() => {
     if (currentStepNumber === 0) {
       return false;
@@ -233,23 +239,28 @@ const CreateTourWizard = ({ location }) => {
         const { data } = await getTourEditGuide({ uid: user.uid, id: tourId.q });
         const res = await getAllCostTourEdit({ uid: user.uid, id: tourId.q });
         const resSchedule = await getAllScheduleTourEdit({ uid: user.uid, id: tourId.q });
-
+        const resPhotos = await getTourPhotos({ uid: user.uid, id: tourId.q });
         setTourCreationInfo({
           ...tourCreationInfo,
+          uid: data[0].uid,
+          id: data[0].id,
           tourName: data[0].name,
           tourShortDescription: data[0].shortDesc,
-          tags: data[0].tag,
+          tags: data[0].tag.split(','),
           country: data[0].country,
           city: data[0].city,
+          tourDescription: data[0].content,
           duration: data[0].day,
           minPax: data[0].minPax,
           maxPax: data[0].maxPax,
           guideFee: data[0].guideFee,
+          coverPhoto: { name: data[0].cover },
           meal: res.meal,
           other: res.other,
           transport: res.transport,
           pickup: resSchedule.pickup,
           schedule: resSchedule.schedule,
+          photos: resPhotos.data,
         });
       } catch (e) {
         // ignore
@@ -266,6 +277,7 @@ const CreateTourWizard = ({ location }) => {
     getAllCostTourEdit,
     getAllScheduleTourEdit,
   ]);
+
   return (
     <>
       {currentStepNumber === 0 && <StartCreateTour onStart={startCreateTour} />}

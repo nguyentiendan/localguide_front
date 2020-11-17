@@ -8,6 +8,7 @@ import { Modal, Col, Input, Row, Space, Spin, Upload } from 'antd';
 import colors from '../../../styles/colors';
 import * as API from '../../../apis';
 import { uploadCoverPhoto, uploadMultiPhoto } from '../../../apis';
+import { getCndResourceUrl } from '../../../utils/commons';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -19,10 +20,19 @@ const Wrapper = styled.div`
       width: 100%;
     }
   }
+
   && {
     .ant-upload-list-picture-card-container {
       display: none;
     }
+    .ant-upload-select-picture-card {
+      width: 350px;
+      height: 250px;
+    }
+  }
+  .cover-photo-upload .ant-upload-select {
+    width: 200px;
+    height: 200px;
   }
 `;
 
@@ -317,7 +327,11 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
               {_.map(photos, (photo, index) => (
                 <Col key={photo.name} span={6}>
                   <ImgEditor
-                    src={photo.name}
+                    src={
+                      photo.name.split('/')[0] === 'static'
+                        ? getCndResourceUrl(photo.name)
+                        : photo.name
+                    }
                     name={photo.name}
                     caption={photo.caption}
                     updateCaption={updateCaption}

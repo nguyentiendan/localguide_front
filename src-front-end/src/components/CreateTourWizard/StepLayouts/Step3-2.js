@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -56,26 +57,35 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
           ...daySchedule,
           day: i,
           pickUpAt: {
-            time: tourCreationInfo.pickup && tourCreationInfo.pickup[i + 1].Pickup[0].pickup_time,
+            time:
+              tourCreationInfo.pickup &&
+              (tourCreationInfo.pickup[i + 1]?.Pickup[0].pickup_time || '00:00'),
             place:
-              tourCreationInfo.pickup && tourCreationInfo.pickup[i + 1].Pickup[0].pickup_location,
+              tourCreationInfo.pickup &&
+              (tourCreationInfo.pickup[i + 1]?.Pickup[0].pickup_location || ''),
           },
           finishAt: {
-            time: tourCreationInfo.pickup && tourCreationInfo.pickup[i + 1].Pickup[0].finish_time,
+            time:
+              tourCreationInfo.pickup &&
+              (tourCreationInfo.pickup[i + 1]?.Pickup[0].finish_time || '00:00'),
             place:
-              tourCreationInfo.pickup && tourCreationInfo.pickup[i + 1].Pickup[0].finish_location,
+              tourCreationInfo.pickup &&
+              (tourCreationInfo.pickup[i + 1]?.Pickup[0].finish_location || ''),
           },
-          schedule: tourCreationInfo.schedule[i + 1].Schedule?.map(item => {
-            return {
-              from: item.from,
-              to: item.to,
-              place: item.location,
-            };
-          }),
+          schedule:
+            tourCreationInfo.schedule &&
+            (tourCreationInfo.schedule[i + 1]?.Schedule?.map(item => {
+              return {
+                $uuid: uuidv4(),
+                from: item.from,
+                to: item.to,
+                place: item.location,
+              };
+            }) ||
+              []),
         }
     );
   }, [tourCreationInfo]);
-
   const pickUpAt = useMemo(() => daySchedules[currentDay] && daySchedules[currentDay].pickUpAt, [
     daySchedules,
     currentDay,
