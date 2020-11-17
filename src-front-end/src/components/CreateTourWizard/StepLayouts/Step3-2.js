@@ -55,9 +55,23 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
         currentDaySchedules[i] || {
           ...daySchedule,
           day: i,
-          pickUpAt: {},
-          finishAt: {},
-          schedule: [],
+          pickUpAt: {
+            time: tourCreationInfo.pickup && tourCreationInfo.pickup[i + 1].Pickup[0].pickup_time,
+            place:
+              tourCreationInfo.pickup && tourCreationInfo.pickup[i + 1].Pickup[0].pickup_location,
+          },
+          finishAt: {
+            time: tourCreationInfo.pickup && tourCreationInfo.pickup[i + 1].Pickup[0].finish_time,
+            place:
+              tourCreationInfo.pickup && tourCreationInfo.pickup[i + 1].Pickup[0].finish_location,
+          },
+          schedule: tourCreationInfo.schedule[i + 1].Schedule?.map(item => {
+            return {
+              from: item.from,
+              to: item.to,
+              place: item.location,
+            };
+          }),
         }
     );
   }, [tourCreationInfo]);
@@ -142,7 +156,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     },
     [onUpdate, schedule, daySchedules, tourCreationInfo]
   );
-
+  const format = 'HH:mm';
   return (
     <Spin spinning={loading}>
       <Wrapper>
@@ -157,9 +171,9 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                 </Col>
                 <Col span={5}>
                   <TimePicker
-                    value={pickUpAt.time}
+                    defaultValue={moment(pickUpAt?.time, format)}
                     onChange={time => updatePickUpAt({ time })}
-                    format="HH:mm"
+                    format={format}
                     minuteStep={5}
                   />
                 </Col>
@@ -187,27 +201,29 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                   </Col>
                 </Row>
               )}
-              {_.map(schedule, (s, i) => (
-                <Row gutter={16} style={{ marginBottom: 8 }} key={s.$uuid}>
-                  <Col span={4}>{i === 0 && <FieldTitle>Schedule</FieldTitle>}</Col>
-                  <Col span={7}>
-                    <TimePicker.RangePicker
-                      value={s.time}
-                      onChange={time => updateSchedule({ $uuid: s.$uuid, time })}
-                      format="HH:mm"
-                      minuteStep={5}
-                      placeholder={['From', 'To']}
-                    />
-                  </Col>
-                  <Col span={10} push={2}>
-                    <Input
-                      placeholder="Place"
-                      value={s.place}
-                      onChange={e => updateSchedule({ $uuid: s.$uuid, place: e.target.value })}
-                    />
-                  </Col>
-                </Row>
-              ))}
+              {_.map(schedule, (s, i) => {
+                return (
+                  <Row gutter={16} style={{ marginBottom: 8 }} key={s.$uuid}>
+                    <Col span={4}>{i === 0 && <FieldTitle>Schedule</FieldTitle>}</Col>
+                    <Col span={7}>
+                      <TimePicker.RangePicker
+                        defaultValue={[moment(s.from, format), moment(s.to, format)]}
+                        onChange={time => updateSchedule({ $uuid: s.$uuid, time })}
+                        format={format}
+                        minuteStep={5}
+                        placeholder={['From', 'To']}
+                      />
+                    </Col>
+                    <Col span={10} push={2}>
+                      <Input
+                        placeholder="Place"
+                        value={s.place}
+                        onChange={e => updateSchedule({ $uuid: s.$uuid, place: e.target.value })}
+                      />
+                    </Col>
+                  </Row>
+                );
+              })}
               {schedule && schedule.length > 0 && (
                 <Row gutter={16}>
                   <Col push={4}>
@@ -224,9 +240,9 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                 </Col>
                 <Col span={5}>
                   <TimePicker
-                    value={finishAt.time}
+                    defaultValue={moment(finishAt?.time, format)}
                     onChange={time => updateFinishAt({ time })}
-                    format="HH:mm"
+                    format={format}
                     minuteStep={5}
                   />
                 </Col>
@@ -261,6 +277,8 @@ StepLayout.propTypes = {
   tourCreationInfo: PropTypes.shape({
     id: PropTypes.number,
     duration: PropTypes.number,
+    pickup: PropTypes.shape({}),
+    schedule: PropTypes.shape({}),
     daySchedules: PropTypes.arrayOf(
       PropTypes.shape({
         day: PropTypes.number,

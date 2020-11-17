@@ -27,6 +27,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   const [newTagValue, setNewTagValue] = useState('');
   const [defaultTags, setDefaultTags] = useState([]);
   const newTagInputRef = useRef();
+  console.log({ tourCreationInfo });
   const tagOptions = useMemo(() => _.union(defaultTags, tourCreationInfo.tags || []), [
     tourCreationInfo,
     defaultTags,
@@ -181,7 +182,7 @@ StepLayout.propTypes = {
   tourCreationInfo: PropTypes.shape({
     tourName: PropTypes.string,
     tourShortDescription: PropTypes.string,
-    tags: PropTypes.arrayOf(PropTypes.string),
+    tags: PropTypes.string,
   }),
   onUpdate: PropTypes.func,
 };

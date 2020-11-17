@@ -300,3 +300,26 @@ export async function getAllLang() {
     method: 'GET',
   });
 }
+
+// API for edit tour.
+export async function getTourEditGuide({ uid, id }) {
+  return request({
+    url: `guide/getTour?uid=${uid}&id=${id}`,
+    method: 'GET',
+    authRequired: true,
+  });
+}
+
+export async function getAllCostTourEdit({ uid, id }) {
+  return request({
+    url: `tourFee/getAllCost?uid=${uid}&id=${id}`,
+    method: 'GET',
+  });
+}
+
+export async function getAllScheduleTourEdit({ uid, id }) {
+  return request({
+    url: `tourSchedule/getAllSchedule?uid=${uid}&id=${id}`,
+    method: 'GET',
+  });
+}
