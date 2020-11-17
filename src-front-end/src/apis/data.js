@@ -300,3 +300,31 @@ export async function getAllLang() {
     method: 'GET',
   });
 }
+
+export async function handleFillterTourAdmin({ uid, data }) {
+  const handleStatus = () => {
+    switch (data.status) {
+      case 0:
+        return 0;
+      case 1:
+        return 1;
+      case 2:
+        return 2;
+      default:
+        return 3;
+    }
+  };
+  return request({
+    url: '/admin/tour/filter',
+    method: 'POST',
+    authRequired: true,
+    data: {
+      uid,
+      city: data.city || '',
+      country: data.country || '',
+      status: handleStatus(),
+      total: data.total || 0,
+      day: data.day || 1,
+    },
+  });
+}
