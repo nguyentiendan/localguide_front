@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { graphql } from 'gatsby';
+import { graphql, Link } from 'gatsby';
 import styled from 'styled-components';
 import Gallery from 'react-grid-gallery';
 import { AiOutlineSchedule } from 'react-icons/ai';
 import { FaSuitcase, FaMoneyBill, FaUsers } from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
-import { Spin } from 'antd';
+import { Spin, notification, Modal, Button as ButtonAntd } from 'antd';
 import _ from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+import moment from 'moment';
+import qs from 'query-string';
 
 import * as API from '../apis';
 import Layout from '../components/Layout';
@@ -23,7 +26,10 @@ import NavItem from '../components/Layout/NavItem';
 import Button from '../components/Button';
 import { bigScreenCss, smallScreenCss } from '../styles/responsive-css';
 import TourGuideListItem from '../components/TourGuideListItem';
+import Feedback from '../components/Feedback';
+import { getUserProfile } from '../utils/auth';
 import { getCndResourceUrl, safeFuncCall } from '../utils/commons';
+import ActionFeedback from '../components/Feedback/ActionFeedback';
 
 const Title = styled.h1`
   font-weight: bold;
@@ -201,15 +207,37 @@ const GalleryWrapper = styled.div`
   }
 `;
 
-function TourPage({ data, id, uid }) {
+const ButtonEventAdminWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  .style-button-approve,
+  .style-button-edit,
+  .style-button-feedback {
+    border: 1px solid #ba7c2e;
+  }
+  .style-button-approve {
+    margin-right: 20px;
+    background: #92d050;
+  }
+  .style-button-edit {
+    background: #3c78d8;
+  }
+  .style-button-feedback {
+    background: #ff9900;
+  }
+`;
+function TourPage({ data, id, uid, location: locationParams }) {
   const { tour, reviews = { comments: [] } } = data || {};
   const [tourDetails, setTourDetails] = useState(tour || {});
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
   const [tourPhotos, setTourPhotos] = useState([]);
   const [thumbnailWidths, setThumbnailWidths] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [dataReply, setDataReply] = useState([]);
   const galleryWrapperComp = useRef();
-
+  const user = getUserProfile();
+  const statusTour = qs.parse(locationParams.search);
   const tourQuery = useMemo(() => {
     const query = {};
     if (tour && tour.rawID && tour.uid) {
@@ -221,7 +249,6 @@ function TourPage({ data, id, uid }) {
     }
     return query;
   }, [tour, id, uid]);
-
   useEffect(() => {
     const fetchTourDetails = async () => {
       try {
@@ -302,10 +329,89 @@ function TourPage({ data, id, uid }) {
 
     return () => window.removeEventListener('resize', updateSize);
   }, [galleryWrapperComp, tourPhotos]);
+  const handleApproveTour = async () => {
+    setLoading(true);
+    await API.handleAdminApproveTour({ uid: user.uid, id: tour?.rawID || id });
+    notification.success({ message: 'You have successfully approve tour.' });
+    setLoading(false);
+  };
+  const handleGetAllReply = async idFeedback => {
+    setLoading(true);
+    const res = await API.handleGetAllReplyFeedback({ uid: user.uid, id: idFeedback });
+    const newData = res.data.map(item => {
+      const newItem = { ...item };
+      newItem.uuid = uuidv4();
+      return newItem;
+    });
+    setDataReply(newData);
+    setLoading(false);
+  };
 
+  const handleReplyFeedback = async (e, feedbackId) => {
+    const newFeedback = {
+      Avatar: user.avatar,
+      Content: e.target.value,
+      Created_At: moment(),
+      FeedbackID: feedbackId,
+      Fullname: user.fullname,
+      UID: user.uid,
+      uuid: uuidv4(),
+    };
+    setDataReply([...dataReply, newFeedback]);
+    await API.handleCreateReply({ uid: user.uid, feedbackId, content: e.target.value });
+  };
+
+  const dataFeedback = () => {
+    return reviews?.comments.map(comment => {
+      return {
+        actions: [
+          <ButtonAntd
+            key="comment-list-reply-to-0"
+            type="link"
+            onClick={() => handleGetAllReply(comment.id)}
+            style={{ color: '#555' }}
+          >
+            Reply to
+          </ButtonAntd>,
+        ],
+        user: comment.user,
+        avatar: comment.avatar,
+        content: comment.content,
+        id: comment.id,
+        uuid: uuidv4(),
+        date: (
+          <span>
+            {moment(comment.date).fromNow()}
+            <ActionFeedback />
+          </span>
+        ),
+      };
+    });
+  };
   return (
     <Layout noHeader>
       <SEO title={tourDetails.name} />
+      {user.role === 3 && (
+        <ButtonEventAdminWrapper>
+          <div>
+            {statusTour.status === 0 && (
+              <Button onClick={handleApproveTour} className="style-button-approve">
+                Approve
+              </Button>
+            )}
+            <Button className="style-button-edit">
+              <Link to={`/edit-tour?q=${tour?.rawID || id}`} style={{ color: '#ffffff' }}>
+                Edit
+              </Link>
+            </Button>
+          </div>
+          <div>
+            <Button className="style-button-feedback" onClick={() => setShowModal(true)}>
+              Tour Feedback
+            </Button>
+          </div>
+        </ButtonEventAdminWrapper>
+      )}
 
       <Spin spinning={loading}>
         <SmallScreen>
@@ -314,7 +420,7 @@ function TourPage({ data, id, uid }) {
           <SubTitle>
             Day Trips
             <Gap />
-            <RatingStars rate={5} style={{ verticalAlign: 'text-bottom' }} />
+            <RatingStars rate={reviews?.rate} style={{ verticalAlign: 'text-bottom' }} />
           </SubTitle>
         </SmallScreen>
 
@@ -323,7 +429,7 @@ function TourPage({ data, id, uid }) {
           <SubTitle>
             Day Trips
             <Gap />
-            <RatingStars rate={5} style={{ verticalAlign: 'text-bottom' }} />
+            <RatingStars rate={reviews?.rate} style={{ verticalAlign: 'text-bottom' }} />
           </SubTitle>
         </BigScreen>
 
@@ -515,12 +621,27 @@ function TourPage({ data, id, uid }) {
             />
           ))}
         </ListWrapper>
+        <Modal
+          title="Feedback"
+          visible={showModal}
+          onCancel={() => setShowModal(false)}
+          footer={<Button>New Feedback</Button>}
+        >
+          <Spin spinning={loading}>
+            <Feedback
+              feedback={dataFeedback()}
+              replyFeedback={dataReply}
+              handleReplyFeedback={handleReplyFeedback}
+            />
+          </Spin>
+        </Modal>
       </Spin>
     </Layout>
   );
 }
 
 TourPage.propTypes = {
+  location: PropTypes.shape({ search: PropTypes.string }),
   data: PropTypes.shape({
     tour: PropTypes.shape({
       id: PropTypes.number,
@@ -542,6 +663,7 @@ TourPage.propTypes = {
 TourPage.defaultProps = {
   id: undefined,
   uid: undefined,
+  location: {},
 };
 
 export default TourPage;

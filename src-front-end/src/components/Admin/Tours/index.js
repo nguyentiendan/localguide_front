@@ -61,7 +61,7 @@ const columns = [
     key: 'Name',
     render: (name, tour) => (
       <Badge count={tour.feedback} offset={[15, 0]}>
-        <Link to={`tours/${tour.UID}/${tour.ID}`}>
+        <Link to={`tours/${tour.UID}/${tour.ID}?status=${tour.Status}`}>
           <TourTitle>{name}</TourTitle>
         </Link>
       </Badge>

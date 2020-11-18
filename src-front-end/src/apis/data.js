@@ -76,8 +76,9 @@ export async function getAllTours() {
 
 export async function getTourDetail({ id, uid }) {
   return request({
-    url: '/tour/getTour',
+    url: '/admin/tourReview/review',
     method: 'GET',
+    authRequired: true,
     params: {
       id,
       uid,
@@ -370,5 +371,32 @@ export async function handleFillterTourAdmin({ uid, data }) {
       total: data.total || 0,
       day: data.day || 1,
     },
+  });
+}
+
+export async function handleAdminApproveTour({ uid, id }) {
+  return request({
+    url: '/admin/tourReview/approve',
+    method: 'POST',
+    authRequired: true,
+    data: { uid, id: Number(id) },
+  });
+}
+
+export async function handleGetAllReplyFeedback({ uid, id }) {
+  return request({
+    url: '/admin/tourFeedback/getAllReply',
+    method: 'GET',
+    authRequired: true,
+    params: { uid, id: Number(id) },
+  });
+}
+
+export async function handleCreateReply({ uid, feedbackId, content }) {
+  return request({
+    url: '/admin/tourReply/create',
+    method: 'POST',
+    authRequired: true,
+    data: { uid, feedbackId, content },
   });
 }
