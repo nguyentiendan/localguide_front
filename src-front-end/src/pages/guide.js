@@ -3,10 +3,8 @@ import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Avatar, Tag } from 'antd';
 import { UserOutlined, CrownOutlined } from '@ant-design/icons';
-import { FaSuitcase, FaUsers } from 'react-icons/fa';
 import _ from 'lodash';
 import Gallery from 'react-grid-gallery';
-import { AiTwotoneProfile } from 'react-icons/ai';
 import qs from 'query-string';
 import PropTypes from 'prop-types';
 
@@ -20,6 +18,14 @@ import { getCndResourceUrl, resizeImageGallery } from '../utils/commons';
 import Layout from '../components/Layout';
 import InterestsOrExtras from '../components/InterestsOrExtras';
 import * as API from '../apis';
+import iconTour from '../images/icon-tour.svg';
+import iconReview from '../images/icon-review.svg';
+import iconLicense from '../images/icon-license.svg';
+import iconCustomer from '../images/icon-customer.svg';
+import iconBooking from '../images/icon-booking.svg';
+import iconLanguage from '../images/icon-language.svg';
+import iconLocation from '../images/icon-location.svg';
+import iconSex from '../images/icon-sex.svg';
 
 const InfoAvatarAndBackgroundImg = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
@@ -46,6 +52,19 @@ const InfoAvatarAndBackgroundImg = styled.div`
     display: flex;
     align-items: flex-end;
     display: none;
+  }
+  .guide__details__booking {
+    display: flex;
+    width: 115px;
+    background-color: #f12f60;
+    border-radius: 4px;
+    padding: 0px 8px;
+    color: #ffffff;
+    & > img {
+      width: 20px;
+      margin-bottom: 0px;
+      margin-right: 5px;
+    }
   }
   @media (min-width: 768px) {
     .info__guide {
@@ -171,6 +190,12 @@ const ListContainer = styled.div`
   }
 `;
 
+const IconWrapper = styled.img`
+  width: 35px;
+  height: 35px;
+  margin-bottom: 0;
+`;
+
 function User({ location }) {
   const [profile, setProfile] = useState({
     guide: {},
@@ -247,14 +272,16 @@ function User({ location }) {
                 <Tag icon={<CrownOutlined />} color="#f12f60" className="guide__details__best">
                   {handleLevelGuide(profile.guide?.level)}
                 </Tag>
-                <Tag icon={<CrownOutlined />} color="#f12f60" className="guide__details__booking">
+                <div className="guide__details__booking">
+                  <img src={iconBooking} alt="booking" />
                   Book now
-                </Tag>
+                </div>
                 <p style={{ color: '#EE305F', margin: 0 }}>Possible to plan personalised tour</p>
               </div>
             </div>
             <div className="info__book-now">
-              <div style={{ color: '#ffffff' }}>
+              <div style={{ color: '#ffffff', textAlign: 'center', cursor: 'pointer' }}>
+                <IconWrapper src={iconBooking} alt="Booking" />
                 <p style={{ margin: 0 }}>Book now</p>
               </div>
             </div>
@@ -267,37 +294,37 @@ function User({ location }) {
             <h1>Biography</h1>
             <div className="list__icon">
               <div className="flex-center" style={{ flexDirection: 'column' }}>
-                <FaSuitcase style={{ fontSize: '26px' }} />
+                <IconWrapper src={iconTour} alt="Tours" />
                 <p style={{ color: '#525F6B' }}>20 Tours</p>
               </div>
               <div className="flex-center" style={{ flexDirection: 'column' }}>
-                <FaSuitcase style={{ fontSize: '26px' }} />
+                <IconWrapper src={iconReview} alt="Review" />
                 <p style={{ color: '#525F6B' }}>45 Reviews</p>
               </div>
               <div className="flex-center" style={{ flexDirection: 'column' }}>
-                <AiTwotoneProfile style={{ fontSize: '26px' }} />
+                <IconWrapper src={iconLicense} alt="License" />
                 <p style={{ color: '#525F6B' }}>Have license</p>
               </div>
               <div className="flex-center" style={{ flexDirection: 'column' }}>
-                <FaUsers style={{ fontSize: '26px' }} />
-                <p style={{ color: '#525F6B' }}>365 Custommers</p>
+                <IconWrapper src={iconCustomer} alt="Customers" />
+                <p style={{ color: '#525F6B' }}>365 Customers</p>
               </div>
             </div>
           </div>
           <p>{profile.guide?.experience}</p>
           <div className="details__information mt-40">
             <div className="details__information__item">
-              <FaSuitcase style={{ fontSize: '26px' }} />
+              <IconWrapper src={iconLanguage} alt="Customers" />
               <h3>{profile.guide?.language?.split(';').join(', ')}</h3>
             </div>
             <div className="details__information__item">
-              <FaSuitcase style={{ fontSize: '26px' }} />
+              <IconWrapper src={iconLocation} alt="Customers" />
               <h3>
                 {profile.guide?.city}, {profile.guide?.country}
               </h3>
             </div>
             <div className="details__information__item">
-              <FaSuitcase style={{ fontSize: '26px' }} />
+              <IconWrapper src={iconSex} alt="Customers" />
               <h3>
                 {profile.guide?.sex === 0 ? 'Female' : 'Male'} {profile.guide?.age}
               </h3>
