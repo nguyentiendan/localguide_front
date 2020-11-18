@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   @media (min-width: 575px) {
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 `;
 

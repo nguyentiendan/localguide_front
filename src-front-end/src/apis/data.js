@@ -39,6 +39,20 @@ export async function getGuideProfile(uid) {
   });
 }
 
+export async function getGuideProfileOverview({ uid, guideId }) {
+  return request({
+    url: `/account/guide/${uid}/${guideId}`,
+    method: 'GET',
+  });
+}
+
+export async function getPhotosGuide({ uid }) {
+  return request({
+    url: `/guide/getAllPhoto/${uid}`,
+    method: 'GET',
+  });
+}
+
 export async function createTour(tour) {
   return request({
     url: `/tour/new`,
@@ -156,6 +170,16 @@ export async function getCityOfCountry(countryCode) {
   });
 }
 
+export async function uploadMultiPhotoGuide({ uid, file }) {
+  return request({
+    url: `/guide/uploadPhoto`,
+    method: 'POST',
+    authRequired: true,
+    data: { uid, uploadFiles: file },
+    isFormData: true,
+  });
+}
+
 export async function uploadCoverPhoto({ tourId, file }) {
   return request({
     url: `/tour/uploadCover`,
@@ -204,6 +228,16 @@ export async function updateCaption({ caption, name, tourId, uid }) {
   });
 }
 
+export async function updateCaptionGuide({ caption, name, uid }) {
+  return request({
+    url: `/guide/updateCaption`,
+    method: 'POST',
+    authRequired: true,
+    data: { caption, fileName: name, uid },
+    isFormData: true,
+  });
+}
+
 export async function getTourPhotos({ id, uid }) {
   return request({
     url: `/tour/getAllPhoto`,
@@ -226,6 +260,16 @@ export async function deletePhoto({ name, tourId }) {
     method: 'DELETE',
     authRequired: true,
     data: { fileName: name, id: tourId },
+  });
+}
+
+export async function deletePhotoGuide({ name, uid }) {
+  return request({
+    url: `/guide/deletePhoto`,
+    method: 'DELETE',
+    authRequired: true,
+    data: { uid, fileName: name },
+    isFormData: true,
   });
 }
 
@@ -321,5 +365,32 @@ export async function getAllScheduleTourEdit({ uid, id }) {
   return request({
     url: `tourSchedule/getAllSchedule?uid=${uid}&id=${id}`,
     method: 'GET',
+  });
+}
+
+export async function handleFillterTourAdmin({ data }) {
+  const handleStatus = () => {
+    switch (data.status) {
+      case 0:
+        return 0;
+      case 1:
+        return 1;
+      case 2:
+        return 2;
+      default:
+        return 3;
+    }
+  };
+  return request({
+    url: '/admin/tourFilter/filter',
+    method: 'GET',
+    authRequired: true,
+    params: {
+      city: data.city,
+      country: data.country,
+      status: handleStatus(),
+      price: data.total || 0,
+      day: data.day || 1,
+    },
   });
 }
