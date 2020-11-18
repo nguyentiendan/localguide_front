@@ -2,6 +2,7 @@
 import React from 'react';
 import { Popover, Button } from 'antd';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 const ActionFeedbackWrapper = styled.div`
   display: flex;
@@ -15,15 +16,15 @@ const ActionFeedbackWrapper = styled.div`
   }
 `;
 
-const ActionFeedback = () => {
+const ActionFeedback = ({ handleDelete, id, handleResolve, handleEdit, disableResolve }) => {
   return (
     <Popover
       placement="right"
       content={(
         <ActionFeedbackWrapper>
-          <Button type="link">Edit</Button>
-          <Button type="link">Delete</Button>
-          <Button type="link">Resolve</Button>
+          <Button type="link" onClick={() => handleEdit(id)}>Edit</Button>
+          <Button type="link" onClick={() => handleDelete(id)}>Delete</Button>
+          {!disableResolve && <Button type="link" onClick={() => handleResolve(id)}>Resolve</Button>}
         </ActionFeedbackWrapper>
       )}
       title={null}
@@ -34,6 +35,21 @@ const ActionFeedback = () => {
       </span>
     </Popover>
   );
-}
+};
 
-export default ActionFeedback
+ActionFeedback.propTypes = {
+  handleDelete: PropTypes.func,
+  handleResolve: PropTypes.func,
+  handleEdit: PropTypes.func,
+  id: PropTypes.number.isRequired,
+  disableResolve: PropTypes.bool,
+};
+
+ActionFeedback.defaultProps = {
+  handleDelete: () => { },
+  handleResolve: () => { },
+  handleEdit: () => { },
+  disableResolve: false,
+};
+
+export default ActionFeedback;

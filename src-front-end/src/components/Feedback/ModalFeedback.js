@@ -1,0 +1,163 @@
+import React, { useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { Modal, Spin, Button, Input } from 'antd';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
+
+import * as API from '../../apis';
+import Feedback from './index';
+
+const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
+  const [loading, setLoading] = useState(false);
+  const [dataReply, setDataReply] = useState([]);
+  const [dataFeedback, setDataFeedback] = useState([]);
+  const [isFeedback, setIsFeedback] = useState(false);
+  const [editFeedback, setEditFeedback] = useState({});
+  const [editReply, setEditReply] = useState({});
+
+  useEffect(() => {
+    const fetchDataFeedback = async () => {
+      setLoading(true);
+      const res = await API.handleGetAllFeedback({ uid: user.uid, id: tour?.rawID || id });
+      const newData = res.data.map(item => {
+        const newItem = { ...item };
+        newItem.uuid = uuidv4();
+        return newItem;
+      });
+      setDataFeedback(newData);
+      setLoading(false);
+    };
+    fetchDataFeedback();
+  }, [setLoading, user.uid, id, tour.rawID, API.handleGetAllFeedback, setDataFeedback]);
+
+  const handleCreateFeedback = async e => {
+    const newFeedback = {
+      Avatar: user.avatar,
+      Content: e.target.value,
+      Created_At: moment(),
+      FeedbackID: tour?.rawID || id,
+      Fullname: user.fullname,
+      UID: user.uid,
+      ID: dataFeedback[dataFeedback.length - 1].ID + 1,
+      uuid: uuidv4(),
+    };
+    setDataFeedback([...dataFeedback, newFeedback]);
+    await API.handleCreateFeedback({
+      uid: user.uid,
+      tourId: tour?.rawID || id,
+      content: e.target.value,
+    });
+  };
+
+  const handleReplyFeedback = async (e, feedbackId) => {
+    const newFeedback = {
+      Avatar: user.avatar,
+      Content: e.target.value,
+      Created_At: moment(),
+      FeedbackID: feedbackId,
+      Fullname: user.fullname,
+      UID: user.uid,
+      ID: dataReply[dataReply.length - 1]?.ID + 1,
+      uuid: uuidv4(),
+    };
+    setDataReply([...dataReply, newFeedback]);
+    await API.handleCreateReply({ uid: user.uid, feedbackId, content: e.target.value });
+  };
+  const handleGetAllReply = async idFeedback => {
+    setLoading(true);
+    const res = await API.handleGetAllReplyFeedback({ uid: user.uid, id: idFeedback });
+    const newData = res.data.map(item => {
+      const newItem = { ...item };
+      newItem.uuid = uuidv4();
+      return newItem;
+    });
+    setDataReply([...dataReply, ...newData]);
+    setLoading(false);
+  };
+
+  const handleResolveFeedback = async idFeedback => {
+    await API.handleResolveFeedback({ id: idFeedback });
+  };
+  const handleDeleteFeedback = async idFeedback => {
+    const newDataRemove = _.remove(dataFeedback, item => {
+      return item.ID !== idFeedback;
+    });
+    setDataFeedback(newDataRemove);
+    await API.handleDeleteFeedback({ id: idFeedback });
+  };
+  const handleEditFeedback = idFeedback => {
+    setEditFeedback({
+      [idFeedback]: { id: idFeedback, value: editFeedback[idFeedback]?.value || '', isOpen: true },
+    });
+  };
+
+  const handleDeleteReply = async idFeedback => {
+    const newDataRemove = _.remove(dataReply, item => {
+      return item.ID !== idFeedback;
+    });
+    setDataReply(newDataRemove);
+    await API.handleDeleteReply({ id: idFeedback });
+  };
+  const handleEditReply = idReply => {
+    setEditReply({
+      [idReply]: { id: idReply, value: editReply[idReply]?.value || '', isOpen: true },
+    });
+  };
+
+  return (
+    <Modal
+      title="Feedback"
+      visible={showModal}
+      onCancel={() => setShowModal(false)}
+      footer={<Button onClick={() => setIsFeedback(true)}>New Feedback</Button>}
+    >
+      <Spin spinning={loading}>
+        <Feedback
+          feedback={dataFeedback}
+          replyFeedback={dataReply}
+          handleReplyFeedback={handleReplyFeedback}
+          userUID={user.uid}
+          handleGetAllReply={handleGetAllReply}
+          handleDeleteFeedback={handleDeleteFeedback}
+          handleResolveFeedback={handleResolveFeedback}
+          handleEditFeedback={handleEditFeedback}
+          editFeedback={editFeedback}
+          setEditFeedback={setEditFeedback}
+          editReply={editReply}
+          setEditReply={setEditReply}
+          handleDeleteReply={handleDeleteReply}
+          handleEditReply={handleEditReply}
+        />
+        {isFeedback && (
+          <Input
+            placeholder="Create feedback"
+            onPressEnter={handleCreateFeedback}
+            style={{ marginTop: 20 }}
+          />
+        )}
+      </Spin>
+    </Modal>
+  );
+};
+
+ModalFeedback.propTypes = {
+  showModal: PropTypes.bool.isRequired,
+  setShowModal: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    avatar: PropTypes.string,
+    fullname: PropTypes.string,
+    uid: PropTypes.string,
+  }).isRequired,
+  tour: PropTypes.shape({
+    rawID: PropTypes.number,
+  }),
+  id: PropTypes.string,
+};
+
+ModalFeedback.defaultProps = {
+  tour: {},
+  id: '',
+};
+
+export default ModalFeedback;

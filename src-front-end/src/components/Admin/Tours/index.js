@@ -156,7 +156,7 @@ function Tours() {
   const handleFinish = async value => {
     setIsloading(true);
     const res = await API.handleFillterTourAdmin({
-      data: { ...value, country: _.find(rootCountry, c => c.code === value.country).name },
+      data: { ...value, country: _.find(rootCountry, c => c.code === value.country)?.name },
     });
     setDataFilter(res.data);
     setIsloading(false);

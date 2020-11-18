@@ -1,40 +1,112 @@
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
-import { Comment, Input } from 'antd';
+import { Comment, Input, Button } from 'antd';
 
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import ActionFeedback from './ActionFeedback';
+import EditFeedback from './EditFeedback';
 
-const Feedback = ({ feedback, replyFeedback, handleReplyFeedback }) => {
-  const [value, setValue] = useState('')
-  const feedbackId = new Set();
+const Feedback = ({
+  feedback,
+  replyFeedback,
+  handleReplyFeedback,
+  userUID,
+  handleGetAllReply,
+  handleDeleteFeedback,
+  handleResolveFeedback,
+  handleEditFeedback,
+  editFeedback,
+  setEditFeedback,
+  handleDeleteReply,
+  handleEditReply,
+  editReply,
+  setEditReply,
+}) => {
+  const [value, setValue] = useState({});
+  const [feedbackId, setFeedbackId] = useState({});
+
   return (
     <div>
       {feedback?.map(comment => {
         return (
           <Comment
-            actions={comment.actions}
-            author={comment.user}
-            avatar={comment.avatar}
-            content={comment.content}
-            datetime={comment.date}
+            actions={[
+              <Button
+                key="comment-list-reply-to-0"
+                type="link"
+                onClick={() => {
+                  setFeedbackId({ ...feedbackId, [comment.ID]: { id: comment.ID } });
+                  handleGetAllReply(comment.ID)
+                }}
+                style={{ color: '#555' }}
+              >
+                Reply to
+              </Button>,
+            ]}
+            author={comment.Fullname}
+            avatar={comment.Avatar}
+            content={(
+              <>
+                {editFeedback[comment.ID] && editFeedback[comment.ID].isOpen ? (
+                  <EditFeedback
+                    data={comment}
+                    dataEdit={editFeedback}
+                    setDataEdit={setEditFeedback}
+                  />
+                ) : (
+                    editFeedback[comment.ID]?.value || comment.Content
+                  )}
+              </>
+            )}
+            datetime={(
+              <span>
+                {moment(comment.Created_At).fromNow()}
+                {userUID === comment.UID && (
+                  <ActionFeedback
+                    handleDelete={handleDeleteFeedback}
+                    id={comment.ID}
+                    handleResolve={handleResolveFeedback}
+                    handleEdit={handleEditFeedback}
+                  />
+                )}
+              </span>
+            )}
             key={comment.uuid}
           >
             {replyFeedback?.map(item => {
-              feedbackId.add(item.FeedbackID);
+              // feedbackId.add(item.FeedbackID);
               return (
-                Number(comment.id) === item.FeedbackID && (
+                comment.ID === item.FeedbackID && (
                   <div key={item.uuid}>
                     <Comment
                       // actions={item.actions}
                       author={item.Fullname}
                       avatar={item.Avatar}
-                      content={item.Content}
+                      content={(
+                        <>
+                          {editReply[item.ID] && editReply[item.ID].isOpen ? (
+                            <EditFeedback
+                              data={item}
+                              dataEdit={editReply}
+                              setDataEdit={setEditReply}
+                            />
+                          ) : (
+                              editReply[item.ID]?.value || item.Content
+                            )}
+                        </>
+                      )}
                       datetime={(
                         <span>
                           {moment(item.Created_At).fromNow()}
-                          <ActionFeedback />
+                          {userUID === item.UID && (
+                            <ActionFeedback
+                              handleDelete={handleDeleteReply}
+                              id={item.ID}
+                              handleEdit={handleEditReply}
+                              disableResolve
+                            />
+                          )}
                         </span>
                       )}
                     />
@@ -42,24 +114,20 @@ const Feedback = ({ feedback, replyFeedback, handleReplyFeedback }) => {
                 )
               );
             })}
-            {
-              [...feedbackId].map(item => (
-                Number(comment.id) === item && (
-                  <Input
-                    key={comment.uuid}
-                    value={value}
-                    placeholder="Reply feedback"
-                    style={{ display: !replyFeedback && 'none' }}
-                    onPressEnter={e => {
-                      handleReplyFeedback(e, Number(comment.id))
-                      setValue('')
-                      e.target.value = ''
-                    }}
-                    onChange={e => setValue(e.target.value)}
-                  />
-                )
-              ))
-            }
+
+            {comment.ID === feedbackId[comment.ID]?.id && (
+              <Input
+                key={comment.uuid}
+                value={value[comment.ID]?.value}
+                placeholder="Reply feedback"
+                style={{ display: !replyFeedback && 'none' }}
+                onPressEnter={e => {
+                  handleReplyFeedback(e, comment.ID);
+                  setValue('');
+                }}
+                onChange={e => setValue({ [comment.ID]: { value: e.target.value } })}
+              />
+            )}
           </Comment>
         );
       })}
@@ -85,12 +153,29 @@ Feedback.propTypes = {
     UID: PropTypes.string,
   }),
   handleReplyFeedback: PropTypes.func,
+  handleGetAllReply: PropTypes.func,
+  userUID: PropTypes.string.isRequired,
+  handleDeleteFeedback: PropTypes.func,
+  handleResolveFeedback: PropTypes.func,
+  handleEditFeedback: PropTypes.func,
+  handleDeleteReply: PropTypes.func,
+  handleEditReply: PropTypes.func,
+  editFeedback: PropTypes.bool.isRequired,
+  setEditFeedback: PropTypes.func.isRequired,
+  editReply: PropTypes.bool.isRequired,
+  setEditReply: PropTypes.func.isRequired,
 };
 
 Feedback.defaultProps = {
   feedback: [],
   replyFeedback: [],
   handleReplyFeedback: () => { },
+  handleGetAllReply: () => { },
+  handleDeleteFeedback: () => { },
+  handleResolveFeedback: () => { },
+  handleEditFeedback: () => { },
+  handleDeleteReply: () => { },
+  handleEditReply: () => { },
 };
 
 export default Feedback;

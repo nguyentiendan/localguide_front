@@ -382,6 +382,51 @@ export async function handleAdminApproveTour({ uid, id }) {
   });
 }
 
+export async function handleCreateFeedback({ uid, tourId, content }) {
+  return request({
+    url: 'admin/tourFeedback/create',
+    method: 'POST',
+    authRequired: true,
+    data: { uid, tourId, content },
+  });
+}
+
+export async function handleGetAllFeedback({ uid, id }) {
+  return request({
+    url: '/admin/tourFeedback/getAll',
+    method: 'GET',
+    authRequired: true,
+    params: { uid, id: Number(id) },
+  });
+}
+
+export async function handleEditFeedback({ id, content }) {
+  return request({
+    url: '/admin/tourFeedback/edit',
+    method: 'POST',
+    data: { id, content },
+    authRequired: true,
+  });
+}
+
+export async function handleDeleteFeedback({ id }) {
+  return request({
+    url: '/admin/tourFeedback/delete',
+    method: 'DELETE',
+    data: { id },
+    authRequired: true,
+  });
+}
+
+export async function handleResolveFeedback({ id }) {
+  return request({
+    url: '/admin/tourFeedback/resolve',
+    method: 'POST',
+    data: { id },
+    authRequired: true,
+  });
+}
+
 export async function handleGetAllReplyFeedback({ uid, id }) {
   return request({
     url: '/admin/tourFeedback/getAllReply',
@@ -397,5 +442,23 @@ export async function handleCreateReply({ uid, feedbackId, content }) {
     method: 'POST',
     authRequired: true,
     data: { uid, feedbackId, content },
+  });
+}
+
+export async function handleEditReply({ id, content }) {
+  return request({
+    url: '/admin/tourReplyFb/edit',
+    method: 'POST',
+    data: { id, content },
+    authRequired: true,
+  });
+}
+
+export async function handleDeleteReply({ id }) {
+  return request({
+    url: '/admin/tourReplyFb/delete',
+    method: 'DELETE',
+    data: { id },
+    authRequired: true,
   });
 }
