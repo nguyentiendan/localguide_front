@@ -62,13 +62,6 @@ export async function createTour(tour) {
   });
 }
 
-export async function getPhotosGuide({ uid }) {
-  return request({
-    url: `/guide/getAllPhoto/${uid}`,
-    method: 'GET',
-  });
-}
-
 export async function getAllTours() {
   // TODO: call API
   // return new Promise(resolve => {
