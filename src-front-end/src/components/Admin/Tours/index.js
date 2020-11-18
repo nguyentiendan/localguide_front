@@ -16,6 +16,7 @@ import {
 } from 'antd';
 import moment from 'moment';
 import { Link } from 'gatsby';
+import _ from 'lodash';
 
 import colors from '../../../styles/colors';
 import * as API from '../../../apis';
@@ -154,7 +155,9 @@ function Tours() {
 
   const handleFinish = async value => {
     setIsloading(true);
-    const res = await API.handleFillterTourAdmin({ uid: user.uid, data: value });
+    const res = await API.handleFillterTourAdmin({
+      data: { ...value, country: _.find(rootCountry, c => c.code === value.country).name },
+    });
     setDataFilter(res.data);
     setIsloading(false);
   };

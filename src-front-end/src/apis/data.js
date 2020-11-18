@@ -346,7 +346,7 @@ export async function getAllLang() {
   });
 }
 
-export async function handleFillterTourAdmin({ uid, data }) {
+export async function handleFillterTourAdmin({ data }) {
   const handleStatus = () => {
     switch (data.status) {
       case 0:
@@ -360,15 +360,14 @@ export async function handleFillterTourAdmin({ uid, data }) {
     }
   };
   return request({
-    url: '/admin/tour/filter',
-    method: 'POST',
+    url: '/admin/tourFilter/filter',
+    method: 'GET',
     authRequired: true,
-    data: {
-      uid,
-      city: data.city || '',
-      country: data.country || '',
+    params: {
+      city: data.city,
+      country: data.country,
       status: handleStatus(),
-      total: data.total || 0,
+      price: data.total || 0,
       day: data.day || 1,
     },
   });
