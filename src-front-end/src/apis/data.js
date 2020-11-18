@@ -62,6 +62,13 @@ export async function createTour(tour) {
   });
 }
 
+export async function getPhotosGuide({ uid }) {
+  return request({
+    url: `/guide/getAllPhoto/${uid}`,
+    method: 'GET',
+  });
+}
+
 export async function getAllTours() {
   // TODO: call API
   // return new Promise(resolve => {
@@ -170,6 +177,16 @@ export async function getCityOfCountry(countryCode) {
   });
 }
 
+export async function uploadMultiPhotoGuide({ uid, file }) {
+  return request({
+    url: `/guide/uploadPhoto`,
+    method: 'POST',
+    authRequired: true,
+    data: { uid, uploadFiles: file },
+    isFormData: true,
+  });
+}
+
 export async function uploadCoverPhoto({ tourId, file }) {
   return request({
     url: `/tour/uploadCover`,
@@ -218,6 +235,16 @@ export async function updateCaption({ caption, name, tourId, uid }) {
   });
 }
 
+export async function updateCaptionGuide({ caption, name, uid }) {
+  return request({
+    url: `/guide/updateCaption`,
+    method: 'POST',
+    authRequired: true,
+    data: { caption, fileName: name, uid },
+    isFormData: true,
+  });
+}
+
 export async function getTourPhotos({ id, uid }) {
   return request({
     url: `/tour/getAllPhoto`,
@@ -240,6 +267,16 @@ export async function deletePhoto({ name, tourId }) {
     method: 'DELETE',
     authRequired: true,
     data: { fileName: name, id: tourId },
+  });
+}
+
+export async function deletePhotoGuide({ name, uid }) {
+  return request({
+    url: `/guide/deletePhoto`,
+    method: 'DELETE',
+    authRequired: true,
+    data: { uid, fileName: name },
+    isFormData: true,
   });
 }
 
