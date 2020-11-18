@@ -39,6 +39,20 @@ export async function getGuideProfile(uid) {
   });
 }
 
+export async function getGuideProfileOverview({ uid, guideId }) {
+  return request({
+    url: `/account/guide/${uid}/${guideId}`,
+    method: 'GET',
+  });
+}
+
+export async function getPhotosGuide({ uid }) {
+  return request({
+    url: `/guide/getAllPhoto/${uid}`,
+    method: 'GET',
+  });
+}
+
 export async function createTour(tour) {
   return request({
     url: `/tour/new`,
