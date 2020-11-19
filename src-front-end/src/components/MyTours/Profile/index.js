@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import * as API from '../../../apis';
 import TagInterests from '../../HandleTag/Interests';
 import UploadAvatar from '../../Input/UploadAvatar';
+import UploadPhotos from './UploadPhotos';
 
 const FormWrapper = styled(Form)`
   display: flex;
@@ -52,13 +53,14 @@ const tailFormItemLayout = {
   },
 };
 
-const AdminProfile = ({ uid }) => {
+const GuideProfile = ({ uid }) => {
   const [form] = Form.useForm();
   const { country, fullname, mobile, job, age, education, experience } = form.getFieldsValue();
   const [profile, setProfile] = useState({});
   const [rootCountry, setRootCountry] = useState([]);
   const [rootCity, setRootCity] = useState([]);
   const [isloading, setIsloading] = useState(false);
+  const [photos, setPhotos] = useState([]);
   const [defaultTags, setDefaultTags] = useState({
     interests: [],
     language: [],
@@ -76,14 +78,14 @@ const AdminProfile = ({ uid }) => {
 
   const fetchAdminProfile = useCallback(async () => {
     setIsloading(true);
-    const res = await API.getAdminProfile({ uid });
+    const res = await API.getGuideProfile(uid);
     const resCountry = await API.getAllCountry();
-    setInterests({ ...interests, tags: res.data?.interest.split(';') });
-    setExtras({ ...extras, tags: res.data?.extras.split(';') });
-    setLanguage({ ...language, tags: res.data?.language.split(';') });
+    setInterests({ ...interests, tags: res.guide?.interest.split(';') });
+    setExtras({ ...extras, tags: res.guide?.extras.split(';') });
+    setLanguage({ ...language, tags: res.guide?.language.split(';') });
 
     setRootCountry(resCountry.data);
-    setProfile(res.data);
+    setProfile(res.guide);
     setIsloading(false);
   }, [API.getAdminProfile, API.getAllCountry, setIsloading, setProfile, setRootCountry]);
 
@@ -112,6 +114,15 @@ const AdminProfile = ({ uid }) => {
       }
     })();
   }, [API.getAllInterest, API.getAllExtra, API.getAllLang, setDefaultTags]);
+  useEffect(() => {
+    const fetchPhotos = async () => {
+      setIsloading(true);
+      const res = await API.getPhotosGuide({ uid });
+      setPhotos(res.data);
+      setIsloading(false);
+    };
+    fetchPhotos();
+  }, [setPhotos, API.getPhotosGuide, setIsloading]);
 
   const handleSelectCountryAndCity = value => {
     form.setFieldsValue({ country: value });
@@ -332,6 +343,15 @@ const AdminProfile = ({ uid }) => {
           <Input.TextArea rows={4} />
         </Form.Item>
 
+        <Form.Item label="Photos">
+          <UploadPhotos
+            photos={photos}
+            uid={uid}
+            setPhotos={setPhotos}
+            setIsloading={setIsloading}
+          />
+        </Form.Item>
+
         <Form.Item {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">
             Submit
@@ -342,8 +362,8 @@ const AdminProfile = ({ uid }) => {
   );
 };
 
-AdminProfile.propTypes = {
+GuideProfile.propTypes = {
   uid: PropTypes.string.isRequired,
 };
 
-export default AdminProfile;
+export default GuideProfile;

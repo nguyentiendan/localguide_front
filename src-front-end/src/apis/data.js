@@ -33,7 +33,22 @@ export async function getAllBlogs() {
 
 export async function getGuideProfile(uid) {
   return request({
-    url: `/account/get/${uid}`,
+    url: `/account/guideView/${uid}`,
+    method: 'GET',
+    authRequired: true,
+  });
+}
+
+export async function getGuideProfileOverview({ uid, guideId }) {
+  return request({
+    url: `/account/guide/${uid}/${guideId}`,
+    method: 'GET',
+  });
+}
+
+export async function getPhotosGuide({ uid }) {
+  return request({
+    url: `/guide/getAllPhoto/${uid}`,
     method: 'GET',
   });
 }
@@ -107,8 +122,9 @@ export async function createReplyFeedback({ uid, feedbackId, content }) {
 
 export async function getTourDetail({ id, uid }) {
   return request({
-    url: '/tour/getTour',
+    url: '/admin/tourReview/review',
     method: 'GET',
+    authRequired: true,
     params: {
       id,
       uid,
@@ -201,6 +217,16 @@ export async function getCityOfCountry(countryCode) {
   });
 }
 
+export async function uploadMultiPhotoGuide({ uid, file }) {
+  return request({
+    url: `/guide/uploadPhoto`,
+    method: 'POST',
+    authRequired: true,
+    data: { uid, uploadFiles: file },
+    isFormData: true,
+  });
+}
+
 export async function uploadCoverPhoto({ tourId, file }) {
   return request({
     url: `/tour/uploadCover`,
@@ -221,12 +247,41 @@ export async function uploadPhoto({ tourId, file }) {
   });
 }
 
+export async function uploadMultiPhoto({ tourId, file }) {
+  return request({
+    url: `/tour/uploadMultiFile`,
+    method: 'POST',
+    authRequired: true,
+    data: { id: tourId, uploadFiles: file },
+    isFormData: true,
+  });
+}
+export async function uploadAvatar({ uid, file }) {
+  return request({
+    url: `/account/uploadAvatar`,
+    method: 'POST',
+    authRequired: true,
+    data: { uid, uploadFile: file },
+    isFormData: true,
+  });
+}
+
 export async function updateCaption({ caption, name, tourId, uid }) {
   return request({
     url: `/tour/updateCaption`,
     method: 'POST',
     authRequired: true,
     data: { caption, fileName: name, id: tourId, uid },
+  });
+}
+
+export async function updateCaptionGuide({ caption, name, uid }) {
+  return request({
+    url: `/guide/updateCaption`,
+    method: 'POST',
+    authRequired: true,
+    data: { caption, fileName: name, uid },
+    isFormData: true,
   });
 }
 
@@ -255,6 +310,16 @@ export async function deletePhoto({ name, tourId }) {
   });
 }
 
+export async function deletePhotoGuide({ name, uid }) {
+  return request({
+    url: `/guide/deletePhoto`,
+    method: 'DELETE',
+    authRequired: true,
+    data: { uid, fileName: name },
+    isFormData: true,
+  });
+}
+
 export async function getAllTags() {
   return request({
     url: `/tag/getAllTag`,
@@ -277,5 +342,169 @@ export async function createTourSchedule({ tourId, day, pickup, schedule }) {
     method: 'POST',
     authRequired: true,
     data: { tourId, day, pickup, schedule },
+  });
+}
+
+export async function adminGetAllTour({ uid, token }) {
+  return request({
+    url: `/admin/tour/${uid}?page=1`,
+    method: 'GET',
+    authRequired: true,
+    token,
+  });
+}
+export async function getAdminProfile({ uid }) {
+  return request({
+    url: `account/admin/${uid}`,
+    method: 'GET',
+    authRequired: true,
+  });
+}
+
+export async function editProfile(data) {
+  return request({
+    url: 'account/edit',
+    method: 'POST',
+    authRequired: true,
+    data,
+  });
+}
+
+export async function getAllInterest() {
+  return request({
+    url: '/interest/getAllInterest',
+    method: 'GET',
+  });
+}
+
+export async function getAllExtra() {
+  return request({
+    url: '/extra/getAllExtra',
+    method: 'GET',
+    authRequired: true,
+  });
+}
+
+export async function getAllLang() {
+  return request({
+    url: '/lang/getAllLang',
+    method: 'GET',
+  });
+}
+
+export async function handleFillterTourAdmin({ data }) {
+  const handleStatus = () => {
+    switch (data.status) {
+      case 0:
+        return 0;
+      case 1:
+        return 1;
+      case 2:
+        return 2;
+      default:
+        return 3;
+    }
+  };
+  return request({
+    url: '/admin/tourFilter/filter',
+    method: 'GET',
+    authRequired: true,
+    params: {
+      city: data.city,
+      country: data.country,
+      status: handleStatus(),
+      price: data.total || 0,
+      day: data.day || 1,
+    },
+  });
+}
+
+export async function handleAdminApproveTour({ uid, id }) {
+  return request({
+    url: '/admin/tourReview/approve',
+    method: 'POST',
+    authRequired: true,
+    data: { uid, id: Number(id) },
+  });
+}
+
+export async function handleCreateFeedback({ uid, tourId, content }) {
+  return request({
+    url: 'admin/tourFeedback/create',
+    method: 'POST',
+    authRequired: true,
+    data: { uid, tourId, content },
+  });
+}
+
+export async function handleGetAllFeedback({ uid, id }) {
+  return request({
+    url: '/admin/tourFeedback/getAll',
+    method: 'GET',
+    authRequired: true,
+    params: { uid, id: Number(id) },
+  });
+}
+
+export async function handleEditFeedback({ id, content }) {
+  return request({
+    url: '/admin/tourFeedback/edit',
+    method: 'POST',
+    data: { id, content },
+    authRequired: true,
+  });
+}
+
+export async function handleDeleteFeedback({ id }) {
+  return request({
+    url: '/admin/tourFeedback/delete',
+    method: 'DELETE',
+    data: { id },
+    authRequired: true,
+  });
+}
+
+export async function handleResolveFeedback({ id }) {
+  return request({
+    url: '/admin/tourFeedback/resolve',
+    method: 'POST',
+    data: { id },
+    authRequired: true,
+  });
+}
+
+export async function handleGetAllReplyFeedback({ uid, id }) {
+  return request({
+    url: '/admin/tourFeedback/getAllReply',
+    method: 'GET',
+    authRequired: true,
+    params: { uid, id: Number(id) },
+  });
+}
+
+export async function handleCreateReply({ uid, feedbackId, content }) {
+  return request({
+    url: '/admin/tourReply/create',
+    method: 'POST',
+    authRequired: true,
+    data: { uid, feedbackId, content },
+  });
+}
+
+export async function handleEditReply({ id, content }) {
+  return request({
+    url: '/admin/tourReplyFb/edit',
+    method: 'POST',
+    data: { id, content },
+    authRequired: true,
+  });
+}
+
+export async function handleDeleteReply({ id }) {
+  return request({
+    url: '/admin/tourReplyFb/delete',
+    method: 'DELETE',
+    data: { id },
+    authRequired: true,
   });
 }

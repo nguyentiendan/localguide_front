@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { graphql } from 'gatsby';
+import { graphql, Link } from 'gatsby';
 import styled from 'styled-components';
 import Gallery from 'react-grid-gallery';
 import { AiOutlineSchedule } from 'react-icons/ai';
 import { FaSuitcase, FaMoneyBill, FaUsers } from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
-import { Spin } from 'antd';
+import { Spin, notification } from 'antd';
 import _ from 'lodash';
+import qs from 'query-string';
 
 import * as API from '../apis';
 import Layout from '../components/Layout';
@@ -23,7 +24,9 @@ import NavItem from '../components/Layout/NavItem';
 import Button from '../components/Button';
 import { bigScreenCss, smallScreenCss } from '../styles/responsive-css';
 import TourGuideListItem from '../components/TourGuideListItem';
+import { getUserProfile } from '../utils/auth';
 import { getCndResourceUrl, safeFuncCall } from '../utils/commons';
+import ModalFeedback from '../components/Feedback/ModalFeedback';
 
 const Title = styled.h1`
   font-weight: bold;
@@ -201,15 +204,37 @@ const GalleryWrapper = styled.div`
   }
 `;
 
-function TourPage({ data, id, uid }) {
+const ButtonEventAdminWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  .style-button-approve,
+  .style-button-edit,
+  .style-button-feedback {
+    border: 1px solid #ba7c2e;
+  }
+  .style-button-approve {
+    margin-right: 20px;
+    background: #92d050;
+  }
+  .style-button-edit {
+    background: #3c78d8;
+  }
+  .style-button-feedback {
+    background: #ff9900;
+  }
+`;
+function TourPage({ data, id, uid, location: locationParams }) {
   const { tour, reviews = { comments: [] } } = data || {};
   const [tourDetails, setTourDetails] = useState(tour || {});
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
   const [tourPhotos, setTourPhotos] = useState([]);
   const [thumbnailWidths, setThumbnailWidths] = useState([]);
   const [loading, setLoading] = useState(false);
-  const galleryWrapperComp = useRef();
+  const [showModal, setShowModal] = useState(false);
 
+  const galleryWrapperComp = useRef();
+  const user = getUserProfile();
+  const statusTour = qs.parse(locationParams.search);
   const tourQuery = useMemo(() => {
     const query = {};
     if (tour && tour.rawID && tour.uid) {
@@ -221,7 +246,6 @@ function TourPage({ data, id, uid }) {
     }
     return query;
   }, [tour, id, uid]);
-
   useEffect(() => {
     const fetchTourDetails = async () => {
       try {
@@ -302,19 +326,56 @@ function TourPage({ data, id, uid }) {
 
     return () => window.removeEventListener('resize', updateSize);
   }, [galleryWrapperComp, tourPhotos]);
+  const handleApproveTour = async () => {
+    setLoading(true);
+    await API.handleAdminApproveTour({ uid: user.uid, id: tour?.rawID || id });
+    notification.success({ message: 'You have successfully approve tour.' });
+    setLoading(false);
+  };
 
   return (
     <Layout noHeader>
       <SEO title={tourDetails.name} />
-
       <Spin spinning={loading}>
+        {user.role === 3 && (
+          <ButtonEventAdminWrapper>
+            <div>
+              {statusTour.status === '0' && (
+                <Button onClick={handleApproveTour} className="style-button-approve">
+                  Approve
+                </Button>
+              )}
+              <Button className="style-button-edit">
+                <Link to={`/edit-tour?q=${tour?.rawID || id}`} style={{ color: '#ffffff' }}>
+                  Edit
+                </Link>
+              </Button>
+            </div>
+            <div>
+              <Button className="style-button-feedback" onClick={() => setShowModal(true)}>
+                Tour Feedback
+              </Button>
+            </div>
+          </ButtonEventAdminWrapper>
+        )}
+        {user.role === 2 && (
+          <ButtonEventAdminWrapper>
+            <div />
+            <div>
+              <Button className="style-button-feedback" onClick={() => setShowModal(true)}>
+                Tour Feedback
+              </Button>
+            </div>
+          </ButtonEventAdminWrapper>
+        )}
+
         <SmallScreen>
           <br />
           <Title>{tourDetails.name}</Title>
           <SubTitle>
             Day Trips
             <Gap />
-            <RatingStars rate={5} style={{ verticalAlign: 'text-bottom' }} />
+            <RatingStars rate={reviews?.rate} style={{ verticalAlign: 'text-bottom' }} />
           </SubTitle>
         </SmallScreen>
 
@@ -323,7 +384,7 @@ function TourPage({ data, id, uid }) {
           <SubTitle>
             Day Trips
             <Gap />
-            <RatingStars rate={5} style={{ verticalAlign: 'text-bottom' }} />
+            <RatingStars rate={reviews?.rate} style={{ verticalAlign: 'text-bottom' }} />
           </SubTitle>
         </BigScreen>
 
@@ -515,12 +576,20 @@ function TourPage({ data, id, uid }) {
             />
           ))}
         </ListWrapper>
+        <ModalFeedback
+          showModal={showModal}
+          setShowModal={setShowModal}
+          user={user}
+          tour={tour}
+          id={id}
+        />
       </Spin>
     </Layout>
   );
 }
 
 TourPage.propTypes = {
+  location: PropTypes.shape({ search: PropTypes.string }),
   data: PropTypes.shape({
     tour: PropTypes.shape({
       id: PropTypes.number,
@@ -542,6 +611,7 @@ TourPage.propTypes = {
 TourPage.defaultProps = {
   id: undefined,
   uid: undefined,
+  location: {},
 };
 
 export default TourPage;
