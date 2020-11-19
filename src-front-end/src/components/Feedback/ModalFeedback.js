@@ -18,18 +18,34 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
 
   useEffect(() => {
     const fetchDataFeedback = async () => {
-      setLoading(true);
-      const res = await API.handleGetAllFeedback({ uid: user.uid, id: tour?.rawID || id });
-      const newData = res.data.map(item => {
-        const newItem = { ...item };
-        newItem.uuid = uuidv4();
-        return newItem;
-      });
-      setDataFeedback(newData);
-      setLoading(false);
+      if (showModal) {
+        setLoading(true);
+        let res = null;
+        if (user.role === 3) {
+          res = await API.handleGetAllFeedback({ uid: user.uid, id: tour?.rawID || id });
+        } else {
+          res = await API.getAllFeedbackOfGuide({ uid: user.uid, id });
+        }
+        const newData = res.data.map(item => {
+          const newItem = { ...item };
+          newItem.uuid = uuidv4();
+          return newItem;
+        });
+        setDataFeedback(newData);
+        setLoading(false);
+      }
     };
     fetchDataFeedback();
-  }, [setLoading, user.uid, id, tour.rawID, API.handleGetAllFeedback, setDataFeedback]);
+  }, [
+    setLoading,
+    user.uid,
+    id,
+    tour.rawID,
+    API.handleGetAllFeedback,
+    setDataFeedback,
+    showModal,
+    API.getAllFeedbackOfGuide,
+  ]);
 
   const handleCreateFeedback = async e => {
     const newFeedback = {
@@ -148,6 +164,7 @@ ModalFeedback.propTypes = {
     avatar: PropTypes.string,
     fullname: PropTypes.string,
     uid: PropTypes.string,
+    role: PropTypes.number,
   }).isRequired,
   tour: PropTypes.shape({
     rawID: PropTypes.number,

@@ -1,11 +1,23 @@
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
 import { Comment, Input, Button } from 'antd';
+import styled from 'styled-components';
 
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import ActionFeedback from './ActionFeedback';
 import EditFeedback from './EditFeedback';
+
+const FeedbackWrapper = styled.div`
+  &&{
+    .ant-comment-actions{
+      margin: 0;
+    }
+    .ant-comment-inner{
+      padding-bottom: 0px;
+    }
+  }
+`;
 
 const Feedback = ({
   feedback,
@@ -27,7 +39,7 @@ const Feedback = ({
   const [feedbackId, setFeedbackId] = useState({});
 
   return (
-    <div>
+    <FeedbackWrapper>
       {feedback?.map(comment => {
         return (
           <Comment
@@ -131,7 +143,7 @@ const Feedback = ({
           </Comment>
         );
       })}
-    </div>
+    </FeedbackWrapper>
   );
 };
 

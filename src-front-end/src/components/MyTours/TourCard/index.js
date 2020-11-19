@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { navigate, Link } from 'gatsby';
-import { Modal, Avatar, Card, Tag, Badge } from 'antd';
+import { Avatar, Card, Tag, Badge } from 'antd';
 import { DeleteOutlined, EditOutlined, MessageOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 
+import ModalFeedback from "../../Feedback/ModalFeedback";
+import { getUserProfile } from '../../../utils/auth';
 import * as API from '../../../apis';
-import FeedbackPanel from '../Feedback';
 
 const Image = styled.img`
   height: 300px;
@@ -15,30 +16,9 @@ const Image = styled.img`
   object-fit: cover;
 `;
 
-const comments = [
-  {
-    author: 'Han Solo',
-    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    content: "Thanks. Great service.",
-    // datetime: moment().fromNow(),
-  },
-  {
-    author: 'Han Solo',
-    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    content: "Thanks. Great service.",
-    // datetime: moment().fromNow(),
-  },
-  {
-    author: 'Han Solo',
-    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    content: "Thanks. Great service.",
-    // datetime: moment().fromNow(),
-  }
-];
-
 const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid, handleDeleteTour }) => {
   const [showModal, setShowModal] = useState(false);
-  const [loadingCreateFeedback, setLoadingCreateFeedback] = useState(false);
+  const user = getUserProfile();
 
   useEffect(() => {
     const fetchAllFeedback = async () => {
@@ -49,11 +29,6 @@ const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid, handleDele
     };
     fetchAllFeedback();
   }, [showModal]);
-  const createFeedback = async data => {
-    setLoadingCreateFeedback(true);
-    await API.createReplyFeedback({ uid, content: data.content, feedbackId: 1 });
-    setLoadingCreateFeedback(false);
-  };
 
   const HandleDescription = () => {
     switch (status) {
@@ -99,18 +74,12 @@ const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid, handleDele
           />
         </Link>
       </Card>
-      <Modal
-        title="Feedback"
-        visible={showModal}
-        onCancel={() => setShowModal(false)}
-        footer={null}
-      >
-        <FeedbackPanel
-          comments={comments}
-          createFeedback={createFeedback}
-          loadingCreateFeedback={loadingCreateFeedback}
-        />
-      </Modal>
+      <ModalFeedback
+        showModal={showModal}
+        setShowModal={setShowModal}
+        user={user}
+        id={id}
+      />
     </Badge>
   );
 };
