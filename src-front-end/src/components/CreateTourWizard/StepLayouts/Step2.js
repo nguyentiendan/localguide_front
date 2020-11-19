@@ -34,9 +34,36 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
         currentTourDayFees[i] || {
           ...tourDayFee,
           day: i,
-          transportations: [{ $uuid: uuidv4(), quantity: tourCreationInfo.minPax }],
-          meals: [{ $uuid: uuidv4(), quantity: tourCreationInfo.minPax }],
-          others: [{ $uuid: uuidv4(), quantity: tourCreationInfo.minPax }],
+          transportations: (tourCreationInfo.transport &&
+            tourCreationInfo.transport[i + 1]?.Trans?.map(item => {
+              return {
+                $uuid: uuidv4(),
+                quantity: tourCreationInfo.minPax,
+                from: item.from,
+                to: item.to,
+                by: item.vehicle,
+                unit: item.unit,
+              };
+            })) || [{ $uuid: uuidv4(), quantity: tourCreationInfo.minPax }],
+          meals: (tourCreationInfo.meal &&
+            tourCreationInfo.meal[i + 1]?.Meal?.map(item => {
+              return {
+                $uuid: uuidv4(),
+                quantity: tourCreationInfo.minPax,
+                description: item.name,
+                type: item.time,
+                unit: item.unit,
+              };
+            })) || [{ $uuid: uuidv4(), quantity: tourCreationInfo.minPax }],
+          others: (tourCreationInfo.other &&
+            tourCreationInfo.other[i + 1]?.Other?.map(item => {
+              return {
+                $uuid: uuidv4(),
+                quantity: tourCreationInfo.minPax,
+                description: item.name,
+                unit: item.unit,
+              };
+            })) || [{ $uuid: uuidv4(), quantity: tourCreationInfo.minPax }],
         }
     );
   }, [tourCreationInfo]);
@@ -199,7 +226,6 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     },
     [tourCreationInfo, tourDayFees, loading]
   );
-
   return (
     <Spin spinning={loading}>
       <Wrapper>
@@ -217,7 +243,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                   <FieldTitle>Unit</FieldTitle>
                 </Col>
                 {_.map(tourDayFee.transportations, transportation => (
-                  <>
+                  <div key={transportation.$uuid} style={{ display: 'flex', width: '100%' }}>
                     <Col span={14} style={{ marginBottom: 8 }}>
                       <Row gutter={16}>
                         <Col span={8}>
@@ -291,7 +317,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                         }
                       />
                     </Col>
-                  </>
+                  </div>
                 ))}
               </Row>
               {tourDayFee.transportations.length <= 3 && (
@@ -315,7 +341,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                   <FieldTitle>Unit</FieldTitle>
                 </Col>
                 {_.map(tourDayFee.others, other => (
-                  <>
+                  <div key={other.$uuid} style={{ display: 'flex', width: '100%' }}>
                     <Col span={14} style={{ marginBottom: 8 }}>
                       <Input
                         placeholder="Snack in the train"
@@ -361,7 +387,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                         }
                       />
                     </Col>
-                  </>
+                  </div>
                 ))}
               </Row>
               {tourDayFee.others.length <= 3 && (
@@ -385,7 +411,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                   <FieldTitle>Unit</FieldTitle>
                 </Col>
                 {_.map(tourDayFee.meals, meal => (
-                  <>
+                  <div key={meal.$uuid} style={{ display: 'flex', width: '100%' }}>
                     <Col span={14} style={{ marginBottom: 8 }}>
                       <Row gutter={16}>
                         <Col span={16}>
@@ -447,7 +473,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                         }
                       />
                     </Col>
-                  </>
+                  </div>
                 ))}
               </Row>
               {tourDayFee.meals.length <= 3 && (
@@ -517,6 +543,9 @@ StepLayout.propTypes = {
   tourCreationInfo: PropTypes.shape({
     id: PropTypes.number,
     duration: PropTypes.number,
+    meal: PropTypes.shape({}),
+    transport: PropTypes.shape({}),
+    other: PropTypes.shape({}),
     tourDayFees: PropTypes.arrayOf(
       PropTypes.shape({
         day: PropTypes.number,

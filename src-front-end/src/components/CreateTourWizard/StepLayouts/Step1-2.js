@@ -109,20 +109,18 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   }, []);
 
   useEffect(() => {
-    if (!selectedCountryCode) {
-      return;
-    }
     (async () => {
       setLoading(true);
+      const countryDefault = _.find(countryOptions, { name: tourCreationInfo.country });
       try {
-        const { data } = await API.getCityOfCountry(selectedCountryCode);
+        const { data } = await API.getCityOfCountry(selectedCountryCode || countryDefault.code);
         setCityOptions(data);
       } catch (e) {
         // ignore
       }
       setLoading(false);
     })();
-  }, [selectedCountryCode]);
+  }, [selectedCountryCode, tourCreationInfo.country, countryOptions]);
 
   return (
     <Spin spinning={loading}>

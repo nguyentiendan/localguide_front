@@ -1,8 +1,10 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 // import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { navigate } from 'gatsby';
+import PropTypes from 'prop-types';
+import qs from 'query-string';
 
 import { Modal } from 'antd';
 import StartCreateTour from './StartCreateTour';
@@ -11,7 +13,14 @@ import Scene from './Scene';
 import Navigation from './Navigation';
 import StepLayout from './StepLayouts';
 import { smallScreenCss } from '../../styles/responsive-css';
-import { createTour, updateTour } from '../../apis';
+import {
+  createTour,
+  updateTour,
+  getTourEditGuide,
+  getAllCostTourEdit,
+  getAllScheduleTourEdit,
+  getTourPhotos,
+} from '../../apis';
 import { useRequiredUser } from '../../utils/useAuth';
 import TourPreview from '../TourPreview';
 
@@ -89,7 +98,7 @@ const Wrapper = styled.div`
   `)}
 `;
 
-const CreateTourWizard = () => {
+const CreateTourWizard = ({ location }) => {
   const { user } = useRequiredUser();
   const [loading, setLoading] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -99,18 +108,24 @@ const CreateTourWizard = () => {
     maxPax: 1,
     tags: [],
   });
+  const tourId = qs.parse(location?.search);
   const [currentStepNumber, setCurrentStepNumber] = useState(0);
   const startCreateTour = useCallback(() => {
     setCurrentStepNumber(1);
   }, []);
-
-  const saveOrUpdateTour = useCallback(async () => {
+  const saveOrUpdateTour = async () => {
     if (!tourCreationInfo || !tourCreationInfo.tourName) {
       return;
     }
-
     const isNew = !tourCreationInfo.id || !tourCreationInfo.uid;
     setLoading(true);
+    const editTourCreationInfo = {
+      ...tourCreationInfo,
+      tags:
+        typeof tourCreationInfo.tags === 'string'
+          ? tourCreationInfo.tags.split()
+          : tourCreationInfo.tags,
+    };
     try {
       if (isNew) {
         const { data } = await createTour(transformTourData(tourCreationInfo));
@@ -120,14 +135,14 @@ const CreateTourWizard = () => {
           ...tourCreationInfo,
         });
       } else {
-        await updateTour(transformTourData(tourCreationInfo));
+        await updateTour(transformTourData(editTourCreationInfo));
       }
     } catch (ignore) {
       setLoading(false);
       // throw new Error();
     }
     setLoading(false);
-  }, [tourCreationInfo]);
+  };
 
   const goBack = useCallback(async () => {
     if (loading) {
@@ -143,7 +158,7 @@ const CreateTourWizard = () => {
     }
   }, [currentStepNumber, loading, tourCreationInfo]);
 
-  const goForward = useCallback(async () => {
+  const goForward = async () => {
     if (loading) {
       return;
     }
@@ -155,7 +170,7 @@ const CreateTourWizard = () => {
     } catch (e) {
       // ignore
     }
-  }, [currentStepNumber, loading, tourCreationInfo]);
+  };
 
   const navigateToHomePage = useCallback(async () => {
     if (loading) {
@@ -196,7 +211,6 @@ const CreateTourWizard = () => {
     },
     [tourCreationInfo]
   );
-
   const isNextDisabled = useMemo(() => {
     if (currentStepNumber === 0) {
       return false;
@@ -217,6 +231,52 @@ const CreateTourWizard = () => {
   const onPreview = useCallback(() => {
     setPreviewVisible(true);
   }, [tourCreationInfo]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const { data } = await getTourEditGuide({ uid: user.uid, id: tourId.q });
+        const res = await getAllCostTourEdit({ uid: user.uid, id: tourId.q });
+        const resSchedule = await getAllScheduleTourEdit({ uid: user.uid, id: tourId.q });
+        const resPhotos = await getTourPhotos({ uid: user.uid, id: tourId.q });
+        setTourCreationInfo({
+          ...tourCreationInfo,
+          uid: data[0].uid,
+          id: data[0].id,
+          tourName: data[0].name,
+          tourShortDescription: data[0].shortDesc,
+          tags: data[0].tag.split(','),
+          country: data[0].country,
+          city: data[0].city,
+          tourDescription: data[0].content,
+          duration: data[0].day,
+          minPax: data[0].minPax,
+          maxPax: data[0].maxPax,
+          guideFee: data[0].guideFee,
+          coverPhoto: { name: data[0].cover },
+          meal: res.meal,
+          other: res.other,
+          transport: res.transport,
+          pickup: resSchedule.pickup,
+          schedule: resSchedule.schedule,
+          photos: resPhotos.data,
+        });
+      } catch (e) {
+        // ignore
+      }
+      setLoading(false);
+    };
+    if (tourId.q) {
+      fetchData();
+    }
+  }, [
+    getTourEditGuide,
+    setTourCreationInfo,
+    setLoading,
+    getAllCostTourEdit,
+    getAllScheduleTourEdit,
+  ]);
 
   return (
     <>
@@ -259,6 +319,13 @@ const CreateTourWizard = () => {
       )}
     </>
   );
+};
+
+CreateTourWizard.propTypes = {
+  location: PropTypes.shape({ search: PropTypes.string }),
+};
+CreateTourWizard.defaultProps = {
+  location: {},
 };
 
 export default CreateTourWizard;
