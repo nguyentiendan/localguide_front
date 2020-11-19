@@ -62,7 +62,7 @@ const columns = [
     key: 'Name',
     render: (name, tour) => (
       <Badge count={tour.feedback} offset={[15, 0]}>
-        <Link to={`tours/${tour.UID}/${tour.ID}`}>
+        <Link to={`tours/${tour.UID}/${tour.ID}?status=${tour.Status}`}>
           <TourTitle>{name}</TourTitle>
         </Link>
       </Badge>
@@ -156,7 +156,7 @@ function Tours() {
   const handleFinish = async value => {
     setIsloading(true);
     const res = await API.handleFillterTourAdmin({
-      data: { ...value, country: _.find(rootCountry, c => c.code === value.country).name },
+      data: { ...value, country: _.find(rootCountry, c => c.code === value.country)?.name },
     });
     setDataFilter(res.data);
     setIsloading(false);
