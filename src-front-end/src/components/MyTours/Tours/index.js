@@ -1,9 +1,13 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import {navigate} from 'gatsby';
-import {Modal, Avatar, Card, Row, Col, Button, Tag, Badge} from 'antd';
-import {PlusOutlined, DeleteOutlined, EditOutlined, MessageOutlined} from '@ant-design/icons';
-import FeedbackPanel from '../FeedbackPanel';
+import { navigate } from 'gatsby';
+import { Row, Col, Button, Spin, Pagination } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import _ from 'lodash';
+
+import * as API from '../../../apis';
+import { getUserProfile } from '../../../utils/auth';
+import TourCard from '../TourCard';
 
 const Wrapper = styled.div``;
 const FilterWrapper = styled.div`
@@ -12,76 +16,84 @@ const FilterWrapper = styled.div`
   }
 `;
 
-const Image = styled.img`
-  height: 300px;
-  width: auto;
-  object-fit: cover;
-`;
-
-function TourCard({title, badge, avatarImg, coverImg}) {
-  const [isShowModal, showModal] = useState(false);
-  return (
-    <Badge count={badge}>
-      <Card
-        hoverable
-        style={{width: '100%'}}
-        cover={<Image src={coverImg}/>}
-        actions={[
-          <MessageOutlined key="feedback" onClick={() => showModal(true)}/>,
-          <EditOutlined key="edit"/>,
-          <DeleteOutlined key="delete"/>,
-        ]}
-      >
-        <Card.Meta
-          avatar={<Avatar src={avatarImg}/>}
-          title={title}
-          description={<><Tag color="warning">WAITING FOR APPROVAL</Tag><br/> 5 days</>}
-        />
-      </Card>
-      <Modal
-        title="Feedback"
-        visible={isShowModal}
-        onCancel={() => showModal(false)}
-        footer={null}
-      >
-        <FeedbackPanel/>
-      </Modal>
-    </Badge>
-  );
-}
-
 function Tours() {
+  const [allTours, setAllTours] = useState({
+    tours: [],
+    totalPage: 1,
+  });
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const user = getUserProfile();
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      const { data: guideAllTours, totalpage: totalPage } = await API.getGuideAllTours({
+        uid: user.uid,
+        page: currentPage,
+      });
+      setAllTours({
+        ...allTours,
+        tours: guideAllTours,
+        totalPage,
+      });
+      setLoading(false);
+    }
+    fetchData();
+  }, [API.getGuideAllTours, setAllTours, currentPage, setLoading]);
+
+  const handleDeleteTour = async data => {
+    setLoading(true);
+    await API.deleteTour({ id: data.id, uid: data.uid });
+    _.remove(allTours?.tours, tour => {
+      return tour.ID === data.id;
+    });
+    setLoading(false);
+  };
   return (
     <Wrapper>
       <FilterWrapper>
-        <br/>
-        <Button icon={<PlusOutlined/>} type="primary" size="large" onClick={() => navigate('/create-tour')}>
+        <br />
+        <Button
+          icon={<PlusOutlined />}
+          type="primary"
+          size="large"
+          onClick={() => navigate('/create-tour')}
+        >
           Create Tour
         </Button>
-        <br/>
-        <br/>
-        <br/>
-        <Row gutter={32}>
-          <Col span={8}>
-            <TourCard title="Great Food Tour in Ha Noi" badge={5}
-                      avatarImg={require('../../../../static/mocks/avatars/avatar-1.jpg')}
-                      coverImg={require('../../../../static/mocks/tours/tour-1.jpg')}/>
-          </Col>
-          <Col span={8}>
-            <TourCard title="Great Tour in Ha Long"
-                      avatarImg={require('../../../../static/mocks/avatars/avatar-1.jpg')}
-                      coverImg={require('../../../../static/mocks/tours/tour-2.jpg')}/>
-          </Col>
-          <Col span={8}>
-            <TourCard title="Great Food Tour in Ha Noi"
-                      avatarImg={require('../../../../static/mocks/avatars/avatar-1.jpg')}
-                      coverImg={require('../../../../static/mocks/tours/tour-3.jpg')}/>
-          </Col>
-        </Row>
+        <br />
+        <br />
+        <br />
+        <Spin spinning={loading}>
+          <Row gutter={32}>
+            {allTours.tours.map(tour => {
+              return (
+                <Col span={8} key={tour.ID} style={{ marginBottom: 20 }}>
+                  <TourCard
+                    id={tour.ID}
+                    uid={user.uid}
+                    title={tour.Name}
+                    day={tour.Day}
+                    avatarImg={tour.AvatarImg}
+                    coverImg={tour.CoverImg}
+                    status={tour.Status}
+                    handleDeleteTour={handleDeleteTour}
+                  />
+                </Col>
+              );
+            })}
+          </Row>
+        </Spin>
       </FilterWrapper>
-      <br/>
+      <br />
+      <Pagination
+        defaultCurrent={1}
+        total={allTours.totalPage * 10}
+        onChange={page => setCurrentPage(page)}
+      />
     </Wrapper>
-  )
+  );
 }
 
 export default Tours;

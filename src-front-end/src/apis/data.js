@@ -74,6 +74,52 @@ export async function getAllTours() {
   });
 }
 
+export async function getGuideAllTours({ uid, page }) {
+  return request({
+    url: `guide/tour/${uid}?page=${page}`,
+    method: 'GET',
+    authRequired: true,
+  });
+}
+
+export async function deleteTour({ id, uid }) {
+  return request({
+    url: `guide/deleteTour`,
+    method: 'DELETE',
+    authRequired: true,
+    data: { uid, id },
+  });
+}
+
+export async function getAllFeedback({ uid, id }) {
+  return request({
+    url: `admin/tourFeedback/getAll?uid=${uid}&id=${id}`,
+    method: 'GET',
+    authRequired: true,
+  });
+}
+
+export async function getAllFeedbackOfGuide({ uid, id }) {
+  return request({
+    url: `guide/tourFeedback/getAll?uid=${uid}&id=${id}`,
+    method: 'GET',
+    authRequired: true,
+  });
+}
+
+export async function createReplyFeedback({ uid, feedbackId, content }) {
+  return request({
+    url: `admin/tourFeedback/create`,
+    method: 'POST',
+    authRequired: true,
+    data: {
+      uid,
+      feedbackId,
+      content,
+    },
+  });
+}
+
 export async function getTourDetail({ id, uid }) {
   return request({
     url: '/admin/tourReview/review',
