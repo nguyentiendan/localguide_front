@@ -29,7 +29,7 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
       setLoading(false);
     };
     fetchDataFeedback();
-  }, [setLoading, user.uid, id, tour.rawID, API.handleGetAllFeedback, setDataFeedback]);
+  }, [setLoading, user?.uid, id, tour?.rawID, API.handleGetAllFeedback, setDataFeedback]);
 
   const handleCreateFeedback = async e => {
     const newFeedback = {
