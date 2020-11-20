@@ -62,7 +62,11 @@ function UserDropdown({ avatarSize, ...rest }) {
             <Link to="/admin">Admin settings</Link>
           </Menu.Item>
         )}
-        {user.role === 1 && <Menu.Item>Profile</Menu.Item>}
+        {user.role === 1 && (
+          <Menu.Item>
+            <Link to="/user-profile">Profile</Link>
+          </Menu.Item>
+        )}
         {user.role === 2 && (
           <Menu.Item>
             <Link to="/my-tours">Guide Admin</Link>
