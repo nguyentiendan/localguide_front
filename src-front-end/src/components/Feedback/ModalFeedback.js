@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Modal, Spin, Button, Input } from 'antd';
+import { Modal, Spin, Input } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import * as API from '../../apis';
+import Button from '../Button';
 import Feedback from './index';
+
+const { TextArea } = Input;
 
 const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
   const [loading, setLoading] = useState(false);
@@ -15,7 +18,6 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
   const [isFeedback, setIsFeedback] = useState(false);
   const [editFeedback, setEditFeedback] = useState({});
   const [editReply, setEditReply] = useState({});
-
   useEffect(() => {
     const fetchDataFeedback = async () => {
       if (showModal) {
@@ -125,7 +127,9 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
       title="Feedback"
       visible={showModal}
       onCancel={() => setShowModal(false)}
-      footer={<Button onClick={() => setIsFeedback(true)}>New Feedback</Button>}
+      footer={
+        user?.role === 2 ? null : <Button onClick={() => setIsFeedback(true)}>New Feedback</Button>
+      }
     >
       <Spin spinning={loading}>
         <Feedback
@@ -145,7 +149,10 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
           handleEditReply={handleEditReply}
         />
         {isFeedback && (
-          <Input
+          <TextArea
+            rows={4}
+            showCount
+            maxLength={200}
             placeholder="Create feedback"
             onPressEnter={handleCreateFeedback}
             style={{ marginTop: 20 }}

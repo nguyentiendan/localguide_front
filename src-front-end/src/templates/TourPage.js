@@ -338,7 +338,7 @@ function TourPage({ data, id, uid }) {
         {user.role === 3 && (
           <ButtonEventAdminWrapper>
             <div>
-              {tourDetails?.Status === 0 && (
+              {tourDetails?.status !== 1 && (
                 <Button onClick={handleApproveTour} className="style-button-approve">
                   Approve
                 </Button>
@@ -427,27 +427,25 @@ function TourPage({ data, id, uid }) {
           <PriceMenuWrapper>
             <NavItem
               className="nav-item"
-              title={`${tourDetails.total}`}
+              title={`${tourDetails.total || 0}`}
               icon={<FaMoneyBill />}
               isActive
             />
             <NavItem
               className="nav-item"
-              title={`${tourDetails.day} day${tourDetails.day > 1 ? 's' : ''}`}
+              title={`${tourDetails.day || 1} day${tourDetails.day > 1 ? 's' : ''}`}
               icon={<AiOutlineSchedule />}
               isActive
             />
             <NavItem
               className="nav-item"
-              // title={tourDetails.language}
-              title=""
+              title={tourDetails.language || 'No language'}
               icon={<MdGTranslate />}
               isActive
             />
             <NavItem
               className="nav-item"
-              // title={`${tourDetails.availableTours || 0} Tours`}
-              title=""
+              title={`${tourDetails.availableTours || 0} Tours`}
               icon={<FaSuitcase />}
               isActive
             />

@@ -263,6 +263,7 @@ function Tours() {
           dataSource={dataFilter || data}
           loading={loadingAllTour}
           rowKey="ID"
+          pagination={{ pageSize: 20 }}
         />
       </ListWrapper>
     </Wrapper>
