@@ -8,7 +8,6 @@ import { FaSuitcase, FaMoneyBill, FaUsers } from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
 import { Spin, notification } from 'antd';
 import _ from 'lodash';
-import qs from 'query-string';
 
 import * as API from '../apis';
 import Layout from '../components/Layout';
@@ -223,7 +222,7 @@ const ButtonEventAdminWrapper = styled.div`
     background: #ff9900;
   }
 `;
-function TourPage({ data, id, uid, location: locationParams }) {
+function TourPage({ data, id, uid }) {
   const { tour, reviews = { comments: [] } } = data || {};
   const [tourDetails, setTourDetails] = useState(tour || {});
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
@@ -234,7 +233,6 @@ function TourPage({ data, id, uid, location: locationParams }) {
 
   const galleryWrapperComp = useRef();
   const user = getUserProfile();
-  const statusTour = qs.parse(locationParams.search);
   const tourQuery = useMemo(() => {
     const query = {};
     if (tour && tour.rawID && tour.uid) {
@@ -340,13 +338,13 @@ function TourPage({ data, id, uid, location: locationParams }) {
         {user.role === 3 && (
           <ButtonEventAdminWrapper>
             <div>
-              {statusTour.status === '0' && (
+              {tourDetails?.Status === 0 && (
                 <Button onClick={handleApproveTour} className="style-button-approve">
                   Approve
                 </Button>
               )}
               <Button className="style-button-edit">
-                <Link to={`/edit-tour?q=${tour?.rawID || id}`} style={{ color: '#ffffff' }}>
+                <Link to={`/edit-tour?q=${tourDetails?.id}`} style={{ color: '#ffffff' }}>
                   Edit
                 </Link>
               </Button>
@@ -581,7 +579,7 @@ function TourPage({ data, id, uid, location: locationParams }) {
           setShowModal={setShowModal}
           user={user}
           tour={tour}
-          id={id}
+          id={tourDetails?.id}
         />
       </Spin>
     </Layout>

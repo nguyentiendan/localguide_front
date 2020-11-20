@@ -13,9 +13,6 @@ const FeedbackWrapper = styled.div`
     .ant-comment-actions{
       margin: 0;
     }
-    .ant-comment-inner{
-      padding-bottom: 0px;
-    }
   }
 `;
 
