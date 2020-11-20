@@ -65,8 +65,6 @@ const UserProfile = ({ uid }) => {
   const fetchAdminProfile = useCallback(async () => {
     setIsloading(true);
     const res = await API.getUserProfile(uid);
-    console.log({ res });
-
     setProfile(res.data);
     setIsloading(false);
   }, [API.getAdminProfile, API.getAllCountry, setIsloading, setProfile]);
