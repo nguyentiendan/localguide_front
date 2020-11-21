@@ -50,7 +50,7 @@ const Feedback = ({
                 }}
                 style={{ color: '#555' }}
               >
-                Reply to
+                {comment.Num ? `${comment.Num} Replies` : 'Reply to'}
               </Button>,
             ]}
             author={comment.Fullname}
@@ -84,7 +84,6 @@ const Feedback = ({
             key={comment.uuid}
           >
             {replyFeedback?.map(item => {
-              // feedbackId.add(item.FeedbackID);
               return (
                 comment.ID === item.FeedbackID && (
                   <div key={item.uuid}>
@@ -147,11 +146,12 @@ const Feedback = ({
 Feedback.propTypes = {
   feedback: PropTypes.arrayOf({
     actions: PropTypes.arrayOf({}),
-    avatar: PropTypes.string,
-    comment: PropTypes.string,
-    data: PropTypes.shape({}),
-    id: PropTypes.string,
-    user: PropTypes.string,
+    Avatar: PropTypes.string,
+    Content: PropTypes.string,
+    Data: PropTypes.shape({}),
+    ID: PropTypes.string,
+    Fullname: PropTypes.string,
+    Num: PropTypes.number,
   }),
   replyFeedback: PropTypes.arrayOf({
     Avatar: PropTypes.string,
