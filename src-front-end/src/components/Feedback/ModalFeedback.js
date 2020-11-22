@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Modal, Spin, Input } from 'antd';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
@@ -49,37 +48,25 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
   ]);
 
   const handleCreateFeedback = async e => {
-    const newFeedback = {
-      Avatar: user.avatar,
-      Content: e.target.value,
-      Created_At: moment(),
-      FeedbackID: tour?.rawID || id,
-      Fullname: user.fullname,
-      UID: user.uid,
-      ID: dataFeedback[dataFeedback.length - 1].ID + 1,
-      uuid: uuidv4(),
-    };
-    setDataFeedback([...dataFeedback, newFeedback]);
-    await API.handleCreateFeedback({
+    const { data } = await API.handleCreateFeedback({
       uid: user.uid,
       tourId: tour?.rawID || id,
       content: e.target.value,
     });
+    const newFeedback = { ...data[0] };
+    newFeedback.uuid = uuidv4();
+    setDataFeedback([...dataFeedback, newFeedback]);
   };
 
   const handleReplyFeedback = async (e, feedbackId) => {
-    const newFeedback = {
-      Avatar: user.avatar,
-      Content: e.target.value,
-      Created_At: moment(),
-      FeedbackID: feedbackId,
-      Fullname: user.fullname,
-      UID: user.uid,
-      ID: dataReply[dataReply.length - 1]?.ID + 1,
-      uuid: uuidv4(),
-    };
+    const { data } = await API.handleCreateReply({
+      uid: user.uid,
+      feedbackId,
+      content: e.target.value,
+    });
+    const newFeedback = { ...data[0] };
+    newFeedback.uuid = uuidv4();
     setDataReply([...dataReply, newFeedback]);
-    await API.handleCreateReply({ uid: user.uid, feedbackId, content: e.target.value });
   };
   const handleGetAllReply = async idFeedback => {
     setLoading(true);
