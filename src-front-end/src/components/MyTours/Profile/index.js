@@ -55,7 +55,16 @@ const tailFormItemLayout = {
 
 const GuideProfile = ({ uid }) => {
   const [form] = Form.useForm();
-  const { country, fullname, mobile, job, age, education, experience } = form.getFieldsValue();
+  const {
+    country,
+    fullname,
+    mobile,
+    job,
+    age,
+    education,
+    experience,
+    specialities,
+  } = form.getFieldsValue();
   const [profile, setProfile] = useState({});
   const [rootCountry, setRootCountry] = useState([]);
   const [rootCity, setRootCity] = useState([]);
@@ -291,6 +300,17 @@ const GuideProfile = ({ uid }) => {
           label="Education"
           initialValue={
             profile.education && form.setFieldsValue({ education: education || profile.education })
+          }
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="specialities"
+          label="Certification"
+          initialValue={
+            profile.specialities &&
+            form.setFieldsValue({ specialities: specialities || profile.specialities })
           }
         >
           <Input />

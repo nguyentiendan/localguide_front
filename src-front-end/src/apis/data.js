@@ -46,6 +46,13 @@ export async function getGuideProfileOverview({ uid, guideId }) {
   });
 }
 
+export async function getUserProfile(uid) {
+  return request({
+    url: `/account/user/${uid}`,
+    method: 'GET',
+  });
+}
+
 export async function getPhotosGuide({ uid }) {
   return request({
     url: `/guide/getAllPhoto/${uid}`,

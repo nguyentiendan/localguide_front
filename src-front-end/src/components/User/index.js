@@ -4,9 +4,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import styled from 'styled-components';
 
-import * as API from '../../../apis';
-import TagInterests from '../../HandleTag/Interests';
-import UploadAvatar from '../../Input/UploadAvatar';
+import * as API from '../../apis';
+import UploadAvatar from '../Input/UploadAvatar';
 
 const FormWrapper = styled(Form)`
   display: flex;
@@ -52,49 +51,23 @@ const tailFormItemLayout = {
   },
 };
 
-const AdminProfile = ({ uid }) => {
+const UserProfile = ({ uid }) => {
   const [form] = Form.useForm();
-  const {
-    country,
-    fullname,
-    mobile,
-    job,
-    age,
-    education,
-    experience,
-    specialities,
-  } = form.getFieldsValue();
+  const { fullname, mobile, job, age } = form.getFieldsValue();
   const [profile, setProfile] = useState({});
-  const [rootCountry, setRootCountry] = useState([]);
-  const [rootCity, setRootCity] = useState([]);
   const [isloading, setIsloading] = useState(false);
   const [defaultTags, setDefaultTags] = useState({
     interests: [],
     language: [],
     extras: [],
   });
-  const [interests, setInterests] = useState({
-    tags: [],
-  });
-  const [extras, setExtras] = useState({
-    tags: [],
-  });
-  const [language, setLanguage] = useState({
-    tags: [],
-  });
 
   const fetchAdminProfile = useCallback(async () => {
     setIsloading(true);
-    const res = await API.getAdminProfile({ uid });
-    const resCountry = await API.getAllCountry();
-    setInterests({ ...interests, tags: res.data?.interest.split(';') });
-    setExtras({ ...extras, tags: res.data?.extras.split(';') });
-    setLanguage({ ...language, tags: res.data?.language.split(';') });
-
-    setRootCountry(resCountry.data);
+    const res = await API.getUserProfile(uid);
     setProfile(res.data);
     setIsloading(false);
-  }, [API.getAdminProfile, API.getAllCountry, setIsloading, setProfile, setRootCountry]);
+  }, [API.getAdminProfile, API.getAllCountry, setIsloading, setProfile]);
 
   useEffect(() => {
     fetchAdminProfile();
@@ -122,28 +95,11 @@ const AdminProfile = ({ uid }) => {
     })();
   }, [API.getAllInterest, API.getAllExtra, API.getAllLang, setDefaultTags]);
 
-  const handleSelectCountryAndCity = value => {
-    form.setFieldsValue({ country: value });
-    const fetchCity = async () => {
-      if (profile.country || country) {
-        setIsloading(true);
-        const resCity = await API.getCityOfCountry(value || profile.country);
-        setRootCity(resCity.data);
-        form.setFieldsValue({ city: null });
-        setIsloading(false);
-      }
-    };
-    fetchCity();
-  };
-
   const onFinish = async values => {
     setIsloading(true);
     await API.editProfile({
       ...values,
       uid,
-      interest: interests.tags?.join(';'),
-      extras: extras.tags?.join(';'),
-      language: language.tags?.join(';'),
     });
     notification.success({ message: 'You have successfully updated your profile.' });
     setIsloading(false);
@@ -246,112 +202,6 @@ const AdminProfile = ({ uid }) => {
           </Row>
         </Form.Item>
 
-        <Form.Item name="country" label="Country" style={{ marginBottom: 0 }}>
-          <Row gutter={8}>
-            <Col span={12}>
-              <Select
-                placeholder="Country"
-                key={profile.country}
-                defaultValue={profile.country}
-                initialValue={profile.country}
-                onChange={handleSelectCountryAndCity}
-              >
-                {rootCountry?.map(item => (
-                  <Option value={item.code} key={item.code}>
-                    {item.name}
-                  </Option>
-                ))}
-              </Select>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="city" label="City">
-                <Select
-                  placeholder="City"
-                  key={profile.city}
-                  defaultValue={profile.city}
-                  onChange={value => {
-                    form.setFieldsValue({ city: value });
-                  }}
-                >
-                  {rootCity?.map(item => (
-                    <Option value={item.city_name} key={item.city_name}>
-                      {item.city_name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form.Item>
-
-        <Form.Item
-          name="education"
-          label="Education"
-          initialValue={
-            profile.education && form.setFieldsValue({ education: education || profile.education })
-          }
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          name="specialities"
-          label="Certification"
-          initialValue={
-            profile.specialities &&
-            form.setFieldsValue({ specialities: specialities || profile.specialities })
-          }
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          name="language"
-          label="Language"
-          initialValue={profile.language && form.setFieldsValue({ language: profile.language })}
-        >
-          <TagInterests
-            createInfo={language}
-            setCreateInfo={setLanguage}
-            defaultTags={defaultTags.language}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="interests"
-          label="Interests"
-          initialValue={profile.interests && form.setFieldsValue({ interests: profile.interests })}
-        >
-          <TagInterests
-            createInfo={interests}
-            setCreateInfo={setInterests}
-            defaultTags={defaultTags.interests}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="extras"
-          label="Extras"
-          initialValue={profile.extras && form.setFieldsValue({ extras: profile.extras })}
-        >
-          <TagInterests
-            createInfo={extras}
-            setCreateInfo={setExtras}
-            defaultTags={defaultTags.extras}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="experience"
-          label="Experience"
-          initialValue={
-            profile.experience &&
-            form.setFieldsValue({ experience: experience || profile.experience })
-          }
-        >
-          <Input.TextArea rows={4} />
-        </Form.Item>
-
         <Form.Item {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">
             Submit
@@ -362,8 +212,8 @@ const AdminProfile = ({ uid }) => {
   );
 };
 
-AdminProfile.propTypes = {
+UserProfile.propTypes = {
   uid: PropTypes.string.isRequired,
 };
 
-export default AdminProfile;
+export default UserProfile;
