@@ -8,6 +8,7 @@ import { FaSuitcase, FaMoneyBill, FaUsers } from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
 import { Spin, notification } from 'antd';
 import _ from 'lodash';
+import qs from 'query-string';
 
 import * as API from '../apis';
 import Layout from '../components/Layout';
@@ -222,7 +223,7 @@ const ButtonEventAdminWrapper = styled.div`
     background: #ff9900;
   }
 `;
-function TourPage({ data, id, uid }) {
+function TourPage({ data, id, uid, location: locationUrl }) {
   const { tour, reviews = { comments: [] } } = data || {};
   const [tourDetails, setTourDetails] = useState(tour || {});
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
@@ -231,6 +232,7 @@ function TourPage({ data, id, uid }) {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
+  const { status } = qs.parse(locationUrl?.search);
   const galleryWrapperComp = useRef();
   const user = getUserProfile();
   const tourQuery = useMemo(() => {
@@ -335,36 +337,40 @@ function TourPage({ data, id, uid }) {
     <Layout noHeader>
       <SEO title={tourDetails.name} />
       <Spin spinning={loading}>
-        {user.role === 3 && (
-          <ButtonEventAdminWrapper>
-            <div>
-              {tourDetails?.status !== 1 && (
-                <Button onClick={handleApproveTour} className="style-button-approve">
-                  Approve
-                </Button>
-              )}
-              <Button className="style-button-edit">
-                <Link to={`/edit-tour?q=${tourDetails?.id}`} style={{ color: '#ffffff' }}>
-                  Edit
-                </Link>
-              </Button>
-            </div>
-            <div>
-              <Button className="style-button-feedback" onClick={() => setShowModal(true)}>
-                Tour Feedback
-              </Button>
-            </div>
-          </ButtonEventAdminWrapper>
-        )}
-        {user.role === 2 && (
-          <ButtonEventAdminWrapper>
-            <div />
-            <div>
-              <Button className="style-button-feedback" onClick={() => setShowModal(true)}>
-                Tour Feedback
-              </Button>
-            </div>
-          </ButtonEventAdminWrapper>
+        {!status && (
+          <div>
+            {user?.role === 3 && (
+              <ButtonEventAdminWrapper>
+                <div>
+                  {tourDetails?.status !== 1 && (
+                    <Button onClick={handleApproveTour} className="style-button-approve">
+                      Approve
+                    </Button>
+                  )}
+                  <Button className="style-button-edit">
+                    <Link to={`/edit-tour?q=${tourDetails?.id}`} style={{ color: '#ffffff' }}>
+                      Edit
+                    </Link>
+                  </Button>
+                </div>
+                <div>
+                  <Button className="style-button-feedback" onClick={() => setShowModal(true)}>
+                    Tour Feedback
+                  </Button>
+                </div>
+              </ButtonEventAdminWrapper>
+            )}
+            {user?.role === 2 && (
+              <ButtonEventAdminWrapper>
+                <div />
+                <div>
+                  <Button className="style-button-feedback" onClick={() => setShowModal(true)}>
+                    Tour Feedback
+                  </Button>
+                </div>
+              </ButtonEventAdminWrapper>
+            )}
+          </div>
         )}
 
         <SmallScreen>

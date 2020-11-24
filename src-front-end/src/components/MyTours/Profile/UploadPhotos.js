@@ -85,7 +85,7 @@ const ImgEditor = ({
   const handleDeletePhoto = () => {
     if (type !== 'Cover') {
       // eslint-disable-next-line react/prop-types
-      myRef.current.state.fileList.splice(index, 1);
+      myRef.current.fileList.splice(index, 1);
     }
     deletePhoto(name);
   };

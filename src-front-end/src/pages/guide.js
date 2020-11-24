@@ -202,7 +202,7 @@ function User({ location }) {
     reviews: [],
     tours: [],
   });
-  const [photos, setPhotos] = useState({});
+  const [photos, setPhotos] = useState([]);
   const [thumbnailWidths, setThumbnailWidths] = useState([]);
   const galleryWrapperComp = useRef();
   const dataQueryParams = qs.parse(location.search);
@@ -226,7 +226,7 @@ function User({ location }) {
     fetchData();
   }, [setProfile, dataQueryParams.uid, dataQueryParams.id]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const fetchPhotos = async () => {
       const res = await API.getPhotosGuide({
         uid: dataQueryParams.uid,
@@ -236,7 +236,7 @@ function User({ location }) {
           src: getCndResourceUrl(photo.name),
           thumbnail: getCndResourceUrl(photo.name),
           caption: photo.caption,
-          thumbnailWidth: thumbnailWidths[i],
+          thumbnailWidth: thumbnailWidths[i] || 240,
           thumbnailHeight: 175,
         };
       });
@@ -245,7 +245,7 @@ function User({ location }) {
       });
     };
     fetchPhotos();
-  }, [setProfile, API.getPhotosGuide]);
+  }, [setProfile, API.getPhotosGuide, dataQueryParams.uid]);
 
   const handleLevelGuide = level => {
     switch (level) {
