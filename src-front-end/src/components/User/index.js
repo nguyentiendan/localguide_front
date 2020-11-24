@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Form, Input, Select, Button, InputNumber, Row, Col, Spin, notification } from 'antd';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import styled from 'styled-components';
 
 import * as API from '../../apis';
@@ -53,47 +52,24 @@ const tailFormItemLayout = {
 
 const UserProfile = ({ uid }) => {
   const [form] = Form.useForm();
-  const { fullname, mobile, job, age } = form.getFieldsValue();
+  const { country, fullname, mobile, job, age } = form.getFieldsValue();
   const [profile, setProfile] = useState({});
+  const [rootCity, setRootCity] = useState([]);
+  const [rootCountry, setRootCountry] = useState([]);
   const [isloading, setIsloading] = useState(false);
-  const [defaultTags, setDefaultTags] = useState({
-    interests: [],
-    language: [],
-    extras: [],
-  });
 
   const fetchAdminProfile = useCallback(async () => {
     setIsloading(true);
     const res = await API.getUserProfile(uid);
+    const resCountry = await API.getAllCountry();
+    setRootCountry(resCountry.data);
     setProfile(res.data);
     setIsloading(false);
-  }, [API.getAdminProfile, API.getAllCountry, setIsloading, setProfile]);
+  }, [API.getAdminProfile, API.getAllCountry, setIsloading, setProfile, setRootCountry]);
 
   useEffect(() => {
     fetchAdminProfile();
   }, [fetchAdminProfile]);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data: extraDefault } = await API.getAllExtra();
-        const { data: languageDefault } = await API.getAllLang();
-        const { data: interestsDefaults } = await API.getAllInterest();
-        const defaultInterests = _.map(interestsDefaults, d => d.interest);
-        const defaultLanguage = _.map(languageDefault, d => d.language);
-        const defaultExtras = _.map(extraDefault, d => d.extra);
-
-        setDefaultTags({
-          ...defaultTags,
-          interests: defaultInterests,
-          language: defaultLanguage,
-          extras: defaultExtras,
-        });
-      } catch (e) {
-        // ignore
-      }
-    })();
-  }, [API.getAllInterest, API.getAllExtra, API.getAllLang, setDefaultTags]);
 
   const onFinish = async values => {
     setIsloading(true);
@@ -103,6 +79,30 @@ const UserProfile = ({ uid }) => {
     });
     notification.success({ message: 'You have successfully updated your profile.' });
     setIsloading(false);
+  };
+
+  useEffect(() => {
+    const fetchCity = async () => {
+      if (profile?.country) {
+        const resCity = await API.getCityOfCountry(profile?.country);
+        setRootCity(resCity.data);
+      }
+    };
+    fetchCity();
+  }, [API.getCityOfCountry, profile?.country, setRootCity]);
+
+  const handleSelectCountryAndCity = value => {
+    form.setFieldsValue({ country: value });
+    const fetchCity = async () => {
+      if (profile.country || country || value) {
+        setIsloading(true);
+        const resCity = await API.getCityOfCountry(value || profile.country);
+        setRootCity(resCity.data);
+        form.setFieldsValue({ city: null });
+        setIsloading(false);
+      }
+    };
+    fetchCity();
   };
 
   return (
@@ -125,6 +125,10 @@ const UserProfile = ({ uid }) => {
             {
               required: true,
               message: 'Please input your Full Name!',
+            },
+            {
+              max: 100,
+              message: 'Value should be less than 100 character',
             },
           ]}
           initialValue={
@@ -197,6 +201,44 @@ const UserProfile = ({ uid }) => {
                 style={{ flexGrow: 0.15 }}
               >
                 <InputNumber />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form.Item>
+
+        <Form.Item name="country" label="Country" style={{ marginBottom: 0 }}>
+          <Row gutter={8}>
+            <Col span={12}>
+              <Select
+                placeholder="Country"
+                key={profile.country}
+                defaultValue={profile.country}
+                initialValue={profile.country}
+                onChange={handleSelectCountryAndCity}
+              >
+                {rootCountry?.map(item => (
+                  <Option value={item.code} key={item.code}>
+                    {item.name}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="city" label="City">
+                <Select
+                  placeholder="City"
+                  key={profile.city}
+                  defaultValue={profile.city}
+                  onChange={value => {
+                    form.setFieldsValue({ city: value });
+                  }}
+                >
+                  {rootCity?.map(item => (
+                    <Option value={item.city_name} key={item.city_name}>
+                      {item.city_name}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
           </Row>

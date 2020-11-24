@@ -17,6 +17,7 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
   const [isFeedback, setIsFeedback] = useState(false);
   const [editFeedback, setEditFeedback] = useState({});
   const [editReply, setEditReply] = useState({});
+  const [dataCreateFeedback, setDataCreateFeedback] = useState('');
   useEffect(() => {
     const fetchDataFeedback = async () => {
       if (showModal) {
@@ -47,15 +48,18 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
     showModal,
   ]);
 
-  const handleCreateFeedback = async e => {
-    const { data } = await API.handleCreateFeedback({
-      uid: user.uid,
-      tourId: tour?.rawID || id,
-      content: e.target.value,
-    });
-    const newFeedback = { ...data[0] };
-    newFeedback.uuid = uuidv4();
-    setDataFeedback([...dataFeedback, newFeedback]);
+  const handleCreateFeedback = async () => {
+    if (dataCreateFeedback) {
+      const { data } = await API.handleCreateFeedback({
+        uid: user.uid,
+        tourId: tour?.rawID || id,
+        content: dataCreateFeedback,
+      });
+      const newFeedback = { ...data[0] };
+      newFeedback.uuid = uuidv4();
+      setDataFeedback([...dataFeedback, newFeedback]);
+      setDataCreateFeedback('');
+    }
   };
 
   const handleReplyFeedback = async (e, feedbackId) => {
@@ -115,7 +119,16 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
       visible={showModal}
       onCancel={() => setShowModal(false)}
       footer={
-        user?.role === 2 ? null : <Button onClick={() => setIsFeedback(true)}>New Feedback</Button>
+        user?.role === 2 ? null : (
+          <Button
+            onClick={() => {
+              setIsFeedback(true);
+              handleCreateFeedback();
+            }}
+          >
+            New Feedback
+          </Button>
+        )
       }
     >
       <Spin spinning={loading}>
@@ -123,7 +136,7 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
           feedback={dataFeedback}
           replyFeedback={dataReply}
           handleReplyFeedback={handleReplyFeedback}
-          userUID={user.uid}
+          userUID={user?.uid}
           handleGetAllReply={handleGetAllReply}
           handleDeleteFeedback={handleDeleteFeedback}
           handleResolveFeedback={handleResolveFeedback}
@@ -141,6 +154,8 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
             showCount
             maxLength={200}
             placeholder="Create feedback"
+            value={dataCreateFeedback || ''}
+            onChange={e => setDataCreateFeedback(e.target.value)}
             onPressEnter={handleCreateFeedback}
             style={{ marginTop: 20 }}
           />

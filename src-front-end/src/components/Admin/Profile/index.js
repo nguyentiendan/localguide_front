@@ -122,10 +122,20 @@ const AdminProfile = ({ uid }) => {
     })();
   }, [API.getAllInterest, API.getAllExtra, API.getAllLang, setDefaultTags]);
 
+  useEffect(() => {
+    const fetchCity = async () => {
+      if (profile?.country) {
+        const resCity = await API.getCityOfCountry(profile?.country);
+        setRootCity(resCity.data);
+      }
+    };
+    fetchCity();
+  }, [API.getCityOfCountry, profile?.country, setRootCity]);
+
   const handleSelectCountryAndCity = value => {
     form.setFieldsValue({ country: value });
     const fetchCity = async () => {
-      if (profile.country || country) {
+      if (profile.country || country || value) {
         setIsloading(true);
         const resCity = await API.getCityOfCountry(value || profile.country);
         setRootCity(resCity.data);
@@ -169,6 +179,10 @@ const AdminProfile = ({ uid }) => {
             {
               required: true,
               message: 'Please input your Full Name!',
+            },
+            {
+              max: 100,
+              message: 'Value should be less than 100 character',
             },
           ]}
           initialValue={
