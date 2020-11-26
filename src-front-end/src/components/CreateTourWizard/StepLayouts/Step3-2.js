@@ -23,25 +23,33 @@ const OptionalTitle = styled(FieldTitle)`
   font-style: italic;
 `;
 
-const transformTourSchedule = ({ day, pickUpAt, finishAt, schedule }) => ({
-  day: day + 1,
-  pickup: [
-    {
-      pickupTime: pickUpAt.time && moment(pickUpAt.time).format('HH:mm'),
-      pickupLocation: pickUpAt.place,
-      finishTime: finishAt.time && moment(finishAt.time).format('HH:mm'),
-      finishLocation: finishAt.place,
-    },
-  ],
-  schedule: _.chain(schedule)
-    .filter(({ time, place }) => time && time[0] && time[1] && place)
-    .map(({ time, place }) => ({
-      from: time && time[0] && moment(time[0]).format('HH:mm'),
-      to: time && time[1] && moment(time[1]).format('HH:mm'),
-      location: place,
-    }))
-    .value(),
-});
+const transformTourSchedule = ({ day, pickUpAt, finishAt, schedule }) => {
+  return {
+    day: day + 1,
+    pickup: [
+      {
+        pickupTime:
+          typeof pickUpAt.time !== 'string'
+            ? pickUpAt.time && moment(pickUpAt.time).format('HH:mm')
+            : pickUpAt.time,
+        pickupLocation: pickUpAt.place,
+        finishTime:
+          typeof finishAt?.time !== 'string'
+            ? finishAt.time && moment(finishAt.time).format('HH:mm')
+            : finishAt.time,
+        finishLocation: finishAt.place,
+      },
+    ],
+    schedule: _.chain(schedule)
+      .filter(({ time, place }) => time && time[0] && time[1] && place)
+      .map(({ time, place }) => ({
+        from: time && time[0] && moment(time[0]).format('HH:mm'),
+        to: time && time[1] && moment(time[1]).format('HH:mm'),
+        location: place,
+      }))
+      .value(),
+  };
+};
 
 const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   const [loading, setLoading] = useState(false);
@@ -59,7 +67,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
           pickUpAt: {
             time:
               tourCreationInfo.pickup &&
-              (tourCreationInfo.pickup[i + 1]?.Pickup[0].pickup_time || '00:00'),
+              (tourCreationInfo.pickup[i + 1]?.Pickup[0].pickup_time || '0'),
             place:
               tourCreationInfo.pickup &&
               (tourCreationInfo.pickup[i + 1]?.Pickup[0].pickup_location || ''),
@@ -67,22 +75,22 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
           finishAt: {
             time:
               tourCreationInfo.pickup &&
-              (tourCreationInfo.pickup[i + 1]?.Pickup[0].finish_time || '00:00'),
+              (tourCreationInfo.pickup[i + 1]?.Pickup[0].finish_time || '0'),
             place:
               tourCreationInfo.pickup &&
               (tourCreationInfo.pickup[i + 1]?.Pickup[0].finish_location || ''),
           },
           schedule:
-            tourCreationInfo.schedule &&
-            (tourCreationInfo.schedule[i + 1]?.Schedule?.map(item => {
-              return {
-                $uuid: uuidv4(),
-                from: item.from,
-                to: item.to,
-                place: item.location,
-              };
-            }) ||
-              []),
+            (tourCreationInfo.schedule &&
+              tourCreationInfo.schedule[i + 1]?.Schedule?.map(item => {
+                return {
+                  $uuid: uuidv4(),
+                  from: item.from || '0',
+                  to: item.to || '0',
+                  place: item.location,
+                };
+              })) ||
+            [],
         }
     );
   }, [tourCreationInfo]);
@@ -181,7 +189,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                 </Col>
                 <Col span={5}>
                   <TimePicker
-                    defaultValue={moment(pickUpAt?.time, format)}
+                    defaultValue={moment(pickUpAt?.time || '0', format)}
                     onChange={time => updatePickUpAt({ time })}
                     format={format}
                     minuteStep={5}
@@ -217,7 +225,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                     <Col span={4}>{i === 0 && <FieldTitle>Schedule</FieldTitle>}</Col>
                     <Col span={7}>
                       <TimePicker.RangePicker
-                        defaultValue={[moment(s.from, format), moment(s.to, format)]}
+                        defaultValue={[moment(s.from || 0, format), moment(s.to || 0, format)]}
                         onChange={time => updateSchedule({ $uuid: s.$uuid, time })}
                         format={format}
                         minuteStep={5}
@@ -250,7 +258,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
                 </Col>
                 <Col span={5}>
                   <TimePicker
-                    defaultValue={moment(finishAt?.time, format)}
+                    defaultValue={moment(finishAt?.time || '0', format)}
                     onChange={time => updateFinishAt({ time })}
                     format={format}
                     minuteStep={5}
@@ -294,17 +302,17 @@ StepLayout.propTypes = {
         day: PropTypes.number,
         pickUpAt: PropTypes.shape({
           place: PropTypes.string,
-          time: PropTypes.number,
+          time: PropTypes.string,
         }),
         finishAt: PropTypes.shape({
           place: PropTypes.string,
-          time: PropTypes.number,
+          time: PropTypes.string,
         }),
         schedule: PropTypes.arrayOf(
           PropTypes.shape({
             $uuid: PropTypes.string,
             place: PropTypes.string,
-            time: PropTypes.number,
+            time: PropTypes.string,
           })
         ),
       })

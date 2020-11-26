@@ -84,20 +84,21 @@ const GuideProfile = ({ uid }) => {
   const [language, setLanguage] = useState({
     tags: [],
   });
-
   const fetchAdminProfile = useCallback(async () => {
     setIsloading(true);
     const res = await API.getGuideProfile(uid);
     const resCountry = await API.getAllCountry();
-    setInterests({ ...interests, tags: res.guide?.interest.split(';') });
-    setExtras({ ...extras, tags: res.guide?.extras.split(';') });
-    setLanguage({ ...language, tags: res.guide?.language.split(';') });
+    setInterests({
+      ...interests,
+      tags: res.guide?.interest ? res.guide?.interest?.split(';') : [],
+    });
+    setExtras({ ...extras, tags: res.guide?.extras ? res.guide?.extras?.split(';') : [] });
+    setLanguage({ ...language, tags: res.guide?.language ? res.guide?.language?.split(';') : [] });
 
     setRootCountry(resCountry.data);
     setProfile(res.guide);
     setIsloading(false);
   }, [API.getAdminProfile, API.getAllCountry, setIsloading, setProfile, setRootCountry]);
-
   useEffect(() => {
     fetchAdminProfile();
   }, [fetchAdminProfile]);
@@ -374,7 +375,7 @@ const GuideProfile = ({ uid }) => {
             form.setFieldsValue({ experience: experience || profile.experience })
           }
         >
-          <Input.TextArea rows={4} />
+          <Input.TextArea rows={12} />
         </Form.Item>
 
         <Form.Item label="Photos">

@@ -86,7 +86,7 @@ const transformTourData = tourCreationInfo => ({
   total: 0,
   content: tourCreationInfo.tourDescription,
   cover: '',
-  tag: tourCreationInfo.tags.join(','),
+  tag: tourCreationInfo.tags.join(';'),
 });
 
 const Wrapper = styled.div`
@@ -123,7 +123,7 @@ const CreateTourWizard = ({ location }) => {
       ...tourCreationInfo,
       tags:
         typeof tourCreationInfo.tags === 'string'
-          ? tourCreationInfo.tags.split()
+          ? tourCreationInfo.tags.split(';')
           : tourCreationInfo.tags,
     };
     try {
@@ -246,7 +246,7 @@ const CreateTourWizard = ({ location }) => {
           id: data[0].id,
           tourName: data[0].name,
           tourShortDescription: data[0].shortDesc,
-          tags: data[0].tag.split(','),
+          tags: data[0].tag.split(';'),
           country: data[0].country,
           city: data[0].city,
           tourDescription: data[0].content,

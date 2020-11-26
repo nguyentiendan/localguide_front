@@ -87,9 +87,12 @@ const AdminProfile = ({ uid }) => {
     setIsloading(true);
     const res = await API.getAdminProfile({ uid });
     const resCountry = await API.getAllCountry();
-    setInterests({ ...interests, tags: res.data?.interest.split(';') });
-    setExtras({ ...extras, tags: res.data?.extras.split(';') });
-    setLanguage({ ...language, tags: res.data?.language.split(';') });
+    setInterests({
+      ...interests,
+      tags: res.data?.interest ? res.data?.interest?.split(';') : [],
+    });
+    setExtras({ ...extras, tags: res.data?.extras ? res.data?.extras?.split(';') : [] });
+    setLanguage({ ...language, tags: res.data?.language ? res.data?.language?.split(';') : [] });
 
     setRootCountry(resCountry.data);
     setProfile(res.data);

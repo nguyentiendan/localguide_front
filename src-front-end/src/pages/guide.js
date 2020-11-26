@@ -26,9 +26,11 @@ import iconBooking from '../images/icon-booking.svg';
 import iconLanguage from '../images/icon-language.svg';
 import iconLocation from '../images/icon-location.svg';
 import iconSex from '../images/icon-sex.svg';
+import banner from '../images/home-banner.jpg';
 
 const InfoAvatarAndBackgroundImg = styled.div`
-  background-color: rgba(0, 0, 0, 0.5);
+  background: url(${banner}) no-repeat center;
+  background-size: cover;
   .container {
     display: flex;
     justify-content: space-between;
@@ -199,7 +201,7 @@ const IconWrapper = styled.img`
 function User({ location }) {
   const [profile, setProfile] = useState({
     guide: {},
-    reviews: [],
+    reviews: { totalReview: 0, listReviews: [] },
     tours: [],
   });
   const [photos, setPhotos] = useState([]);
@@ -221,7 +223,14 @@ function User({ location }) {
         uid: dataQueryParams.uid,
         guideId: dataQueryParams.id,
       });
-      setProfile({ guide: res.guide, reviews: res.review, tours: res.tour });
+      setProfile({
+        guide: res.guide,
+        reviews: {
+          totalReview: res.total_review,
+          listReviews: res.review,
+        },
+        tours: res.tour,
+      });
     };
     fetchData();
   }, [setProfile, dataQueryParams.uid, dataQueryParams.id]);
@@ -313,35 +322,49 @@ function User({ location }) {
           </div>
           <p>{profile.guide?.experience}</p>
           <div className="details__information mt-40">
-            <div className="details__information__item">
-              <IconWrapper src={iconLanguage} alt="Customers" />
-              <h3>{profile.guide?.language?.split(';').join(', ')}</h3>
-            </div>
-            <div className="details__information__item">
-              <IconWrapper src={iconLocation} alt="Customers" />
-              <h3>
-                {profile.guide?.city}, {profile.guide?.country}
-              </h3>
-            </div>
-            <div className="details__information__item">
-              <IconWrapper src={iconSex} alt="Customers" />
-              <h3>
-                {profile.guide?.sex === 0 ? 'Female' : 'Male'} {profile.guide?.age}
-              </h3>
-            </div>
+            {profile.guide?.language && (
+              <div className="details__information__item">
+                <IconWrapper src={iconLanguage} alt="Customers" />
+                <h3>{profile.guide?.language?.split(';').join(', ')}</h3>
+              </div>
+            )}
+            {(profile.guide?.city || profile.guide?.country) && (
+              <div className="details__information__item">
+                <IconWrapper src={iconLocation} alt="Customers" />
+                <h3>
+                  {profile.guide?.city} {profile.guide?.city && ','} {profile.guide?.country}
+                </h3>
+              </div>
+            )}
+            {profile.guide?.sex && (
+              <div className="details__information__item">
+                <IconWrapper src={iconSex} alt="Customers" />
+                <h3>
+                  {profile.guide?.sex === 0 ? 'Female' : 'Male'} {profile.guide?.age}
+                </h3>
+              </div>
+            )}
           </div>
           <div className="mt-40">
-            <InterestsOrExtras data={profile.guide?.interest} title="Interests" />
-            <InterestsOrExtras data={profile.guide?.extras} title="Extras" />
+            {profile.guide?.interest && (
+              <InterestsOrExtras data={profile.guide?.interest} title="Interests" />
+            )}
+            {profile.guide?.extras && (
+              <InterestsOrExtras data={profile.guide?.extras} title="Extras" />
+            )}
           </div>
-          <div className="education__information">
-            <b>Education:</b>
-            <p>{profile.guide?.education}</p>
-          </div>
-          <div className="education__information">
-            <b>Certification:</b>
-            <p>{profile.guide?.specialities}</p>
-          </div>
+          {profile.guide?.education && (
+            <div className="education__information">
+              <b>Education:</b>
+              <p>{profile.guide?.education}</p>
+            </div>
+          )}
+          {profile.guide?.specialities && (
+            <div className="education__information">
+              <b>Certification:</b>
+              <p>{profile.guide?.specialities}</p>
+            </div>
+          )}
         </InfoIntroduction>
         <ListWrapper ref={galleryWrapperComp}>
           {photos?.customDataPhotos && (
@@ -351,7 +374,7 @@ function User({ location }) {
             </>
           )}
         </ListWrapper>
-        <SectionHeader title="Related Tour" subTitle="View all" />
+        {profile.tours.length > 0 && <SectionHeader title="Related Tour" subTitle="View all" />}
         <ListWrapper>
           <ListContainer>
             {_.map(profile.tours, (tour, index) => (
@@ -365,24 +388,25 @@ function User({ location }) {
             ))}
           </ListContainer>
         </ListWrapper>
-
-        <SectionHeader
-          title={
-            // eslint-disable-next-line react/jsx-wrap-multilines
-            <>
-              Reviews (45)
-              <Gap />
-              <RatingStars rate={5} />
-            </>
-          }
-        />
+        {profile.reviews?.listReviews?.length > 0 && (
+          <SectionHeader
+            title={
+              // eslint-disable-next-line react/jsx-wrap-multilines
+              <>
+                Reviews ({profile.reviews?.totalReview})
+                <Gap />
+                <RatingStars rate={5} />
+              </>
+            }
+          />
+        )}
         <ListWrapper>
-          {_.map(profile.reviews, (comment, index) => (
+          {_.map(profile.reviews?.listReviews, (comment, index) => (
             <CommentListItem
               key={index}
               content={comment.Content}
               user={comment.Fullname}
-              date={comment.Date}
+              date={comment.Created_At}
               avatar={comment.Avatar}
               className="comment"
             />

@@ -34,7 +34,6 @@ const Feedback = ({
 }) => {
   const [value, setValue] = useState({});
   const [feedbackId, setFeedbackId] = useState({});
-
   return (
     <FeedbackWrapper>
       {feedback?.map(comment => {
@@ -86,7 +85,7 @@ const Feedback = ({
             {replyFeedback?.map(item => {
               return (
                 comment.ID === item.FeedbackID && (
-                  <div key={item.uuid}>
+                  <div key={item.ID}>
                     <Comment
                       // actions={item.actions}
                       author={item.Fullname}

@@ -73,7 +73,6 @@ const TagInterests = ({ createInfo, setCreateInfo, defaultTags }) => {
       newTagInputRef.current.focus();
     }
   }, [newTagInputVisible]);
-
   return (
     <Wrapper>
       {_.map(tagOptions, tagOption => (
