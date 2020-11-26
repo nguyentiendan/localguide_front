@@ -6,7 +6,7 @@ import Gallery from 'react-grid-gallery';
 import { AiOutlineSchedule } from 'react-icons/ai';
 import { FaSuitcase, FaMoneyBill, FaUsers } from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
-import { Spin, notification } from 'antd';
+import { Spin, notification, Popconfirm } from 'antd';
 import _ from 'lodash';
 import qs from 'query-string';
 
@@ -343,9 +343,14 @@ function TourPage({ data, id, uid, location: locationUrl }) {
               <ButtonEventAdminWrapper>
                 <div>
                   {tourDetails?.status !== 1 && (
-                    <Button onClick={handleApproveTour} className="style-button-approve">
-                      Approve
-                    </Button>
+                    <Popconfirm
+                      title="Are you sure to approve tour?"
+                      onConfirm={handleApproveTour}
+                      okText="Yes"
+                      cancelText="No"
+                    >
+                      <Button className="style-button-approve">Approve</Button>
+                    </Popconfirm>
                   )}
                   <Button className="style-button-edit">
                     <Link to={`/edit-tour?q=${tourDetails?.id}`} style={{ color: '#ffffff' }}>

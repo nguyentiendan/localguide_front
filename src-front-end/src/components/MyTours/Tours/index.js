@@ -78,6 +78,8 @@ function Tours() {
                     avatarImg={tour.AvatarImg}
                     coverImg={tour.CoverImg}
                     status={tour.Status}
+                    city={tour.City}
+                    country={tour.Country}
                     handleDeleteTour={handleDeleteTour}
                   />
                 </Col>
@@ -87,11 +89,13 @@ function Tours() {
         </Spin>
       </FilterWrapper>
       <br />
-      <Pagination
-        defaultCurrent={1}
-        total={allTours.totalPage * 10}
-        onChange={page => setCurrentPage(page)}
-      />
+      {allTours.tours.length > 0 && (
+        <Pagination
+          defaultCurrent={1}
+          total={allTours.totalPage * 10}
+          onChange={page => setCurrentPage(page)}
+        />
+      )}
     </Wrapper>
   );
 }

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { navigate, Link } from 'gatsby';
-import { Avatar, Card, Tag, Badge } from 'antd';
+import { Card, Tag, Badge, Popconfirm } from 'antd';
 import { DeleteOutlined, EditOutlined, MessageOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 
@@ -16,7 +16,7 @@ const Image = styled.img`
   object-fit: cover;
 `;
 
-const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid, handleDeleteTour }) => {
+const TourCard = ({ title, coverImg, day, id, status, city, country, uid, handleDeleteTour }) => {
   const [showModal, setShowModal] = useState(false);
   const user = getUserProfile();
 
@@ -57,19 +57,30 @@ const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid, handleDele
             : [
               <MessageOutlined key="feedback" onClick={() => setShowModal(true)} />,
               <EditOutlined key="edit" onClick={() => navigate(`/edit-tour?q=${id}`)} />,
-              <DeleteOutlined key="delete" onClick={() => handleDeleteTour({ uid, id })} />,
+              <Popconfirm
+                title="Are you sure to delete this tour?"
+                onConfirm={() => handleDeleteTour({ uid, id })}
+                okText="Yes"
+                cancelText="No"
+              >
+                <DeleteOutlined key="delete" />
+              </Popconfirm>,
             ]
         }
       >
         <Link to={`/edit-tour?q=${id}`}>
           <Card.Meta
-            avatar={<Avatar src={avatarImg} />}
-            title={title}
+            title={<b>{title}</b>}
             description={
-              <>
-                <HandleDescription />
-                {day} days
-              </>
+              <div style={{ lineHeight: '30px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>{country}/{city}</span>
+                  <span>{day} days</span>
+                </div>
+                <div>
+                  <HandleDescription />
+                </div>
+              </div>
             }
           />
         </Link>
@@ -86,18 +97,22 @@ const TourCard = ({ title, avatarImg, coverImg, day, id, status, uid, handleDele
 
 TourCard.propTypes = {
   title: PropTypes.string.isRequired,
-  avatarImg: PropTypes.string,
+  // avatarImg: PropTypes.string,
   coverImg: PropTypes.string,
   day: PropTypes.number.isRequired,
   id: PropTypes.number.isRequired,
   status: PropTypes.number.isRequired,
   uid: PropTypes.string.isRequired,
   handleDeleteTour: PropTypes.func,
+  city: PropTypes.string,
+  country: PropTypes.string,
 };
 
 TourCard.defaultProps = {
-  avatarImg: '',
+  // avatarImg: '',
   coverImg: '',
+  city: '',
+  country: '',
   handleDeleteTour: () => { },
 };
 

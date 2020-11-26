@@ -345,7 +345,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
               ))}
             </Row>
             <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
-              {photos.length >= 5 ? null : uploadButton('Upload photo')}
+              {uploadButton('Upload photo')}
             </Upload>
           </Col>
           <Modal

@@ -75,12 +75,7 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
   const handleGetAllReply = async idFeedback => {
     setLoading(true);
     const res = await API.handleGetAllReplyFeedback({ uid: user.uid, id: idFeedback });
-    const newData = res.data.map(item => {
-      const newItem = { ...item };
-      newItem.uuid = uuidv4();
-      return newItem;
-    });
-    setDataReply([...dataReply, ...newData]);
+    setDataReply(res.data);
     setLoading(false);
   };
 
