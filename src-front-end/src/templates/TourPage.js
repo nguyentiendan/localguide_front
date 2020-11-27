@@ -420,7 +420,7 @@ function TourPage({ data, id, uid, location: locationUrl }) {
             </SectionTitle>
             <TagWrapper>
               {tourDetails.tag &&
-                _.map(tourDetails.tag.split(','), tag => <Tag key={tag}>{tag}</Tag>)}
+                _.map(tourDetails.tag.split(';'), tag => <Tag key={tag}>{tag}</Tag>)}
             </TagWrapper>
           </LocationWrapper>
           <TourGuideWrapper>
