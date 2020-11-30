@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import styled from 'styled-components';
@@ -204,6 +205,7 @@ function User({ location }) {
     reviews: { totalReview: 0, listReviews: [] },
     tours: [],
   });
+  const [rootCountry, setRootCountry] = useState({});
   const [photos, setPhotos] = useState([]);
   const [thumbnailWidths, setThumbnailWidths] = useState([]);
   const galleryWrapperComp = useRef();
@@ -255,6 +257,14 @@ function User({ location }) {
     };
     fetchPhotos();
   }, [setProfile, API.getPhotosGuide, dataQueryParams.uid]);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await API.getAllCountry();
+      const newData = _.keyBy(data, item => item.code);
+      setRootCountry(newData);
+    })();
+  }, []);
 
   const handleLevelGuide = level => {
     switch (level) {
@@ -320,7 +330,7 @@ function User({ location }) {
               </div>
             </div>
           </div>
-          <p>{profile.guide?.experience}</p>
+          <div dangerouslySetInnerHTML={{ __html: profile.guide?.experience }} />
           <div className="details__information mt-40">
             {profile.guide?.language && (
               <div className="details__information__item">
@@ -332,7 +342,8 @@ function User({ location }) {
               <div className="details__information__item">
                 <IconWrapper src={iconLocation} alt="Customers" />
                 <h3>
-                  {profile.guide?.city} {profile.guide?.city && ','} {profile.guide?.country}
+                  {profile.guide?.city}
+                  {profile.guide?.city && ','} {rootCountry[profile.guide?.country]?.name}
                 </h3>
               </div>
             )}
@@ -367,7 +378,7 @@ function User({ location }) {
           )}
         </InfoIntroduction>
         <ListWrapper ref={galleryWrapperComp}>
-          {photos?.customDataPhotos && (
+          {photos?.customDataPhotos?.length > 0 && (
             <>
               <SectionHeader title="Photo" />
               <Gallery enableImageSelection={false} images={photos?.customDataPhotos} />

@@ -19,7 +19,6 @@ const AdminPage = () => {
   useEffect(() => {
     function check() {
       if (!isAuthenticated()) {
-        console.log('ABC');
         navigate('/login');
       }
     }

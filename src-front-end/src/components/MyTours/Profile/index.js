@@ -55,16 +55,7 @@ const tailFormItemLayout = {
 
 const GuideProfile = ({ uid }) => {
   const [form] = Form.useForm();
-  const {
-    country,
-    fullname,
-    mobile,
-    job,
-    age,
-    education,
-    experience,
-    specialities,
-  } = form.getFieldsValue();
+  const { country } = form.getFieldsValue();
   const [profile, setProfile] = useState({});
   const [rootCountry, setRootCountry] = useState([]);
   const [rootCity, setRootCity] = useState([]);
@@ -197,9 +188,8 @@ const GuideProfile = ({ uid }) => {
               message: 'Value should be less than 100 character',
             },
           ]}
-          initialValue={
-            profile.fullname && form.setFieldsValue({ fullname: fullname || profile.fullname })
-          }
+          key={profile.fullname}
+          initialValue={profile.fullname}
         >
           <Input />
         </Form.Item>
@@ -217,7 +207,8 @@ const GuideProfile = ({ uid }) => {
               message: 'Please input your E-mail!',
             },
           ]}
-          initialValue={profile.email && form.setFieldsValue({ email: profile.email })}
+          key={profile.email}
+          initialValue={profile.email}
         >
           <Input disabled={profile.email} />
         </Form.Item>
@@ -231,16 +222,13 @@ const GuideProfile = ({ uid }) => {
               message: 'Please input your Mobile phone!',
             },
           ]}
-          initialValue={profile.mobile && form.setFieldsValue({ mobile: mobile || profile.mobile })}
+          key={profile.mobile}
+          initialValue={profile.mobile}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="job"
-          label="Your job"
-          initialValue={profile.job && form.setFieldsValue({ job: job || profile.job })}
-        >
+        <Form.Item name="job" label="Your job" key={profile.job} initialValue={profile.job}>
           <Input />
         </Form.Item>
 
@@ -263,7 +251,8 @@ const GuideProfile = ({ uid }) => {
               <Form.Item
                 name="age"
                 label="Age"
-                initialValue={profile.age && form.setFieldsValue({ age: age || profile.age })}
+                key={profile.age}
+                initialValue={profile.age}
                 style={{ flexGrow: 0.15 }}
               >
                 <InputNumber />
@@ -271,15 +260,13 @@ const GuideProfile = ({ uid }) => {
             </Col>
           </Row>
         </Form.Item>
-
-        <Form.Item name="country" label="Country" style={{ marginBottom: 0 }}>
-          <Row gutter={8}>
-            <Col span={12}>
+        <div style={{ width: '100%' }}>
+          <Form.Item name="country" label="Country">
+            <Row>
               <Select
                 placeholder="Country"
                 key={profile.country}
                 defaultValue={profile.country}
-                initialValue={profile.country}
                 onChange={handleSelectCountryAndCity}
               >
                 {rootCountry?.map(item => (
@@ -288,34 +275,33 @@ const GuideProfile = ({ uid }) => {
                   </Option>
                 ))}
               </Select>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="city" label="City">
-                <Select
-                  placeholder="City"
-                  key={profile.city}
-                  defaultValue={profile.city}
-                  onChange={value => {
-                    form.setFieldsValue({ city: value });
-                  }}
-                >
-                  {rootCity?.map(item => (
-                    <Option value={item.city_name} key={item.city_name}>
-                      {item.city_name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form.Item>
+            </Row>
+          </Form.Item>
+          <Form.Item name="city" label="City">
+            <Row>
+              <Select
+                placeholder="City"
+                key={profile.city}
+                defaultValue={profile.city}
+                onChange={value => {
+                  form.setFieldsValue({ city: value });
+                }}
+              >
+                {rootCity?.map(item => (
+                  <Option value={item.city_name} key={item.city_name}>
+                    {item.city_name}
+                  </Option>
+                ))}
+              </Select>
+            </Row>
+          </Form.Item>
+        </div>
 
         <Form.Item
           name="education"
           label="Education"
-          initialValue={
-            profile.education && form.setFieldsValue({ education: education || profile.education })
-          }
+          key={profile.education}
+          initialValue={profile.education}
         >
           <Input />
         </Form.Item>
@@ -323,10 +309,8 @@ const GuideProfile = ({ uid }) => {
         <Form.Item
           name="specialities"
           label="Certification"
-          initialValue={
-            profile.specialities &&
-            form.setFieldsValue({ specialities: specialities || profile.specialities })
-          }
+          key={profile.specialities}
+          initialValue={profile.specialities}
         >
           <Input />
         </Form.Item>
@@ -334,7 +318,8 @@ const GuideProfile = ({ uid }) => {
         <Form.Item
           name="language"
           label="Language"
-          initialValue={profile.language && form.setFieldsValue({ language: profile.language })}
+          key={profile.language}
+          initialValue={profile.language}
         >
           <TagInterests
             createInfo={language}
@@ -346,7 +331,8 @@ const GuideProfile = ({ uid }) => {
         <Form.Item
           name="interests"
           label="Interests"
-          initialValue={profile.interests && form.setFieldsValue({ interests: profile.interests })}
+          key={profile.interests}
+          initialValue={profile.interests}
         >
           <TagInterests
             createInfo={interests}
@@ -355,11 +341,7 @@ const GuideProfile = ({ uid }) => {
           />
         </Form.Item>
 
-        <Form.Item
-          name="extras"
-          label="Extras"
-          initialValue={profile.extras && form.setFieldsValue({ extras: profile.extras })}
-        >
+        <Form.Item name="extras" label="Extras" key={profile.extras} initialValue={profile.extras}>
           <TagInterests
             createInfo={extras}
             setCreateInfo={setExtras}
@@ -370,10 +352,8 @@ const GuideProfile = ({ uid }) => {
         <Form.Item
           name="experience"
           label="Experience"
-          initialValue={
-            profile.experience &&
-            form.setFieldsValue({ experience: experience || profile.experience })
-          }
+          key={profile.experience}
+          initialValue={profile.experience}
         >
           <Input.TextArea rows={12} />
         </Form.Item>

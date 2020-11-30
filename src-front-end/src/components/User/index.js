@@ -52,7 +52,7 @@ const tailFormItemLayout = {
 
 const UserProfile = ({ uid }) => {
   const [form] = Form.useForm();
-  const { country, fullname, mobile, job, age } = form.getFieldsValue();
+  const { country } = form.getFieldsValue();
   const [profile, setProfile] = useState({});
   const [rootCity, setRootCity] = useState([]);
   const [rootCountry, setRootCountry] = useState([]);
@@ -131,9 +131,8 @@ const UserProfile = ({ uid }) => {
               message: 'Value should be less than 100 character',
             },
           ]}
-          initialValue={
-            profile.fullname && form.setFieldsValue({ fullname: fullname || profile.fullname })
-          }
+          key={profile.fullname}
+          initialValue={profile.fullname}
         >
           <Input />
         </Form.Item>
@@ -151,7 +150,8 @@ const UserProfile = ({ uid }) => {
               message: 'Please input your E-mail!',
             },
           ]}
-          initialValue={profile.email && form.setFieldsValue({ email: profile.email })}
+          key={profile.email}
+          initialValue={profile.email}
         >
           <Input disabled={profile.email} />
         </Form.Item>
@@ -165,16 +165,13 @@ const UserProfile = ({ uid }) => {
               message: 'Please input your Mobile phone!',
             },
           ]}
-          initialValue={profile.mobile && form.setFieldsValue({ mobile: mobile || profile.mobile })}
+          key={profile.mobile}
+          initialValue={profile.mobile}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="job"
-          label="Your job"
-          initialValue={profile.job && form.setFieldsValue({ job: job || profile.job })}
-        >
+        <Form.Item name="job" label="Your job" initialValue={profile.job} key={profile.job}>
           <Input />
         </Form.Item>
 
@@ -197,7 +194,8 @@ const UserProfile = ({ uid }) => {
               <Form.Item
                 name="age"
                 label="Age"
-                initialValue={profile.age && form.setFieldsValue({ age: age || profile.age })}
+                key={profile.age}
+                initialValue={profile.age}
                 style={{ flexGrow: 0.15 }}
               >
                 <InputNumber />
@@ -206,14 +204,13 @@ const UserProfile = ({ uid }) => {
           </Row>
         </Form.Item>
 
-        <Form.Item name="country" label="Country" style={{ marginBottom: 0 }}>
-          <Row gutter={8}>
-            <Col span={12}>
+        <div style={{ width: '100%' }}>
+          <Form.Item name="country" label="Country">
+            <Row>
               <Select
                 placeholder="Country"
                 key={profile.country}
                 defaultValue={profile.country}
-                initialValue={profile.country}
                 onChange={handleSelectCountryAndCity}
               >
                 {rootCountry?.map(item => (
@@ -222,27 +219,27 @@ const UserProfile = ({ uid }) => {
                   </Option>
                 ))}
               </Select>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="city" label="City">
-                <Select
-                  placeholder="City"
-                  key={profile.city}
-                  defaultValue={profile.city}
-                  onChange={value => {
-                    form.setFieldsValue({ city: value });
-                  }}
-                >
-                  {rootCity?.map(item => (
-                    <Option value={item.city_name} key={item.city_name}>
-                      {item.city_name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form.Item>
+            </Row>
+          </Form.Item>
+          <Form.Item name="city" label="City">
+            <Row>
+              <Select
+                placeholder="City"
+                key={profile.city}
+                defaultValue={profile.city}
+                onChange={value => {
+                  form.setFieldsValue({ city: value });
+                }}
+              >
+                {rootCity?.map(item => (
+                  <Option value={item.city_name} key={item.city_name}>
+                    {item.city_name}
+                  </Option>
+                ))}
+              </Select>
+            </Row>
+          </Form.Item>
+        </div>
 
         <Form.Item {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">

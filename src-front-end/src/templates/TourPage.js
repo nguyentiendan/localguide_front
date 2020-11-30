@@ -225,14 +225,14 @@ const ButtonEventAdminWrapper = styled.div`
 `;
 function TourPage({ data, id, uid, location: locationUrl }) {
   const { tour, reviews = { comments: [] } } = data || {};
-  const [tourDetails, setTourDetails] = useState(tour || {});
+  const [tourDetails, setTourDetails] = useState({});
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
   const [tourPhotos, setTourPhotos] = useState([]);
   const [thumbnailWidths, setThumbnailWidths] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
   const { status } = qs.parse(locationUrl?.search);
+
   const galleryWrapperComp = useRef();
   const user = getUserProfile();
   const tourQuery = useMemo(() => {
@@ -328,14 +328,14 @@ function TourPage({ data, id, uid, location: locationUrl }) {
   }, [galleryWrapperComp, tourPhotos]);
   const handleApproveTour = async () => {
     setLoading(true);
-    await API.handleAdminApproveTour({ uid: user.uid, id: tour?.rawID || id });
+    await API.handleAdminApproveTour({ uid: tourDetails?.uid, id: tour?.rawID || id });
     notification.success({ message: 'You have successfully approve tour.' });
     setLoading(false);
   };
 
   return (
     <Layout noHeader>
-      <SEO title={tourDetails.name} />
+      <SEO title={tourDetails.name || ''} />
       <Spin spinning={loading}>
         {!status && (
           <div>
@@ -404,7 +404,7 @@ function TourPage({ data, id, uid, location: locationUrl }) {
               images={_.map(tourPhotos, (pic, i) => ({
                 src: getCndResourceUrl(pic.name),
                 thumbnail: getCndResourceUrl(pic.name),
-                thumbnailWidth: thumbnailWidths[i],
+                thumbnailWidth: thumbnailWidths[i] || 240,
                 thumbnailHeight: 175,
               }))}
             />
@@ -425,10 +425,9 @@ function TourPage({ data, id, uid, location: locationUrl }) {
           </LocationWrapper>
           <TourGuideWrapper>
             <TourGuideListItem
-              // level={tourDetails.level}
-              level={undefined}
-              avatar={tourDetails.avatar}
-              name={tourDetails.fullname}
+              // level={tourDetails?.level}
+              avatar={tourDetails?.avatar}
+              name={tourDetails?.fullname}
             />
           </TourGuideWrapper>
         </HeaderWrapper>
@@ -588,7 +587,7 @@ function TourPage({ data, id, uid, location: locationUrl }) {
           setShowModal={setShowModal}
           user={user}
           tour={tour}
-          id={tourDetails?.id}
+          id={tourDetails.id || 0}
         />
       </Spin>
     </Layout>
@@ -599,7 +598,7 @@ TourPage.propTypes = {
   location: PropTypes.shape({ search: PropTypes.string }),
   data: PropTypes.shape({
     tour: PropTypes.shape({
-      id: PropTypes.number,
+      id: PropTypes.string,
       uid: PropTypes.string,
       name: PropTypes.string,
       location: PropTypes.string,
