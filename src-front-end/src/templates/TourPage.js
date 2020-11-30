@@ -469,6 +469,7 @@ function TourPage({ data, id, uid, location: locationUrl }) {
           <BookButton>Book</BookButton>
         </PriceWrapper>
         <SectionTitle>Tour description</SectionTitle>
+        <TourDescription>{tourDetails.content}</TourDescription>
         <DescriptionWrapper>
           <ul>
             {_.map(
