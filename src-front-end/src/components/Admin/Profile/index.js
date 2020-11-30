@@ -3,7 +3,6 @@ import { Form, Input, Select, Button, InputNumber, Row, Col, Spin, notification 
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import styled from 'styled-components';
-
 import JoditEditor from 'jodit-react';
 import * as API from '../../../apis';
 import TagInterests from '../../HandleTag/Interests';

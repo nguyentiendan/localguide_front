@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { graphql, Link } from 'gatsby';
@@ -469,7 +470,9 @@ function TourPage({ data, id, uid, location: locationUrl }) {
           <BookButton>Book</BookButton>
         </PriceWrapper>
         <SectionTitle>Tour description</SectionTitle>
-        <TourDescription>{tourDetails.content}</TourDescription>
+        <TourDescription>
+          <div dangerouslySetInnerHTML={{ __html: tourDetails.content }} />
+        </TourDescription>
         <DescriptionWrapper>
           <ul>
             {_.map(

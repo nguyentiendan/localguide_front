@@ -78,8 +78,10 @@ function Tours() {
                     avatarImg={tour.AvatarImg}
                     coverImg={tour.CoverImg}
                     status={tour.Status}
+                    shortDesc={tour.ShortDesc}
                     city={tour.City}
                     country={tour.Country}
+                    totalReview={tour.Num}
                     handleDeleteTour={handleDeleteTour}
                   />
                 </Col>

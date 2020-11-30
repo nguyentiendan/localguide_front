@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Input } from 'antd';
+import JoditEditor from 'jodit-react';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -13,7 +13,12 @@ const SubTitle = styled.h3`
 `;
 
 const StepLayout = ({ tourCreationInfo, onUpdate }) => {
-  const tourDescription = useMemo(() => tourCreationInfo.tourDescription, [tourCreationInfo]);
+  const editor = useRef(null);
+  const [content, setContent] = useState('');
+  const config = {
+    readonly: false, // all options from https://xdsoft.net/jodit/doc/
+    toolbar: true,
+  };
 
   const updateTourDescription = useCallback(
     newTourDescription => {
@@ -28,13 +33,19 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   return (
     <Wrapper>
       <SubTitle>Description about tour</SubTitle>
-      <Input.TextArea
-        autoSize={{ minRows: 8 }}
-        placeholder="Description"
-        value={tourDescription}
-        onChange={e => updateTourDescription(e.target.value)}
-        size="large"
-        // style={{ maxWidth: 400 }}
+      <JoditEditor
+        ref={editor}
+        value={content || tourCreationInfo?.tourDescription}
+        config={config}
+        tabIndex={-1}
+        onBlur={newContent => {
+          updateTourDescription(newContent);
+          setContent(newContent);
+        }}
+        onChange={newContent => {
+          updateTourDescription(newContent);
+          setContent(newContent);
+        }}
       />
     </Wrapper>
   );

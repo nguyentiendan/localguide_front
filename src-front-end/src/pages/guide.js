@@ -395,6 +395,8 @@ function User({ location }) {
                 location={`${tour.City} ${tour.Country}`}
                 picture={tour.Cover}
                 className="destination"
+                id={tour.ID}
+                uid={tour.UID}
               />
             ))}
           </ListContainer>
