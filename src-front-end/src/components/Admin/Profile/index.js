@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Form, Input, Select, Button, InputNumber, Row, Col, Spin, notification } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import styled from 'styled-components';
-
 import JoditEditor from 'jodit-react';
 import * as API from '../../../apis';
 import TagInterests from '../../HandleTag/Interests';
@@ -55,16 +54,7 @@ const tailFormItemLayout = {
 
 const AdminProfile = ({ uid }) => {
   const [form] = Form.useForm();
-  const {
-    country,
-    fullname,
-    mobile,
-    job,
-    age,
-    education,
-    experience,
-    specialities,
-  } = form.getFieldsValue();
+  const { country } = form.getFieldsValue();
   const [profile, setProfile] = useState({});
   const [rootCountry, setRootCountry] = useState([]);
   const [rootCity, setRootCity] = useState([]);
@@ -84,25 +74,24 @@ const AdminProfile = ({ uid }) => {
     tags: [],
   });
 
-  const fetchAdminProfile = useCallback(async () => {
-    setIsloading(true);
-    const res = await API.getAdminProfile({ uid });
-    const resCountry = await API.getAllCountry();
-    setInterests({
-      ...interests,
-      tags: res.data?.interest ? res.data?.interest?.split(';') : [],
-    });
-    setExtras({ ...extras, tags: res.data?.extras ? res.data?.extras?.split(';') : [] });
-    setLanguage({ ...language, tags: res.data?.language ? res.data?.language?.split(';') : [] });
-
-    setRootCountry(resCountry.data);
-    setProfile(res.data);
-    setIsloading(false);
-  }, [API.getAdminProfile, API.getAllCountry, setIsloading, setProfile, setRootCountry]);
-
   useEffect(() => {
+    const fetchAdminProfile = async () => {
+      setIsloading(true);
+      const res = await API.getAdminProfile({ uid });
+      const resCountry = await API.getAllCountry();
+      setInterests({
+        ...interests,
+        tags: res.data?.interest ? res.data?.interest?.split(';') : [],
+      });
+      setExtras({ ...extras, tags: res.data?.extras ? res.data?.extras?.split(';') : [] });
+      setLanguage({ ...language, tags: res.data?.language ? res.data?.language?.split(';') : [] });
+
+      setProfile(res.data);
+      setRootCountry(resCountry.data);
+      setIsloading(false);
+    };
     fetchAdminProfile();
-  }, [fetchAdminProfile]);
+  }, [API.getAdminProfile, API.getAllCountry, setIsloading, setProfile, setRootCountry]);
 
   useEffect(() => {
     (async () => {
@@ -196,9 +185,8 @@ const AdminProfile = ({ uid }) => {
               message: 'Value should be less than 100 character',
             },
           ]}
-          initialValue={
-            profile.fullname && form.setFieldsValue({ fullname: fullname || profile.fullname })
-          }
+          key={profile.fullname}
+          initialValue={profile.fullname}
         >
           <Input />
         </Form.Item>
@@ -216,7 +204,8 @@ const AdminProfile = ({ uid }) => {
               message: 'Please input your E-mail!',
             },
           ]}
-          initialValue={profile.email && form.setFieldsValue({ email: profile.email })}
+          key={profile.email}
+          initialValue={profile.email}
         >
           <Input disabled={profile.email} />
         </Form.Item>
@@ -230,16 +219,13 @@ const AdminProfile = ({ uid }) => {
               message: 'Please input your Mobile phone!',
             },
           ]}
-          initialValue={profile.mobile && form.setFieldsValue({ mobile: mobile || profile.mobile })}
+          key={profile.mobile}
+          initialValue={profile.mobile}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="job"
-          label="Your job"
-          initialValue={profile.job && form.setFieldsValue({ job: job || profile.job })}
-        >
+        <Form.Item name="job" label="Your job" initialValue={profile.job} key={profile.job}>
           <Input />
         </Form.Item>
 
@@ -262,7 +248,8 @@ const AdminProfile = ({ uid }) => {
               <Form.Item
                 name="age"
                 label="Age"
-                initialValue={profile.age && form.setFieldsValue({ age: age || profile.age })}
+                key={profile.age}
+                initialValue={profile.age}
                 style={{ flexGrow: 0.15 }}
               >
                 <InputNumber />
@@ -271,14 +258,13 @@ const AdminProfile = ({ uid }) => {
           </Row>
         </Form.Item>
 
-        <Form.Item name="country" label="Country" style={{ marginBottom: 0 }}>
-          <Row gutter={8}>
-            <Col span={12}>
+        <div style={{ width: '100%' }}>
+          <Form.Item name="country" label="Country">
+            <Row>
               <Select
                 placeholder="Country"
                 key={profile.country}
                 defaultValue={profile.country}
-                initialValue={profile.country}
                 onChange={handleSelectCountryAndCity}
               >
                 {rootCountry?.map(item => (
@@ -287,34 +273,33 @@ const AdminProfile = ({ uid }) => {
                   </Option>
                 ))}
               </Select>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="city" label="City">
-                <Select
-                  placeholder="City"
-                  key={profile.city}
-                  defaultValue={profile.city}
-                  onChange={value => {
-                    form.setFieldsValue({ city: value });
-                  }}
-                >
-                  {rootCity?.map(item => (
-                    <Option value={item.city_name} key={item.city_name}>
-                      {item.city_name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form.Item>
+            </Row>
+          </Form.Item>
+          <Form.Item name="city" label="City">
+            <Row>
+              <Select
+                placeholder="City"
+                key={profile.city}
+                defaultValue={profile.city}
+                onChange={value => {
+                  form.setFieldsValue({ city: value });
+                }}
+              >
+                {rootCity?.map(item => (
+                  <Option value={item.city_name} key={item.city_name}>
+                    {item.city_name}
+                  </Option>
+                ))}
+              </Select>
+            </Row>
+          </Form.Item>
+        </div>
 
         <Form.Item
           name="education"
           label="Education"
-          initialValue={
-            profile.education && form.setFieldsValue({ education: education || profile.education })
-          }
+          initialValue={profile.education}
+          key={profile.education}
         >
           <Input />
         </Form.Item>
@@ -322,10 +307,8 @@ const AdminProfile = ({ uid }) => {
         <Form.Item
           name="specialities"
           label="Certification"
-          initialValue={
-            profile.specialities &&
-            form.setFieldsValue({ specialities: specialities || profile.specialities })
-          }
+          initialValue={profile.specialities}
+          key={profile.specialities}
         >
           <Input />
         </Form.Item>
@@ -333,7 +316,8 @@ const AdminProfile = ({ uid }) => {
         <Form.Item
           name="language"
           label="Language"
-          initialValue={profile.language && form.setFieldsValue({ language: profile.language })}
+          initialValue={profile.language}
+          key={profile.language}
         >
           <TagInterests
             createInfo={language}
@@ -345,7 +329,8 @@ const AdminProfile = ({ uid }) => {
         <Form.Item
           name="interests"
           label="Interests"
-          initialValue={profile.interests && form.setFieldsValue({ interests: profile.interests })}
+          initialValue={profile.interests}
+          key={profile.interests}
         >
           <TagInterests
             createInfo={interests}
@@ -354,11 +339,7 @@ const AdminProfile = ({ uid }) => {
           />
         </Form.Item>
 
-        <Form.Item
-          name="extras"
-          label="Extras"
-          initialValue={profile.extras && form.setFieldsValue({ extras: profile.extras })}
-        >
+        <Form.Item name="extras" label="Extras" initialValue={profile.extras} key={profile.extras}>
           <TagInterests
             createInfo={extras}
             setCreateInfo={setExtras}
@@ -369,10 +350,8 @@ const AdminProfile = ({ uid }) => {
         <Form.Item
           name="experience"
           label="Experience"
-          initialValue={
-            profile.experience &&
-            form.setFieldsValue({ experience: experience || profile.experience })
-          }
+          initialValue={profile.experience}
+          key={profile.experience}
         >
           {/* <Input.TextArea rows={4} /> */}
           <JoditEditor

@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef } from 'react';
-import { Modal, Col, Row, Upload, Space, Input, notification } from 'antd';
+import { Modal, Col, Row, Upload, Space, Input } from 'antd';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
@@ -163,7 +163,6 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
     },
     [uid]
   );
-
   const deletePhoto = async name => {
     setIsloading(true);
     try {
@@ -176,7 +175,6 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
       // ignored
     }
     setIsloading(false);
-    notification.success({ message: 'You have successfully deleted photo.' });
   };
 
   const handleUploadPhoto = async info => {
@@ -184,7 +182,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
       setIsloading(true);
       let fileList = [...info.fileList];
       fileList = fileList.slice(-5);
-      removeImage.current.state.fileList = fileList;
+      removeImage.current.fileList = fileList;
       fileList = fileList.map(file => {
         return file.originFileObj;
       });
@@ -198,7 +196,6 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
     } catch (e) {
       // ignored
     }
-    notification.success({ message: 'You have successfully updated photos.' });
   };
   const uploadButton = text => (
     <div>

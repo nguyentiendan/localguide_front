@@ -266,7 +266,6 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   };
 
   const deleteCoverPhoto = async name => {
-    console.log('asdfkakadksf');
     setLoading(true);
     try {
       await API.deletePhoto({ name, tourId, uid });

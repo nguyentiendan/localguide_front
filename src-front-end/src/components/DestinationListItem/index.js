@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Link } from 'gatsby';
 import colors from '../../styles/colors';
 
 const Wrapper = styled.div`
@@ -30,11 +31,13 @@ const Picture = styled.img`
   margin-bottom: 0.75rem;
 `;
 
-const DestinationListItem = ({ className, name, location, picture }) => (
+const DestinationListItem = ({ className, name, location, picture, id, uid }) => (
   <Wrapper className={className}>
-    <Picture src={picture} />
-    <Title>{name}</Title>
-    <SubTitle>{location}</SubTitle>
+    <Link to={`/tours/${uid}/${id}?status=view`}>
+      <Picture src={picture} />
+      <Title>{name}</Title>
+      <SubTitle>{location}</SubTitle>
+    </Link>
   </Wrapper>
 );
 
@@ -43,6 +46,8 @@ DestinationListItem.propTypes = {
   name: PropTypes.string.isRequired,
   location: PropTypes.string.isRequired,
   picture: PropTypes.string.isRequired,
+  id: PropTypes.number.isRequired,
+  uid: PropTypes.string.isRequired,
 };
 
 DestinationListItem.defaultProps = {

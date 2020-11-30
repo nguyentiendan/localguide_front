@@ -208,7 +208,6 @@ function Tours() {
             <Form.Item label="Day" name="day">
               <Select
                 placeholder="Day"
-                defaultValue="1"
                 onChange={value => {
                   form.setFieldsValue({ pax: value });
                 }}
@@ -227,7 +226,6 @@ function Tours() {
             <Form.Item label="Status" name="status">
               <Select
                 placeholder="Status"
-                defaultValue=""
                 onChange={value => {
                   form.setFieldsValue({ status: value });
                 }}

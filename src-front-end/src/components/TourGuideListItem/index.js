@@ -39,13 +39,16 @@ const TourGuideListItem = ({ className, name, level, avatar }) => (
 
 TourGuideListItem.propTypes = {
   className: PropTypes.string,
-  name: PropTypes.string.isRequired,
-  level: PropTypes.number.isRequired,
-  avatar: PropTypes.string.isRequired,
+  name: PropTypes.string,
+  level: PropTypes.number,
+  avatar: PropTypes.string,
 };
 
 TourGuideListItem.defaultProps = {
   className: '',
+  name: '',
+  level: 0,
+  avatar: '',
 };
 
 export default TourGuideListItem;

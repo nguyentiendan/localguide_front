@@ -36,12 +36,13 @@ const NavItem = ({ icon, link, title, className }) => (
 NavItem.propTypes = {
   className: PropTypes.string,
   icon: PropTypes.node.isRequired,
-  link: PropTypes.node.isRequired,
+  link: PropTypes.node,
   title: PropTypes.string.isRequired,
 };
 
 NavItem.defaultProps = {
   className: '',
+  link: '',
 };
 
 export default NavItem;

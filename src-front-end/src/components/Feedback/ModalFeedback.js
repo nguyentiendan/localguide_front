@@ -63,14 +63,16 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
   };
 
   const handleReplyFeedback = async (e, feedbackId) => {
-    const { data } = await API.handleCreateReply({
-      uid: user.uid,
-      feedbackId,
-      content: e.target.value,
-    });
-    const newFeedback = { ...data[0] };
-    newFeedback.uuid = uuidv4();
-    setDataReply([...dataReply, newFeedback]);
+    if (e.target.value) {
+      const { data } = await API.handleCreateReply({
+        uid: user.uid,
+        feedbackId,
+        content: e.target.value,
+      });
+      const newFeedback = { ...data[0] };
+      newFeedback.uuid = uuidv4();
+      setDataReply([...dataReply, newFeedback]);
+    }
   };
   const handleGetAllReply = async idFeedback => {
     setLoading(true);
@@ -172,12 +174,11 @@ ModalFeedback.propTypes = {
   tour: PropTypes.shape({
     rawID: PropTypes.number,
   }),
-  id: PropTypes.string,
+  id: PropTypes.number.isRequired,
 };
 
 ModalFeedback.defaultProps = {
   tour: {},
-  id: '',
 };
 
 export default ModalFeedback;

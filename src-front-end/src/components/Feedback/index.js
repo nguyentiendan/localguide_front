@@ -143,23 +143,8 @@ const Feedback = ({
 };
 
 Feedback.propTypes = {
-  feedback: PropTypes.arrayOf({
-    actions: PropTypes.arrayOf({}),
-    Avatar: PropTypes.string,
-    Content: PropTypes.string,
-    Data: PropTypes.shape({}),
-    ID: PropTypes.string,
-    Fullname: PropTypes.string,
-    Num: PropTypes.number,
-  }),
-  replyFeedback: PropTypes.arrayOf({
-    Avatar: PropTypes.string,
-    Content: PropTypes.string,
-    Created_At: PropTypes.string,
-    FeedbackID: PropTypes.number,
-    Fullname: PropTypes.string,
-    UID: PropTypes.string,
-  }),
+  feedback: PropTypes.arrayOf(PropTypes.object),
+  replyFeedback: PropTypes.arrayOf(PropTypes.object),
   handleReplyFeedback: PropTypes.func,
   handleGetAllReply: PropTypes.func,
   userUID: PropTypes.string.isRequired,
@@ -168,9 +153,9 @@ Feedback.propTypes = {
   handleEditFeedback: PropTypes.func,
   handleDeleteReply: PropTypes.func,
   handleEditReply: PropTypes.func,
-  editFeedback: PropTypes.bool.isRequired,
+  editFeedback: PropTypes.shape({}).isRequired,
   setEditFeedback: PropTypes.func.isRequired,
-  editReply: PropTypes.bool.isRequired,
+  editReply: PropTypes.shape({}).isRequired,
   setEditReply: PropTypes.func.isRequired,
 };
 
