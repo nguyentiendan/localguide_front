@@ -178,8 +178,8 @@ const GuideProfile = ({ uid }) => {
         onFinish={onFinish}
         scrollToFirstError
       >
-        <Form.Item name="avatar" style={{ justifyContent: 'flex-end' }}>
-          <UploadAvatar uid={uid} src={profile.avatar} />
+        <Form.Item name="avatar">
+          <UploadAvatar uid={uid} src={profile.avatar} title="Guide" />
         </Form.Item>
 
         <Form.Item

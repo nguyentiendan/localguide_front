@@ -15,7 +15,7 @@ import { smallScreenCss } from '../styles/responsive-css';
 import CommentListItem from '../components/CommentListItem';
 import RatingStars from '../components/RatingStars';
 import DestinationListItem from '../components/DestinationListItem';
-import { getCndResourceUrl, resizeImageGallery } from '../utils/commons';
+import { getCndResourceUrl } from '../utils/commons';
 import Layout from '../components/Layout';
 import InterestsOrExtras from '../components/InterestsOrExtras';
 import * as API from '../apis';
@@ -95,6 +95,20 @@ const InfoAvatarAndBackgroundImg = styled.div`
     .info__book-now {
       display: flex;
     }
+  }
+`;
+
+const GalleryWrapper = styled.div`
+  display: block;
+  margin-top: 0;
+  .ReactGridGallery_tile {
+    background: none !important;
+  }
+  img {
+    object-fit: cover !important;
+    margin-left: 0 !important;
+    padding: 2px !important;
+    border-radius: 8px;
   }
 `;
 
@@ -212,12 +226,39 @@ function User({ location }) {
   const dataQueryParams = qs.parse(location.search);
 
   useLayoutEffect(() => {
-    resizeImageGallery({
-      useRef: galleryWrapperComp,
-      photos: photos?.customDataPhotos,
-      useStateSetWidth: setThumbnailWidths,
-    });
-  }, [galleryWrapperComp, photos?.customDataPhotos, resizeImageGallery, setThumbnailWidths]);
+    if (!galleryWrapperComp || !galleryWrapperComp.current || !photos) {
+      return () => {};
+    }
+    const updateSize = _.debounce(() => {
+      const wrapperWidth = galleryWrapperComp.current.offsetWidth;
+      const maxColumn = Math.round(wrapperWidth / 275);
+      const minColumn = 2;
+      const maxRows = Math.ceil(photos.length / ((maxColumn + minColumn) / 2));
+      let widths = [];
+      for (let i = 0; i < maxRows; i++) {
+        const randomColumns = Math.floor(Math.random() * (maxColumn - minColumn + 1) + minColumn);
+        const minWidth = (wrapperWidth * 0.6) / randomColumns;
+        const maxWidth = (wrapperWidth * 1.25) / randomColumns;
+        const rowWidths = [];
+        for (let j = 0; j < randomColumns; j++) {
+          if (widths.length === photos.length - 1) {
+            rowWidths.push(wrapperWidth - _.sum(rowWidths));
+            break;
+          } else if (j === randomColumns - 1) {
+            rowWidths.push(wrapperWidth - _.sum(rowWidths));
+          } else {
+            rowWidths.push(Math.floor(Math.random() * (maxWidth - minWidth + 1) + minWidth));
+          }
+        }
+        widths = [...widths, ...rowWidths];
+      }
+      setThumbnailWidths(widths);
+    }, 350);
+    window.addEventListener('resize', updateSize);
+    updateSize();
+
+    return () => window.removeEventListener('resize', updateSize);
+  }, [galleryWrapperComp, photos]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -242,18 +283,7 @@ function User({ location }) {
       const res = await API.getPhotosGuide({
         uid: dataQueryParams.uid,
       });
-      const customDataPhotos = _.map(res.data, (photo, i) => {
-        return {
-          src: getCndResourceUrl(photo.name),
-          thumbnail: getCndResourceUrl(photo.name),
-          caption: photo.caption,
-          thumbnailWidth: thumbnailWidths[i] || 240,
-          thumbnailHeight: 175,
-        };
-      });
-      setPhotos({
-        customDataPhotos,
-      });
+      setPhotos(res.data);
     };
     fetchPhotos();
   }, [setProfile, API.getPhotosGuide, dataQueryParams.uid]);
@@ -377,13 +407,24 @@ function User({ location }) {
             </div>
           )}
         </InfoIntroduction>
-        <ListWrapper ref={galleryWrapperComp}>
-          {photos?.customDataPhotos?.length > 0 && (
-            <>
-              <SectionHeader title="Photo" />
-              <Gallery enableImageSelection={false} images={photos?.customDataPhotos} />
-            </>
-          )}
+        <ListWrapper>
+          <GalleryWrapper ref={galleryWrapperComp}>
+            {photos?.length > 0 && (
+              <>
+                <SectionHeader title="Photo" />
+                <Gallery
+                  enableImageSelection={false}
+                  images={_.map(photos, (photo, i) => ({
+                    src: getCndResourceUrl(photo.name),
+                    thumbnail: getCndResourceUrl(photo.name),
+                    caption: photo.caption,
+                    thumbnailWidth: thumbnailWidths[i] || 240,
+                    thumbnailHeight: 175,
+                  }))}
+                />
+              </>
+            )}
+          </GalleryWrapper>
         </ListWrapper>
         {profile.tours.length > 0 && <SectionHeader title="Related Tour" subTitle="View all" />}
         <ListWrapper>

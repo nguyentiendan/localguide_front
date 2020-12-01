@@ -8,9 +8,14 @@ import * as API from '../../apis';
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  margin-top: 10px;
   @media (min-width: 575px) {
-    justify-content: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 `;
 
@@ -59,7 +64,7 @@ const UploadCustom = styled.div`
   }
 `;
 
-const UploadAvatar = ({ uid, src }) => {
+const UploadAvatar = ({ uid, src, title }) => {
   const [avatarBlob, setAvatarBlob] = useState();
   const [loading, setLoading] = useState(false);
   const handleUploadCoverPhoto = useCallback(
@@ -76,6 +81,7 @@ const UploadAvatar = ({ uid, src }) => {
   );
   return (
     <Wrapper>
+      <h2>{title} Profile</h2>
       <label htmlFor="avatar">
         <Spin spinning={loading}>
           <UploadCustom>
@@ -102,6 +108,7 @@ export default UploadAvatar;
 
 UploadAvatar.propTypes = {
   uid: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
   src: PropTypes.string,
 };
 

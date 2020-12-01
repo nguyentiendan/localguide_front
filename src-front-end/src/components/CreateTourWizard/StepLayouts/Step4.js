@@ -104,7 +104,7 @@ const ImgEditor = ({
   const handleDeletePhoto = () => {
     if (type !== 'Cover') {
       // eslint-disable-next-line react/prop-types
-      myRef.current.state.fileList.splice(index, 1);
+      myRef.current.fileList.splice(index, 1);
     }
     deletePhoto(name);
   };
@@ -222,7 +222,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
       setLoading(true);
       let fileList = [...info.fileList];
       fileList = fileList.slice(-5);
-      removeImage.current.state.fileList = fileList;
+      removeImage.current.fileList = fileList;
       fileList = fileList.map(file => {
         return file.originFileObj;
       });
@@ -230,8 +230,9 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
         tourId: tourCreationInfo.id,
         file: fileList,
       });
+      const newData = _.concat(photos, uploadedRes.data);
       setLoading(false);
-      handlePhotosChange(uploadedRes.data);
+      handlePhotosChange(newData);
     } catch (e) {
       // ignored
     }
@@ -296,7 +297,6 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
           publish.
         </SubTitle>
         <br />
-
         <Row gutter={32} style={{ flexDirection: 'column' }}>
           <Col span={5}>
             {coverPhoto && (
@@ -318,7 +318,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
               fileList={[]}
               action={handleUploadCoverPhoto}
             >
-              {coverPhoto ? null : uploadButton('Upload cover photo')}
+              {coverPhoto?.name ? null : uploadButton('Upload cover photo')}
             </Upload>
           </Col>
           <Col span={18}>

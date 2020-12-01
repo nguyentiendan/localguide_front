@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { navigate } from 'gatsby';
-import { Row, Col, Button, Spin, Pagination } from 'antd';
+import { Row, Col, Button, Spin, Pagination, notification } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 
@@ -49,6 +49,7 @@ function Tours() {
       return tour.ID === data.id;
     });
     setLoading(false);
+    notification.success({ message: `You have successfully deleted ${data.title} tour.` });
   };
   return (
     <Wrapper>
@@ -76,7 +77,7 @@ function Tours() {
                     title={tour.Name}
                     day={tour.Day}
                     avatarImg={tour.AvatarImg}
-                    coverImg={tour.CoverImg}
+                    coverImg={tour.Cover}
                     status={tour.Status}
                     shortDesc={tour.ShortDesc}
                     city={tour.City}

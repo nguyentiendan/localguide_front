@@ -27,7 +27,7 @@ export function resizeImageGallery({ useRef, photos, useStateSetWidth }) {
     return () => {};
   }
   const updateSize = _.debounce(() => {
-    const wrapperWidth = useRef.current.offsetWidth;
+    const wrapperWidth = useRef.current?.offsetWidth;
     const maxColumn = Math.round(wrapperWidth / 275);
     const minColumn = 2;
     const maxRows = Math.ceil(photos.length / ((maxColumn + minColumn) / 2));
