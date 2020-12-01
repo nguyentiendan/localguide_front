@@ -23,12 +23,26 @@ const CardWrapper = styled(Card)`
   }
 `;
 
+const WrapperImageCard = styled.div`
+  position: relative;
+  .styled-box-price {
+    position: absolute;
+    left: 15px;
+    background: #fff;
+    padding: 10px 15px;
+    bottom: 0px;
+    color: red;
+    box-shadow: lavender;
+    box-shadow: 0px 0px 10px 3px rgba(0,0,0,0.38);
+  }
+`
+
 const Image = styled.img`
   height: 200px;
   width: auto;
   object-fit: cover;
   border-radius: 10px 10px 0px 0px;
-  margin-bottom: 0px;
+  // margin-bottom: 0px;
 `;
 
 const CardDesc = styled.div`
@@ -82,7 +96,7 @@ const TourCard = ({
       <CardWrapper
         hoverable
         style={{ width: '100%', cursor: 'pointer', minWidth: 300, minHeight: 400, borderRadius: 10 }}
-        cover={<Image src={coverImg || backpackers} onClick={() => navigate(`/edit-tour?q=${id}`)} />}
+        cover={<WrapperImageCard><Image src={coverImg || backpackers} onClick={() => navigate(`/edit-tour?q=${id}`)} /><span className='styled-box-price'>1</span></WrapperImageCard>}
         actions={
           status
             ? [
@@ -92,7 +106,7 @@ const TourCard = ({
               <MessageOutlined key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
               <Popconfirm
                 title="Are you sure to delete this tour?"
-                onConfirm={() => handleDeleteTour({ uid, id })}
+                onConfirm={() => handleDeleteTour({ uid, id, title })}
                 okText="Yes"
                 cancelText="No"
               >

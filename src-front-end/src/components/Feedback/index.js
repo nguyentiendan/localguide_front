@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Comment, Input, Button } from 'antd';
 import styled from 'styled-components';
+import { CheckOutlined } from '@ant-design/icons';
 
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -31,6 +32,7 @@ const Feedback = ({
   handleEditReply,
   editReply,
   setEditReply,
+  isResolve,
 }) => {
   const [value, setValue] = useState({});
   const [feedbackId, setFeedbackId] = useState({});
@@ -65,6 +67,7 @@ const Feedback = ({
                 ) : (
                     editFeedback[comment.ID]?.value || comment.Content
                   )}
+                {' '}{(!!comment.status || isResolve[comment.ID]) && <CheckOutlined style={{ color: '#52c41a' }} />}
               </>
             )}
             datetime={(
@@ -157,6 +160,7 @@ Feedback.propTypes = {
   setEditFeedback: PropTypes.func.isRequired,
   editReply: PropTypes.shape({}).isRequired,
   setEditReply: PropTypes.func.isRequired,
+  isResolve: PropTypes.shape({}).isRequired
 };
 
 Feedback.defaultProps = {

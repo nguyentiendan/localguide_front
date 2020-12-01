@@ -15,6 +15,7 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
   const [dataReply, setDataReply] = useState([]);
   const [dataFeedback, setDataFeedback] = useState([]);
   const [isFeedback, setIsFeedback] = useState(false);
+  const [isResolve, setIsResolve] = useState({});
   const [editFeedback, setEditFeedback] = useState({});
   const [editReply, setEditReply] = useState({});
   const [dataCreateFeedback, setDataCreateFeedback] = useState('');
@@ -82,6 +83,10 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
   };
 
   const handleResolveFeedback = async idFeedback => {
+    setIsResolve({
+      ...isResolve,
+      [idFeedback]: { id: idFeedback },
+    });
     await API.handleResolveFeedback({ id: idFeedback });
   };
   const handleDeleteFeedback = async idFeedback => {
@@ -144,6 +149,7 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
           setEditReply={setEditReply}
           handleDeleteReply={handleDeleteReply}
           handleEditReply={handleEditReply}
+          isResolve={isResolve}
         />
         {isFeedback && (
           <TextArea

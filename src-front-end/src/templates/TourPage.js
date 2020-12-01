@@ -227,13 +227,13 @@ const ButtonEventAdminWrapper = styled.div`
 function TourPage({ data, id, uid, location: locationUrl }) {
   const { tour, reviews = { comments: [] } } = data || {};
   const [tourDetails, setTourDetails] = useState({});
+  const [isApprove, setIsApprove] = useState(false);
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
   const [tourPhotos, setTourPhotos] = useState([]);
   const [thumbnailWidths, setThumbnailWidths] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const { status } = qs.parse(locationUrl?.search);
-
   const galleryWrapperComp = useRef();
   const user = getUserProfile();
   const tourQuery = useMemo(() => {
@@ -330,6 +330,7 @@ function TourPage({ data, id, uid, location: locationUrl }) {
   const handleApproveTour = async () => {
     setLoading(true);
     await API.handleAdminApproveTour({ uid: tourDetails?.uid, id: tour?.rawID || id });
+    setIsApprove(true);
     notification.success({ message: 'You have successfully approve tour.' });
     setLoading(false);
   };
@@ -343,7 +344,7 @@ function TourPage({ data, id, uid, location: locationUrl }) {
             {user?.role === 3 && (
               <ButtonEventAdminWrapper>
                 <div>
-                  {tourDetails?.status !== 1 && (
+                  {tourDetails?.status !== 1 && !isApprove && (
                     <Popconfirm
                       title="Are you sure to approve tour?"
                       onConfirm={handleApproveTour}
