@@ -134,7 +134,7 @@ const ImgEditor = ({
         </div>
       </ActionImageWraper>
       <Space direction="vertical" style={{ width: '100%' }}>
-        <Input placeholder="Caption" onBlur={handleUpdateCaption} />
+        <Input placeholder="Caption" onBlur={handleUpdateCaption} defaultValue={caption} />
       </Space>
     </ImgEditorWrapper>
   );
@@ -172,6 +172,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     previewVisible: false,
     url: '',
   });
+  const [image, setImage] = useState([]);
   const removeImage = useRef(null);
 
   const tourId = useMemo(() => {
@@ -191,12 +192,12 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     });
   };
 
-  const handlePhotosChange = uploadedPhotos => {
-    onUpdate({
-      ...tourCreationInfo,
-      photos: uploadedPhotos,
-    });
-  };
+  // const handlePhotosChange = uploadedPhotos => {
+  //   onUpdate({
+  //     ...tourCreationInfo,
+  //     photos: uploadedPhotos,
+  //   });
+  // };
 
   const handleUploadCoverPhoto = async file => {
     if (!tourCreationInfo.id) {
@@ -230,9 +231,8 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
         tourId: tourCreationInfo.id,
         file: fileList,
       });
-      const newData = _.concat(photos, uploadedRes.data);
+      setImage(uploadedRes.data);
       setLoading(false);
-      handlePhotosChange(newData);
     } catch (e) {
       // ignored
     }
@@ -242,7 +242,21 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     async (caption, name) => {
       setLoading(true);
       try {
-        await API.updateCaption({ caption, name, tourId, uid });
+        const nameImage = name.split('/')[3];
+        await API.updateCaption({ caption, name: nameImage, tourId, uid });
+      } catch (e) {
+        // ignored
+      }
+      setLoading(false);
+    },
+    [tourId, uid]
+  );
+  const updateCaptionAntd = useCallback(
+    async (caption, name) => {
+      setLoading(true);
+      try {
+        const nameImage = name.split('/')[7];
+        await API.updateCaption({ caption, name: nameImage, tourId, uid });
       } catch (e) {
         // ignored
       }
@@ -253,13 +267,27 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const deletePhoto = async name => {
     setLoading(true);
     try {
-      await API.deletePhoto({ name, tourId, uid });
+      const nameImage = name.split('/')[3];
+      await API.deletePhoto({ name: nameImage, tourId, uid });
       const removedPhotos = [...photos];
       _.remove(removedPhotos, photo => photo.name === name);
       onUpdate({
         ...tourCreationInfo,
         photos: removedPhotos,
       });
+    } catch (e) {
+      // ignored
+    }
+    setLoading(false);
+  };
+  const deletePhotoAntd = async name => {
+    setLoading(true);
+    try {
+      const nameImage = name.split('/')[7];
+      await API.deletePhoto({ name: nameImage, tourId, uid });
+      const removedPhotos = [...image];
+      _.remove(removedPhotos, photo => photo.name === name);
+      setImage(removedPhotos);
     } catch (e) {
       // ignored
     }
@@ -342,6 +370,27 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                   />
                 </Col>
               ))}
+              {_.map(image, (photo, index) => {
+                return (
+                  <Col key={photo.name} span={6}>
+                    <ImgEditor
+                      src={
+                        photo.name.split('/')[0] === 'static'
+                          ? getCndResourceUrl(photo.name)
+                          : photo.name
+                      }
+                      name={photo.name}
+                      caption={photo.caption}
+                      updateCaption={updateCaptionAntd}
+                      deletePhoto={deletePhotoAntd}
+                      zoomImage={zoomImage}
+                      setZoomImage={setZoomImage}
+                      myRef={removeImage}
+                      index={index}
+                    />
+                  </Col>
+                );
+              })}
             </Row>
             <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
               {uploadButton('Upload photo')}

@@ -38,10 +38,6 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
         value={content || tourCreationInfo?.tourDescription}
         config={config}
         tabIndex={-1}
-        onBlur={newContent => {
-          updateTourDescription(newContent);
-          setContent(newContent);
-        }}
         onChange={newContent => {
           updateTourDescription(newContent);
           setContent(newContent);

@@ -55,6 +55,7 @@
     "react-icons": "^3.7.0",
     "react-markdown": "^4.1.0",
     "react-placeholder": "^3.0.2",
+    "react-rte": "^0.16.3",
     "react-select": "^3.0.4",
     "react-tabs": "^3.0.0",
     "react-typography": "^0.16.19",

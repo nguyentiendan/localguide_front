@@ -512,7 +512,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
               placeholder="Fee"
               type="number"
               suffix={currencySymbol}
-              value={guideFee}
+              value={guideFee || null}
               onChange={e => updateGuideFee(e.target.value)}
             />
           </Col>

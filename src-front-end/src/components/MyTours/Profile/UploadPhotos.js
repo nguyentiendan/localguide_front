@@ -149,10 +149,23 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
     url: '',
   });
   const removeImage = useRef(null);
-
+  const [image, setImage] = useState([]);
   const updateCaption = useCallback(
     async (caption, name) => {
       const nameImage = name.split('/')[3];
+      setIsloading(true);
+      try {
+        await API.updateCaptionGuide({ caption, name: nameImage, uid });
+      } catch (e) {
+        // ignored
+      }
+      setIsloading(false);
+    },
+    [uid]
+  );
+  const updateCaptionAntd = useCallback(
+    async (caption, name) => {
+      const nameImage = name.split('/')[7];
       setIsloading(true);
       try {
         await API.updateCaptionGuide({ caption, name: nameImage, uid });
@@ -176,6 +189,19 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
     }
     setIsloading(false);
   };
+  const deletePhotoAntd = async name => {
+    setIsloading(true);
+    try {
+      const nameImage = name.split('/')[7];
+      await API.deletePhotoGuide({ name: nameImage, uid });
+      const removedPhotos = [...image];
+      _.remove(removedPhotos, photo => photo.name === name);
+      setImage(removedPhotos);
+    } catch (e) {
+      // ignored
+    }
+    setIsloading(false);
+  };
 
   const handleUploadPhoto = async info => {
     try {
@@ -186,12 +212,11 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
       fileList = fileList.map(file => {
         return file.originFileObj;
       });
-      const res = await API.uploadMultiPhotoGuide({
+      const { data } = await API.uploadMultiPhotoGuide({
         uid,
         file: fileList,
       });
-      const newData = _.concat(photos, res.data);
-      setPhotos(newData);
+      setImage(data);
       setIsloading(false);
     } catch (e) {
       // ignored
@@ -221,6 +246,27 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
                   caption={photo.caption}
                   updateCaption={updateCaption}
                   deletePhoto={deletePhoto}
+                  zoomImage={zoomImage}
+                  setZoomImage={setZoomImage}
+                  myRef={removeImage}
+                  index={index}
+                />
+              </Col>
+            );
+          })}
+          {_.map(image, (photo, index) => {
+            return (
+              <Col key={photo.name} span={6}>
+                <ImgEditor
+                  src={
+                    photo.name.split('/')[0] === 'static'
+                      ? getCndResourceUrl(photo.name)
+                      : photo.name
+                  }
+                  name={photo.name}
+                  caption={photo.caption}
+                  updateCaption={updateCaptionAntd}
+                  deletePhoto={deletePhotoAntd}
                   zoomImage={zoomImage}
                   setZoomImage={setZoomImage}
                   myRef={removeImage}

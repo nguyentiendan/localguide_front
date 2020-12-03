@@ -279,6 +279,7 @@ export async function updateCaption({ caption, name, tourId, uid }) {
     method: 'POST',
     authRequired: true,
     data: { caption, fileName: name, id: tourId, uid },
+    isFormData: true,
   });
 }
 
@@ -314,6 +315,7 @@ export async function deletePhoto({ name, tourId }) {
     method: 'DELETE',
     authRequired: true,
     data: { fileName: name, id: tourId },
+    isFormData: true,
   });
 }
 
