@@ -108,6 +108,7 @@ function IndexPage({ data }) {
     refreshAllTours();
     refreshAllTourGuides();
   }, []);
+  console.log({ destinations });
 
   return (
     <Layout>

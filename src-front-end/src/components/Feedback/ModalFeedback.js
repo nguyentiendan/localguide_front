@@ -50,11 +50,11 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
   ]);
 
   const handleCreateFeedback = async () => {
-    if (dataCreateFeedback) {
+    if (dataCreateFeedback.trim()) {
       const { data } = await API.handleCreateFeedback({
         uid: user.uid,
         tourId: tour?.rawID || id,
-        content: dataCreateFeedback,
+        content: dataCreateFeedback.trim(),
       });
       const newFeedback = { ...data[0] };
       newFeedback.uuid = uuidv4();
@@ -62,7 +62,6 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
       setDataCreateFeedback('');
     }
   };
-
   const handleReplyFeedback = async (e, feedbackId) => {
     if (e.target.value) {
       const { data } = await API.handleCreateReply({
@@ -134,34 +133,52 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
       }
     >
       <Spin spinning={loading}>
-        <Feedback
-          feedback={dataFeedback}
-          replyFeedback={dataReply}
-          handleReplyFeedback={handleReplyFeedback}
-          userUID={user?.uid}
-          handleGetAllReply={handleGetAllReply}
-          handleDeleteFeedback={handleDeleteFeedback}
-          handleResolveFeedback={handleResolveFeedback}
-          handleEditFeedback={handleEditFeedback}
-          editFeedback={editFeedback}
-          setEditFeedback={setEditFeedback}
-          editReply={editReply}
-          setEditReply={setEditReply}
-          handleDeleteReply={handleDeleteReply}
-          handleEditReply={handleEditReply}
-          isResolve={isResolve}
-        />
-        {isFeedback && (
-          <TextArea
-            rows={4}
-            showCount
-            maxLength={200}
-            placeholder="Create feedback"
-            value={dataCreateFeedback || ''}
-            onChange={e => setDataCreateFeedback(e.target.value)}
-            onPressEnter={handleCreateFeedback}
-            style={{ marginTop: 20 }}
-          />
+        {dataFeedback.length > 0 ? (
+          <>
+            <Feedback
+              feedback={dataFeedback}
+              replyFeedback={dataReply}
+              handleReplyFeedback={handleReplyFeedback}
+              userUID={user?.uid}
+              handleGetAllReply={handleGetAllReply}
+              handleDeleteFeedback={handleDeleteFeedback}
+              handleResolveFeedback={handleResolveFeedback}
+              handleEditFeedback={handleEditFeedback}
+              editFeedback={editFeedback}
+              setEditFeedback={setEditFeedback}
+              editReply={editReply}
+              setEditReply={setEditReply}
+              handleDeleteReply={handleDeleteReply}
+              handleEditReply={handleEditReply}
+              isResolve={isResolve}
+            />
+            {isFeedback && (
+              <TextArea
+                rows={4}
+                showCount
+                maxLength={200}
+                placeholder="Create feedback"
+                value={dataCreateFeedback || ''}
+                onChange={e => setDataCreateFeedback(e.target.value)}
+                style={{ marginTop: 20 }}
+              />
+            )}{' '}
+          </>
+        ) : (
+          <>
+            <b>Have not feedback for this tour.</b>
+            {isFeedback && (
+              <TextArea
+                rows={4}
+                showCount
+                maxLength={200}
+                placeholder="Create feedback"
+                value={dataCreateFeedback || ''}
+                onChange={e => setDataCreateFeedback(e.target.value)}
+                style={{ marginTop: 20 }}
+              />
+            )}
+          </>
         )}
       </Spin>
     </Modal>
