@@ -81,6 +81,7 @@ function Tours() {
                     status={tour.Status}
                     shortDesc={tour.ShortDesc}
                     city={tour.City}
+                    price={tour.Total}
                     country={tour.Country}
                     totalReview={tour.Num}
                     handleDeleteTour={handleDeleteTour}

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Link } from 'gatsby';
 import colors from '../../styles/colors';
 import Button from '../Button';
 
@@ -25,7 +26,7 @@ const UnderlineText = styled.span`
   text-decoration: underline;
 `;
 
-const StartCreateTour = ({ onStart }) => {
+const StartCreateTour = ({ onStart, location }) => {
   return (
     <Wrapper>
       <Title>
@@ -44,13 +45,25 @@ const StartCreateTour = ({ onStart }) => {
         &nbsp;tour for your dearest friends!
       </SubTitle>
       <br />
-      <Button onClick={onStart}>Start</Button>
+      <div>
+        <Button onClick={onStart}>
+          {location.pathname === '/edit-tour' ? 'Edit Tour' : 'Start'}
+        </Button>
+        <Button style={{ marginLeft: 20 }}>
+          <Link to="/my-tours" style={{ color: '#ffffff' }}>
+            Cancel
+          </Link>
+        </Button>
+      </div>
     </Wrapper>
   );
 };
 
 StartCreateTour.propTypes = {
   onStart: PropTypes.func,
+  location: PropTypes.shape({
+    pathname: PropTypes.string,
+  }).isRequired,
 };
 
 StartCreateTour.defaultProps = {
