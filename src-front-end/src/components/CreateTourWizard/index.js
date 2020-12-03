@@ -280,7 +280,7 @@ const CreateTourWizard = ({ location }) => {
 
   return (
     <>
-      {currentStepNumber === 0 && <StartCreateTour onStart={startCreateTour} />}
+      {currentStepNumber === 0 && <StartCreateTour onStart={startCreateTour} location={location} />}
       {currentStepNumber !== 0 && (
         <Wrapper>
           <ProgressBar

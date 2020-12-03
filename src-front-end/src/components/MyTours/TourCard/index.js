@@ -65,6 +65,7 @@ const TourCard = ({
   handleDeleteTour,
   shortDesc,
   totalReview,
+  price
 }) => {
   const [showModal, setShowModal] = useState(false);
   const user = getUserProfile();
@@ -96,7 +97,7 @@ const TourCard = ({
       <CardWrapper
         hoverable
         style={{ width: '100%', cursor: 'pointer', minWidth: 300, minHeight: 400, borderRadius: 10 }}
-        cover={<WrapperImageCard><Image src={coverImg || backpackers} onClick={() => navigate(`/edit-tour?q=${id}`)} /><span className='styled-box-price'>1</span></WrapperImageCard>}
+        cover={<WrapperImageCard><Image src={coverImg || backpackers} onClick={() => navigate(`/edit-tour?q=${id}`)} /><span className='styled-box-price'>{price}</span></WrapperImageCard>}
         actions={
           status
             ? [
@@ -157,6 +158,7 @@ TourCard.propTypes = {
   country: PropTypes.string,
   shortDesc: PropTypes.string,
   totalReview: PropTypes.number,
+  price: PropTypes.number,
 };
 
 TourCard.defaultProps = {
@@ -166,6 +168,7 @@ TourCard.defaultProps = {
   country: '',
   shortDesc: '',
   totalReview: 0,
+  price: 0,
   handleDeleteTour: () => { },
 };
 
