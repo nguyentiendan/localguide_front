@@ -98,6 +98,10 @@ const UserProfile = ({ uid }) => {
         setIsloading(true);
         const resCity = await API.getCityOfCountry(value || profile.country);
         setRootCity(resCity.data);
+        setProfile({
+          ...profile,
+          city: null,
+        });
         form.setFieldsValue({ city: null });
         setIsloading(false);
       }

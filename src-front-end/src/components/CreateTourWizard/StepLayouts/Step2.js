@@ -160,11 +160,11 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     },
     [onUpdate, transportations, meals, others, tourDayFees]
   );
-
   const updateGuideFee = useCallback(
     newGuideFee => {
       onUpdate({
         ...tourCreationInfo,
+        total: Math.ceil(+total),
         guideFee: +newGuideFee,
       });
     },
@@ -218,6 +218,10 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
               unit: `${other.unit}`,
             }))
             .value(),
+        });
+        onUpdate({
+          ...tourCreationInfo,
+          total: Math.ceil(+total),
         });
       } catch (e) {
         // ignore

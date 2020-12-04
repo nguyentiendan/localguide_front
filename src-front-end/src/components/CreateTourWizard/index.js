@@ -83,17 +83,20 @@ const transformTourData = tourCreationInfo => ({
   minPax: tourCreationInfo.minPax,
   maxPax: tourCreationInfo.maxPax,
   guideFee: tourCreationInfo.guideFee,
-  total: 0,
+  total: tourCreationInfo.total,
   content: tourCreationInfo.tourDescription,
   cover: '',
   tag: tourCreationInfo.tags.join(';'),
 });
 
 const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
   padding-top: 2rem;
+  min-height: 90vh;
 
-  ${smallScreenCss(`
+  ${smallScreenCss(`tag
     padding-top: 1rem;
   `)}
 `;
@@ -107,6 +110,7 @@ const CreateTourWizard = ({ location }) => {
     minPax: 1,
     maxPax: 1,
     tags: [],
+    total: 0,
   });
   const tourId = qs.parse(location?.search);
   const [currentStepNumber, setCurrentStepNumber] = useState(0);
@@ -246,7 +250,7 @@ const CreateTourWizard = ({ location }) => {
           id: data[0].id,
           tourName: data[0].name,
           tourShortDescription: data[0].shortDesc,
-          tags: data[0].tag.split(';'),
+          tags: data[0].tag ? data[0].tag.split(';') : [],
           country: data[0].country,
           city: data[0].city,
           tourDescription: data[0].content,
@@ -255,6 +259,7 @@ const CreateTourWizard = ({ location }) => {
           maxPax: data[0].maxPax,
           guideFee: data[0].guideFee,
           coverPhoto: { name: data[0].cover },
+          total: data[0].total,
           meal: res.meal,
           other: res.other,
           transport: res.transport,

@@ -1,33 +1,19 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Button, Spin } from 'antd';
+import { Button } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
-import { smallScreenCss } from '../../styles/responsive-css';
 
 const Wrapper = styled.div`
   display: flex;
+  align-items: flex-end;
+  flex-grow: 2;
 `;
 
 const LayoutWrapper = styled.div`
   flex: 1;
   display: flex;
   justify-content: space-between;
-`;
-
-const EmptySpaceWrapper = styled.div`
-  flex: 0.5;
-  display: flex;
-  align-items: center;
-  padding-top: 5px;
-
-  @media (max-width: 780px) {
-    flex: 0.4;
-  }
-
-  ${smallScreenCss(`
-    display: none;
-  `)}
 `;
 
 const Navigation = ({
@@ -63,7 +49,7 @@ const Navigation = ({
           {isLastStep && (
             <Button
               onClick={onPreview}
-              style={{ marginLeft: 20, marginRight: 20 }}
+              style={{ marginLeft: 20, marginRight: 20, width: 100 }}
               type="primary"
               size="large"
               disabled={loading || isNextDisabled}
@@ -74,10 +60,11 @@ const Navigation = ({
           {!isFinished && (
             <Button
               onClick={onNext}
-              style={{ marginLeft: 20, marginRight: 20 }}
+              style={{ marginLeft: 20, marginRight: 20, width: 100 }}
               type="primary"
               size="large"
               disabled={loading || isNextDisabled}
+              loading={loading}
             >
               Next
             </Button>
@@ -95,7 +82,6 @@ const Navigation = ({
           )}
         </div>
       </LayoutWrapper>
-      <EmptySpaceWrapper>{loading && <Spin />}</EmptySpaceWrapper>
     </Wrapper>
   );
 };
