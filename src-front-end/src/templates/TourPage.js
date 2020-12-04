@@ -220,6 +220,9 @@ const ButtonEventAdminWrapper = styled.div`
   .style-button-edit {
     background: #3c78d8;
   }
+  .style-button-cancel {
+    background: #f12f60;
+  }
   .style-button-feedback {
     background: #ff9900;
   }
@@ -354,11 +357,17 @@ function TourPage({ data, id, uid, location: locationUrl }) {
                       <Button className="style-button-approve">Approve</Button>
                     </Popconfirm>
                   )}
-                  <Button className="style-button-edit">
+                  <Button className="style-button-cancel">
+                    <Link to="/admin" style={{ color: '#ffffff' }}>
+                      Cancel
+                    </Link>
+                  </Button>
+
+                  {/* <Button className="style-button-edit">
                     <Link to={`/edit-tour?q=${tourDetails?.id}`} style={{ color: '#ffffff' }}>
                       Edit
                     </Link>
-                  </Button>
+                  </Button> */}
                 </div>
                 <div>
                   <Button className="style-button-feedback" onClick={() => setShowModal(true)}>
