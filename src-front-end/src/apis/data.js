@@ -126,8 +126,19 @@ export async function createReplyFeedback({ uid, feedbackId, content }) {
     },
   });
 }
-
+// User get TourDetail
 export async function getTourDetail({ id, uid }) {
+  return request({
+    url: '/tour/getTour',
+    method: 'GET',
+    params: {
+      id,
+      uid,
+    },
+  });
+}
+// Admin review Tour
+export async function adminReviewTour({ id, uid }) {
   return request({
     url: '/admin/tourReview/review',
     method: 'GET',

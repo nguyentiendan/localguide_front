@@ -7,7 +7,7 @@ import ReactGA from 'react-ga';
  */
 
 export const onClientEntry = () => {
-  // ReactGA.initialize(process.env.GATSBY_GOOGLE_ANALYTICS_TRACKING_ID);
+  ReactGA.initialize(process.env.GATSBY_GOOGLE_ANALYTICS_TRACKING_ID);
 };
 
 export const onRouteUpdate = ({ location }) => {

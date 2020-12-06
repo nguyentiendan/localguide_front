@@ -34,7 +34,7 @@ const Picture = styled.img`
 
 const TourListItem = ({ className, id, uid, name, country, city, cover }) => (
   <Wrapper className={className}>
-    <Link to={`/tours/${uid}/${id}?status=view`}>
+    <Link to={`/tour/${uid}/${id}`}>
       <Picture src={cover || defaultTourImage} />
       <Title>{name}</Title>
       <SubTitle>{`${country} - ${city}`}</SubTitle>

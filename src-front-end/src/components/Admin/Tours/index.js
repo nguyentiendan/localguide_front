@@ -32,7 +32,8 @@ const FilterWrapper = styled(Form)`
 `;
 const ListWrapper = styled.div``;
 const TourTitle = styled.span`
-  color: ${colors.blue[50]};
+  color: ${colors.blue[80]};
+  font-weight: bold;
 `;
 
 const STATUS = {
@@ -62,7 +63,7 @@ const columns = [
     key: 'Name',
     render: (name, tour) => (
       <Badge count={tour.feedback} offset={[15, 0]}>
-        <Link to={`tours/${tour.UID}/${tour.ID}`}>
+        <Link to={`adminReview/${tour.UID}/${tour.ID}`}>
           <TourTitle>{name}</TourTitle>
         </Link>
       </Badge>
@@ -261,7 +262,7 @@ function Tours() {
           dataSource={dataFilter || data}
           loading={loadingAllTour}
           rowKey="ID"
-          pagination={{ pageSize: 20 }}
+          pagination={{ pageSize: 40 }}
         />
       </ListWrapper>
     </Wrapper>

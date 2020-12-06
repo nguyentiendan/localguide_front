@@ -165,16 +165,23 @@ exports.createPages = async function createPages({ actions, graphql }) {
     const { slug, rawID, uid } = edge.node;
 
     actions.createPage({
-      path: `tours/${uid}/${rawID}`,
+      path: `tour/${uid}/${rawID}`,
       component: require.resolve('./src/templates/TourPage.js'),
       context: { slug, id: rawID },
     });
   });
 
   actions.createPage({
-    path: `tours`,
-    matchPath: `tours/:uid/:id`,
+    path: `tour`,
+    matchPath: `tour/:uid/:id`,
     component: require.resolve('./src/templates/TourPage.js'),
+    context: { id: -999 },
+  });
+
+  actions.createPage({
+    path: `adminReview`,
+    matchPath: `adminReview/:uid/:id`,
+    component: require.resolve('./src/templates/AdminTourPage.js'),
     context: { id: -999 },
   });
 };

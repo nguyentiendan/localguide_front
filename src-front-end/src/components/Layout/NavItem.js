@@ -42,7 +42,7 @@ NavItem.propTypes = {
 
 NavItem.defaultProps = {
   className: '',
-  link: '',
+  link: '/', // Resolve console error [Use the Link component only for internal links. See: https://gatsby.app/internal-links]
 };
 
 export default NavItem;
