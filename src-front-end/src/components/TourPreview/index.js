@@ -222,6 +222,7 @@ function TourPreview({ tourId, uid }) {
 
   return (
     <Wrapper>
+      TOUR REVIEW WHEN CREATE TOUR
       <SmallScreen>
         <br />
         <Title>{tourDetails.name}</Title>
@@ -234,9 +235,7 @@ function TourPreview({ tourId, uid }) {
           {tourDetails.transportation}
         </SubTitle>
       </SmallScreen>
-
       {loading && <Spinner />}
-
       <GalleryWrapper ref={galleryWrapperComp}>
         {tourDetails.pictures && (
           <Gallery
@@ -250,7 +249,6 @@ function TourPreview({ tourId, uid }) {
           />
         )}
       </GalleryWrapper>
-
       <BigScreen>
         <Title>{tourDetails.name}</Title>
         <SubTitle>
@@ -263,7 +261,6 @@ function TourPreview({ tourId, uid }) {
           {tourDetails.transportation}
         </SubTitle>
       </BigScreen>
-
       <HeaderWrapper>
         <LocationWrapper>
           <SectionTitle>{tourDetails.location}</SectionTitle>
@@ -281,7 +278,6 @@ function TourPreview({ tourId, uid }) {
           />
         </TourGuideWrapper>
       </HeaderWrapper>
-
       <SectionTitle>Price</SectionTitle>
       <PriceWrapper>
         <PriceMenuWrapper>
@@ -315,7 +311,6 @@ function TourPreview({ tourId, uid }) {
       </PriceWrapper>
       <SectionTitle>Tour description</SectionTitle>
       <DescriptionWrapper>{tourDetails.description}</DescriptionWrapper>
-
       <SectionTitle>
         <TourIcon />
         <Gap />

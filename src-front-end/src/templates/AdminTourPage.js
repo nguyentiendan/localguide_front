@@ -1,15 +1,14 @@
 /* eslint-disable react/no-danger */
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { graphql } from 'gatsby';
+import { graphql, Link } from 'gatsby';
 import styled from 'styled-components';
 import Gallery from 'react-grid-gallery';
 import { AiOutlineSchedule } from 'react-icons/ai';
 import { FaSuitcase, FaMoneyBill, FaUsers } from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
-import { Spin } from 'antd';
+import { Spin, notification, Popconfirm } from 'antd';
 import _ from 'lodash';
-
 import * as API from '../apis';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';
@@ -24,7 +23,9 @@ import NavItem from '../components/Layout/NavItem';
 import Button from '../components/Button';
 import { bigScreenCss, smallScreenCss } from '../styles/responsive-css';
 import TourGuideListItem from '../components/TourGuideListItem';
+import { getUserProfile } from '../utils/auth';
 import { getCndResourceUrl, safeFuncCall } from '../utils/commons';
+import ModalFeedback from '../components/Feedback/ModalFeedback';
 
 const Title = styled.h1`
   font-weight: bold;
@@ -202,14 +203,39 @@ const GalleryWrapper = styled.div`
   }
 `;
 
-function TourPage({ data, id, uid }) {
+const ButtonEventAdminWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  .style-button-approve,
+  .style-button-edit,
+  .style-button-feedback {
+    border: 1px solid #ba7c2e;
+  }
+  .style-button-approve {
+    margin-right: 20px;
+    background: #92d050;
+  }
+  .style-button-edit {
+    background: #3c78d8;
+  }
+  .style-button-cancel {
+    background: #f12f60;
+  }
+  .style-button-feedback {
+    background: #ff9900;
+  }
+`;
+function AdminTourPage({ data, id, uid }) {
   const { tour, reviews = { comments: [] } } = data || {};
   const [tourDetails, setTourDetails] = useState({});
+  const [isApprove, setIsApprove] = useState(false);
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
   const [tourPhotos, setTourPhotos] = useState([]);
   const [thumbnailWidths, setThumbnailWidths] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const galleryWrapperComp = useRef();
+  const user = getUserProfile();
   const tourQuery = useMemo(() => {
     const query = {};
     if (tour && tour.rawID && tour.uid) {
@@ -225,7 +251,7 @@ function TourPage({ data, id, uid }) {
     const fetchTourDetails = async () => {
       try {
         setLoading(true);
-        const { data: details } = await safeFuncCall(() => API.getTourDetail(tourQuery));
+        const { data: details } = await safeFuncCall(() => API.adminReviewTour(tourQuery));
         setTourDetails(_.mapKeys(details[0], (v, k) => _.camelCase(k)));
         const { data: photos } = await safeFuncCall(() => API.getTourPhotos(tourQuery));
         setTourPhotos(photos);
@@ -301,11 +327,53 @@ function TourPage({ data, id, uid }) {
 
     return () => window.removeEventListener('resize', updateSize);
   }, [galleryWrapperComp, tourPhotos]);
+  const handleApproveTour = async () => {
+    setLoading(true);
+    await API.handleAdminApproveTour({ uid: tourDetails?.uid, id: tour?.rawID || id });
+    setIsApprove(true);
+    notification.success({ message: 'You have successfully approve tour.' });
+    setLoading(false);
+  };
 
   return (
     <Layout noHeader>
       <SEO title={tourDetails.name || ''} />
       <Spin spinning={loading}>
+        <div>
+          {user?.role === 3 && (
+            <ButtonEventAdminWrapper>
+              <div>
+                {tourDetails?.status !== 1 && !isApprove && (
+                  <Popconfirm
+                    title="Are you sure to approve tour?"
+                    onConfirm={handleApproveTour}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button className="style-button-approve">Approve</Button>
+                  </Popconfirm>
+                )}
+                <Button className="style-button-cancel">
+                  <Link to="/admin" style={{ color: '#ffffff' }}>
+                    Cancel
+                  </Link>
+                </Button>
+
+                {/* <Button className="style-button-edit">
+                    <Link to={`/edit-tour?q=${tourDetails?.id}`} style={{ color: '#ffffff' }}>
+                      Edit
+                    </Link>
+                  </Button> */}
+              </div>
+              <div>
+                <Button className="style-button-feedback" onClick={() => setShowModal(true)}>
+                  Tour Feedback
+                </Button>
+              </div>
+            </ButtonEventAdminWrapper>
+          )}
+        </div>
+
         <SmallScreen>
           <br />
           <Title>{tourDetails.name}</Title>
@@ -513,17 +581,26 @@ function TourPage({ data, id, uid }) {
             />
           ))}
         </ListWrapper>
+        <ModalFeedback
+          showModal={showModal}
+          setShowModal={setShowModal}
+          user={user}
+          tour={tour}
+          id={tourDetails.id || 0}
+        />
       </Spin>
     </Layout>
   );
 }
 
-TourPage.propTypes = {
+AdminTourPage.propTypes = {
+  // location: PropTypes.shape({ search: PropTypes.string }),
   data: PropTypes.shape({
     tour: PropTypes.shape({
       id: PropTypes.string,
       uid: PropTypes.string,
       name: PropTypes.string,
+      // location: PropTypes.string,
       picture: PropTypes.string,
     }),
     reviews: PropTypes.shape({
@@ -536,12 +613,13 @@ TourPage.propTypes = {
   uid: PropTypes.string,
 };
 
-TourPage.defaultProps = {
+AdminTourPage.defaultProps = {
   id: undefined,
   uid: undefined,
+  // location: {},
 };
 
-export default TourPage;
+export default AdminTourPage;
 
 export const pageQuery = graphql`
   query($id: Int!) {
