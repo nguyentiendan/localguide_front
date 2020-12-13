@@ -3,10 +3,11 @@ import { Form, Input, Select, Button, InputNumber, Row, Col, Spin, notification 
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import styled from 'styled-components';
-import JoditEditor from 'jodit-react';
+import SunEditor from 'suneditor-react';
 import * as API from '../../../apis';
 import TagInterests from '../../HandleTag/Interests';
 import UploadAvatar from '../../Input/UploadAvatar';
+import 'suneditor/dist/css/suneditor.min.css';
 
 const FormWrapper = styled(Form)`
   display: flex;
@@ -156,12 +157,7 @@ const AdminProfile = ({ uid }) => {
     setIsloading(false);
   };
 
-  const editor = useRef(null);
-  const [content, setContent] = useState('');
-  const config = {
-    readonly: false, // all options from https://xdsoft.net/jodit/doc/
-    toolbar: true,
-  };
+  const editorRef = useRef();
 
   return (
     <Spin spinning={isloading}>
@@ -357,15 +353,24 @@ const AdminProfile = ({ uid }) => {
           initialValue={profile.experience}
           key={profile.experience}
         >
-          {/* <Input.TextArea rows={4} /> */}
-          <JoditEditor
-            ref={editor}
-            value={content}
-            config={config}
-            tabIndex={-1}
-            onBlur={newContent => setContent(newContent)}
-            onChange={newContent => setContent(newContent)}
-          />
+          <div>
+            <SunEditor
+              ref={editorRef}
+              setContents={profile.experience}
+              lang="en"
+              width="100%"
+              height="200"
+              placeholder="Please type content here..."
+              showToolbar
+              enableToolbar
+              onChange={value => {
+                form.setFieldsValue({ experience: value });
+              }}
+              setOptions={{
+                buttonList: [['undo', 'redo', 'bold', 'underline', 'italic', 'fullScreen']],
+              }}
+            />
+          </div>
         </Form.Item>
 
         <Form.Item {...tailFormItemLayout}>
