@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import JoditEditor from 'jodit-react';
+import SunEditor from 'suneditor-react';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -13,12 +13,8 @@ const SubTitle = styled.h3`
 `;
 
 const StepLayout = ({ tourCreationInfo, onUpdate }) => {
-  const editor = useRef(null);
+  const editorRef = useRef();
   const [content, setContent] = useState('');
-  const config = {
-    readonly: false, // all options from https://xdsoft.net/jodit/doc/
-    toolbar: true,
-  };
 
   const updateTourDescription = useCallback(
     newTourDescription => {
@@ -32,17 +28,59 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
 
   return (
     <Wrapper>
+      Create Tour
       <SubTitle>Description about tour</SubTitle>
-      <JoditEditor
-        ref={editor}
-        value={content || tourCreationInfo?.tourDescription}
-        config={config}
-        tabIndex={-1}
-        onChange={newContent => {
-          updateTourDescription(newContent);
-          setContent(newContent);
-        }}
-      />
+      <div>
+        <SunEditor
+          ref={editorRef}
+          setContents={content || tourCreationInfo?.tourDescription}
+          lang="en"
+          width="100%"
+          height="300"
+          placeholder="Please type content here..."
+          showToolbar
+          enableToolbar
+          onChange={newContent => {
+            updateTourDescription(newContent);
+            setContent(newContent);
+          }}
+          setOptions={{
+            buttonList: [
+              [
+                'undo',
+                'redo',
+                'font',
+                'fontSize',
+                'formatBlock',
+                'blockquote',
+                'bold',
+                'underline',
+                'italic',
+                'strike',
+                'subscript',
+                'superscript',
+                'fontColor',
+                'hiliteColor',
+                'textStyle',
+                'removeFormat',
+                'outdent',
+                'indent',
+                'align',
+                'horizontalRule',
+                'list',
+                'lineHeight',
+                'link',
+                'image',
+                'video',
+                'showBlocks',
+                'codeView',
+                'preview',
+                'fullScreen',
+              ],
+            ],
+          }}
+        />
+      </div>
     </Wrapper>
   );
 };
