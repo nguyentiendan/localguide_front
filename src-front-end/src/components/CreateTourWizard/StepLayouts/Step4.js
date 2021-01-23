@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { PlusOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Modal, Col, Input, Row, Space, Spin, Upload } from 'antd';
 
-import colors from '../../../styles/colors';
+import colors from '../../../assets/styles/colors';
 import * as API from '../../../apis';
 import { uploadCoverPhoto, uploadMultiPhoto } from '../../../apis';
 import { getCndResourceUrl } from '../../../utils/commons';

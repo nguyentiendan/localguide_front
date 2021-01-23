@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import defaultAvatar from '../../images/avatar-default.jpg';
+import defaultAvatar from '../../assets/img/avatar-default.jpg';
 
 const Wrapper = styled.div`
   display: flex;
@@ -13,7 +13,8 @@ const Wrapper = styled.div`
 
 const Title = styled.h3`
   margin-bottom: 0.5rem;
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 14px;
 `;
 
 const SubTitle = styled.h5`
@@ -33,7 +34,7 @@ const TourGuideListItem = ({ className, name, level, avatar }) => (
   <Wrapper className={className}>
     <Avatar src={avatar || defaultAvatar} />
     <Title>{name}</Title>
-    <SubTitle>{level}</SubTitle>
+    {/*<SubTitle>{level}</SubTitle>*/}
   </Wrapper>
 );
 

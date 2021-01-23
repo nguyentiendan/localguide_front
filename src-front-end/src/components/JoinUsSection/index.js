@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Button from '../Button';
-import breakpoints from '../../styles/breakpoints';
+import breakpoints from '../../assets/styles/breakpoints';
 
 const Wrapper = styled.div`
   width: 100%;

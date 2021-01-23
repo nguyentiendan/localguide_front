@@ -12,10 +12,10 @@ import Spinner from '../Spinner';
 import SmallScreen from '../Responsive/SmallScreen';
 import BigScreen from '../Responsive/BigScreen';
 import RatingStars from '../RatingStars';
-import colors from '../../styles/colors';
+import colors from '../../assets/styles/colors';
 import NavItem from '../Layout/NavItem';
 import Button from '../Button';
-import { bigScreenCss, smallScreenCss } from '../../styles/responsive-css';
+import { bigScreenCss, smallScreenCss } from '../../assets/styles/responsive-css';
 import TourGuideListItem from '../TourGuideListItem';
 
 const Wrapper = styled.div``;

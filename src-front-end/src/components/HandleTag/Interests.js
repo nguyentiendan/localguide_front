@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { Tag, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
-import colors from '../../styles/colors';
+import colors from '../../assets/styles/colors';
 
 const Wrapper = styled.div`
   height: 100%;

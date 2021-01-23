@@ -11,7 +11,7 @@ import SEO from '../components/SEO';
 import SectionHeader from '../components/SectionHeader';
 import TourGuideListItem from '../components/TourGuideListItem';
 import DestinationListItem from '../components/DestinationListItem';
-import breakpoints from '../styles/breakpoints';
+import breakpoints from '../assets/styles/breakpoints';
 import BlogListItem from '../components/BlogListItem';
 import TourListItem from '../components/TourListItem';
 import RatingStars from '../components/RatingStars';
@@ -205,7 +205,7 @@ IndexPage.propTypes = {
 
 export default IndexPage;
 
-export const pageQuery = graphql`
+/*export const pageQuery = graphql`
   query {
     tourGuideNodes: allTourGuide {
       nodes {
@@ -262,3 +262,4 @@ export const pageQuery = graphql`
     }
   }
 `;
+*/

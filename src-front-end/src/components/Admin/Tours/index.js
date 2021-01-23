@@ -1,24 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {
-  Divider,
-  Row,
-  Col,
-  Form,
-  Button,
-  Table,
-  Tag,
-  Space,
-  Badge,
-  Select,
-  Spin,
-  InputNumber,
-} from 'antd';
+import {Divider,Row,Col,Form,Button,Table,Tag,Space,Badge,Select,Spin,InputNumber,} from 'antd';
 import moment from 'moment';
 import { Link } from 'gatsby';
 import _ from 'lodash';
 
-import colors from '../../../styles/colors';
+import colors from '../../../assets/styles/colors';
 import * as API from '../../../apis';
 import { getUserProfile } from '../../../utils/auth';
 
@@ -59,51 +46,53 @@ const statusFilter = [
 const columns = [
   {
     title: 'Tour name',
-    dataIndex: 'Name',
-    key: 'Name',
+    dataIndex: 'name',
+    key: 'name',
     render: (name, tour) => (
+      <div>
       <Badge count={tour.feedback} offset={[15, 0]}>
-        <Link to={`adminReview/${tour.UID}/${tour.ID}`}>
+        <Link to={`admin_tour_review?uid=${tour.uid}&id=${tour.id}`}>
           <TourTitle>{name}</TourTitle>
         </Link>
       </Badge>
+      </div>
     ),
   },
   {
     title: 'Post by',
-    dataIndex: 'Fullname',
-    key: 'Fullname',
+    dataIndex: 'fullName',
+    key: 'fullName',
   },
   {
     title: 'Price',
-    dataIndex: 'Total',
-    key: 'Total',
+    dataIndex: 'total',
+    key: 'total',
   },
   {
     title: 'Duration',
-    dataIndex: 'Day',
-    key: 'Day',
+    dataIndex: 'day',
+    key: 'day',
   },
   {
     title: 'Pax',
-    key: 'MaxPax',
-    dataIndex: 'MaxPax',
+    key: 'maxPax',
+    dataIndex: 'maxPax',
   },
   {
     title: 'Updated Date',
-    key: 'UpdatedAt',
-    render: (updatedDate, tour) => moment(tour.UpdatedAt).format('YYYY-MM-DD'),
+    key: 'updatedAt',
+    render: (updatedDate, tour) => moment(tour.updatedAt).format('YYYY-MM-DD'),
   },
   {
     title: 'Status',
-    key: 'Status',
+    key: 'status',
     render: (status, tour) => (
       <Space size="middle">
-        {tour.Status === STATUS.APPROVED && <Tag color="success">APPROVED</Tag>}
-        {tour.Status === STATUS.WAITING_FOR_APPROVAL && (
+        {tour.status === STATUS.APPROVED && <Tag color="success">APPROVED</Tag>}
+        {tour.status === STATUS.WAITING_FOR_APPROVAL && (
           <Tag color="warning">WAITING FOR APPROVAL</Tag>
         )}
-        {tour.Status === STATUS.DELETED && <Tag color="error">DELETED</Tag>}
+        {tour.status === STATUS.DELETED && <Tag color="error">DELETED</Tag>}
       </Space>
     ),
   },
@@ -162,6 +151,7 @@ function Tours() {
     setDataFilter(res.data);
     setIsloading(false);
   };
+  
   const handleClearFilter = async () => {
     setIsloading(true);
     await API.handleFillterTourAdmin({ uid: user.uid, data: '' });
@@ -261,7 +251,7 @@ function Tours() {
           columns={columns}
           dataSource={dataFilter || data}
           loading={loadingAllTour}
-          rowKey="ID"
+          rowKey="id"
           pagination={{ pageSize: 40 }}
         />
       </ListWrapper>

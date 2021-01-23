@@ -12,7 +12,7 @@ import ProgressBar from './ProgressBar';
 import Scene from './Scene';
 import Navigation from './Navigation';
 import StepLayout from './StepLayouts';
-import { smallScreenCss } from '../../styles/responsive-css';
+import { smallScreenCss } from '../../assets/styles/responsive-css';
 import {
   createTour,
   updateTour,

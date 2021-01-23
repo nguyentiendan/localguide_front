@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { smallScreenCss } from '../../styles/responsive-css';
+import { smallScreenCss } from '../../assets/styles/responsive-css';
 
 const Wrapper = styled.div`
   display: flex;

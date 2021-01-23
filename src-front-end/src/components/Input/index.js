@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 
-import colors from '../../styles/colors';
+import colors from '../../assets/styles/colors';
 import Spinner from '../Spinner';
 
 const BEFORE_ICON_PADDING = 16;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import * as API from '../apis';
-import breakpoints from '../styles/breakpoints';
+import breakpoints from '../assets/styles/breakpoints';
 import { ENTER } from '../constants/keys';
 import Layout from '../components/Layout';
 import SEO from '../components/SEO';

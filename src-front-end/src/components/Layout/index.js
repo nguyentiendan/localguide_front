@@ -4,13 +4,13 @@ import styled from 'styled-components';
 import { graphql, useStaticQuery } from 'gatsby';
 
 import { AuthProvider } from '../../utils/useAuth';
-import GlobalStyle from '../../styles/GlobalStyle';
-import breakpoints from '../../styles/breakpoints';
+import GlobalStyle from '../../assets/styles/GlobalStyle';
+import breakpoints from '../../assets/styles/breakpoints';
 import Header from './Header';
 import NavigationMenu from './NavigationMenu';
 import 'antd/dist/antd.less';
 
-import { bigScreenCss, smallScreenCss } from '../../styles/responsive-css';
+import { bigScreenCss, smallScreenCss } from '../../assets/styles/responsive-css';
 
 const DefaultMainContent = styled.main`
   margin: 0 auto;
@@ -27,7 +27,7 @@ const DefaultMainContent = styled.main`
 `;
 
 const Layout = ({ mainContent: MainContent, title, subTitle, children, noHeader }) => {
-  const data = useStaticQuery(graphql`
+  {/*const data = useStaticQuery(graphql`
     query SiteTitleQuery {
       site {
         siteMetadata {
@@ -35,7 +35,7 @@ const Layout = ({ mainContent: MainContent, title, subTitle, children, noHeader 
         }
       }
     }
-  `);
+  `);*/}
 
   return (
     <AuthProvider>

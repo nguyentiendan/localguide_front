@@ -7,9 +7,9 @@ import SmallScreen from '../Responsive/SmallScreen';
 import FullWidth from '../FullWidth';
 import BigScreen from '../Responsive/BigScreen';
 import BannerImage from './BannerImage';
-import { smallScreenCss } from '../../styles/responsive-css';
+import { smallScreenCss } from '../../assets/styles/responsive-css';
 import SearchBox from '../SearchBox';
-import breakpoints from '../../styles/breakpoints';
+import breakpoints from '../../assets/styles/breakpoints';
 import { ENTER } from '../../constants/keys';
 
 const Wrapper = styled.header`

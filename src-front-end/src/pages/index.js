@@ -6,19 +6,36 @@ import styled from 'styled-components';
 import _ from 'lodash';
 
 import { Spin } from 'antd';
-import Layout from '../components/Layout';
+import Layout from '../components/CustomLayout';
 import SEO from '../components/SEO';
 import SectionHeader from '../components/SectionHeader';
 import TourGuideListItem from '../components/TourGuideListItem';
 import DestinationListItem from '../components/DestinationListItem';
-import breakpoints from '../styles/breakpoints';
+import breakpoints from '../assets/styles/breakpoints';
 import BlogListItem from '../components/BlogListItem';
 import TourListItem from '../components/TourListItem';
 import RatingStars from '../components/RatingStars';
 import CommentListItem from '../components/CommentListItem';
 import JoinUsSection from '../components/JoinUsSection';
-import { smallScreenCss } from '../styles/responsive-css';
+import { smallScreenCss } from '../assets/styles/responsive-css';
 import * as API from '../apis';
+
+
+import Header from "../components/Header/Header.js";
+import Footer from "../components/Footer/Footer.js";
+import HeaderLinks from "../components/Header/HeaderLinks.js";
+import GridContainer from "../components/Grid/GridContainer.js";
+import GridItem from "../components/Grid/GridItem.js";
+import Parallax from "../components/Parallax/Parallax.js";
+import classNames from "classnames";
+
+
+import TeamSection from '../components/Sections/TeamSection';
+import TourSection from '../components/Sections/TourSection';
+import DestinationSection from '../components/Sections/DestinationSection';
+import BlogSection from '../components/Sections/BlogSection';
+import { makeStyles } from "@material-ui/core/styles";
+import styles from "../assets/styles/landingPage.js";
 
 const ListWrapper = styled.div`
   max-width: ${breakpoints.lg};
@@ -65,7 +82,9 @@ const ExploreTourWrapper = styled.div`
   margin: 2rem -1rem;
 `;
 
-function IndexPage({ data }) {
+//function IndexPage({ data }) {
+function IndexPage() {
+  /*
   const {
     tourGuideNodes = { nodes: [] },
     destinationNodes = { nodes: [] },
@@ -80,9 +99,9 @@ function IndexPage({ data }) {
   const [tours, setTours] = useState(_.map(tourNodes.nodes, node => node));
   const destinations = _.map(destinationNodes.nodes, node => node);
   const blogs = _.map(blogNodes.nodes, node => node);
-
+  */
   useEffect(() => {
-    const refreshAllTours = async () => {
+    /*const refreshAllTours = async () => {
       try {
         setLoadingTours(true);
         const { data: allTours } = await API.getAllTours();
@@ -92,8 +111,8 @@ function IndexPage({ data }) {
       } finally {
         setLoadingTours(false);
       }
-    };
-    const refreshAllTourGuides = async () => {
+    };*/
+    /*const refreshAllTourGuides = async () => {
       try {
         setLoadingTourGuides(true);
         const { data: allTourGuides } = await API.getAllTourGuides();
@@ -103,17 +122,47 @@ function IndexPage({ data }) {
       } finally {
         setLoadingTourGuides(false);
       }
-    };
-
-    refreshAllTours();
-    refreshAllTourGuides();
+    };*/
+    //refreshAllTours();
+    //refreshAllTourGuides();
   }, []);
-  console.log({ destinations });
-
+  
+  //console.log(tourGuides);
+  
+  
+  
+  const useStyles = makeStyles(styles);
+  const classes = useStyles();
   return (
+    
     <Layout>
-      <SEO title="Home" />
-      <SectionHeader title="Tour Guide" subTitle="View all" />
+      <SEO title="Localguide Pal" />
+      
+      <Parallax filter image={require("../assets/img/home-banner.jpg")}>
+        <div className={classes.container}>
+          <GridContainer>
+            <GridItem xs={12} sm={12} md={6}>
+              <h1 className={classes.title}>Explore tours in Japan</h1>
+              <h4 >
+                It is not where you travel to, it is who ou travel with
+              </h4>
+              <br />
+            </GridItem>
+          </GridContainer>
+        </div>
+      </Parallax>
+      
+      <div className={classNames(classes.main, classes.mainRaised)}>
+        <div className={classes.container}>
+          <DestinationSection/>
+          <TeamSection/>          
+          <TourSection/>
+          <BlogSection/>
+        </div>
+      </div>
+      <Footer/>  
+      
+      {/*<SectionHeader title="Tour Guide" subTitle="View all" />
       <Spin spinning={loadingTourGuides}>
         <ListWrapper>
           <ListContainer>
@@ -132,9 +181,9 @@ function IndexPage({ data }) {
             })}
           </ListContainer>
         </ListWrapper>
-      </Spin>
+        </Spin>*/}
 
-      <SectionHeader title="Destinations we love" subTitle="View all" />
+      {/*<SectionHeader title="Destinations we love" subTitle="View all" />
       <ListWrapper>
         <ListContainer>
           {_.map(destinations, destination => (
@@ -147,9 +196,9 @@ function IndexPage({ data }) {
             />
           ))}
         </ListContainer>
-      </ListWrapper>
+          </ListWrapper>*/}
 
-      <SectionHeader title="Popular Tour" subTitle="View all" />
+      {/*<SectionHeader title="Popular Tour" subTitle="View all" />
       <Spin spinning={loadingTours}>
         <ListWrapper>
           <ListContainer>
@@ -167,9 +216,9 @@ function IndexPage({ data }) {
             ))}
           </ListContainer>
         </ListWrapper>
-      </Spin>
+      </Spin>*/}
 
-      <SectionHeader title="Blog" subTitle="View all" />
+      {/*<SectionHeader title="Blog" subTitle="View all" />
       <ListWrapper>
         <ListContainer>
           {_.map(blogs, blog => (
@@ -182,11 +231,10 @@ function IndexPage({ data }) {
             />
           ))}
         </ListContainer>
-      </ListWrapper>
+        </ListWrapper>*/}
 
-      <SectionHeader
+      {/*<SectionHeader
         title={
-          // eslint-disable-next-line react/jsx-wrap-multilines
           <>
             {`Reviews (${reviews.total})`}
             <Gap />
@@ -205,13 +253,13 @@ function IndexPage({ data }) {
             className="comment"
           />
         ))}
-      </ListWrapper>
+      </ListWrapper>*/}
 
-      <ExploreTourWrapper>
+      {/*<ExploreTourWrapper>
         <Img fluid={exploreTourImg.childImageSharp.fluid} style={{ position: 'initial' }} />
       </ExploreTourWrapper>
 
-      <JoinUsSection />
+      <JoinUsSection />*/}
     </Layout>
   );
 }
@@ -240,12 +288,12 @@ IndexPage.propTypes = {
         fluid: PropTypes.shape({}),
       }),
     }),
-  }).isRequired,
+  }),
 };
 
 export default IndexPage;
 
-export const pageQuery = graphql`
+/*export const pageQuery = graphql`
   query {
     tourGuideNodes: allTourGuide {
       nodes {
@@ -301,4 +349,4 @@ export const pageQuery = graphql`
       }
     }
   }
-`;
+`;*/

@@ -12,9 +12,9 @@ import { isBrowser } from '../../utils/browser';
 import Dropdown from '../Dropdown';
 import BigScreen from '../Responsive/BigScreen';
 import SmallScreen from '../Responsive/SmallScreen';
-import breakpoints from '../../styles/breakpoints';
-import { bigScreenCss } from '../../styles/responsive-css';
-import colors from '../../styles/colors';
+import breakpoints from '../../assets/styles/breakpoints';
+import { bigScreenCss } from '../../assets/styles/responsive-css';
+import colors from '../../assets/styles/colors';
 import NavItem from './NavItem';
 import UserDropdown from './UserDropdown';
 

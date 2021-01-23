@@ -6,8 +6,8 @@ import { math } from 'polished';
 import { Link } from 'gatsby';
 import useAuth from '../../utils/useAuth';
 import { hideAt } from '../../utils/responsive';
-import breakpoints from '../../styles/breakpoints';
-import colors from '../../styles/colors';
+import breakpoints from '../../assets/styles/breakpoints';
+import colors from '../../assets/styles/colors';
 import Dropdown from '../Dropdown';
 import Menu from '../Menu';
 

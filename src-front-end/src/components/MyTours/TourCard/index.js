@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import ModalFeedback from '../../Feedback/ModalFeedback';
 import { getUserProfile } from '../../../utils/auth';
 import * as API from '../../../apis';
-import backpackers from '../../../../static/mocks/blogs/backpackers.png';
+import backpackers from '../../../assets/img/mocks/blogs/backpackers.png';
 
 const CardWrapper = styled(Card)`
   .totalReview{

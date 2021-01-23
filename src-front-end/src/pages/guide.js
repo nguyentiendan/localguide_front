@@ -1,114 +1,71 @@
-/* eslint-disable react/no-danger */
-/* eslint-disable react/jsx-one-expression-per-line */
-import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import React, {useEffect, useState,} from "react";
+// nodejs library that concatenates classes
+import classNames from "classnames";
 import styled from 'styled-components';
-import { Avatar, Tag } from 'antd';
-import { UserOutlined, CrownOutlined } from '@ant-design/icons';
-import _ from 'lodash';
-import Gallery from 'react-grid-gallery';
-import qs from 'query-string';
-import PropTypes from 'prop-types';
-
-import SectionHeader from '../components/SectionHeader';
-import breakpoints from '../styles/breakpoints';
-import { smallScreenCss } from '../styles/responsive-css';
-import CommentListItem from '../components/CommentListItem';
-import RatingStars from '../components/RatingStars';
-import DestinationListItem from '../components/DestinationListItem';
-import { getCndResourceUrl } from '../utils/commons';
-import Layout from '../components/Layout';
+// @material-ui/core components
+import { makeStyles } from "@material-ui/core/styles";
+// @material-ui/icons
+import {FormatQuote,Star,StarHalf} from "@material-ui/icons";
+// core components
+import Layout from '../components/CustomLayout';
+import SEO from '../components/SEO';
+import Footer from "../components/Footer/Footer.js";
+import GridContainer from "../components/Grid/GridContainer.js";
+import GridItem from "../components/Grid/GridItem.js";
+import Parallax from "../components/Parallax/Parallax.js";
 import InterestsOrExtras from '../components/InterestsOrExtras';
+import RatingStars from '../components/RatingStars';
+import _ from 'lodash';
+import { getCndResourceUrl } from '../utils/commons';
+import qs from 'query-string';
 import * as API from '../apis';
-import iconTour from '../images/icon-tour.svg';
-import iconReview from '../images/icon-review.svg';
-import iconLicense from '../images/icon-license.svg';
-import iconCustomer from '../images/icon-customer.svg';
-import iconBooking from '../images/icon-booking.svg';
-import iconLanguage from '../images/icon-language.svg';
-import iconLocation from '../images/icon-location.svg';
-import iconSex from '../images/icon-sex.svg';
-import banner from '../images/home-banner.jpg';
+import "react-image-gallery/styles/css/image-gallery.css";
+import ImageGallery from 'react-image-gallery';
 
-const InfoAvatarAndBackgroundImg = styled.div`
-  background: url(${banner}) no-repeat center;
-  background-size: cover;
-  .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    height: 250px;
-  }
+import {Avatar, Spin, Tag, Tooltip, Statistic } from 'antd';
+import styles from "../assets/styles/profilePage.js";
+
+import { UserOutlined, CrownOutlined } from '@ant-design/icons';
+import iconTour from '../assets/img/icon-tour.svg';
+import iconReview from '../assets/img/icon-review.svg';
+import iconLicense from '../assets/img/icon-license.svg';
+import iconCustomer from '../assets/img/icon-customer.svg';
+
+const InfoAvatar = styled.div`
   .info__guide {
     display: flex;
     position: relative;
-    bottom: -115px;
+    bottom: 85px; //in smartphone mode
     align-items: center;
     .info__guide__details {
-      margin-left: 25px;
+      text-align: left;
+      margin-left: 10px;
       line-height: 30px;
       .guide__details__best {
         display: none;
       }
     }
   }
-  .info__book-now {
-    display: flex;
-    align-items: flex-end;
-    display: none;
-  }
-  .guide__details__booking {
-    display: flex;
-    width: 115px;
-    background-color: #f12f60;
-    border-radius: 4px;
-    padding: 0px 8px;
-    color: #ffffff;
-    & > img {
-      width: 20px;
-      margin-bottom: 0px;
-      margin-right: 5px;
-    }
-  }
+  
   @media (min-width: 768px) {
     .info__guide {
-      bottom: -70px;
+      bottom: 99px;
       .info__guide__details {
         .guide__details__best {
           display: inline-block;
         }
-        .guide__details__booking {
-          display: none;
-        }
       }
     }
-    .info__book-now {
-      display: block;
-    }
+    
   }
   @media (min-width: 992px) {
     .container {
       height: 465px;
     }
     .info__guide {
-      bottom: -70px;
+      bottom: 99px;
     }
-    .info__book-now {
-      display: flex;
-    }
-  }
-`;
-
-const GalleryWrapper = styled.div`
-  display: block;
-  margin-top: 0;
-  .ReactGridGallery_tile {
-    background: none !important;
-  }
-  img {
-    object-fit: cover !important;
-    margin-left: 0 !important;
-    padding: 2px !important;
-    border-radius: 8px;
+    
   }
 `;
 
@@ -121,7 +78,7 @@ const InfoIntroduction = styled.div`
       display: flex;
       justify-content: space-between;
       text-align: center;
-      gap: 60px;
+      gap: 40px;
       color: #ee305f;
       flex-grow: 0.6;
     }
@@ -129,35 +86,15 @@ const InfoIntroduction = styled.div`
       order: 2;
     }
   }
-  .flex-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .details__information {
-    .details__information__item {
-      display: flex;
-      color: #ee305f;
-      gap: 20px;
-      align-items: center;
-      margin-bottom: 20px;
-      & > h3 {
-        margin: 0;
-        color: #525f6b;
-        font-weight: 400;
-      }
-    }
-  }
-  .mt-40 {
-    margin-top: 40px;
-  }
   @media (min-width: 768px) {
     .general__information {
       margin-top: 0px;
+      padding-top:10px;
     }
   }
   @media (min-width: 992px) {
     .general__information {
+      padding-top:30px;
       flex-direction: row;
       justify-content: space-between;
       .list__icon {
@@ -170,96 +107,51 @@ const InfoIntroduction = styled.div`
   }
 `;
 
-const ListWrapper = styled.div`
-  max-width: ${breakpoints.lg};
-  overflow: auto;
-  .comment:last-child .delimiter {
-    display: none;
-  }
-`;
-const Gap = styled.div`
-  display: inline-block;
-  width: 15px;
-`;
-
-const ListContainer = styled.div`
-  display: inline-flex;
-  flex-direction: row;
-  overflow: hidden;
-
-  & .tour-guide + .tour-guide {
-    margin-left: 3rem;
-  }
-
-  ${smallScreenCss(`
-    & .tour-guide + .tour-guide {
-      margin-left: 1rem;
-    }
-  `)}
-
-  & .destination + .destination,
-  & .tour + .tour {
-    margin-left: 1rem;
-  }
-
-  & .blog + .blog {
-    margin-left: 1.5rem;
-  }
-`;
-
 const IconWrapper = styled.img`
-  width: 35px;
-  height: 35px;
+  width: 25px;
+  height: 25px;
   margin-bottom: 0;
 `;
 
-function User({ location }) {
+const Title = styled.h3`
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+`;
+
+const CardDesc = styled.div`
+  overflow: hidden;
+  text-align:left;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+`;
+
+const useStyles = makeStyles(styles);
+
+function GuideProfile({ location }) {
   const [profile, setProfile] = useState({
     guide: {},
     reviews: { totalReview: 0, listReviews: [] },
-    tours: [],
+  });
+  const [tour, setTour] = useState({
+    related: { tours: [], allTour: [] },
   });
   const [rootCountry, setRootCountry] = useState({});
-  const [photos, setPhotos] = useState([]);
-  const [thumbnailWidths, setThumbnailWidths] = useState([]);
-  const galleryWrapperComp = useRef();
+  const classes = useStyles();
+  const imageClasses = classNames(
+    classes.imgRaised,
+    classes.imgRoundedCircle,
+    classes.imgFluid
+  );
+  const imageClasses_1 = classNames(
+    classes.imgRaised,
+    classes.imgRounded,
+    classes.imgFluid
+  );
+  const [images, setImages] = useState([]);
   const dataQueryParams = qs.parse(location.search);
-
-  useLayoutEffect(() => {
-    if (!galleryWrapperComp || !galleryWrapperComp.current || !photos) {
-      return () => {};
-    }
-    const updateSize = _.debounce(() => {
-      const wrapperWidth = galleryWrapperComp.current.offsetWidth;
-      const maxColumn = Math.round(wrapperWidth / 275);
-      const minColumn = 2;
-      const maxRows = Math.ceil(photos.length / ((maxColumn + minColumn) / 2));
-      let widths = [];
-      for (let i = 0; i < maxRows; i++) {
-        const randomColumns = Math.floor(Math.random() * (maxColumn - minColumn + 1) + minColumn);
-        const minWidth = (wrapperWidth * 0.6) / randomColumns;
-        const maxWidth = (wrapperWidth * 1.25) / randomColumns;
-        const rowWidths = [];
-        for (let j = 0; j < randomColumns; j++) {
-          if (widths.length === photos.length - 1) {
-            rowWidths.push(wrapperWidth - _.sum(rowWidths));
-            break;
-          } else if (j === randomColumns - 1) {
-            rowWidths.push(wrapperWidth - _.sum(rowWidths));
-          } else {
-            rowWidths.push(Math.floor(Math.random() * (maxWidth - minWidth + 1) + minWidth));
-          }
-        }
-        widths = [...widths, ...rowWidths];
-      }
-      setThumbnailWidths(widths);
-    }, 350);
-    window.addEventListener('resize', updateSize);
-    updateSize();
-
-    return () => window.removeEventListener('resize', updateSize);
-  }, [galleryWrapperComp, photos]);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       const res = await API.getGuideProfileOverview({
@@ -271,22 +163,31 @@ function User({ location }) {
         reviews: {
           totalReview: res.total_review,
           listReviews: res.review,
-        },
-        tours: res.tour,
+        },        
       });
     };
-    fetchData();
+    fetchData();    
   }, [setProfile, dataQueryParams.uid, dataQueryParams.id]);
-
-  useLayoutEffect(() => {
-    const fetchPhotos = async () => {
-      const res = await API.getPhotosGuide({
-        uid: dataQueryParams.uid,
+  
+  useEffect(() => {
+    const fetchRelatedTour = async () => {
+      const res = await API.getRelatedTour({
+        uid: dataQueryParams.uid,       
       });
-      setPhotos(res.data);
+      setTour({
+        related: {
+          tours: res.tour,
+          allTour: res.allTour
+        }        
+      });
     };
-    fetchPhotos();
-  }, [setProfile, API.getPhotosGuide, dataQueryParams.uid]);
+    fetchRelatedTour();
+    const interval = setInterval(() => fetchRelatedTour(), 200000)
+    return () => {
+      clearInterval(interval);
+    }    
+  }, []);
+  console.log(profile)
 
   useEffect(() => {
     (async () => {
@@ -294,6 +195,28 @@ function User({ location }) {
       const newData = _.keyBy(data, item => item.code);
       setRootCountry(newData);
     })();
+  }, []);
+
+  useEffect(() => {
+    let shouldCancel = false;
+
+    const fetchImage = async () => {
+      const response = await API.getPhotosGuide({
+        uid: dataQueryParams.uid,
+      });
+
+      if (!shouldCancel && response.data && response.data.length > 0) {
+        setImages(
+          response.data.map(photo => ({  
+            original: getCndResourceUrl(photo.name),
+            description:photo.caption,
+            thumbnail: getCndResourceUrl(photo.name)
+          }))
+        );
+      }
+    };
+    fetchImage();
+    return () => (shouldCancel = true);
   }, []);
 
   const handleLevelGuide = level => {
@@ -308,172 +231,200 @@ function User({ location }) {
         return null;
     }
   };
+  /*
+  //TODO
+  1-Add loading Spin
+  2-Add short description for guide
+  3-Add link for Related Tour
+  4-Save Country
+  5-Chinh lai Related Tour cho nam ngang
+  */
+  return (    
+    <Layout scrollHeight={300}>
+      <SEO title="Guide Profile" /> 
+      <Parallax small filter image={require("../assets/img/home-banner.jpg")} />
+      <div className={classNames(classes.main, classes.mainRaised)}>
+        <div>
+          <div className={classes.container}>
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description}>
+                  <InfoAvatar>
+                    <div className="info__guide">
+                      <Avatar size={128} icon={<UserOutlined />} src={profile.guide?.avatar} />
+                      <div className="info__guide__details">
+                        <h2 style={{ color: '#ffffff' }}>{profile.guide?.fullname}</h2>
+                        <Tag icon={<CrownOutlined />} color="#f12f60">
+                          {handleLevelGuide(profile.guide?.level)}
+                        </Tag>            
+                        <p style={{ color: '#EE305F', margin: 0 }}>Possible to plan personalised tour</p>
+                      </div>
+                    </div>
+                  </InfoAvatar>
+                  
+                </div>  
+                {/*<div className={classes.name}>
+                    <h3 className={classes.title}>{profile.guide?.fullname}</h3>
+                    <h6>{profile.guide?.sex === 0 ? 'Female' : 'Male'} - Living at {rootCountry[profile.guide?.country]?.name}/{profile.guide?.city}</h6>                    
+                </div>*/}
+              </GridItem>
+            </GridContainer>
 
-  return (
-    <div>
-      <InfoAvatarAndBackgroundImg>
-        <Layout noHeader>
-          <div className="container">
-            <div className="info__guide">
-              <Avatar size={128} icon={<UserOutlined />} src={profile.guide?.avatar} />
-              <div className="info__guide__details">
-                <h2 style={{ color: '#ffffff' }}>{profile.guide?.fullname}</h2>
-                <Tag icon={<CrownOutlined />} color="#f12f60" className="guide__details__best">
-                  {handleLevelGuide(profile.guide?.level)}
-                </Tag>
-                <div className="guide__details__booking">
-                  <img src={iconBooking} alt="booking" />
-                  Book now
-                </div>
-                <p style={{ color: '#EE305F', margin: 0 }}>Possible to plan personalised tour</p>
-              </div>
-            </div>
-            <div className="info__book-now">
-              <div style={{ color: '#ffffff', textAlign: 'center', cursor: 'pointer' }}>
-                <IconWrapper src={iconBooking} alt="Booking" />
-                <p style={{ margin: 0 }}>Book now</p>
-              </div>
-            </div>
-          </div>
-        </Layout>
-      </InfoAvatarAndBackgroundImg>
-      <Layout noHeader>
-        <InfoIntroduction>
-          <div className="general__information">
-            <h1>Biography</h1>
-            <div className="list__icon">
-              <div className="flex-center" style={{ flexDirection: 'column' }}>
-                <IconWrapper src={iconTour} alt="Tours" />
-                <p style={{ color: '#525F6B' }}>20 Tours</p>
-              </div>
-              <div className="flex-center" style={{ flexDirection: 'column' }}>
-                <IconWrapper src={iconReview} alt="Review" />
-                <p style={{ color: '#525F6B' }}>45 Reviews</p>
-              </div>
-              <div className="flex-center" style={{ flexDirection: 'column' }}>
-                <IconWrapper src={iconLicense} alt="License" />
-                <p style={{ color: '#525F6B' }}>Have license</p>
-              </div>
-              <div className="flex-center" style={{ flexDirection: 'column' }}>
-                <IconWrapper src={iconCustomer} alt="Customers" />
-                <p style={{ color: '#525F6B' }}>365 Customers</p>
-              </div>
-            </div>
-          </div>
-          <div dangerouslySetInnerHTML={{ __html: profile.guide?.experience }} />
-          <div className="details__information mt-40">
+            {/*<GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <InfoIntroduction>
+                  <div className="general__information">                    
+                    <div className="list__icon">
+                      <div className="flex-center" style={{ flexDirection: 'column' }}>
+                        <IconWrapper src={iconTour} alt="Tours" />
+                        <p style={{ color: '#525F6B' }}><a href="#related">{tour.related?.allTour} tours</a></p>
+                      </div>
+                      <div className="flex-center" style={{ flexDirection: 'column' }}>
+                        <IconWrapper src={iconReview} alt="Review" />
+                        <p style={{ color: '#525F6B' }}>45 Reviews</p>
+                      </div>
+                      <div className="flex-center" style={{ flexDirection: 'column' }}>
+                        <IconWrapper src={iconLicense} alt="License" />
+                        <p style={{ color: '#525F6B' }}>Have license</p>
+                      </div>
+                      <div className="flex-center" style={{ flexDirection: 'column' }}>
+                        <IconWrapper src={iconCustomer} alt="Customers" />
+                        <p style={{ color: '#525F6B' }}>365 Customers</p>
+                      </div>
+                    </div>
+                  </div>
+                </InfoIntroduction>
+              </GridItem>
+              </GridContainer>*/}
+
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description}>
+                  <FormatQuote style={{ color : "#e91e63"}}/>
+                  <i>An artist of considerable range, Chet Faker — the name taken by Melbourne-raised, Brooklyn-based Nick Murphy — writes, 
+                    performs and records all of his own music, giving it a warm, intimate feel with a solid groove structure.</i>
+                  <FormatQuote style={{ color : "#e91e63"}}/>
+                </div>  
+              </GridItem>
+            </GridContainer>
+            <br/><br/>
+          
             {profile.guide?.language && (
-              <div className="details__information__item">
-                <IconWrapper src={iconLanguage} alt="Customers" />
-                <h3>{profile.guide?.language?.split(';').join(', ')}</h3>
-              </div>
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description}>
+                  <h4 style={{ textAlign: "left"}}>Speak language</h4>
+                  {profile.guide?.interest && (
+                    <InterestsOrExtras data={profile.guide?.language} title="" />
+                  )}
+                </div>
+              </GridItem>
+            </GridContainer>
             )}
-            {(profile.guide?.city || profile.guide?.country) && (
-              <div className="details__information__item">
-                <IconWrapper src={iconLocation} alt="Customers" />
-                <h3>
-                  {profile.guide?.city}
-                  {profile.guide?.city && ','} {rootCountry[profile.guide?.country]?.name}
-                </h3>
-              </div>
-            )}
-            {profile.guide?.sex && (
-              <div className="details__information__item">
-                <IconWrapper src={iconSex} alt="Customers" />
-                <h3>
-                  {profile.guide?.sex === 0 ? 'Female' : 'Male'} {profile.guide?.age}
-                </h3>
-              </div>
-            )}
-          </div>
-          <div className="mt-40">
+
             {profile.guide?.interest && (
-              <InterestsOrExtras data={profile.guide?.interest} title="Interests" />
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description}>
+                  {/*<h4 style={{ textAlign: "left"}}>Interests</h4>*/}
+                  {profile.guide?.interest && (
+                    <InterestsOrExtras data={profile.guide?.interest} title="Interests" />
+                  )}
+                </div>
+              </GridItem>
+            </GridContainer>
             )}
-            {profile.guide?.extras && (
-              <InterestsOrExtras data={profile.guide?.extras} title="Extras" />
+
+            {profile.guide?.extras && ( 
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description} >
+                  {/*<h4 style={{ textAlign: "left"}}>Extras</h4>*/}
+                  {profile.guide?.extras && (
+                    <InterestsOrExtras data={profile.guide?.extras} title="Extras" />
+                  )}
+                </div>
+              </GridItem>
+            </GridContainer>
             )}
-          </div>
-          {profile.guide?.education && (
-            <div className="education__information">
-              <b>Education:</b>
-              <p>{profile.guide?.education}</p>
-            </div>
-          )}
-          {profile.guide?.specialities && (
-            <div className="education__information">
-              <b>Certification:</b>
-              <p>{profile.guide?.specialities}</p>
-            </div>
-          )}
-        </InfoIntroduction>
-        <ListWrapper>
-          <GalleryWrapper ref={galleryWrapperComp}>
-            {photos?.length > 0 && (
-              <>
-                <SectionHeader title="Photo" />
-                <Gallery
-                  enableImageSelection={false}
-                  images={_.map(photos, (photo, i) => ({
-                    src: getCndResourceUrl(photo.name),
-                    thumbnail: getCndResourceUrl(photo.name),
-                    caption: photo.caption,
-                    thumbnailWidth: thumbnailWidths[i] || 240,
-                    thumbnailHeight: 175,
-                  }))}
-                />
-              </>
+
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description}>
+                  <h2 style={{ textAlign: "left"}}>Experience</h2>
+                  <div style={{ textAlign: "left",color: "#494848"}} dangerouslySetInnerHTML={{ __html: profile.guide?.experience}} />   
+                </div>
+              </GridItem>
+            </GridContainer>
+            
+
+            {profile.guide?.education && (                            
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description}>
+                  <h4 style={{ textAlign: "left"}}>Education</h4>
+                  <p style={{ textAlign: "left"}}>{profile.guide?.education}</p>
+                </div>
+              </GridItem>
+            </GridContainer>
             )}
-          </GalleryWrapper>
-        </ListWrapper>
-        {profile.tours.length > 0 && <SectionHeader title="Related Tour" subTitle="View all" />}
-        <ListWrapper>
-          <ListContainer>
-            {_.map(profile.tours, (tour, index) => (
-              <DestinationListItem
-                key={index}
-                name={tour.Name}
-                location={`${tour.City} ${tour.Country}`}
-                picture={tour.Cover}
-                className="destination"
-                id={tour.ID}
-                uid={tour.UID}
-              />
-            ))}
-          </ListContainer>
-        </ListWrapper>
-        {profile.reviews?.listReviews?.length > 0 && (
-          <SectionHeader
-            title={
-              // eslint-disable-next-line react/jsx-wrap-multilines
-              <>
-                Reviews ({profile.reviews?.totalReview})
-                <Gap />
-                <RatingStars rate={5} />
-              </>
+
+            {profile.guide?.specialities && (                    
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description}>
+                  <h4 style={{ textAlign: "left"}}>Certification</h4>
+                  <p style={{ textAlign: "left"}}>{profile.guide?.specialities}</p>
+                </div>
+              </GridItem>
+            </GridContainer>
+            )}
+
+            {images?.length > 0 && 
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description}>
+                  <h2 style={{ textAlign: "left"}}>Photos</h2>
+                    { images?.length == 1 &&
+                      <ImageGallery items={images}  lazyLoad={true} infinite={true} showFullscreenButton={false} showPlayButton={false} showThumbnails={false}/>
+                    }
+                    { images?.length > 1 &&
+                      <ImageGallery items={images}  lazyLoad={true} infinite={true} />                  
+                    }  
+                </div>  
+              </GridItem>
+            </GridContainer>
             }
-          />
-        )}
-        <ListWrapper>
-          {_.map(profile.reviews?.listReviews, (comment, index) => (
-            <CommentListItem
-              key={index}
-              content={comment.Content}
-              user={comment.Fullname}
-              date={comment.Created_At}
-              avatar={comment.Avatar}
-              className="comment"
-            />
-          ))}
-        </ListWrapper>
-      </Layout>
-    </div>
+             
+            {tour.related?.tours.length > 0 &&        
+            <GridContainer justify="center" id="related">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description}>
+                  <h2 style={{ textAlign: "left"}}>Related tours</h2> 
+                  {_.map(tour.related?.tours, (tour, index) => (
+                    <GridContainer key={index} style={{ textAlign: "left"}}>
+                        <GridItem xs={12} sm={12} md={4}>
+                          <img src={tour.cover} alt="..." className={imageClasses_1} style={{ cursor: 'pointer', maxWidth: 230, minWidth: 230, maxHeight: 130, minHeight: 130, paddingRigh: 10, borderRadius: 5 }} />                    
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={8} style={{ textAlign: "left"}}>
+                          <Title>{tour.name}</Title>
+                          <CardDesc>{tour.shortDesc}</CardDesc>
+                          {tour.country}/{tour.city}&nbsp;&nbsp;&nbsp;in &nbsp;&nbsp;&nbsp;{tour.day}<br/>
+                          <RatingStars rate={4.5} style={{ verticalAlign: 'text-bottom' }} />                          
+                        </GridItem>
+                    </GridContainer>      
+                  ))}
+                </div>
+              </GridItem>
+            </GridContainer>
+            }
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </Layout>
   );
 }
-export default User;
 
-User.propTypes = {
-  location: PropTypes.shape({
-    search: PropTypes.string,
-  }).isRequired,
-};
+export default GuideProfile;
+

@@ -39,6 +39,7 @@ export async function getGuideProfile(uid) {
   });
 }
 
+//Get GuideProfile
 export async function getGuideProfileOverview({ uid, guideId }) {
   return request({
     url: `/account/guide/${uid}/${guideId}`,
@@ -46,6 +47,15 @@ export async function getGuideProfileOverview({ uid, guideId }) {
   });
 }
 
+//Get Related tour of uid. Use in GuideProfile
+export async function getRelatedTour({uid}) {
+  return request({
+    url: `/tour/getAllTour?uid=${uid}`,
+    method: 'GET',
+  });
+}
+
+//Get User Profile
 export async function getUserProfile(uid) {
   return request({
     url: `/account/user/${uid}`,
@@ -70,11 +80,6 @@ export async function createTour(tour) {
 }
 
 export async function getAllTours() {
-  // TODO: call API
-  // return new Promise(resolve => {
-  //   resolve(tours);
-  // });
-
   return request({
     url: '/tour/getPopularTour',
     method: 'GET',
@@ -213,13 +218,13 @@ export async function updateTour(tour) {
     authRequired: true,
   });
 }
-
+/*
 export async function getRelatedTour() {
   return request({
     url: '/tour/getAllTour',
     method: 'GET',
   });
-}
+}*/
 
 export async function getAllCountry() {
   return request({

@@ -5,7 +5,7 @@ import moment from 'moment';
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
-import colors from '../../styles/colors';
+import colors from '../../assets/styles/colors';
 
 const Wrapper = styled.div`
   display: flex;
@@ -37,6 +37,7 @@ const AvatarWrapper = styled(Avatar)`
 const Delimiter = styled.div`
   margin: 1.25rem 0;
   border-bottom: 1px solid ${colors.grey[30]};
+  
 `;
 
 const Content = styled.div``;

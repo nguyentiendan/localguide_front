@@ -6,56 +6,23 @@ import jwt from 'jsonwebtoken';
 import * as API from '../apis';
 import { useLocalStorage } from '../utils/storage';
 import { AUTH_TOKEN_KEY } from '../utils/auth';
-import breakpoints from '../styles/breakpoints';
+import breakpoints from '../assets/styles/breakpoints';
 import { ENTER } from '../constants/keys';
-import Layout from '../components/Layout';
 import SEO from '../components/SEO';
 import Input from '../components/Input';
-import Checkbox from '../components/Checkbox';
-import Button from '../components/Button';
-
-const MainContent = styled.div`
-  min-height: 100vh;
-  background: rgb(245, 247, 250);
-`;
-
-const Card = styled.div`
-  max-width: 570px;
-  margin: 0 auto;
-  padding: 5rem 1rem;
-
-  @media (max-width: ${breakpoints.sm}) {
-    padding: 1.5rem 1rem;
-  }
-`;
-
-const Header = styled.header`
-  padding: 2.5rem;
-  font-size: 1.375rem;
-  font-weight: 500;
-  text-align: center;
-  color: #343434;
-  background-color: #ffffff;
-  border-bottom: solid 1px #eceff0;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-
-  @media (max-width: ${breakpoints.sm}) {
-    padding: 1.5rem;
-  }
-`;
-
-const Body = styled.section`
-  padding: 1.5rem 4.375rem 4.375rem;
-  text-align: left;
-  background-color: #ffffff;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-
-  @media (max-width: ${breakpoints.sm}) {
-    padding: 1.5rem 2rem 2rem;
-  }
-`;
+import Layout from '../components/CustomLayout';
+import Button from "../components/CustomButtons/Button.js";
+import GridContainer from "../components/Grid/GridContainer.js";
+import GridItem from "../components/Grid/GridItem.js";
+import Card from "../components/Card/Card.js";
+import CardBody from "../components/Card/CardBody.js";
+import CardHeader from "../components/Card/CardHeader.js";
+import CardFooter from "../components/Card/CardFooter.js";
+import Footer from "../components/Footer/Footer.js";
+import { makeStyles } from "@material-ui/core/styles";
+import styles from "../assets/jss/material-kit-react/views/loginPage.js";
+const useStyles = makeStyles(styles);
+import image from "../assets/img/bg7.jpg";
 
 const Field = styled.div`
   margin-bottom: 1.5rem;
@@ -69,26 +36,6 @@ const Actions = styled.div`
   @media (max-width: ${breakpoints.sm}) {
     flex-direction: column;
     margin-bottom: 0;
-  }
-`;
-
-const LoginButton = styled(Button)`
-  padding-left: 4.25rem;
-  padding-right: 4.25rem;
-  margin-right: 1.5rem;
-
-  @media (max-width: ${breakpoints.sm}) {
-    width: 100%;
-    margin: 0 0 1rem 0;
-    justify-content: center;
-  }
-`;
-
-const SignupLink = styled(Link)`
-  font-weight: 500;
-
-  @media (max-width: ${breakpoints.sm}) {
-    align-self: flex-end;
   }
 `;
 
@@ -110,6 +57,13 @@ const ErrorMessage = styled.div`
 `;
 
 function LoginPage() {
+  /*const [cardAnimaton, setCardAnimation] = useState('cardHidden');
+  setTimeout(function() {
+    setCardAnimation('');
+  }, 700);*/
+  const [cardAnimaton, setCardAnimation] = useState('');
+  const classes = useStyles();
+
   const [authToken, setAuthToken] = useLocalStorage(AUTH_TOKEN_KEY);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -182,55 +136,71 @@ function LoginPage() {
   };
 
   return (
-    <Layout mainContent={MainContent}>
-      <SEO title="Sign In" />
-      <Card>
-        <Header>Login</Header>
-        <Body>
-          <ErrorMessage>{errorMessage}</ErrorMessage>
-          <Field>
-            <Input
-              label="Email"
-              placeholder="Your email address"
-              value={email}
-              hasError={!!error.email}
-              message={error.email}
-              onChange={event => setEmail(event.target.value)}
-              onKeyDown={event => {
-                if (event.keyCode === ENTER) {
-                  handleLogin();
-                }
-              }}
-            />
-          </Field>
-          <Field>
-            <Input
-              type="password"
-              label="Password"
-              placeholder="**********"
-              value={password}
-              hasError={!!error.password}
-              message={error.password}
-              onChange={event => setPassword(event.target.value)}
-              onKeyDown={event => {
-                if (event.keyCode === ENTER) {
-                  handleLogin();
-                }
-              }}
-            />
-          </Field>
-          <Field>
-            <Checkbox label="Remember me" />
-          </Field>
-          <Actions>
-            <LoginButton size="large" loading={loading} disabled={loading} onClick={handleLogin}>
-              Sign In
-            </LoginButton>
-            <SignupLink to="/signup/">Sign Up</SignupLink>
-          </Actions>
-          <ForgotPasswordLink to="/forgot-password/">Forgot your password?</ForgotPasswordLink>
-        </Body>
-      </Card>
+    <Layout noLogin>
+      <SEO title="Login" />      
+      <div
+        className={classes.pageHeader}
+        style={{
+          backgroundImage: "url(" + image + ")",
+          backgroundSize: "cover",
+          backgroundPosition: "top center"
+        }}
+      >
+        <div className={classes.container}>
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={12} md={5}>
+              <Card className={classes[cardAnimaton]}>
+                <CardHeader color="warning" className={classes.cardHeader}>
+                  <h1>Login</h1>
+                </CardHeader>  
+                <CardBody>
+                  <ErrorMessage>{errorMessage}</ErrorMessage>
+                  <Field>
+                    <Input
+                      label="Email"
+                      placeholder="Your email address"
+                      value={email}
+                      hasError={!!error.email}
+                      message={error.email}
+                      onChange={event => setEmail(event.target.value)}
+                      onKeyDown={event => {
+                        if (event.keyCode === ENTER) {
+                          handleLogin();
+                        }
+                      }}
+                    />
+                  </Field>
+                  <Field>
+                    <Input
+                      type="password"
+                      label="Password"
+                      placeholder="**********"
+                      value={password}
+                      hasError={!!error.password}
+                      message={error.password}
+                      onChange={event => setPassword(event.target.value)}
+                      onKeyDown={event => {
+                        if (event.keyCode === ENTER) {
+                          handleLogin();
+                        }
+                      }}
+                    />
+                  </Field>
+                  
+                  <Actions>
+                    <Button color="rose" loading={loading} disabled={loading} onClick={handleLogin}>Login</Button>
+                    <Button href="/signup" color="transparent">Create Account</Button>                    
+                  </Actions>
+                </CardBody>
+                <CardFooter className={classes.cardFooter}>
+                  <ForgotPasswordLink to="/forgot-password/">Forgot your password?</ForgotPasswordLink>  
+                </CardFooter>
+              </Card>
+            </GridItem>
+          </GridContainer>
+        </div>
+        <Footer whiteFont />
+      </div>        
     </Layout>
   );
 }

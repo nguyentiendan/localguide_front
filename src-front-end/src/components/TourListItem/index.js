@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
-import colors from '../../styles/colors';
-import defaultTourImage from '../../images/tour-default.png';
+import colors from '../../assets/styles/colors';
+import defaultTourImage from '../../assets/img/tour-default.png';
 
 const Wrapper = styled.div`
   display: flex;
