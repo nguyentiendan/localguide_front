@@ -1,22 +1,15 @@
 /* eslint-disable react/no-danger */
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { graphql } from 'gatsby';
+import { Link } from 'gatsby';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
 import Gallery from 'react-grid-gallery';
 import { AiOutlineSchedule } from 'react-icons/ai';
-import {
-  FaSuitcase,
-  FaMoneyBill,
-  FaUsers,
-  FaStar,
-  FaMoneyCheckAlt,
-  FaRegCalendarAlt,
-} from 'react-icons/fa';
+import {FaSuitcase,FaMoneyBill,FaUsers,FaStar,FaMoneyCheckAlt,FaRegCalendarAlt,FaTextHeight,} from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
-import { Avatar, Spin } from 'antd';
+import { Avatar, Spin,notification, Popconfirm } from 'antd';
 import _ from 'lodash';
 import qs from 'query-string';
 
@@ -40,14 +33,19 @@ import Button from '../components/CustomButtons/Button';
 import { bigScreenCss, smallScreenCss } from '../assets/styles/responsive-css';
 import TourGuideListItem from '../components/TourGuideListItem';
 import { getCndResourceUrl, safeFuncCall } from '../utils/commons';
+import { getUserProfile } from '../utils/auth';
+import ModalFeedback from '../components/Feedback/ModalFeedback';
 
 import 'react-image-gallery/styles/css/image-gallery.css';
 import ImageGallery from 'react-image-gallery';
 import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
-
 import styles from '../assets/styles/tourPage.js';
 
-const Title = styled.h1`
+//TODO
+// 1)Xem lai getUserProfile, response co nhieu thong tin khong can thiet
+//
+
+ const Title = styled.h1`
   font-weight: bold;
   clear: both;
   margin: 0 0 1.125rem 0;
@@ -214,20 +212,23 @@ const TourDescriptionItem = styled.li`
   }
 `;
 
+const ButtonEventAdminWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 const useStyles = makeStyles(styles);
 
-function TourDetail({ location }) {
+function AdminTourReview({ location }) {
   const classes = useStyles();
 
   const dataQueryParams = qs.parse(location.search);
   const { uid } = dataQueryParams;
   const { id } = dataQueryParams;
 
-  {
-    /* const { tour, reviews = { comments: [] } } = data || {}; */
-  }
   const [images, setImages] = useState([]);
-  // const [tourDetails, setTourDetails] = useState({});
+  const [isApprove, setIsApprove] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [tourDetails, setTourDetails] = useState({
     tour: [],
     reviews: { totalReview: 0, listReviews: [] },
@@ -242,6 +243,9 @@ function TourDetail({ location }) {
     query.id = id;
     return query;
   }, [uid, id]);
+  const user = getUserProfile();
+  
+  console.log(user)
 
   useEffect(() => {
     let shouldCancel = false;
@@ -319,12 +323,59 @@ function TourDetail({ location }) {
     fetchTourDetails();
   }, [tourQuery]);
 
+  const handleApproveTour = async () => {
+    setLoading(true);
+    await API.handleAdminApproveTour({ uid: tourDetails.tour[0]?.uid, id: tour?.rawID || id });
+    setIsApprove(true);
+    notification.success({ message: 'You have successfully approve tour.' });
+    setLoading(false);
+  };
+
   return (
     <Layout scrollHeight={10} textColor="black">
       <SEO title={tourDetails.name || ''} />
       {/* <Parallax small filter image={require("../assets/img/home-banner.jpg")} /> */}
       <div className={classNames(classes.main, classes.mainRaised)} style={{ paddingTop: '70px' }}>
         <div className={classes.container}>
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={12} md={12}>
+              <div className={classes.description}>
+                {user?.role === 3 && (
+                  <ButtonEventAdminWrapper>
+                    <div>
+                      {tourDetails.tour[0]?.status !== 1 && !isApprove && (
+                        <Popconfirm
+                          title="Are you sure to approve tour?"
+                          onConfirm={handleApproveTour}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <Button color="info">Approve</Button>
+                        </Popconfirm>
+                      )}
+                      <Button color="danger">
+                        <Link to="/admin" style={{ color: '#ffffff' }}>
+                          Cancel
+                        </Link>
+                      </Button>
+
+                      {/* <Button className="style-button-edit">
+                          <Link to={`/edit-tour?q=${tourDetails?.id}`} style={{ color: '#ffffff' }}>
+                            Edit
+                          </Link>
+                        </Button> */}
+                    </div>
+                    <div>
+                      <Button color="warning"  onClick={() => setShowModal(true)}>
+                        Tour Feedback
+                      </Button>
+                    </div>
+                  </ButtonEventAdminWrapper>
+                )}
+              </div>
+            </GridItem>
+          </GridContainer>
+
           <Spin spinning={loading}>
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12}>
@@ -558,41 +609,55 @@ function TourDetail({ location }) {
               </GridItem>
             </GridContainer>
 
-            {tourDetails.tourIncluding && (
-              <>
-                <SectionTitle>
-                  <TourIcon />
-                  <Gap />
-                  Tour including:
-                </SectionTitle>
-                <ul>
-                  {_.map(tourDetails.tourIncluding, i => (
-                    <TourIncludingListItem key={i}>{i}</TourIncludingListItem>
-                  ))}
-                </ul>
-              </>
-            )}
-            <br />
-            <br />
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description}>
+                  {tourDetails.tourIncluding && (
+                    <>
+                      <SectionTitle>
+                        <TourIcon />
+                        <Gap />
+                        Tour including:
+                      </SectionTitle>
+                      <ul>
+                        {_.map(tourDetails.tourIncluding, i => (
+                          <TourIncludingListItem key={i}>{i}</TourIncludingListItem>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                  <br />
+                  <br />
 
-            {/* <SectionHeader
-              title={
-                // eslint-disable-next-line react/jsx-wrap-multilines
-                <>{`Reviews (${reviews.total})`}</>
-              }
+                  <SectionHeader
+                    title={
+                      // eslint-disable-next-line react/jsx-wrap-multilines
+                      <>{`Reviews (${tourDetails.reviews?.totalReview})`}</>
+                    }
+                  />
+                  <ListWrapper style={{ textAlign: 'left' }}>
+                    {_.map(tourDetails.reviews?.listReviews, (comment, index) => (
+                      <CommentListItem
+                        key={index}
+                        content={comment.content}
+                        user={comment.fullname}
+                        date={comment.createdAt}
+                        avatar={comment.avatar}
+                        className="comment"
+                      />
+                    ))}
+                  </ListWrapper>
+                </div>
+              </GridItem>
+            </GridContainer>
+
+            <ModalFeedback
+              showModal={showModal}
+              setShowModal={setShowModal}
+              user={user}
+              tour={tourQuery}
+              id={tourDetails.tour[0]?.id || 0}
             />
-            <ListWrapper>
-              {_.map(reviews.comments, comment => (
-                <CommentListItem
-                  key={comment.id}
-                  content={comment.content}
-                  user={comment.user}
-                  date={comment.date}
-                  avatar={comment.avatar}
-                  className="comment"
-                />
-              ))}
-            </ListWrapper> */}
           </Spin>
         </div>
       </div>
@@ -601,4 +666,4 @@ function TourDetail({ location }) {
   );
 }
 
-export default TourDetail;
+export default AdminTourReview;

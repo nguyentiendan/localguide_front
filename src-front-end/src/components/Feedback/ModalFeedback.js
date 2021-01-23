@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import * as API from '../../apis';
-import Button from '../Button';
+import Button from "../CustomButtons/Button";
 import Feedback from './index';
 
 const { TextArea } = Input;
@@ -119,9 +119,11 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
       title="Feedback"
       visible={showModal}
       onCancel={() => setShowModal(false)}
-      footer={
+      footer={        
         user?.role === 2 ? null : (
-          <Button
+          <div>
+          {/*<Button>Cancel</Button>*/}
+          <Button color="rose"
             onClick={() => {
               setIsFeedback(true);
               handleCreateFeedback();
@@ -129,8 +131,10 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
           >
             New Feedback
           </Button>
-        )
-      }
+          
+          </div>
+        )        
+      }      
     >
       <Spin spinning={loading}>
         {dataFeedback.length > 0 ? (

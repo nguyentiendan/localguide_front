@@ -7,14 +7,7 @@ import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
 import Gallery from 'react-grid-gallery';
 import { AiOutlineSchedule } from 'react-icons/ai';
-import {
-  FaSuitcase,
-  FaMoneyBill,
-  FaUsers,
-  FaStar,
-  FaMoneyCheckAlt,
-  FaRegCalendarAlt,
-} from 'react-icons/fa';
+import {FaSuitcase, FaMoneyBill, FaUsers, FaStar, FaMoneyCheckAlt,FaRegCalendarAlt,FaShare, FaTwitter, FaBookmark} from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
 import { Avatar, Spin } from 'antd';
 import _ from 'lodash';
@@ -76,6 +69,21 @@ const SectionTitle = styled.h3`
   margin: 1.5rem 0 0.5rem 0;
   font-weight: 500;
   clear: both;
+`;
+
+const TitleWrapper = styled.div`
+  flex: 1;
+  width: 100%;
+  //height: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center
+`;
+
+const SocialWrapper = styled.div`
+  display: flex;
+  padding-top: 0px;
+  justify-content: flex-end;
 `;
 
 const HeaderWrapper = styled.div`
@@ -182,6 +190,11 @@ const TourIcon = styled(FaSuitcase)`
 const Gap = styled.div`
   display: inline-block;
   width: 5px;
+`;
+
+const Space = styled.div`
+  display: inline-block;
+  width: 20px;
 `;
 
 const TourIncludingListItem = styled.li`
@@ -329,8 +342,32 @@ function TourDetail({ location }) {
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
-                  <SmallScreen>
-                    <Title style={{ textAlign: 'left' }}>{tourDetails.tour[0]?.name}</Title>
+                  <SmallScreen>                    
+                    <TitleWrapper>
+                      <Title style={{ textAlign: 'left', fontSize: '20px'  }}>{tourDetails.tour[0]?.name}</Title>
+                      <SocialWrapper>
+                        <NavItem
+                          className="nav-item"
+                          title=""
+                          icon={<FaBookmark style={{ color: '#f12f60' }} />}
+                          isActive
+                        />
+                        <Space/>
+                        <NavItem
+                          className="nav-item"
+                          title=""
+                          icon={<FaTwitter style={{ color: '#f12f60' }} />}
+                          isActive
+                        />
+                        <Space/>
+                        <NavItem
+                          className="nav-item"
+                          title=""
+                          icon={<FaShare style={{ color: '#f12f60' }} />}
+                          isActive
+                        />
+                      </SocialWrapper>                     
+                    </TitleWrapper>
                     <SubTitle style={{ textAlign: 'left' }}>
                       <span style={{ fontSize: '25px' }}>4.5</span>
                       <Gap />
@@ -340,8 +377,33 @@ function TourDetail({ location }) {
                     <div style={{ textAlign: 'left', fontSize: '11px' }}>1,305 votes</div>
                   </SmallScreen>
 
-                  <BigScreen>
-                    <Title style={{ textAlign: 'left' }}>{tourDetails.tour[0]?.name}</Title>
+                  <BigScreen>                    
+                    <TitleWrapper>
+                      <Title style={{ textAlign: 'left' }}>{tourDetails.tour[0]?.name}</Title>
+                      <SocialWrapper>
+                        <NavItem
+                          className="nav-item"
+                          title=""
+                          icon={<FaBookmark style={{ color: '#f12f60' }} />}
+                          isActive
+                        />
+                        <Space/>
+                        <NavItem
+                          className="nav-item"
+                          title=""
+                          icon={<FaTwitter style={{ color: '#f12f60' }} />}
+                          isActive
+                        />
+                        <Space/>
+                        <NavItem
+                          className="nav-item"
+                          title=""
+                          icon={<FaShare style={{ color: '#f12f60' }} />}
+                          isActive
+                        />
+                      </SocialWrapper>
+                    </TitleWrapper>
+                    
                     <SubTitle style={{ textAlign: 'left' }}>
                       <span style={{ fontSize: '25px' }}>4.5</span>
                       <Gap />
