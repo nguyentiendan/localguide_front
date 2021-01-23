@@ -205,7 +205,7 @@ IndexPage.propTypes = {
 
 export default IndexPage;
 
-/*export const pageQuery = graphql`
+/* export const pageQuery = graphql`
   query {
     tourGuideNodes: allTourGuide {
       nodes {

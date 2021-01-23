@@ -27,7 +27,8 @@ const DefaultMainContent = styled.main`
 `;
 
 const Layout = ({ mainContent: MainContent, title, subTitle, children, noHeader }) => {
-  {/*const data = useStaticQuery(graphql`
+  {
+    /* const data = useStaticQuery(graphql`
     query SiteTitleQuery {
       site {
         siteMetadata {
@@ -35,7 +36,8 @@ const Layout = ({ mainContent: MainContent, title, subTitle, children, noHeader 
         }
       }
     }
-  `);*/}
+  `); */
+  }
 
   return (
     <AuthProvider>

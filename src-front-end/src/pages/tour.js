@@ -2,12 +2,19 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { graphql } from 'gatsby';
-import classNames from "classnames";
+import classNames from 'classnames';
 import styled from 'styled-components';
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from '@material-ui/core/styles';
 import Gallery from 'react-grid-gallery';
 import { AiOutlineSchedule } from 'react-icons/ai';
-import { FaSuitcase, FaMoneyBill, FaUsers,FaStar,FaMoneyCheckAlt,FaRegCalendarAlt } from 'react-icons/fa';
+import {
+  FaSuitcase,
+  FaMoneyBill,
+  FaUsers,
+  FaStar,
+  FaMoneyCheckAlt,
+  FaRegCalendarAlt,
+} from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
 import { Avatar, Spin } from 'antd';
 import _ from 'lodash';
@@ -15,11 +22,11 @@ import qs from 'query-string';
 
 import * as API from '../apis';
 import Layout from '../components/CustomLayout';
-import Parallax from "../components/Parallax/Parallax.js";
+import Parallax from '../components/Parallax/Parallax.js';
 import SEO from '../components/SEO';
-import Footer from "../components/Footer/Footer.js";
-import GridContainer from "../components/Grid/GridContainer.js";
-import GridItem from "../components/Grid/GridItem.js";
+import Footer from '../components/Footer/Footer.js';
+import GridContainer from '../components/Grid/GridContainer.js';
+import GridItem from '../components/Grid/GridItem.js';
 
 import SmallScreen from '../components/Responsive/SmallScreen';
 import BigScreen from '../components/Responsive/BigScreen';
@@ -34,11 +41,11 @@ import { bigScreenCss, smallScreenCss } from '../assets/styles/responsive-css';
 import TourGuideListItem from '../components/TourGuideListItem';
 import { getCndResourceUrl, safeFuncCall } from '../utils/commons';
 
-import "react-image-gallery/styles/css/image-gallery.css";
+import 'react-image-gallery/styles/css/image-gallery.css';
 import ImageGallery from 'react-image-gallery';
-import {FormatQuote,Star,StarHalf} from "@material-ui/icons";
+import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
 
-import styles from "../assets/styles/tourPage.js";
+import styles from '../assets/styles/tourPage.js';
 
 const Title = styled.h1`
   font-weight: bold;
@@ -53,7 +60,7 @@ const Title = styled.h1`
 
 const SubTitle = styled.h3`
   font-weight: bold;
-  font-size:18px;
+  font-size: 18px;
   color: ${colors.grey[80]};
   margin: 0 0 0 0;
 
@@ -149,7 +156,6 @@ const Price = styled.div`
   font-size: 30px;
   font-weight: 400;
   margin-right: 10px;
-  
 `;
 
 const BookButton = styled(Button)`
@@ -208,21 +214,20 @@ const TourDescriptionItem = styled.li`
   }
 `;
 
-
-
 const useStyles = makeStyles(styles);
 
 function TourDetail({ location }) {
   const classes = useStyles();
 
   const dataQueryParams = qs.parse(location.search);
-  var uid = dataQueryParams.uid;
-  var id = dataQueryParams.id;
+  const { uid } = dataQueryParams;
+  const { id } = dataQueryParams;
 
-  
-  {/*const { tour, reviews = { comments: [] } } = data || {};*/}
+  {
+    /* const { tour, reviews = { comments: [] } } = data || {}; */
+  }
   const [images, setImages] = useState([]);
-  //const [tourDetails, setTourDetails] = useState({});
+  // const [tourDetails, setTourDetails] = useState({});
   const [tourDetails, setTourDetails] = useState({
     tour: [],
     reviews: { totalReview: 0, listReviews: [] },
@@ -230,12 +235,11 @@ function TourDetail({ location }) {
 
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
   const [loading, setLoading] = useState(false);
-  
-  
+
   const tourQuery = useMemo(() => {
     const query = {};
     query.uid = uid;
-    query.id = id;    
+    query.id = id;
     return query;
   }, [uid, id]);
 
@@ -247,10 +251,10 @@ function TourDetail({ location }) {
 
       if (!shouldCancel && response.data && response.data.length > 0) {
         setImages(
-          response.data.map(photo => ({  
+          response.data.map(photo => ({
             original: getCndResourceUrl(photo.name),
-            description:photo.caption,
-            thumbnail: getCndResourceUrl(photo.name)
+            description: photo.caption,
+            thumbnail: getCndResourceUrl(photo.name),
           }))
         );
       }
@@ -262,7 +266,7 @@ function TourDetail({ location }) {
   useEffect(() => {
     const fetchData = async () => {
       const res = await API.getTourDetail(tourQuery);
-      console.log(res)
+      console.log(res);
       setTourDetails({
         tour: res.tour,
         reviews: {
@@ -271,7 +275,7 @@ function TourDetail({ location }) {
         },
       });
     };
-    fetchData();    
+    fetchData();
   }, [tourQuery]);
 
   useEffect(() => {
@@ -315,85 +319,89 @@ function TourDetail({ location }) {
     fetchTourDetails();
   }, [tourQuery]);
 
-  
   return (
     <Layout scrollHeight={10} textColor="black">
       <SEO title={tourDetails.tour[0]?.name || ''} />
-      {/*<Parallax small filter image={require("../assets/img/home-banner.jpg")} />*/}
-      <div className={classNames(classes.main, classes.mainRaised)} style={{ paddingTop: "70px"}}>
+      {/* <Parallax small filter image={require("../assets/img/home-banner.jpg")} /> */}
+      <div className={classNames(classes.main, classes.mainRaised)} style={{ paddingTop: '70px' }}>
         <div className={classes.container}>
           <Spin spinning={loading}>
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12}>
-                <div className={classes.description}>                  
-                  <SmallScreen>                    
-                    <Title style={{ textAlign: "left"}}>{tourDetails.tour[0]?.name}</Title>
-                    <SubTitle style={{ textAlign: "left"}}>                      
-                      <span style={{fontSize:"25px"}}>4.5</span>
-                      <Gap />                      
-                      <RatingStars rate={4.5} style={{ verticalAlign: 'text-bottom' }} />                                                            
-                      {/*<RatingStars rate={reviews?.rate} style={{ verticalAlign: 'text-bottom' }} />*/}
-                    </SubTitle>                    
-                    <div style={{ textAlign: "left", fontSize:"11px"}}>1,305 votes</div>                    
+                <div className={classes.description}>
+                  <SmallScreen>
+                    <Title style={{ textAlign: 'left' }}>{tourDetails.tour[0]?.name}</Title>
+                    <SubTitle style={{ textAlign: 'left' }}>
+                      <span style={{ fontSize: '25px' }}>4.5</span>
+                      <Gap />
+                      <RatingStars rate={4.5} style={{ verticalAlign: 'text-bottom' }} />
+                      {/* <RatingStars rate={reviews?.rate} style={{ verticalAlign: 'text-bottom' }} /> */}
+                    </SubTitle>
+                    <div style={{ textAlign: 'left', fontSize: '11px' }}>1,305 votes</div>
                   </SmallScreen>
 
                   <BigScreen>
-                    <Title style={{ textAlign: "left"}}>{tourDetails.tour[0]?.name}</Title>
-                    <SubTitle style={{ textAlign: "left"}}>                      
-                      <span style={{fontSize:"25px"}}>4.5</span>
-                      <Gap />                      
-                      <RatingStars rate={4.5} style={{ verticalAlign: 'text-bottom' }} />                      
-                    </SubTitle>                    
-                    <div style={{ textAlign: "left", fontSize:"11px"}}>1,305 votes</div>
+                    <Title style={{ textAlign: 'left' }}>{tourDetails.tour[0]?.name}</Title>
+                    <SubTitle style={{ textAlign: 'left' }}>
+                      <span style={{ fontSize: '25px' }}>4.5</span>
+                      <Gap />
+                      <RatingStars rate={4.5} style={{ verticalAlign: 'text-bottom' }} />
+                    </SubTitle>
+                    <div style={{ textAlign: 'left', fontSize: '11px' }}>1,305 votes</div>
                   </BigScreen>
                 </div>
               </GridItem>
-            </GridContainer>    
-
-            {images?.length > 0 && 
-            <GridContainer justify="center">
-              <GridItem xs={12} sm={12} md={12}>
-                <div className={classes.description}>                  
-                  <ImageGallery items={images}  
-                    lazyLoad={true} autoPlay={true} 
-                    infinite={true} 
-                    showFullscreenButton={false} 
-                    showPlayButton={false} 
-                    showThumbnails={false}
-                    slideDuration={250}
-                  />                  
-                </div>  
-              </GridItem>
             </GridContainer>
-            }
+
+            {images?.length > 0 && (
+              <GridContainer justify="center">
+                <GridItem xs={12} sm={12} md={12}>
+                  <div className={classes.description}>
+                    <ImageGallery
+                      items={images}
+                      lazyLoad
+                      autoPlay
+                      infinite
+                      showFullscreenButton={false}
+                      showPlayButton={false}
+                      showThumbnails={false}
+                      slideDuration={250}
+                    />
+                  </div>
+                </GridItem>
+              </GridContainer>
+            )}
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12}>
-                <div className={classes.description} style={{paddingTop:"0px"}}>
-                  <FormatQuote style={{ color : "#e91e63"}}/>
+                <div className={classes.description} style={{ paddingTop: '0px' }}>
+                  <FormatQuote style={{ color: '#e91e63' }} />
                   <i>{tourDetails.tour[0]?.shortDesc}</i>
-                  <FormatQuote style={{ color : "#e91e63"}}/>
-                </div>  
+                  <FormatQuote style={{ color: '#e91e63' }} />
+                </div>
               </GridItem>
             </GridContainer>
 
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12}>
-                <div className={classes.description}  style={{paddingTop:"0px"}}>                  
-                  <HeaderWrapper >
+                <div className={classes.description} style={{ paddingTop: '0px' }}>
+                  <HeaderWrapper>
                     <LocationWrapper>
-                      <h2 style={{ textAlign: "left"}}>
+                      <h2 style={{ textAlign: 'left' }}>
                         {tourDetails.tour[0]?.city &&
                           tourDetails.tour[0]?.country &&
-                          `${tourDetails.tour[0]?.city}, ${tourDetails.tour[0]?.country}`}</h2>                      
-                      <TagWrapper style={{ textAlign: "left"}}>
+                          `${tourDetails.tour[0]?.city}, ${tourDetails.tour[0]?.country}`}
+                      </h2>
+                      <TagWrapper style={{ textAlign: 'left' }}>
                         {tourDetails.tour[0]?.tag &&
-                        _.map(tourDetails.tour[0]?.tag.split(';'), tag => <Tag key={tag}>{tag}</Tag>)}
+                          _.map(tourDetails.tour[0]?.tag.split(';'), tag => (
+                            <Tag key={tag}>{tag}</Tag>
+                          ))}
                       </TagWrapper>
                     </LocationWrapper>
                     <TourGuideWrapper>
-                      <span style={{ paddingBottom: "5px"}}>Tour post by</span>
-                      <TourGuideListItem                        
-                        //level={tourDetails?.level}
+                      <span style={{ paddingBottom: '5px' }}>Tour post by</span>
+                      <TourGuideListItem
+                        // level={tourDetails?.level}
                         avatar={tourDetails.tour[0]?.avatar}
                         name={tourDetails.tour[0]?.fullName}
                       />
@@ -405,22 +413,22 @@ function TourDetail({ location }) {
 
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12}>
-                <div className={classes.description} style={{ textAlign: "left" }} >
+                <div className={classes.description} style={{ textAlign: 'left' }}>
                   <PriceWrapper>
                     <PriceMenuWrapper>
                       <NavItem
                         className="nav-item"
                         title="18 booked"
-                        icon={<FaMoneyCheckAlt style={{ color: '#f12f60' }}/>}
+                        icon={<FaMoneyCheckAlt style={{ color: '#f12f60' }} />}
                         isActive
                       />
                       <NavItem
                         className="nav-item"
                         title="2 days"
-                        icon={<FaRegCalendarAlt style={{ color: '#f12f60' }}/>}
+                        icon={<FaRegCalendarAlt style={{ color: '#f12f60' }} />}
                         isActive
                       />
-                      {/*<NavItem
+                      {/* <NavItem
                         className="nav-item"
                         title={tourDetails.language || 'No language'}
                         icon={<MdGTranslate />}
@@ -437,30 +445,35 @@ function TourDetail({ location }) {
                         title={`${tourDetails.minPax || 0}-${tourDetails.maxPax || 0}`}
                         icon={<FaUsers />}
                         isActive
-                      />*/}
+                      /> */}
                       <Price>${tourDetails.tour[0]?.total || 0}</Price>
                     </PriceMenuWrapper>
-                    <BookButton color="rose" loading={loading} disabled={loading}>Book now</BookButton>
-                  </PriceWrapper>  
-                </div>  
+                    <BookButton color="rose" loading={loading} disabled={loading}>
+                      Book now
+                    </BookButton>
+                  </PriceWrapper>
+                </div>
               </GridItem>
-            </GridContainer>    
-            
+            </GridContainer>
+
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12}>
-                <div className={classes.description}>                  
-                  <h2 style={{ textAlign: "left"}}>Tour description</h2>
-                  {/*<TourDescription>
+                <div className={classes.description}>
+                  <h2 style={{ textAlign: 'left' }}>Tour description</h2>
+                  {/* <TourDescription>
                     <div dangerouslySetInnerHTML={{ __html: tourDetails.content }} />                   
-                  </TourDescription>*/}
-                  <div style={{ textAlign: "left",}} dangerouslySetInnerHTML={{ __html: tourDetails.tour[0]?.content }} />
-                  
-                  <SectionTitle style={{ textAlign: "left"}}>
+                  </TourDescription> */}
+                  <div
+                    style={{ textAlign: 'left' }}
+                    dangerouslySetInnerHTML={{ __html: tourDetails.tour[0]?.content }}
+                  />
+
+                  <SectionTitle style={{ textAlign: 'left' }}>
                     <TourIcon />
                     <Gap />
                     Tour including
-                  </SectionTitle>    
-                  <DescriptionWrapper style={{ textAlign: "left"}}>
+                  </SectionTitle>
+                  <DescriptionWrapper style={{ textAlign: 'left' }}>
                     <ul>
                       {_.map(
                         tourDescriptionDays,
@@ -482,7 +495,9 @@ function TourDetail({ location }) {
                               <TourDescription>
                                 <TourDescriptionTitle>Meals:</TourDescriptionTitle>
                                 {_.map(meals, ({ time, name }, i) => (
-                                  <TourDescriptionItem key={i}>{`${time} at ${name}`}</TourDescriptionItem>
+                                  <TourDescriptionItem key={i}>
+                                    {`${time} at ${name}`}
+                                  </TourDescriptionItem>
                                 ))}
                               </TourDescription>
                             )}
@@ -510,8 +525,16 @@ function TourDetail({ location }) {
                                   ) =>
                                     _.map(
                                       [
-                                        { time: pickupTime, location: pickupLocation, mes: 'pick up at' },
-                                        { time: finishTime, location: finishLocation, mes: 'finish at' },
+                                        {
+                                          time: pickupTime,
+                                          location: pickupLocation,
+                                          mes: 'pick up at',
+                                        },
+                                        {
+                                          time: finishTime,
+                                          location: finishLocation,
+                                          mes: 'finish at',
+                                        },
                                       ],
                                       ({ time, location, mes }, j) => (
                                         <TourDescriptionItem key={`${i}-${j}`}>
@@ -541,7 +564,6 @@ function TourDetail({ location }) {
               </GridItem>
             </GridContainer>
 
-            
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
@@ -568,7 +590,7 @@ function TourDetail({ location }) {
                       <>{`Reviews (${tourDetails.reviews?.totalReview})`}</>
                     }
                   />
-                  <ListWrapper style={{ textAlign: "left",}}>
+                  <ListWrapper style={{ textAlign: 'left' }}>
                     {_.map(tourDetails.reviews?.listReviews, (comment, index) => (
                       <CommentListItem
                         key={index}
@@ -582,7 +604,7 @@ function TourDetail({ location }) {
                   </ListWrapper>
                 </div>
               </GridItem>
-            </GridContainer>    
+            </GridContainer>
           </Spin>
         </div>
       </div>
@@ -592,4 +614,3 @@ function TourDetail({ location }) {
 }
 
 export default TourDetail;
-

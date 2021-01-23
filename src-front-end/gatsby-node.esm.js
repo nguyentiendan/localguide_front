@@ -1,7 +1,7 @@
 import { slugify } from './src/utils/slug';
 import * as API from './src/apis';
 
-/*async function createTourGuideNodes({ createNode, createNodeId, createContentDigest }) {
+/* async function createTourGuideNodes({ createNode, createNodeId, createContentDigest }) {
   try {
     const { data: allTourGuides } = await API.getAllTourGuides();
     allTourGuides.forEach(tourGuide => {
@@ -29,7 +29,7 @@ import * as API from './src/apis';
 }
 */
 
-/*async function createDestinationNodes({ createNode, createNodeId, createContentDigest }) {
+/* async function createDestinationNodes({ createNode, createNodeId, createContentDigest }) {
   try {
     const allDestinations = await API.getAllDestinations();
     allDestinations.forEach(destination => {
@@ -84,7 +84,7 @@ async function createBlogNodes({ createNode, createNodeId, createContentDigest }
   }
 }
 */
-/*async function createTourNodes({ createNode, createNodeId, createContentDigest }) {
+/* async function createTourNodes({ createNode, createNodeId, createContentDigest }) {
   try {
     const { data: allTours } = await API.getAllTours();
     console.log(allTours);
@@ -110,7 +110,7 @@ async function createBlogNodes({ createNode, createNodeId, createContentDigest }
   } catch (error) {
     console.error(error);
   }
-}*/
+} */
 
 /*
 async function createReviewNodes({ createNode, createNodeId, createContentDigest }) {

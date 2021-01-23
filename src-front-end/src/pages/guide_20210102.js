@@ -19,7 +19,7 @@ import { getCndResourceUrl } from '../utils/commons';
 import Layout from '../components/Layout';
 import InterestsOrExtras from '../components/InterestsOrExtras';
 import * as API from '../apis';
-import iconTour from '../assets/img/icon-tour.svg'
+import iconTour from '../assets/img/icon-tour.svg';
 import iconReview from '../assets/img/icon-review.svg';
 import iconLicense from '../assets/img/icon-license.svg';
 import iconCustomer from '../assets/img/icon-customer.svg';
@@ -407,7 +407,7 @@ function User({ location }) {
             </div>
           )}
         </InfoIntroduction>
-        {/*<ListWrapper>
+        {/* <ListWrapper>
           <GalleryWrapper ref={galleryWrapperComp}>
             {photos?.length > 0 && (
               <>
@@ -465,7 +465,7 @@ function User({ location }) {
               className="comment"
             />
           ))}
-          </ListWrapper>*/}
+          </ListWrapper> */}
       </Layout>
     </div>
   );

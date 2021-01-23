@@ -2,24 +2,25 @@ import React, { useState } from 'react';
 import { Link } from 'gatsby';
 import styled from 'styled-components';
 
+import { makeStyles } from '@material-ui/core/styles';
 import * as API from '../apis';
 import breakpoints from '../assets/styles/breakpoints';
 import { ENTER } from '../constants/keys';
 import Layout from '../components/CustomLayout';
 import SEO from '../components/SEO';
 import Input from '../components/Input';
-import Button from "../components/CustomButtons/Button.js";
-import GridContainer from "../components/Grid/GridContainer.js";
-import GridItem from "../components/Grid/GridItem.js";
-import Card from "../components/Card/Card.js";
-import CardBody from "../components/Card/CardBody.js";
-import CardHeader from "../components/Card/CardHeader.js";
-import CardFooter from "../components/Card/CardFooter.js";
-import Footer from "../components/Footer/Footer.js";
-import { makeStyles } from "@material-ui/core/styles";
-import styles from "../assets/jss/material-kit-react/views/loginPage.js";
+import Button from '../components/CustomButtons/Button.js';
+import GridContainer from '../components/Grid/GridContainer.js';
+import GridItem from '../components/Grid/GridItem.js';
+import Card from '../components/Card/Card.js';
+import CardBody from '../components/Card/CardBody.js';
+import CardHeader from '../components/Card/CardHeader.js';
+import CardFooter from '../components/Card/CardFooter.js';
+import Footer from '../components/Footer/Footer.js';
+import styles from '../assets/jss/material-kit-react/views/loginPage.js';
+import image from '../assets/img/bg7.jpg';
+
 const useStyles = makeStyles(styles);
-import image from "../assets/img/bg7.jpg";
 
 const Field = styled.div`
   margin-bottom: 1.5rem;
@@ -41,9 +42,9 @@ const Text = styled.div`
 `;
 
 function ForgotPassPage() {
-  const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
+  const [cardAnimaton, setCardAnimation] = React.useState('cardHidden');
   setTimeout(function() {
-    setCardAnimation("");
+    setCardAnimation('');
   }, 700);
 
   const classes = useStyles();
@@ -102,49 +103,60 @@ function ForgotPassPage() {
   return (
     <Layout noLogin>
       <SEO title="Forgot Password" />
-        <div
-          className={classes.pageHeader}
-          style={{
-            backgroundImage: "url(" + image + ")",
-            backgroundSize: "cover",
-            backgroundPosition: "top center"
-          }}
-        >
-          <div className={classes.container}>
-            <GridContainer justify="center">
-              <GridItem xs={12} sm={12} md={5}>
-                <Card className={classes[cardAnimaton]}>
-                  <CardHeader color="warning" className={classes.cardHeader}>
-                    <h1>Forgot Password</h1>
-                  </CardHeader>                        
-                  <CardBody>
-                    <Text>You forgot your password? Here you can easily retrieve a new password.</Text>
-                    <Field>
-                      <Input
-                        label="Email"
-                        placeholder="Your email address"
-                        value={email}
-                        hasError={!!errorMessage}
-                        message={errorMessage}
-                        onChange={event => setEmail(event.target.value)}
-                        onKeyDown={event => {
-                          if (event.keyCode === ENTER) {
-                            handleOnSubmit();
-                          }
-                        }}
-                      />
-                    </Field>
-                    <Actions>
-                      <Button color="rose" loading={loading} disabled={loading} onClick={handleOnSubmit}>Send new password</Button>
-                      <Button href="/login" color="transparent">Login</Button>                      
-                    </Actions>
-                  </CardBody>
-                </Card>
-                <CardFooter className={classes.cardFooter}/>
-              </GridItem>
-            </GridContainer>
-          </div> 
-          <Footer whiteFont /> 
+      <div
+        className={classes.pageHeader}
+        style={{
+          backgroundImage: `url(${image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'top center',
+        }}
+      >
+        <div className={classes.container}>
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={12} md={5}>
+              <Card className={classes[cardAnimaton]}>
+                <CardHeader color="warning" className={classes.cardHeader}>
+                  <h1>Forgot Password</h1>
+                </CardHeader>
+                <CardBody>
+                  <Text>
+                    You forgot your password? Here you can easily retrieve a new password.
+                  </Text>
+                  <Field>
+                    <Input
+                      label="Email"
+                      placeholder="Your email address"
+                      value={email}
+                      hasError={!!errorMessage}
+                      message={errorMessage}
+                      onChange={event => setEmail(event.target.value)}
+                      onKeyDown={event => {
+                        if (event.keyCode === ENTER) {
+                          handleOnSubmit();
+                        }
+                      }}
+                    />
+                  </Field>
+                  <Actions>
+                    <Button
+                      color="rose"
+                      loading={loading}
+                      disabled={loading}
+                      onClick={handleOnSubmit}
+                    >
+                      Send new password
+                    </Button>
+                    <Button href="/login" color="transparent">
+                      Login
+                    </Button>
+                  </Actions>
+                </CardBody>
+              </Card>
+              <CardFooter className={classes.cardFooter} />
+            </GridItem>
+          </GridContainer>
+        </div>
+        <Footer whiteFont />
       </div>
     </Layout>
   );

@@ -34,7 +34,7 @@ const TourGuideListItem = ({ className, name, level, avatar }) => (
   <Wrapper className={className}>
     <Avatar src={avatar || defaultAvatar} />
     <Title>{name}</Title>
-    {/*<SubTitle>{level}</SubTitle>*/}
+    {/* <SubTitle>{level}</SubTitle> */}
   </Wrapper>
 );
 

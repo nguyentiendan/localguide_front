@@ -25,7 +25,7 @@ function Tours() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const user = getUserProfile();
-  
+
   useEffect(() => {
     async function fetchData() {
       setLoading(true);

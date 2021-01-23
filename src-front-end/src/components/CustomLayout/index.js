@@ -7,7 +7,7 @@ import Header from '../Header/Header.js';
 import HeaderLinks from '../Header/HeaderLinks.js';
 import 'antd/dist/antd.less';
 
-const CustomLayout = ({children, noLogin,scrollHeight,textColor}) => {
+const CustomLayout = ({ children, noLogin, scrollHeight, textColor }) => {
   const data = useStaticQuery(graphql`
     query SiteTitleQuery {
       site {
@@ -16,40 +16,40 @@ const CustomLayout = ({children, noLogin,scrollHeight,textColor}) => {
         }
       }
     }
-`);
- 
+  `);
+
   return (
     <AuthProvider>
       <GlobalStyle />
-        <Header
-          link="/"
-          absolute
-          color="transparent"
-          textColor={textColor}
-          brand="Localguide Pal"
-          rightLinks={!noLogin && (<HeaderLinks/>) }
-          fixed
-          changeColorOnScroll={{
-            height: scrollHeight,
-            color: "white"
-          }}      
-        />
-      {children}            
+      <Header
+        link="/"
+        absolute
+        color="transparent"
+        textColor={textColor}
+        brand="Localguide Pal"
+        rightLinks={!noLogin && <HeaderLinks />}
+        fixed
+        changeColorOnScroll={{
+          height: scrollHeight,
+          color: 'white',
+        }}
+      />
+      {children}
     </AuthProvider>
   );
 };
 
 CustomLayout.propTypes = {
-  children: PropTypes.node.isRequired,  
+  children: PropTypes.node.isRequired,
   noLogin: PropTypes.bool,
   scrollHeight: PropTypes.number,
   textColor: PropTypes.string,
 };
 
-CustomLayout.defaultProps = {  
+CustomLayout.defaultProps = {
   noLogin: false,
-  scrollHeight:10,
-  textColor:""
+  scrollHeight: 10,
+  textColor: '',
 };
 
 export default CustomLayout;

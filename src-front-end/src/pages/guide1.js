@@ -4,14 +4,14 @@ import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Avatar, Tag } from 'antd';
 import { UserOutlined, CrownOutlined } from '@ant-design/icons';
-import {FormatQuote,Star,StarHalf} from "@material-ui/icons";
+import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
 import _ from 'lodash';
 import Gallery from 'react-grid-gallery';
 import qs from 'query-string';
 import PropTypes from 'prop-types';
-import classNames from "classnames";
+import classNames from 'classnames';
 // @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from '@material-ui/core/styles';
 
 import SectionHeader from '../components/SectionHeader';
 import breakpoints from '../assets/styles/breakpoints';
@@ -22,13 +22,13 @@ import DestinationListItem from '../components/DestinationListItem';
 import { getCndResourceUrl } from '../utils/commons';
 import Layout from '../components/CustomLayout';
 import SEO from '../components/SEO';
-import Parallax from "../components/Parallax/Parallax.js";
-import GridContainer from "../components/Grid/GridContainer.js";
-import GridItem from "../components/Grid/GridItem.js";
-import Footer from "../components/Footer/Footer.js";
+import Parallax from '../components/Parallax/Parallax.js';
+import GridContainer from '../components/Grid/GridContainer.js';
+import GridItem from '../components/Grid/GridItem.js';
+import Footer from '../components/Footer/Footer.js';
 import InterestsOrExtras from '../components/InterestsOrExtras';
 import * as API from '../apis';
-import iconTour from '../assets/img/icon-tour.svg'
+import iconTour from '../assets/img/icon-tour.svg';
 import iconReview from '../assets/img/icon-review.svg';
 import iconLicense from '../assets/img/icon-license.svg';
 import iconCustomer from '../assets/img/icon-customer.svg';
@@ -37,9 +37,9 @@ import iconLanguage from '../assets/img/icon-language.svg';
 import iconLocation from '../assets/img/icon-location.svg';
 import iconSex from '../assets/img/icon-sex.svg';
 import banner from '../assets/img/home-banner.jpg';
-import styles from "../assets/styles/profilePage.js";
+import styles from '../assets/styles/profilePage.js';
 
-const InfoAvatarAndBackgroundImg = styled.div`    
+const InfoAvatarAndBackgroundImg = styled.div`
   .info__guide {
     height: 15px;
     display: flex;
@@ -61,7 +61,7 @@ const InfoAvatarAndBackgroundImg = styled.div`
       .info__guide__details {
         .guide__details__best {
           display: inline-block;
-        }      
+        }
       }
     }
   }
@@ -95,7 +95,7 @@ const InfoIntroduction = styled.div`
     .list__icon {
       display: flex;
       justify-content: space-between;
-      text-align: center;      
+      text-align: center;
       gap: 40px;
       color: #ee305f;
       flex-grow: 0.6;
@@ -129,14 +129,14 @@ const InfoIntroduction = styled.div`
   @media (min-width: 768px) {
     .general__information {
       margin-top: 0px;
-      padding-right:30px;
+      padding-right: 30px;
     }
   }
   @media (min-width: 992px) {
     .general__information {
       flex-direction: row;
       justify-content: space-between;
-      padding-right:30px;
+      padding-right: 30px;
       .list__icon {
         justify-content: flex-end;
       }
@@ -201,19 +201,11 @@ function GuideProfile({ location }) {
   });
   const [rootCountry, setRootCountry] = useState({});
   const classes = useStyles();
-  const imageClasses = classNames(
-    classes.imgRaised,
-    classes.imgRoundedCircle,
-    classes.imgFluid
-  );
-  const imageClasses_1 = classNames(
-    classes.imgRaised,
-    classes.imgRounded,
-    classes.imgFluid
-  );
+  const imageClasses = classNames(classes.imgRaised, classes.imgRoundedCircle, classes.imgFluid);
+  const imageClasses_1 = classNames(classes.imgRaised, classes.imgRounded, classes.imgFluid);
   const [images, setImages] = useState([]);
   const dataQueryParams = qs.parse(location.search);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       const res = await API.getGuideProfileOverview({
@@ -225,29 +217,29 @@ function GuideProfile({ location }) {
         reviews: {
           totalReview: res.total_review,
           listReviews: res.review,
-        },        
+        },
       });
     };
-    fetchData();    
+    fetchData();
   }, [setProfile, dataQueryParams.uid, dataQueryParams.id]);
-  
+
   useEffect(() => {
     const fetchRelatedTour = async () => {
       const res = await API.getRelatedTour({
-        uid: dataQueryParams.uid,       
+        uid: dataQueryParams.uid,
       });
       setTour({
         related: {
           tours: res.tour,
-          allTour: res.allTour
-        }        
+          allTour: res.allTour,
+        },
       });
     };
     fetchRelatedTour();
-    const interval = setInterval(() => fetchRelatedTour(), 200000)
+    const interval = setInterval(() => fetchRelatedTour(), 200000);
     return () => {
       clearInterval(interval);
-    }    
+    };
   }, []);
 
   useEffect(() => {
@@ -268,10 +260,10 @@ function GuideProfile({ location }) {
 
       if (!shouldCancel && response.data && response.data.length > 0) {
         setImages(
-          response.data.map(photo => ({  
+          response.data.map(photo => ({
             original: getCndResourceUrl(photo.name),
-            description:photo.caption,
-            thumbnail: getCndResourceUrl(photo.name)
+            description: photo.caption,
+            thumbnail: getCndResourceUrl(photo.name),
           }))
         );
       }
@@ -303,37 +295,43 @@ function GuideProfile({ location }) {
   console.log(profile);
   return (
     <Layout scrollHeight={300}>
-      <SEO title="Guide Profile" /> 
-      <Parallax small filter image={require("../assets/img/home-banner.jpg")} />
+      <SEO title="Guide Profile" />
+      <Parallax small filter image={require('../assets/img/home-banner.jpg')} />
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div className={classes.container}>
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12}>
               <div className={classes.description}>
-                <InfoAvatarAndBackgroundImg>                
+                <InfoAvatarAndBackgroundImg>
                   <div className="info__guide">
                     <Avatar size={128} icon={<UserOutlined />} src={profile.guide?.avatar} />
                     <div className="info__guide__details">
                       <h2 style={{ color: '#ffffff' }}>{profile.guide?.fullname}</h2>
-                      <Tag icon={<CrownOutlined />} color="#f12f60" className="guide__details__best">
+                      <Tag
+                        icon={<CrownOutlined />}
+                        color="#f12f60"
+                        className="guide__details__best"
+                      >
                         {handleLevelGuide(profile.guide?.level)}
-                      </Tag>                  
-                      <p style={{ color: '#EE305F', margin: 0 }}>Possible to plan personalised tour</p>
+                      </Tag>
+                      <p style={{ color: '#EE305F', margin: 0 }}>
+                        Possible to plan personalised tour
+                      </p>
                     </div>
                   </div>
-                </InfoAvatarAndBackgroundImg>  
-              </div>           
+                </InfoAvatarAndBackgroundImg>
+              </div>
             </GridItem>
           </GridContainer>
-        </div>    
+        </div>
         <div className={classes.container}>
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12}>
               <div className={classes.description}>
                 <InfoIntroduction>
                   <div className="general__information">
-                    {/*<h1>Biography</h1>*/}
-                    <div className="list__icon" >
+                    {/* <h1>Biography</h1> */}
+                    <div className="list__icon">
                       <div className="flex-center" style={{ flexDirection: 'column' }}>
                         <IconWrapper src={iconTour} alt="Tours" />
                         <p style={{ color: '#525F6B' }}>20 Tours</p>
@@ -352,17 +350,24 @@ function GuideProfile({ location }) {
                       </div>
                     </div>
                   </div>
-                  
-                  <div className={classes.description} style={{ paddingTop: '0px', paddingBottom: '10px' }}>
-                    <FormatQuote style={{ color : "#e91e63"}}/>
-                    <i>An artist of considerable range, Chet Faker — the name taken by Melbourne-raised, Brooklyn-based Nick Murphy — writes, 
-                      performs and records all of his own music, giving it a warm, intimate feel with a solid groove structure.</i>
-                    <FormatQuote style={{ color : "#e91e63"}}/>
-                  </div>  
+
+                  <div
+                    className={classes.description}
+                    style={{ paddingTop: '0px', paddingBottom: '10px' }}
+                  >
+                    <FormatQuote style={{ color: '#e91e63' }} />
+                    <i>
+                      An artist of considerable range, Chet Faker — the name taken by
+                      Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs and records
+                      all of his own music, giving it a warm, intimate feel with a solid groove
+                      structure.
+                    </i>
+                    <FormatQuote style={{ color: '#e91e63' }} />
+                  </div>
 
                   <h1>Biography</h1>
                   <div dangerouslySetInnerHTML={{ __html: profile.guide?.experience }} />
-                  
+
                   <div className="details__information mt-40">
                     {profile.guide?.language && (
                       <div className="details__information__item">
@@ -409,20 +414,20 @@ function GuideProfile({ location }) {
                     </div>
                   )}
                 </InfoIntroduction>
-              </div>  
+              </div>
             </GridItem>
           </GridContainer>
-        </div>      
+        </div>
         <div className={classes.container}>
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12}>
               <div className={classes.description}>
-                {
-                  tour.related?.allTour > 3 && <SectionHeader title="Related Tour" subTitle="View all" /> 
-                }
-                {
-                  tour.related?.tours.length > 0 && tour.related?.allTour.length < 3 && <SectionHeader title="Related Tour"/> 
-                }                
+                {tour.related?.allTour > 3 && (
+                  <SectionHeader title="Related Tour" subTitle="View all" />
+                )}
+                {tour.related?.tours.length > 0 && tour.related?.allTour.length < 3 && (
+                  <SectionHeader title="Related Tour" />
+                )}
                 <ListWrapper>
                   <ListContainer>
                     {_.map(tour.related?.tours, (tour, index) => (
@@ -436,20 +441,22 @@ function GuideProfile({ location }) {
                         uid={tour.uid}
                       />
                     ))}
-                  </ListContainer>                  
+                  </ListContainer>
                 </ListWrapper>
               </div>
             </GridItem>
           </GridContainer>
-        </div>        
-        <br/><br/>
+        </div>
+        <br />
+        <br />
+        <br />
         <div className={classes.container}>
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12}>
               <div className={classes.description}>
                 {profile.reviews?.listReviews?.length > 0 && (
                   <SectionHeader
-                    title={                      
+                    title={
                       <>
                         Reviews ({profile.reviews?.totalReview})
                         <Gap />
@@ -473,8 +480,8 @@ function GuideProfile({ location }) {
               </div>
             </GridItem>
           </GridContainer>
-        </div>        
-        {/*<ListWrapper>
+        </div>
+        {/* <ListWrapper>
           <GalleryWrapper ref={galleryWrapperComp}>
             {photos?.length > 0 && (
               <>
@@ -492,12 +499,10 @@ function GuideProfile({ location }) {
               </>
             )}
           </GalleryWrapper>
-        </ListWrapper>*/}
-      </div>  
+        </ListWrapper> */}
+      </div>
       <Footer />
     </Layout>
   );
 }
 export default GuideProfile;
-
-

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Tabs } from 'antd';
 import { navigate } from 'gatsby';
 import Layout from '../components/Layout';
-//import Layout from '../components/CustomLayout';
+// import Layout from '../components/CustomLayout';
 import TabTitle from '../components/TabTitle';
 import Tours from '../components/Admin/Tours';
 import Profile from '../components/Admin/Profile';

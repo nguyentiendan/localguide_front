@@ -543,7 +543,7 @@ TourPage.defaultProps = {
 
 export default TourPage;
 
-/*export const pageQuery = graphql`
+/* export const pageQuery = graphql`
   query($id: Int!) {
     tour(rawID: { eq: $id }) {
       id

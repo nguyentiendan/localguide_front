@@ -1,6 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {Divider,Row,Col,Form,Button,Table,Tag,Space,Badge,Select,Spin,InputNumber,} from 'antd';
+import {
+  Divider,
+  Row,
+  Col,
+  Form,
+  Button,
+  Table,
+  Tag,
+  Space,
+  Badge,
+  Select,
+  Spin,
+  InputNumber,
+} from 'antd';
 import moment from 'moment';
 import { Link } from 'gatsby';
 import _ from 'lodash';
@@ -50,11 +63,11 @@ const columns = [
     key: 'name',
     render: (name, tour) => (
       <div>
-      <Badge count={tour.feedback} offset={[15, 0]}>
-        <Link to={`admin_tour_review?uid=${tour.uid}&id=${tour.id}`}>
-          <TourTitle>{name}</TourTitle>
-        </Link>
-      </Badge>
+        <Badge count={tour.feedback} offset={[15, 0]}>
+          <Link to={`admin_tour_review?uid=${tour.uid}&id=${tour.id}`}>
+            <TourTitle>{name}</TourTitle>
+          </Link>
+        </Badge>
       </div>
     ),
   },
@@ -151,7 +164,7 @@ function Tours() {
     setDataFilter(res.data);
     setIsloading(false);
   };
-  
+
   const handleClearFilter = async () => {
     setIsloading(true);
     await API.handleFillterTourAdmin({ uid: user.uid, data: '' });

@@ -9,19 +9,18 @@ const ContainerWrapper = styled.div`
   display: flex;
   padding-top: 0px;
   margin-left: 0px;
-  text-align:left;
+  text-align: left;
   & > b {
     min-width: 80px;
   }
-  
-  @media (min-width: 768px) {    
+
+  @media (min-width: 768px) {
     margin-top: 0px;
     padding-top: 0px;
   }
   @media (min-width: 992px) {
     margin-top: 0px;
     padding-top: 0px;
-    
   }
 `;
 

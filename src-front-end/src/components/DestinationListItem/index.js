@@ -39,7 +39,7 @@ const DestinationListItem = ({ className, name, location, picture, id, uid }) =>
       <Title>{name}</Title>
       <SubTitle>{location}</SubTitle>
     </Link>
-    <RatingStars rate={4.5} style={{ verticalAlign: 'text-bottom' }} /> 
+    <RatingStars rate={4.5} style={{ verticalAlign: 'text-bottom' }} />
   </Wrapper>
 );
 

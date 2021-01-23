@@ -3,6 +3,7 @@ import { Link, navigate } from 'gatsby';
 import styled from 'styled-components';
 import jwt from 'jsonwebtoken';
 
+import { makeStyles } from '@material-ui/core/styles';
 import * as API from '../apis';
 import { useLocalStorage } from '../utils/storage';
 import { AUTH_TOKEN_KEY } from '../utils/auth';
@@ -11,18 +12,18 @@ import { ENTER } from '../constants/keys';
 import SEO from '../components/SEO';
 import Input from '../components/Input';
 import Layout from '../components/CustomLayout';
-import Button from "../components/CustomButtons/Button.js";
-import GridContainer from "../components/Grid/GridContainer.js";
-import GridItem from "../components/Grid/GridItem.js";
-import Card from "../components/Card/Card.js";
-import CardBody from "../components/Card/CardBody.js";
-import CardHeader from "../components/Card/CardHeader.js";
-import CardFooter from "../components/Card/CardFooter.js";
-import Footer from "../components/Footer/Footer.js";
-import { makeStyles } from "@material-ui/core/styles";
-import styles from "../assets/jss/material-kit-react/views/loginPage.js";
+import Button from '../components/CustomButtons/Button.js';
+import GridContainer from '../components/Grid/GridContainer.js';
+import GridItem from '../components/Grid/GridItem.js';
+import Card from '../components/Card/Card.js';
+import CardBody from '../components/Card/CardBody.js';
+import CardHeader from '../components/Card/CardHeader.js';
+import CardFooter from '../components/Card/CardFooter.js';
+import Footer from '../components/Footer/Footer.js';
+import styles from '../assets/jss/material-kit-react/views/loginPage.js';
+import image from '../assets/img/bg7.jpg';
+
 const useStyles = makeStyles(styles);
-import image from "../assets/img/bg7.jpg";
 
 const Field = styled.div`
   margin-bottom: 1.5rem;
@@ -57,10 +58,10 @@ const ErrorMessage = styled.div`
 `;
 
 function LoginPage() {
-  /*const [cardAnimaton, setCardAnimation] = useState('cardHidden');
+  /* const [cardAnimaton, setCardAnimation] = useState('cardHidden');
   setTimeout(function() {
     setCardAnimation('');
-  }, 700);*/
+  }, 700); */
   const [cardAnimaton, setCardAnimation] = useState('');
   const classes = useStyles();
 
@@ -137,13 +138,13 @@ function LoginPage() {
 
   return (
     <Layout noLogin>
-      <SEO title="Login" />      
+      <SEO title="Login" />
       <div
         className={classes.pageHeader}
         style={{
-          backgroundImage: "url(" + image + ")",
-          backgroundSize: "cover",
-          backgroundPosition: "top center"
+          backgroundImage: `url(${image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'top center',
         }}
       >
         <div className={classes.container}>
@@ -152,7 +153,7 @@ function LoginPage() {
               <Card className={classes[cardAnimaton]}>
                 <CardHeader color="warning" className={classes.cardHeader}>
                   <h1>Login</h1>
-                </CardHeader>  
+                </CardHeader>
                 <CardBody>
                   <ErrorMessage>{errorMessage}</ErrorMessage>
                   <Field>
@@ -186,21 +187,27 @@ function LoginPage() {
                       }}
                     />
                   </Field>
-                  
+
                   <Actions>
-                    <Button color="rose" loading={loading} disabled={loading} onClick={handleLogin}>Login</Button>
-                    <Button href="/signup" color="transparent">Create Account</Button>                    
+                    <Button color="rose" loading={loading} disabled={loading} onClick={handleLogin}>
+                      Login
+                    </Button>
+                    <Button href="/signup" color="transparent">
+                      Create Account
+                    </Button>
                   </Actions>
                 </CardBody>
                 <CardFooter className={classes.cardFooter}>
-                  <ForgotPasswordLink to="/forgot-password/">Forgot your password?</ForgotPasswordLink>  
+                  <ForgotPasswordLink to="/forgot-password/">
+                    Forgot your password?
+                  </ForgotPasswordLink>
                 </CardFooter>
               </Card>
             </GridItem>
           </GridContainer>
         </div>
         <Footer whiteFont />
-      </div>        
+      </div>
     </Layout>
   );
 }

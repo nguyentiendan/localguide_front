@@ -1,33 +1,29 @@
-import React from "react";
+import React from 'react';
 // nodejs library that concatenates classes
-import classNames from "classnames";
+import classNames from 'classnames';
 // @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from '@material-ui/core/styles';
 
 // @material-ui/icons
 // core components
-import GridContainer from "../Grid/GridContainer.js"
-import GridItem from "../Grid/GridItem.js";
-import Button from "../CustomButtons/Button.js";
-import Card from "../Card/Card.js";
-import CardBody from "../Card/CardBody.js";
-import CardFooter from "../Card/CardFooter.js";
+import GridContainer from '../Grid/GridContainer.js';
+import GridItem from '../Grid/GridItem.js';
+import Button from '../CustomButtons/Button.js';
+import Card from '../Card/Card.js';
+import CardBody from '../Card/CardBody.js';
+import CardFooter from '../Card/CardFooter.js';
 
-import styles from "../../assets/jss/material-kit-react/views/landingPageSections/teamStyle.js";
+import styles from '../../assets/jss/material-kit-react/views/landingPageSections/teamStyle.js';
 
-import team1 from "../../assets/img/faces/avatar.jpg"
-import team2 from "../../assets/img/faces/christian.jpg";
-import team3 from "../../assets/img/faces/kendall.jpg";
+import team1 from '../../assets/img/faces/avatar.jpg';
+import team2 from '../../assets/img/faces/christian.jpg';
+import team3 from '../../assets/img/faces/kendall.jpg';
 
 const useStyles = makeStyles(styles);
 
 export default function TeamSection(name, avatar) {
   const classes = useStyles();
-  const imageClasses = classNames(
-    classes.imgRaised,
-    classes.imgRoundedCircle,
-    classes.imgFluid
-  );
+  const imageClasses = classNames(classes.imgRaised, classes.imgRoundedCircle, classes.imgFluid);
   return (
     <div className={classes.section}>
       <h2 className={classes.title}>Tour Guides </h2>
@@ -45,10 +41,9 @@ export default function TeamSection(name, avatar) {
               </h4>
               <CardBody>
                 <p className={classes.description}>
-                  You can write here details about one of your team members. You
-                  can give more details about what they do. Feel free to add
-                  some <a href="#pablo">links</a> for people to be able to
-                  follow them outside the site.
+                  You can write here details about one of your team members. You can give more
+                  details about what they do. Feel free to add some <a href="#pablo">links</a> for
+                  people to be able to follow them outside the site.
                 </p>
               </CardBody>
               {/*
@@ -90,13 +85,12 @@ export default function TeamSection(name, avatar) {
               </h4>
               <CardBody>
                 <p className={classes.description}>
-                  You can write here details about one of your team members. You
-                  can give more details about what they do. Feel free to add
-                  some <a href="#pablo">links</a> for people to be able to
-                  follow them outside the site.
+                  You can write here details about one of your team members. You can give more
+                  details about what they do. Feel free to add some <a href="#pablo">links</a> for
+                  people to be able to follow them outside the site.
                 </p>
               </CardBody>
-              {/*<CardFooter className={classes.justifyCenter}>
+              {/* <CardFooter className={classes.justifyCenter}>
                 <Button
                   justIcon
                   color="transparent"
@@ -111,7 +105,7 @@ export default function TeamSection(name, avatar) {
                 >
                   <i className={classes.socials + " fab fa-linkedin"} />
                 </Button>
-            </CardFooter>*/}
+            </CardFooter> */}
             </Card>
           </GridItem>
           <GridItem xs={12} sm={12} md={4}>
@@ -126,13 +120,12 @@ export default function TeamSection(name, avatar) {
               </h4>
               <CardBody>
                 <p className={classes.description}>
-                  You can write here details about one of your team members. You
-                  can give more details about what they do. Feel free to add
-                  some <a href="#pablo">links</a> for people to be able to
-                  follow them outside the site.
+                  You can write here details about one of your team members. You can give more
+                  details about what they do. Feel free to add some <a href="#pablo">links</a> for
+                  people to be able to follow them outside the site.
                 </p>
               </CardBody>
-              {/*<CardFooter className={classes.justifyCenter}>
+              {/* <CardFooter className={classes.justifyCenter}>
                 <Button
                   justIcon
                   color="transparent"
@@ -154,7 +147,7 @@ export default function TeamSection(name, avatar) {
                 >
                   <i className={classes.socials + " fab fa-facebook"} />
                 </Button>
-              </CardFooter>*/}
+              </CardFooter> */}
             </Card>
           </GridItem>
         </GridContainer>

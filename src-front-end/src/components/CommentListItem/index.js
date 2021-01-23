@@ -37,7 +37,6 @@ const AvatarWrapper = styled(Avatar)`
 const Delimiter = styled.div`
   margin: 1.25rem 0;
   border-bottom: 1px solid ${colors.grey[30]};
-  
 `;
 
 const Content = styled.div``;

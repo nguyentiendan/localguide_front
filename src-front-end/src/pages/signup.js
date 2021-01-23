@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'gatsby';
 import styled from 'styled-components';
 
+import { makeStyles } from '@material-ui/core/styles';
 import * as API from '../apis';
 import breakpoints from '../assets/styles/breakpoints';
 import { ENTER } from '../constants/keys';
@@ -9,19 +10,18 @@ import SEO from '../components/SEO';
 import Input from '../components/Input';
 import Checkbox from '../components/Checkbox';
 import Layout from '../components/CustomLayout';
-import Button from "../components/CustomButtons/Button.js";
-import GridContainer from "../components/Grid/GridContainer.js";
-import GridItem from "../components/Grid/GridItem.js";
-import Card from "../components/Card/Card.js";
-import CardBody from "../components/Card/CardBody.js";
-import CardHeader from "../components/Card/CardHeader.js";
-import CardFooter from "../components/Card/CardFooter.js";
-import Footer from "../components/Footer/Footer.js";
-import { makeStyles } from "@material-ui/core/styles";
-import styles from "../assets/jss/material-kit-react/views/loginPage.js";
-const useStyles = makeStyles(styles);
-import image from "../assets/img/bg7.jpg";
+import Button from '../components/CustomButtons/Button.js';
+import GridContainer from '../components/Grid/GridContainer.js';
+import GridItem from '../components/Grid/GridItem.js';
+import Card from '../components/Card/Card.js';
+import CardBody from '../components/Card/CardBody.js';
+import CardHeader from '../components/Card/CardHeader.js';
+import CardFooter from '../components/Card/CardFooter.js';
+import Footer from '../components/Footer/Footer.js';
+import styles from '../assets/jss/material-kit-react/views/loginPage.js';
+import image from '../assets/img/bg7.jpg';
 
+const useStyles = makeStyles(styles);
 
 const Field = styled.div`
   margin-bottom: 1.5rem;
@@ -55,9 +55,9 @@ const AgreeError = styled.div`
 `;
 
 function SignUpPage() {
-  const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
+  const [cardAnimaton, setCardAnimation] = React.useState('cardHidden');
   setTimeout(function() {
-    setCardAnimation("");
+    setCardAnimation('');
   }, 700);
 
   const classes = useStyles();
@@ -155,111 +155,120 @@ function SignUpPage() {
   return (
     <Layout noLogin>
       <SEO title="Create Account" />
-        <div
-          className={classes.pageHeader}
-          style={{
-            backgroundImage: "url(" + image + ")",
-            backgroundSize: "cover",
-            backgroundPosition: "top center"
-          }}
-        >
-          <div className={classes.container}>
-            <GridContainer justify="center">
-              <GridItem xs={12} sm={12} md={5}>
-                <Card className={classes[cardAnimaton]}>
-                  <CardHeader color="warning" className={classes.cardHeader}>
-                    <h1>Create Account</h1>
-                  </CardHeader>                    
-                  <CardBody>
-                    <Field>
-                      <Input
-                        label="Fullname"
-                        placeholder="Your full name"
-                        value={fullname}
-                        hasError={!!error.fullname}
-                        message={error.fullname}
-                        onChange={event => setFullname(event.target.value)}
-                        onBlur={event => setFullname(event.target.value)}
-                        onKeyDown={event => {
-                          if (event.keyCode === ENTER) {
-                            handleOnSubmit();
-                          }
-                        }}
-                      />
-                    </Field>
-                    <Field>
-                      <Input
-                        label="Email"
-                        placeholder="Your email address"
-                        value={email}
-                        hasError={!!error.email}
-                        message={error.email}
-                        onChange={event => setEmail(event.target.value)}
-                        onBlur={event => setEmail(event.target.value)}
-                        onKeyDown={event => {
-                          if (event.keyCode === ENTER) {
-                            handleOnSubmit();
-                          }
-                        }}
-                      />
-                    </Field>
-                    <Field>
-                      <Input
-                        type="password"
-                        label="Password"
-                        placeholder="**********"
-                        value={password}
-                        hasError={!!error.password}
-                        message={error.password}
-                        onChange={event => setPassword(event.target.value)}
-                        onBlur={event => setPassword(event.target.value)}
-                        onKeyDown={event => {
-                          if (event.keyCode === ENTER) {
-                            handleOnSubmit();
-                          }
-                        }}
-                      />
-                    </Field>
-                    <Field>
-                      <Input
-                        type="password"
-                        label="Confirm password"
-                        placeholder="**********"
-                        value={confirmPassword}
-                        hasError={!!error.confirmPassword}
-                        message={error.confirmPassword}
-                        onChange={event => setConfirmPassword(event.target.value)}
-                        onBlur={event => setConfirmPassword(event.target.value)}
-                        onKeyDown={event => {
-                          if (event.keyCode === ENTER) {
-                            handleOnSubmit();
-                          }
-                        }}
-                      />
-                    </Field>
-                    <Field>
-                      <Checkbox
-                        label="I agree to the terms"
-                        onChange={event => setAgreeTerm(event.target.checked)}
-                        checked={agreeTerm}
-                      />
-                      <AgreeError>{error.agreeTerm}</AgreeError>
-                    </Field>
-                    <Actions>
-                      <Button color="rose" loading={loading} disabled={loading} onClick={handleOnSubmit}>Create</Button>
-                      <Button href="/login" color="transparent">Have an account ?</Button>
-                    </Actions>
-                  </CardBody>
-                  <CardFooter className={classes.cardFooter}>
-                    <TermLink to="/">Localguide Pal Term and Service</TermLink>  
-                  </CardFooter>
-                </Card>
-              </GridItem>
-            </GridContainer>
-          </div>
-          <Footer whiteFont />
+      <div
+        className={classes.pageHeader}
+        style={{
+          backgroundImage: `url(${image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'top center',
+        }}
+      >
+        <div className={classes.container}>
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={12} md={5}>
+              <Card className={classes[cardAnimaton]}>
+                <CardHeader color="warning" className={classes.cardHeader}>
+                  <h1>Create Account</h1>
+                </CardHeader>
+                <CardBody>
+                  <Field>
+                    <Input
+                      label="Fullname"
+                      placeholder="Your full name"
+                      value={fullname}
+                      hasError={!!error.fullname}
+                      message={error.fullname}
+                      onChange={event => setFullname(event.target.value)}
+                      onBlur={event => setFullname(event.target.value)}
+                      onKeyDown={event => {
+                        if (event.keyCode === ENTER) {
+                          handleOnSubmit();
+                        }
+                      }}
+                    />
+                  </Field>
+                  <Field>
+                    <Input
+                      label="Email"
+                      placeholder="Your email address"
+                      value={email}
+                      hasError={!!error.email}
+                      message={error.email}
+                      onChange={event => setEmail(event.target.value)}
+                      onBlur={event => setEmail(event.target.value)}
+                      onKeyDown={event => {
+                        if (event.keyCode === ENTER) {
+                          handleOnSubmit();
+                        }
+                      }}
+                    />
+                  </Field>
+                  <Field>
+                    <Input
+                      type="password"
+                      label="Password"
+                      placeholder="**********"
+                      value={password}
+                      hasError={!!error.password}
+                      message={error.password}
+                      onChange={event => setPassword(event.target.value)}
+                      onBlur={event => setPassword(event.target.value)}
+                      onKeyDown={event => {
+                        if (event.keyCode === ENTER) {
+                          handleOnSubmit();
+                        }
+                      }}
+                    />
+                  </Field>
+                  <Field>
+                    <Input
+                      type="password"
+                      label="Confirm password"
+                      placeholder="**********"
+                      value={confirmPassword}
+                      hasError={!!error.confirmPassword}
+                      message={error.confirmPassword}
+                      onChange={event => setConfirmPassword(event.target.value)}
+                      onBlur={event => setConfirmPassword(event.target.value)}
+                      onKeyDown={event => {
+                        if (event.keyCode === ENTER) {
+                          handleOnSubmit();
+                        }
+                      }}
+                    />
+                  </Field>
+                  <Field>
+                    <Checkbox
+                      label="I agree to the terms"
+                      onChange={event => setAgreeTerm(event.target.checked)}
+                      checked={agreeTerm}
+                    />
+                    <AgreeError>{error.agreeTerm}</AgreeError>
+                  </Field>
+                  <Actions>
+                    <Button
+                      color="rose"
+                      loading={loading}
+                      disabled={loading}
+                      onClick={handleOnSubmit}
+                    >
+                      Create
+                    </Button>
+                    <Button href="/login" color="transparent">
+                      Have an account ?
+                    </Button>
+                  </Actions>
+                </CardBody>
+                <CardFooter className={classes.cardFooter}>
+                  <TermLink to="/">Localguide Pal Term and Service</TermLink>
+                </CardFooter>
+              </Card>
+            </GridItem>
+          </GridContainer>
         </div>
-    </Layout >
+        <Footer whiteFont />
+      </div>
+    </Layout>
   );
 }
 
