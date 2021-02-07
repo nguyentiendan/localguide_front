@@ -19,9 +19,10 @@ import {
 // core components
 import _ from 'lodash';
 import qs from 'query-string';
-import ImageGallery from 'react-image-gallery';
+// import ImageGallery from 'react-image-gallery';
 import { navigate, Link } from 'gatsby';
 import { Avatar, Tag, Card, Tooltip, Statistic } from 'antd';
+import { UserOutlined, CrownOutlined } from '@ant-design/icons';
 import Layout from '../components/CustomLayout';
 import SEO from '../components/SEO';
 import Footer from '../components/Footer/Footer.js';
@@ -32,11 +33,9 @@ import Parallax from '../components/Parallax/Parallax.js';
 import InterestsOrExtras from '../components/InterestsOrExtras';
 import { getCndResourceUrl } from '../utils/commons';
 import * as API from '../apis';
-import 'react-image-gallery/styles/css/image-gallery.css';
+// import 'react-image-gallery/styles/css/image-gallery.css';
 
 import styles from '../assets/styles/profilePage.js';
-
-import { UserOutlined, CrownOutlined } from '@ant-design/icons';
 
 const Title = styled.h3`
   margin-bottom: 0.5rem;

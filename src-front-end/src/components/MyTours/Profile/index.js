@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import styled from 'styled-components';
 import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css';
 import * as API from '../../../apis';
 import TagInterests from '../../HandleTag/Interests';
 import UploadAvatar from '../../Input/UploadAvatar';
@@ -75,7 +76,7 @@ const GuideProfile = ({ uid }) => {
   const [language, setLanguage] = useState({
     tags: [],
   });
-  const fetchAdminProfile = useCallback(async () => {
+  const fetchGuideProfile = useCallback(async () => {
     setIsloading(true);
     const res = await API.getGuideProfile(uid);
     const resCountry = await API.getAllCountry();
@@ -90,9 +91,10 @@ const GuideProfile = ({ uid }) => {
     setProfile(res.guide);
     setIsloading(false);
   }, [API.getAdminProfile, API.getAllCountry, setIsloading, setProfile, setRootCountry]);
+
   useEffect(() => {
-    fetchAdminProfile();
-  }, [fetchAdminProfile]);
+    fetchGuideProfile();
+  }, [fetchGuideProfile]);
 
   useEffect(() => {
     (async () => {
@@ -115,6 +117,7 @@ const GuideProfile = ({ uid }) => {
       }
     })();
   }, [API.getAllInterest, API.getAllExtra, API.getAllLang, setDefaultTags]);
+
   useEffect(() => {
     const fetchPhotos = async () => {
       setIsloading(true);
@@ -154,6 +157,7 @@ const GuideProfile = ({ uid }) => {
   };
 
   const onFinish = async values => {
+    console.log(values);
     setIsloading(true);
     await API.editProfile({
       ...values,
@@ -356,6 +360,21 @@ const GuideProfile = ({ uid }) => {
         </Form.Item>
 
         <Form.Item
+          name="intro"
+          label="Introduction"
+          rules={[
+            {
+              max: 255,
+              message: 'Value should be less than 255 character',
+            },
+          ]}
+          key={profile.intro}
+          initialValue={profile.intro}
+        >
+          <Input.TextArea />
+        </Form.Item>
+
+        <Form.Item
           name="experience"
           label="Experience"
           key={profile.experience}
@@ -366,8 +385,8 @@ const GuideProfile = ({ uid }) => {
               ref={editorRef}
               setContents={profile.experience}
               lang="en"
-              width="100%"
-              height="200"
+              width="500"
+              height="300"
               placeholder="Please type content here..."
               showToolbar
               enableToolbar

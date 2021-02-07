@@ -407,7 +407,7 @@ function User({ location }) {
             </div>
           )}
         </InfoIntroduction>
-        {/* <ListWrapper>
+        <ListWrapper>
           <GalleryWrapper ref={galleryWrapperComp}>
             {photos?.length > 0 && (
               <>
@@ -426,7 +426,7 @@ function User({ location }) {
             )}
           </GalleryWrapper>
         </ListWrapper>
-        {profile.tours.length > 0 && <SectionHeader title="Related Tour" subTitle="View all" />}
+        {/* {profile.tours.length > 0 && <SectionHeader title="Related Tour" subTitle="View all" />}
         <ListWrapper>
           <ListContainer>
             {_.map(profile.tours, (tour, index) => (

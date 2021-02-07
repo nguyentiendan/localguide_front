@@ -9,7 +9,7 @@ import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
 // core components
 import _ from 'lodash';
 import qs from 'query-string';
-import ImageGallery from 'react-image-gallery';
+// import ImageGallery from 'react-image-gallery';
 import { Avatar, Spin, Tag, Tooltip, Statistic } from 'antd';
 import { UserOutlined, CrownOutlined } from '@ant-design/icons';
 import Layout from '../components/CustomLayout';
@@ -22,7 +22,7 @@ import InterestsOrExtras from '../components/InterestsOrExtras';
 import RatingStars from '../components/RatingStars';
 import { getCndResourceUrl } from '../utils/commons';
 import * as API from '../apis';
-import 'react-image-gallery/styles/css/image-gallery.css';
+// import 'react-image-gallery/styles/css/image-gallery.css';
 
 import styles from '../assets/styles/profilePage.js';
 

@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import _ from 'lodash';
-
-import { getCndResourceUrl } from '../../../utils/commons';
 import * as API from '../../../apis';
 
 const Wrapper = styled.div`
@@ -85,7 +83,7 @@ const ImgEditor = ({
   const handleDeletePhoto = () => {
     if (type !== 'Cover') {
       // eslint-disable-next-line react/prop-types
-      myRef.current.fileList.splice(index, 1);
+      // myRef.current.fileList.splice(index, 1);
     }
     deletePhoto(name);
   };
@@ -150,6 +148,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
   });
   const removeImage = useRef(null);
   const [image, setImage] = useState([]);
+
   const updateCaption = useCallback(
     async (caption, name) => {
       const nameImage = name.split('/')[3];
@@ -163,6 +162,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
     },
     [uid]
   );
+
   const updateCaptionAntd = useCallback(
     async (caption, name) => {
       const nameImage = name.split('/')[7];
@@ -176,12 +176,15 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
     },
     [uid]
   );
+
   const deletePhoto = async name => {
     setIsloading(true);
     try {
-      const nameImage = name.split('/')[3];
+      const nameImage = name.split('/')[7];
       await API.deletePhotoGuide({ name: nameImage, uid });
       const removedPhotos = [...photos];
+      console.log(photo.name);
+      console.log(name);
       _.remove(removedPhotos, photo => photo.name === name);
       setPhotos(removedPhotos);
     } catch (e) {
@@ -189,6 +192,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
     }
     setIsloading(false);
   };
+
   const deletePhotoAntd = async name => {
     setIsloading(true);
     try {
@@ -233,17 +237,18 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
     <Wrapper>
       <Col span={24}>
         <Row gutter={16}>
-          {_.map(photos, (photo, index) => {
+          {_.map(photos, (p, index) => {
             return (
-              <Col key={photo.name} span={6}>
+              <Col key={p.photo} span={6}>
                 <ImgEditor
-                  src={
-                    photo.name.split('/')[0] === 'static'
-                      ? getCndResourceUrl(photo.name)
-                      : photo.name
-                  }
-                  name={photo.name}
-                  caption={photo.caption}
+                  src={p.photo}
+                  // src={
+                  //  photo.photo.split('/')[0] === 'static'
+                  //    ? getCndResourceUrl(photo.name)
+                  //    : photo.name
+                  // }
+                  name={p.photo}
+                  caption={p.subcaption}
                   updateCaption={updateCaption}
                   deletePhoto={deletePhoto}
                   zoomImage={zoomImage}
@@ -254,17 +259,18 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
               </Col>
             );
           })}
-          {_.map(image, (photo, index) => {
+          {_.map(image, (p, index) => {
             return (
-              <Col key={photo.name} span={6}>
+              <Col key={p.photo} span={6}>
                 <ImgEditor
-                  src={
-                    photo.name.split('/')[0] === 'static'
-                      ? getCndResourceUrl(photo.name)
-                      : photo.name
-                  }
-                  name={photo.name}
-                  caption={photo.caption}
+                  src={p.photo}
+                  // src={
+                  //  photo.name.split('/')[0] === 'static'
+                  //    ? getCndResourceUrl(photo.name)
+                  //    : photo.name
+                  // }
+                  name={p.photo}
+                  caption={p.subcaption}
                   updateCaption={updateCaptionAntd}
                   deletePhoto={deletePhotoAntd}
                   zoomImage={zoomImage}
@@ -276,9 +282,10 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
             );
           })}
         </Row>
-        <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
+
+        {/* <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
           {photos.length >= 100 ? null : uploadButton('Upload photo')}
-        </Upload>
+        </Upload> */}
       </Col>
       <Modal
         visible={zoomImage.previewVisible}

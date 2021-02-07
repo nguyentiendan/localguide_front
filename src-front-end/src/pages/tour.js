@@ -1,21 +1,26 @@
 /* eslint-disable react/no-danger */
-import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { graphql } from 'gatsby';
+import React, { useState, useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
-import Gallery from 'react-grid-gallery';
 import { AiOutlineSchedule } from 'react-icons/ai';
-import {FaSuitcase, FaMoneyBill, FaUsers, FaStar, FaMoneyCheckAlt,FaRegCalendarAlt,FaShare, FaTwitter, FaBookmark} from 'react-icons/fa';
+import {
+  FaSuitcase,
+  FaMoneyCheckAlt,
+  FaRegCalendarAlt,
+  FaShare,
+  FaTwitter,
+  FaBookmark,
+} from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
 import { Avatar, Spin } from 'antd';
 import _ from 'lodash';
 import qs from 'query-string';
 
+import { FormatQuote } from '@material-ui/icons';
+import ReactBnbGallery from 'react-bnb-gallery';
 import * as API from '../apis';
 import Layout from '../components/CustomLayout';
-import Parallax from '../components/Parallax/Parallax.js';
 import SEO from '../components/SEO';
 import Footer from '../components/Footer/Footer.js';
 import GridContainer from '../components/Grid/GridContainer.js';
@@ -32,13 +37,10 @@ import NavItem from '../components/Layout/NavItem';
 import Button from '../components/CustomButtons/Button';
 import { bigScreenCss, smallScreenCss } from '../assets/styles/responsive-css';
 import TourGuideListItem from '../components/TourGuideListItem';
-import { getCndResourceUrl, safeFuncCall } from '../utils/commons';
-
-import 'react-image-gallery/styles/css/image-gallery.css';
-import ImageGallery from 'react-image-gallery';
-import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
-
+import { safeFuncCall } from '../utils/commons';
+import defaultImage from '../assets/img/noimage-600x400.jpg';
 import styles from '../assets/styles/tourPage.js';
+import 'react-bnb-gallery/dist/style.css';
 
 const Title = styled.h1`
   font-weight: bold;
@@ -73,11 +75,11 @@ const SectionTitle = styled.h3`
 
 const TitleWrapper = styled.div`
   flex: 1;
-  width: 100%;
+  width: 98%;
   //height: 64px;
   display: flex;
   justify-content: space-between;
-  align-items: center
+  align-items: center;
 `;
 
 const SocialWrapper = styled.div`
@@ -119,6 +121,135 @@ const ListWrapper = styled.div`
 
   .comment:last-child .delimiter {
     display: none;
+  }
+`;
+
+const PhotoWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+
+  ${bigScreenCss(`
+    flex-direction: row;
+  `)}
+`;
+
+const ImgMainWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  .imgstyle {
+    width: 98%;
+    height: 100%;
+    //padding-right:8px;
+    box-shadow: lavender;
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+    border-radius: 5px 5px 5px 5px;
+    margin-bottom: 6px;
+  }
+  .buttonOnImage {
+    font-weight: 400;
+    color: white;
+    margin: 0;
+    position: absolute;
+    top: 88%;
+    left: 78%;
+    font-size: 11px;
+    transform: translate(-50%, -50%);
+  }
+
+  @media (min-width: 768px) {
+    width: 50%;
+    height: 400px;
+    .imgstyle {
+      width: 98%;
+      height: 100%;
+      //padding-right:8px;
+      box-shadow: lavender;
+      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+      border-radius: 5px 5px 5px 5px;
+      margin-bottom: 6px;
+    }
+  }
+  @media (min-width: 992px) {
+    width: 50%;
+    height: 400px;
+    .imgstyle {
+      width: 98%;
+      height: 100%;
+      //padding-right:8px;
+      box-shadow: lavender;
+      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+      border-radius: 5px 5px 5px 5px;
+      margin-bottom: 6px;
+    }
+  }
+`;
+const ImgSecondWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: 400px;
+  flex: 1;
+`;
+
+const RowWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  height: 200px;
+  margin-bottom: 0px;
+`;
+
+const ImgWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  //flex-basis: 100%;
+  flex: 1;
+  .imgstyle {
+    width: 96%;
+    height: 96%;
+    margin-bottom: 0px;
+    box-shadow: lavender;
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+    border-radius: 5px 5px 5px 5px;
+    cursor: pointer;
+  }
+  .buttonOnImage {
+    font-weight: 500;
+    color: white;
+    margin: 0;
+    position: absolute;
+    top: 92%;
+    left: 87%;
+    font-size: 12px;
+    transform: translate(-50%, -50%);
+  }
+
+  @media (min-width: 768px) {
+    .imgstyle {
+      width: 96%;
+      height: 96%;
+      margin-bottom: 0px;
+      box-shadow: lavender;
+      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+      border-radius: 5px 5px 5px 5px;
+    }
+  }
+  @media (min-width: 992px) {
+    .imgstyle {
+      width: 96%;
+      height: 96%;
+      margin-bottom: 0px;
+      box-shadow: lavender;
+      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+      border-radius: 5px 5px 5px 5px;
+    }
   }
 `;
 
@@ -235,12 +366,7 @@ function TourDetail({ location }) {
   const dataQueryParams = qs.parse(location.search);
   const { uid } = dataQueryParams;
   const { id } = dataQueryParams;
-
-  {
-    /* const { tour, reviews = { comments: [] } } = data || {}; */
-  }
-  const [images, setImages] = useState([]);
-  // const [tourDetails, setTourDetails] = useState({});
+  const [tourPhotos, setTourPhotos] = useState([]);
   const [tourDetails, setTourDetails] = useState({
     tour: [],
     reviews: { totalReview: 0, listReviews: [] },
@@ -248,6 +374,7 @@ function TourDetail({ location }) {
 
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const tourQuery = useMemo(() => {
     const query = {};
@@ -257,29 +384,27 @@ function TourDetail({ location }) {
   }, [uid, id]);
 
   useEffect(() => {
-    let shouldCancel = false;
-
-    const fetchImage = async () => {
-      const response = await API.getTourPhotos(tourQuery);
-
-      if (!shouldCancel && response.data && response.data.length > 0) {
-        setImages(
-          response.data.map(photo => ({
-            original: getCndResourceUrl(photo.name),
-            description: photo.caption,
-            thumbnail: getCndResourceUrl(photo.name),
-          }))
-        );
+    setLoading(true);
+    const fetchData = async () => {
+      const res = await API.getTourPhotos(tourQuery);
+      if (res.status === false) {
+        const data = [{ photo: defaultImage, subcaption: 'no image' }];
+        setTourPhotos(data);
+      } else {
+        setTourPhotos(res.data);
       }
+      setLoading(false);
     };
-    fetchImage();
-    return () => (shouldCancel = true);
-  }, []);
+    fetchData();
+    const interval = setInterval(() => fetchData(), 200000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [tourQuery]);
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await API.getTourDetail(tourQuery);
-      console.log(res);
       setTourDetails({
         tour: res.tour,
         reviews: {
@@ -342,9 +467,11 @@ function TourDetail({ location }) {
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
-                  <SmallScreen>                    
+                  <SmallScreen>
                     <TitleWrapper>
-                      <Title style={{ textAlign: 'left', fontSize: '20px'  }}>{tourDetails.tour[0]?.name}</Title>
+                      <Title style={{ textAlign: 'left', fontSize: '20px' }}>
+                        {tourDetails.tour[0]?.name}
+                      </Title>
                       <SocialWrapper>
                         <NavItem
                           className="nav-item"
@@ -352,21 +479,21 @@ function TourDetail({ location }) {
                           icon={<FaBookmark style={{ color: '#f12f60' }} />}
                           isActive
                         />
-                        <Space/>
+                        <Space />
                         <NavItem
                           className="nav-item"
                           title=""
                           icon={<FaTwitter style={{ color: '#f12f60' }} />}
                           isActive
                         />
-                        <Space/>
+                        <Space />
                         <NavItem
                           className="nav-item"
                           title=""
                           icon={<FaShare style={{ color: '#f12f60' }} />}
                           isActive
                         />
-                      </SocialWrapper>                     
+                      </SocialWrapper>
                     </TitleWrapper>
                     <SubTitle style={{ textAlign: 'left' }}>
                       <span style={{ fontSize: '25px' }}>4.5</span>
@@ -377,7 +504,7 @@ function TourDetail({ location }) {
                     <div style={{ textAlign: 'left', fontSize: '11px' }}>1,305 votes</div>
                   </SmallScreen>
 
-                  <BigScreen>                    
+                  <BigScreen>
                     <TitleWrapper>
                       <Title style={{ textAlign: 'left' }}>{tourDetails.tour[0]?.name}</Title>
                       <SocialWrapper>
@@ -387,14 +514,14 @@ function TourDetail({ location }) {
                           icon={<FaBookmark style={{ color: '#f12f60' }} />}
                           isActive
                         />
-                        <Space/>
+                        <Space />
                         <NavItem
                           className="nav-item"
                           title=""
                           icon={<FaTwitter style={{ color: '#f12f60' }} />}
                           isActive
                         />
-                        <Space/>
+                        <Space />
                         <NavItem
                           className="nav-item"
                           title=""
@@ -403,7 +530,7 @@ function TourDetail({ location }) {
                         />
                       </SocialWrapper>
                     </TitleWrapper>
-                    
+
                     <SubTitle style={{ textAlign: 'left' }}>
                       <span style={{ fontSize: '25px' }}>4.5</span>
                       <Gap />
@@ -415,24 +542,107 @@ function TourDetail({ location }) {
               </GridItem>
             </GridContainer>
 
-            {images?.length > 0 && (
+            {tourPhotos.length > 0 && (
               <GridContainer justify="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
-                    <ImageGallery
-                      items={images}
-                      lazyLoad
-                      autoPlay
-                      infinite
-                      showFullscreenButton={false}
-                      showPlayButton={false}
-                      showThumbnails={false}
-                      slideDuration={250}
-                    />
+                    <SmallScreen>
+                      <ImgMainWrapper>
+                        <img
+                          src={tourPhotos[0]?.photo || defaultImage}
+                          className="imgstyle"
+                          onClick={() => setIsOpen(true)}
+                        />
+                        {tourPhotos.length > 1 && (
+                          <Button
+                            className="buttonOnImage"
+                            color="rose"
+                            size="sm"
+                            onClick={() => setIsOpen(true)}
+                          >
+                            1 / {tourPhotos.length} photos
+                          </Button>
+                        )}
+                      </ImgMainWrapper>
+                    </SmallScreen>
+                    <BigScreen>
+                      <PhotoWrapper>
+                        <ImgMainWrapper>
+                          <img
+                            src={
+                              tourPhotos[Math.floor(Math.random() * tourPhotos.length)]?.photo ||
+                              defaultImage
+                            }
+                            className="imgstyle"
+                            onClick={() => setIsOpen(true)}
+                          />
+                        </ImgMainWrapper>
+                        <ImgSecondWrapper>
+                          <RowWrapper>
+                            <ImgWrapper>
+                              <img
+                                src={
+                                  tourPhotos[Math.floor(Math.random() * tourPhotos.length)]
+                                    ?.photo || defaultImage
+                                }
+                                className="imgstyle"
+                                onClick={() => setIsOpen(true)}
+                              />
+                            </ImgWrapper>
+                            <ImgWrapper>
+                              <img
+                                src={
+                                  tourPhotos[Math.floor(Math.random() * tourPhotos.length)]
+                                    ?.photo || defaultImage
+                                }
+                                className="imgstyle"
+                                onClick={() => setIsOpen(true)}
+                              />
+                            </ImgWrapper>
+                          </RowWrapper>
+                          <RowWrapper>
+                            <ImgWrapper>
+                              <img
+                                src={
+                                  tourPhotos[Math.floor(Math.random() * tourPhotos.length)]
+                                    ?.photo || defaultImage
+                                }
+                                className="imgstyle"
+                                onClick={() => setIsOpen(true)}
+                              />
+                            </ImgWrapper>
+                            <ImgWrapper>
+                              <img
+                                src={
+                                  tourPhotos[Math.floor(Math.random() * tourPhotos.length)]
+                                    ?.photo || defaultImage
+                                }
+                                className="imgstyle"
+                                onClick={() => setIsOpen(true)}
+                              />
+                              {tourPhotos.length > 5 && (
+                                <Button
+                                  className="buttonOnImage"
+                                  color="rose"
+                                  size="sm"
+                                  onClick={() => setIsOpen(true)}
+                                >
+                                  +{tourPhotos.length - 5} Photos
+                                </Button>
+                              )}
+                            </ImgWrapper>
+                          </RowWrapper>
+                        </ImgSecondWrapper>
+                      </PhotoWrapper>
+                    </BigScreen>
                   </div>
                 </GridItem>
               </GridContainer>
             )}
+            <div>
+              <ReactBnbGallery show={isOpen} photos={tourPhotos} onClose={() => setIsOpen(false)} />
+            </div>
+
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description} style={{ paddingTop: '0px' }}>
@@ -461,11 +671,11 @@ function TourDetail({ location }) {
                       </TagWrapper>
                     </LocationWrapper>
                     <TourGuideWrapper>
-                      <span style={{ paddingBottom: '5px' }}>Tour post by</span>
+                      {/* <span style={{ paddingBottom: '5px' }}>Tour post by</span> */}
                       <TourGuideListItem
                         // level={tourDetails?.level}
                         avatar={tourDetails.tour[0]?.avatar}
-                        name={tourDetails.tour[0]?.fullName}
+                        // name={tourDetails.tour[0]?.fullName}
                       />
                     </TourGuideWrapper>
                   </HeaderWrapper>
@@ -522,9 +732,6 @@ function TourDetail({ location }) {
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <h2 style={{ textAlign: 'left' }}>Tour description</h2>
-                  {/* <TourDescription>
-                    <div dangerouslySetInnerHTML={{ __html: tourDetails.content }} />                   
-                  </TourDescription> */}
                   <div
                     style={{ textAlign: 'left' }}
                     dangerouslySetInnerHTML={{ __html: tourDetails.tour[0]?.content }}
@@ -626,47 +833,32 @@ function TourDetail({ location }) {
               </GridItem>
             </GridContainer>
 
-            <GridContainer justify="center">
-              <GridItem xs={12} sm={12} md={12}>
-                <div className={classes.description}>
-                  {tourDetails.tourIncluding && (
-                    <>
-                      <SectionTitle>
-                        <TourIcon />
-                        <Gap />
-                        Tour including:
-                      </SectionTitle>
-                      <ul>
-                        {_.map(tourDetails.tourIncluding, i => (
-                          <TourIncludingListItem key={i}>{i}</TourIncludingListItem>
-                        ))}
-                      </ul>
-                    </>
-                  )}
-                  <br />
-                  <br />
-
-                  <SectionHeader
-                    title={
-                      // eslint-disable-next-line react/jsx-wrap-multilines
-                      <>{`Reviews (${tourDetails.reviews?.totalReview})`}</>
-                    }
-                  />
-                  <ListWrapper style={{ textAlign: 'left' }}>
-                    {_.map(tourDetails.reviews?.listReviews, (comment, index) => (
-                      <CommentListItem
-                        key={index}
-                        content={comment.content}
-                        user={comment.fullname}
-                        date={comment.createdAt}
-                        avatar={comment.avatar}
-                        className="comment"
-                      />
-                    ))}
-                  </ListWrapper>
-                </div>
-              </GridItem>
-            </GridContainer>
+            {tourDetails.reviews?.totalReview > 0 && (
+              <GridContainer justify="center">
+                <GridItem xs={12} sm={12} md={12}>
+                  <div className={classes.description}>
+                    <SectionHeader
+                      title={
+                        // eslint-disable-next-line react/jsx-wrap-multilines
+                        <>{`Reviews (${tourDetails.reviews?.totalReview})`}</>
+                      }
+                    />
+                    <ListWrapper style={{ textAlign: 'left' }}>
+                      {_.map(tourDetails.reviews?.listReviews, (comment, index) => (
+                        <CommentListItem
+                          key={index}
+                          content={comment.content}
+                          user={comment.fullname}
+                          date={comment.createdAt}
+                          avatar={comment.avatar}
+                          className="comment"
+                        />
+                      ))}
+                    </ListWrapper>
+                  </div>
+                </GridItem>
+              </GridContainer>
+            )}
           </Spin>
         </div>
       </div>

@@ -71,20 +71,20 @@ function Tours() {
           <Row gutter={32}>
             {allTours.tours.map(tour => {
               return (
-                <Col span={8} key={tour.ID} style={{ marginBottom: 20 }}>
+                <Col span={8} key={tour.id} style={{ marginBottom: 20 }}>
                   <TourCard
-                    id={tour.ID}
+                    id={tour.id}
                     uid={user.uid}
-                    title={tour.Name}
-                    day={tour.Day}
-                    avatarImg={tour.AvatarImg}
-                    coverImg={tour.Cover}
-                    status={tour.Status}
-                    shortDesc={tour.ShortDesc}
-                    city={tour.City}
-                    price={tour.Total}
-                    country={tour.Country}
-                    totalReview={tour.Num}
+                    title={tour.name}
+                    day={tour.day}
+                    // avatarImg={tour.AvatarImg}
+                    coverImg={tour.cover}
+                    status={tour.status}
+                    shortDesc={tour.shortDesc}
+                    city={tour.city}
+                    price={tour.total}
+                    country={tour.country}
+                    totalReview={tour.num}
                     handleDeleteTour={handleDeleteTour}
                   />
                 </Col>

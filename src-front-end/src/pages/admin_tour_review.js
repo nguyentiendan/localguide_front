@@ -7,12 +7,21 @@ import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
 import Gallery from 'react-grid-gallery';
 import { AiOutlineSchedule } from 'react-icons/ai';
-import {FaSuitcase,FaMoneyBill,FaUsers,FaStar,FaMoneyCheckAlt,FaRegCalendarAlt,FaTextHeight,} from 'react-icons/fa';
+import {
+  FaSuitcase,
+  FaMoneyBill,
+  FaUsers,
+  FaStar,
+  FaMoneyCheckAlt,
+  FaRegCalendarAlt,
+  FaTextHeight,
+} from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
-import { Avatar, Spin,notification, Popconfirm } from 'antd';
+import { Avatar, Spin, notification, Popconfirm } from 'antd';
 import _ from 'lodash';
 import qs from 'query-string';
 
+import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
 import * as API from '../apis';
 import Layout from '../components/CustomLayout';
 import Parallax from '../components/Parallax/Parallax.js';
@@ -36,16 +45,15 @@ import { getCndResourceUrl, safeFuncCall } from '../utils/commons';
 import { getUserProfile } from '../utils/auth';
 import ModalFeedback from '../components/Feedback/ModalFeedback';
 
-import 'react-image-gallery/styles/css/image-gallery.css';
-import ImageGallery from 'react-image-gallery';
-import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
+// import 'react-image-gallery/styles/css/image-gallery.css';
+// import ImageGallery from 'react-image-gallery';
 import styles from '../assets/styles/tourPage.js';
 
-//TODO
+// TODO
 // 1)Xem lai getUserProfile, response co nhieu thong tin khong can thiet
 //
 
- const Title = styled.h1`
+const Title = styled.h1`
   font-weight: bold;
   clear: both;
   margin: 0 0 1.125rem 0;
@@ -244,8 +252,8 @@ function AdminTourReview({ location }) {
     return query;
   }, [uid, id]);
   const user = getUserProfile();
-  
-  console.log(user)
+
+  console.log(user);
 
   useEffect(() => {
     let shouldCancel = false;
@@ -366,7 +374,7 @@ function AdminTourReview({ location }) {
                         </Button> */}
                     </div>
                     <div>
-                      <Button color="warning"  onClick={() => setShowModal(true)}>
+                      <Button color="warning" onClick={() => setShowModal(true)}>
                         Tour Feedback
                       </Button>
                     </div>
