@@ -2,7 +2,7 @@ import React, { useCallback, useState, useRef } from 'react';
 import { Modal, Col, Row, Upload, Space, Input } from 'antd';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { EyeOutlined, DeleteOutlined, PlusOutlined, InboxOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 import * as API from '../../../apis';
 
@@ -140,6 +140,7 @@ ImgEditor.defaultProps = {
   myRef: {},
   index: 0,
 };
+const { Dragger } = Upload;
 
 const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
   const [zoomImage, setZoomImage] = useState({
@@ -151,7 +152,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
 
   const updateCaption = useCallback(
     async (caption, name) => {
-      const nameImage = name.split('/')[3];
+      const nameImage = name.split('/')[7];
       setIsloading(true);
       try {
         await API.updateCaptionGuide({ caption, name: nameImage, uid });
@@ -183,9 +184,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
       const nameImage = name.split('/')[7];
       await API.deletePhotoGuide({ name: nameImage, uid });
       const removedPhotos = [...photos];
-      console.log(photo.name);
-      console.log(name);
-      _.remove(removedPhotos, photo => photo.name === name);
+      _.remove(removedPhotos, photo => photo.photo === name);
       setPhotos(removedPhotos);
     } catch (e) {
       // ignored
@@ -194,10 +193,12 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
   };
 
   const deletePhotoAntd = async name => {
+    console.log('DeletePhotoAntd');
     setIsloading(true);
     try {
       const nameImage = name.split('/')[7];
       await API.deletePhotoGuide({ name: nameImage, uid });
+      console.log(name);
       const removedPhotos = [...image];
       _.remove(removedPhotos, photo => photo.name === name);
       setImage(removedPhotos);
@@ -239,7 +240,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
         <Row gutter={16}>
           {_.map(photos, (p, index) => {
             return (
-              <Col key={p.photo} span={6}>
+              <Col key={index} span={6}>
                 <ImgEditor
                   src={p.photo}
                   // src={
@@ -261,7 +262,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
           })}
           {_.map(image, (p, index) => {
             return (
-              <Col key={p.photo} span={6}>
+              <Col key={index} span={6}>
                 <ImgEditor
                   src={p.photo}
                   // src={
@@ -282,10 +283,16 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
             );
           })}
         </Row>
-
+        <Dragger listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">Click or drag file to this area to upload</p>
+          <p className="ant-upload-hint">Support for a single or bulk upload.</p>
+        </Dragger>
         {/* <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
           {photos.length >= 100 ? null : uploadButton('Upload photo')}
-        </Upload> */}
+      </Upload> */}
       </Col>
       <Modal
         visible={zoomImage.previewVisible}

@@ -192,7 +192,7 @@ function LoginPage() {
                     <Button color="rose" loading={loading} disabled={loading} onClick={handleLogin}>
                       Login
                     </Button>
-                    <Button href="/signup" color="transparent">
+                    <Button href="/signup/" color="transparent">
                       Create Account
                     </Button>
                   </Actions>

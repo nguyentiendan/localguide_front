@@ -97,7 +97,7 @@ const TourCard = ({
       <CardWrapper
         hoverable
         style={{ width: '100%', cursor: 'pointer', minWidth: 300, minHeight: 400, borderRadius: 10 }}
-        cover={<WrapperImageCard><Image src={coverImg || backpackers} onClick={() => navigate(`/edit-tour?q=${id}`)} /><span className='styled-box-price'>{price}</span></WrapperImageCard>}
+        cover={<WrapperImageCard><Image src={coverImg || backpackers} onClick={() => navigate(`/app/edit_tour?q=${id}`)} /><span className='styled-box-price'>{price}</span></WrapperImageCard>}
         actions={
           status
             ? [
@@ -116,7 +116,7 @@ const TourCard = ({
             ]
         }
       >
-        <Link to={`/edit-tour?q=${id}`}>
+        <Link to={`/app/edit_tour?q=${id}`}>
           <Card.Meta
             title={<b>{title}</b>}
             description={

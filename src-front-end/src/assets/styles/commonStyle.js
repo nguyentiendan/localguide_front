@@ -3,6 +3,7 @@ import imagesStyle from './imagesStyles';
 
 const landingPageStyle = {
   container: {
+    padding: '20px 0',
     zIndex: '12',
     color: '#FFFFFF',
     ...container,

@@ -8,7 +8,8 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: flex-start;
   position: relative;
-  width: 400px;
+  //width: 400px;
+  width: 310px;
   overflow: hidden;
 `;
 
@@ -23,8 +24,10 @@ const SubTitle = styled.h5`
 `;
 
 const Picture = styled.img`
-  width: 400px;
-  height: 200px;
+  //width: 400px;
+  //height: 200px;
+  width: 310px;
+  height: 175px;
   border-radius: 6px;
   object-fit: cover;
   object-position: center;
@@ -42,8 +45,8 @@ const BlogListItem = ({ className, name, description, picture }) => (
 BlogListItem.propTypes = {
   className: PropTypes.string,
   name: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  picture: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  picture: PropTypes.string,
 };
 
 BlogListItem.defaultProps = {

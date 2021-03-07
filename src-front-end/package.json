@@ -55,6 +55,7 @@
     "react-helmet": "^5.2.1",
     "react-icons": "^3.7.0",
     "react-markdown": "^4.1.0",
+    "react-number-format": "^4.4.4",
     "react-placeholder": "^3.0.2",
     "react-select": "^3.0.4",
     "react-tabs": "^3.0.0",

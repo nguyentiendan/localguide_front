@@ -15,7 +15,6 @@ import {
   InputNumber,
 } from 'antd';
 import moment from 'moment';
-import { Link } from 'gatsby';
 import _ from 'lodash';
 
 import colors from '../../../assets/styles/colors';
@@ -63,11 +62,9 @@ const columns = [
     key: 'name',
     render: (name, tour) => (
       <div>
-        <Badge count={tour.feedback} offset={[15, 0]}>
-          <Link to={`admin_tour_review?uid=${tour.uid}&id=${tour.id}`}>
-            <TourTitle>{name}</TourTitle>
-          </Link>
-        </Badge>
+        <TourTitle>
+          <a href={`/app/admin_tour_review?uid=${tour.uid}&id=${tour.id}`}>{name}</a>
+        </TourTitle>
       </div>
     ),
   },

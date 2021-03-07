@@ -1,6 +1,19 @@
 import { slugify } from './src/utils/slug';
 import * as API from './src/apis';
 
+exports.onCreatePage = async ({ page, actions }) => {
+  const { createPage } = actions;
+
+  // page.matchPath is a special key that's used for matching pages
+  // only on the client.
+  if (page.path.match(/^\/app/)) {
+    page.matchPath = `/app/*`;
+
+    // Update the page.
+    createPage(page);
+  }
+};
+
 /* async function createTourGuideNodes({ createNode, createNodeId, createContentDigest }) {
   try {
     const { data: allTourGuides } = await API.getAllTourGuides();

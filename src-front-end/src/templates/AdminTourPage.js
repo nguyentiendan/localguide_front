@@ -253,6 +253,7 @@ function AdminTourPage({ data, id, uid }) {
         setLoading(true);
         const { data: details } = await safeFuncCall(() => API.adminReviewTour(tourQuery));
         setTourDetails(_.mapKeys(details[0], (v, k) => _.camelCase(k)));
+
         const { data: photos } = await safeFuncCall(() => API.getTourPhotos(tourQuery));
         setTourPhotos(photos);
 
@@ -354,13 +355,13 @@ function AdminTourPage({ data, id, uid }) {
                   </Popconfirm>
                 )}
                 <Button className="style-button-cancel">
-                  <Link to="/admin" style={{ color: '#ffffff' }}>
+                  <Link to="/app/admin" style={{ color: '#ffffff' }}>
                     Cancel
                   </Link>
                 </Button>
 
                 {/* <Button className="style-button-edit">
-                    <Link to={`/edit-tour?q=${tourDetails?.id}`} style={{ color: '#ffffff' }}>
+                    <Link to={`/app/edit_tour?q=${tourDetails?.id}`} style={{ color: '#ffffff' }}>
                       Edit
                     </Link>
                   </Button> */}

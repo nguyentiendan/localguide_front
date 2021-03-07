@@ -1,8 +1,7 @@
 import React from 'react';
 import { navigate } from 'gatsby';
 import styled from 'styled-components';
-
-import Layout from '../components/Layout';
+import Layout from '../components/CustomLayout';
 import SEO from '../components/SEO';
 
 const Wrapper = styled.div`
@@ -37,18 +36,16 @@ const LinkButton = styled.button`
   cursor: pointer;
 `;
 
-function NotFoundPage() {
+function NotFound() {
   const goHomeButton = <LinkButton onClick={() => navigate('/')}>Home page</LinkButton>;
 
   return (
-    <Layout>
-      <Wrapper>
-        <SEO title="404: Not found" />
-        <Title>Oops! Page not found!</Title>
-        {goHomeButton}
-      </Wrapper>
-    </Layout>
+    <Wrapper>
+      <SEO title="404: Not found" />
+      <Title>Oops! Page not found!</Title>
+      {goHomeButton}
+    </Wrapper>
   );
 }
 
-export default NotFoundPage;
+export default NotFound;

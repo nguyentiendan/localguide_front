@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Layout from '../components/Layout';
-import SEO from '../components/SEO';
-import CreateTourWizard from '../components/CreateTourWizard';
+import Layout from './Layout';
+import SEO from './SEO';
+import CreateTourWizard from './CreateTourWizard';
 
 const Wrapper = styled.div``;
 

@@ -34,7 +34,7 @@ const Picture = styled.img`
   margin-bottom: 0.75rem;
 `;
 
-const DestinationListItem = ({ className, name, location, picture, id, uid }) => (
+const TourRelatedListItem = ({ className, name, location, picture, id, uid }) => (
   <Wrapper className={className}>
     <Link to={`/tour?uid=${uid}&id=${id}`}>
       <Picture src={picture} />
@@ -45,7 +45,7 @@ const DestinationListItem = ({ className, name, location, picture, id, uid }) =>
   </Wrapper>
 );
 
-DestinationListItem.propTypes = {
+TourRelatedListItem.propTypes = {
   className: PropTypes.string,
   name: PropTypes.string.isRequired,
   location: PropTypes.string.isRequired,
@@ -54,8 +54,8 @@ DestinationListItem.propTypes = {
   uid: PropTypes.string.isRequired,
 };
 
-DestinationListItem.defaultProps = {
+TourRelatedListItem.defaultProps = {
   className: '',
 };
 
-export default DestinationListItem;
+export default TourRelatedListItem;

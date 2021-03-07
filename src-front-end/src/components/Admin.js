@@ -2,21 +2,17 @@ import React, { useEffect, useState } from 'react';
 
 import { Tabs } from 'antd';
 import { navigate } from 'gatsby';
-import Layout from '../components/Layout';
+import Layout from './Layout';
 // import Layout from '../components/CustomLayout';
-import TabTitle from '../components/TabTitle';
-import Tours from '../components/Admin/Tours';
-import Profile from '../components/Admin/Profile';
+import TabTitle from './TabTitle';
+import Tours from './Admin/Tours';
+import Profile from './Admin/Profile';
 import { isAuthenticated, getUserProfile } from '../utils/auth';
 
 // function AdminPage() {
 const AdminPage = () => {
-  // const [authToken] = useLocalStorage(AUTH_TOKEN_KEY);
-  // if (!isAuthenticated()) {
-  //  console.log("ABC")
-  //  navigate('/login');
-  // }
   const [userProfile] = useState(getUserProfile());
+
   useEffect(() => {
     function check() {
       if (!isAuthenticated()) {
@@ -24,7 +20,7 @@ const AdminPage = () => {
       }
     }
     check();
-    const id = setInterval(check, 10000);
+    const id = setInterval(check, 1000);
 
     return () => clearInterval(id);
   }, []);

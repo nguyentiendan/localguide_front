@@ -1,103 +1,47 @@
 import React, { useState, useEffect } from 'react';
-// nodejs library that concatenates classes
-import classNames from 'classnames';
 // @material-ui/core components
 import { makeStyles } from '@material-ui/core/styles';
 
 // @material-ui/icons
-import { Spin, Card, Badge, Tooltip } from 'antd';
-import { navigate, Link } from 'gatsby';
-import { StarFilled } from '@ant-design/icons';
 // core components
 import styled from 'styled-components';
+import { Spin } from 'antd';
+import breakpoints from '../../assets/styles/breakpoints';
 import GridContainer from '../Grid/GridContainer.js';
 import GridItem from '../Grid/GridItem.js';
-import Button from '../CustomButtons/Button';
+import SectionHeader from '../SectionHeader';
+import DestinationListItem from '../DestinationListItem';
 import * as API from '../../apis';
 
-import styles from '../../assets/styles/teamStyle.js';
+import styles from '../../assets/styles/commonStyle.js';
 import backpackers from '../../assets/img/mocks/blogs/backpackers.png';
 
 const useStyles = makeStyles(styles);
 
-const CardWrapper = styled(Card)`
-  .totalReview {
-    display: flex;
-    justify-content: space-between;
-  }
-  && {
-    .ant-card-actions {
-      border-radius: 0px 0px 10px 10px;
-    }
-  }
-`;
-const WrapperImageCard = styled.div`
-  position: relative;
-  .styled-box-price {
-    position: absolute;
-    left: 5px;
-    background: #f12f60;
-    padding: 10px 15px;
-    bottom: 0px;
-    color: #fff;
-    font-weight: bold;
-    font-size: 18px;
-    box-shadow: lavender;
-    box-shadow: 0px 0px 10px 3px rgba(0, 0, 0, 0.38);
-    border-radius: 5px 5px 5px 5px;
+const ListWrapper = styled.div`
+  max-width: ${breakpoints.lg};
+  overflow: auto;
+  .comment:last-child .delimiter {
+    display: none;
   }
 `;
 
-const Image = styled.img`
-  height: 158px;
-  width: auto;
-  object-fit: cover;
-  border-radius: 10px 10px 0px 0px;
-  // margin-bottom: 0px;
-`;
-
-const CardDesc = styled.div`
+const ListContainer = styled.div`
+  display: inline-flex;
+  flex-direction: row;
   overflow: hidden;
-  text-align: left;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
+
+  & .destination + .destination,
+  & .tour + .tour {
+    margin-left: 2rem;
+  }
 `;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  position: relative;
-  width: 325px;
-`;
-
-const Title = styled.h3`
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-`;
-
-const SubTitle = styled.h5`
-  color: #635e69;
-  font-weight: normal;
-`;
-
-const Picture = styled.img`
-  width: 325px;
-  height: 175px;
-  border-radius: 6px;
-  object-fit: cover;
-  object-position: center;
-  margin-bottom: 0.75rem;
-`;
-
-function TourSection() {
+function DestinationSection() {
   const [tours, setTours] = useState();
   const [loading, setLoading] = useState(false);
 
   const classes = useStyles();
-  const imageClasses = classNames(classes.imgRaised, classes.imgRoundedCircle, classes.imgFluid);
 
   useEffect(() => {
     const fetchAllTour = async () => {
@@ -117,44 +61,53 @@ function TourSection() {
       clearInterval(interval);
     };
   }, []);
-  console.log(tours);
 
   return (
-    <div className={classes.section_odd}>
-      <h2 className={classes.title}>Destination we love</h2>
-      <div>
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={4}>
-            <Wrapper style={{ textAlign: 'left' }}>
-              <Link to={`/tours/${1}/${2}?status=view`}>
-                <Picture src={backpackers} />
-                <Title>ABC</Title>
-                <SubTitle>Tokyo/Japan</SubTitle>
-              </Link>
-            </Wrapper>
-          </GridItem>
-          <GridItem xs={12} sm={12} md={4}>
-            <Wrapper style={{ textAlign: 'left' }}>
-              <Link to={`/tours/${1}/${2}?status=view`}>
-                <Picture src={backpackers} />
-                <Title>ABC</Title>
-                <SubTitle>Tokyo/Japan</SubTitle>
-              </Link>
-            </Wrapper>
-          </GridItem>
-          <GridItem xs={12} sm={12} md={4}>
-            <Wrapper style={{ textAlign: 'left' }}>
-              <Link to={`/tours/${1}/${2}?status=view`}>
-                <Picture src={backpackers} />
-                <Title>ABC</Title>
-                <SubTitle>Tokyo/Japan</SubTitle>
-              </Link>
-            </Wrapper>
+    <div className={classes.container}>
+      <Spin spinning={loading}>
+        <GridContainer justify="center">
+          <GridItem xs={12} sm={12} md={12}>
+            <div className={classes.description}>
+              <SectionHeader title="Destination" />
+              <ListWrapper>
+                <ListContainer>
+                  <DestinationListItem
+                    key={1}
+                    name="Greate Tour in Tokyo"
+                    location="Tokyo"
+                    picture={backpackers}
+                    className="destination"
+                    id={1}
+                    uid={134234234234234}
+                  />
+
+                  <DestinationListItem
+                    key={2}
+                    name="Greate Tour in Osaka"
+                    location="Tokyo"
+                    picture={backpackers}
+                    className="destination"
+                    id={1}
+                    uid={1123123123123}
+                  />
+
+                  <DestinationListItem
+                    key={3}
+                    name="Greate Tour in Nagoya"
+                    location="Tokyo"
+                    picture={backpackers}
+                    className="destination"
+                    id={1}
+                    uid={1123123123123}
+                  />
+                </ListContainer>
+              </ListWrapper>
+            </div>
           </GridItem>
         </GridContainer>
-      </div>
+      </Spin>
     </div>
   );
 }
 
-export default TourSection;
+export default DestinationSection;

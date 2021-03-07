@@ -5,12 +5,15 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import * as API from '../../apis';
-import Button from "../CustomButtons/Button";
+import Button from '../CustomButtons/Button';
 import Feedback from './index';
 
 const { TextArea } = Input;
 
 const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
+  console.log(tour);
+  console.log(id);
+
   const [loading, setLoading] = useState(false);
   const [dataReply, setDataReply] = useState([]);
   const [dataFeedback, setDataFeedback] = useState([]);
@@ -56,6 +59,7 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
         tourId: tour?.rawID || id,
         content: dataCreateFeedback.trim(),
       });
+      console.log(data);
       const newFeedback = { ...data[0] };
       newFeedback.uuid = uuidv4();
       setDataFeedback([...dataFeedback, newFeedback]);
@@ -119,22 +123,22 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
       title="Feedback"
       visible={showModal}
       onCancel={() => setShowModal(false)}
-      footer={        
+      footer={
         user?.role === 2 ? null : (
           <div>
-          {/*<Button>Cancel</Button>*/}
-          <Button color="rose"
-            onClick={() => {
-              setIsFeedback(true);
-              handleCreateFeedback();
-            }}
-          >
-            New Feedback
-          </Button>
-          
+            {/* <Button>Cancel</Button> */}
+            <Button
+              color="rose"
+              onClick={() => {
+                setIsFeedback(true);
+                handleCreateFeedback();
+              }}
+            >
+              New Feedback
+            </Button>
           </div>
-        )        
-      }      
+        )
+      }
     >
       <Spin spinning={loading}>
         {dataFeedback.length > 0 ? (

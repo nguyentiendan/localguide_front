@@ -44,7 +44,7 @@ export default function HeaderLinks() {
           dropdownList={[
             user.role === 3 && ( 
               <a 
-                href="/admin"
+                href="/app/admin"
                 target="_blank"
                 className={classes.dropdownLink}
               >
@@ -53,7 +53,7 @@ export default function HeaderLinks() {
             ),       
             user.role === 2 && (    
               <a 
-                href="/my-tours"
+                href="/app/my_tours"
                 target="_blank"
                 className={classes.dropdownLink}
               >

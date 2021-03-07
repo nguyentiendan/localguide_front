@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
 import { Tabs } from 'antd';
-import Layout from '../components/Layout';
-import TabTitle from '../components/TabTitle';
-import Tours from '../components/MyTours/Tours';
-import Profile from '../components/MyTours/Profile';
+import Layout from './Layout';
+import TabTitle from './TabTitle';
+import Tours from './MyTours/Tours';
+import Profile from './MyTours/Profile';
 import { getUserProfile } from '../utils/auth';
 
-function AdminPage() {
+function MyTour() {
   const [userProfile] = useState(getUserProfile());
 
   return (
@@ -33,6 +33,6 @@ function AdminPage() {
   );
 }
 
-AdminPage.propTypes = {};
+MyTour.propTypes = {};
 
-export default AdminPage;
+export default MyTour;

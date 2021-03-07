@@ -60,7 +60,7 @@ function Tours() {
           icon={<PlusOutlined />}
           type="primary"
           size="large"
-          onClick={() => navigate('/create-tour')}
+          onClick={() => navigate('/app/create_tour')}
         >
           Create Tour
         </Button>
