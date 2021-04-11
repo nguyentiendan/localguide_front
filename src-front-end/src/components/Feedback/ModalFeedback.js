@@ -11,9 +11,6 @@ import Feedback from './index';
 const { TextArea } = Input;
 
 const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
-  console.log(tour);
-  console.log(id);
-
   const [loading, setLoading] = useState(false);
   const [dataReply, setDataReply] = useState([]);
   const [dataFeedback, setDataFeedback] = useState([]);
@@ -59,7 +56,7 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
         tourId: tour?.rawID || id,
         content: dataCreateFeedback.trim(),
       });
-      console.log(data);
+      
       const newFeedback = { ...data[0] };
       newFeedback.uuid = uuidv4();
       setDataFeedback([...dataFeedback, newFeedback]);

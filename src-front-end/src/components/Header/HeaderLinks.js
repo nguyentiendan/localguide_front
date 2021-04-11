@@ -66,7 +66,7 @@ export default function HeaderLinks() {
                 target="_blank"
                 className={classes.dropdownLink}
               >
-                Profile
+                Your Profile
               </a>
             ),
             <a

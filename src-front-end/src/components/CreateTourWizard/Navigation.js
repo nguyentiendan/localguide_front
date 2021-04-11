@@ -21,6 +21,7 @@ const Navigation = ({
   currentStepNumber,
   onBack,
   onNext,
+  onCancel,
   onPreview,
   loading,
   isNextDisabled,
@@ -57,6 +58,15 @@ const Navigation = ({
               Preview
             </Button>
           )}
+            <Button
+              onClick={onCancel}
+              style={{ marginLeft: 20, marginRight: 20, width: 100 }}
+              type="primary"
+              size="large"              
+              loading={loading}
+            >
+              Cancel
+            </Button>
           {!isFinished && (
             <Button
               onClick={onNext}
@@ -91,6 +101,7 @@ Navigation.propTypes = {
   currentStepNumber: PropTypes.number,
   onBack: PropTypes.func,
   onNext: PropTypes.func,
+  onCancel: PropTypes.func,
   onPreview: PropTypes.func,
   loading: PropTypes.bool,
   isNextDisabled: PropTypes.bool,
@@ -104,6 +115,7 @@ Navigation.defaultProps = {
   currentStepNumber: 0,
   onBack: () => {},
   onNext: () => {},
+  onCancel: () => {},
   onPreview: () => {},
   loading: false,
   isNextDisabled: false,

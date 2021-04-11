@@ -5,9 +5,9 @@ const signupPageStyle = {
     ...container,
     zIndex: '2',
     position: 'relative',
-    paddingTop: '20vh',
+    paddingTop: '12vh',
     color: '#FFFFFF',
-    paddingBottom: '200px',
+    paddingBottom: '100px',
   },
   cardHidden: {
     opacity: '0',
@@ -53,8 +53,8 @@ const signupPageStyle = {
     marginLeft: '20px',
     marginRight: '20px',
     marginTop: '-40px',
-    padding: '20px 0',
-    marginBottom: '15px',
+    padding: '10px 0',
+    marginBottom: '5px',
   },
   socialIcons: {
     maxWidth: '24px',

@@ -6,6 +6,7 @@ import MyTour from '../components/MyTour';
 import CreateTour from '../components/CreateTour';
 import EditTour from '../components/EditTour';
 import AdminTourReview from '../components/AdminTourReview';
+import GuideTourReview from '../components/GuideTourReview';
 
 const App = () => (
   <Router>
@@ -14,6 +15,7 @@ const App = () => (
     <PrivateRoute path="/app/create_tour" component={CreateTour} />
     <PrivateRoute path="/app/edit_tour" component={EditTour} />
     <PrivateRoute path="/app/admin_tour_review" component={AdminTourReview} />
+    <PrivateRoute path="/app/tour_review" component={GuideTourReview} />
   </Router>
 );
 

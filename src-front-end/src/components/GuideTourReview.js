@@ -1,35 +1,33 @@
 /* eslint-disable react/no-danger */
-import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'gatsby';
+import React, { useState, useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
-import Gallery from 'react-grid-gallery';
 import { AiOutlineSchedule } from 'react-icons/ai';
 import {
   FaSuitcase,
-  FaMoneyBill,
-  FaUsers,
-  FaStar,
   FaMoneyCheckAlt,
   FaRegCalendarAlt,
-  FaTextHeight,
+  FaShare,
+  FaTwitter,
+  FaBookmark,
+  FaLanguage,
+  FaUsers,
 } from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
 import { Avatar, Spin, notification, Popconfirm } from 'antd';
 import _ from 'lodash';
 import qs from 'query-string';
-
-import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
+import { Link, navigate } from 'gatsby';
+import { FormatQuote } from '@material-ui/icons';
+import ReactBnbGallery from 'react-bnb-gallery';
+import NumberFormat from 'react-number-format';
 import * as API from '../apis';
 import Layout from './CustomLayout';
-import Parallax from './Parallax/Parallax.js';
 import SEO from './SEO';
 import Footer from './Footer/Footer.js';
 import GridContainer from './Grid/GridContainer.js';
 import GridItem from './Grid/GridItem.js';
-
 import SmallScreen from './Responsive/SmallScreen';
 import BigScreen from './Responsive/BigScreen';
 import RatingStars from './RatingStars';
@@ -41,17 +39,12 @@ import NavItem from './Layout/NavItem';
 import Button from './CustomButtons/Button';
 import { bigScreenCss, smallScreenCss } from '../assets/styles/responsive-css';
 import TourGuideListItem from './TourGuideListItem';
-import { getCndResourceUrl, safeFuncCall } from '../utils/commons';
+import { safeFuncCall } from '../utils/commons';
+import defaultImage from '../assets/img/noimage-600x400.jpg';
+import styles from '../assets/styles/tourPage.js';
+import 'react-bnb-gallery/dist/style.css';
 import { getUserProfile } from '../utils/auth';
 import ModalFeedback from './Feedback/ModalFeedback';
-
-// import 'react-image-gallery/styles/css/image-gallery.css';
-// import ImageGallery from 'react-image-gallery';
-import styles from '../assets/styles/tourPage.js';
-
-// TODO
-// 1)Xem lai getUserProfile, response co nhieu thong tin khong can thiet
-//
 
 const Title = styled.h1`
   font-weight: bold;
@@ -82,6 +75,36 @@ const SectionTitle = styled.h3`
   margin: 1.5rem 0 0.5rem 0;
   font-weight: 500;
   clear: both;
+`;
+
+const TitleWrapper = styled.div`
+  flex: 1;
+  width: 98%;
+  //height: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const VoteWrapper = styled.div`
+  flex: 1;
+  width: 98%;
+  //height: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const TotalWrapper = styled.div`
+  display: flex;
+  padding-top: 0px;
+  justify-content: flex-end;
+`;
+
+const SocialWrapper = styled.div`
+  display: flex;
+  padding-top: 0px;
+  justify-content: flex-end;
 `;
 
 const HeaderWrapper = styled.div`
@@ -117,6 +140,135 @@ const ListWrapper = styled.div`
 
   .comment:last-child .delimiter {
     display: none;
+  }
+`;
+
+const PhotoWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+
+  ${bigScreenCss(`
+    flex-direction: row;
+  `)}
+`;
+
+const ImgMainWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  .imgstyle {
+    width: 98%;
+    height: 100%;
+    //padding-right:8px;
+    box-shadow: lavender;
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+    border-radius: 5px 5px 5px 5px;
+    margin-bottom: 6px;
+  }
+  .buttonOnImage {
+    font-weight: 400;
+    color: white;
+    margin: 0;
+    position: absolute;
+    top: 88%;
+    left: 78%;
+    font-size: 11px;
+    transform: translate(-50%, -50%);
+  }
+
+  @media (min-width: 768px) {
+    width: 50%;
+    height: 400px;
+    .imgstyle {
+      width: 98%;
+      height: 100%;
+      //padding-right:8px;
+      box-shadow: lavender;
+      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+      border-radius: 5px 5px 5px 5px;
+      margin-bottom: 6px;
+    }
+  }
+  @media (min-width: 992px) {
+    width: 50%;
+    height: 400px;
+    .imgstyle {
+      width: 98%;
+      height: 100%;
+      //padding-right:8px;
+      box-shadow: lavender;
+      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+      border-radius: 5px 5px 5px 5px;
+      margin-bottom: 6px;
+    }
+  }
+`;
+const ImgSecondWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: 400px;
+  flex: 1;
+`;
+
+const RowWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  height: 200px;
+  margin-bottom: 0px;
+`;
+
+const ImgWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  //flex-basis: 100%;
+  flex: 1;
+  .imgstyle {
+    width: 96%;
+    height: 96%;
+    margin-bottom: 0px;
+    box-shadow: lavender;
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+    border-radius: 5px 5px 5px 5px;
+    cursor: pointer;
+  }
+  .buttonOnImage {
+    font-weight: 500;
+    color: white;
+    margin: 0;
+    position: absolute;
+    top: 92%;
+    left: 87%;
+    font-size: 12px;
+    transform: translate(-50%, -50%);
+  }
+
+  @media (min-width: 768px) {
+    .imgstyle {
+      width: 96%;
+      height: 96%;
+      margin-bottom: 0px;
+      box-shadow: lavender;
+      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+      border-radius: 5px 5px 5px 5px;
+    }
+  }
+  @media (min-width: 992px) {
+    .imgstyle {
+      width: 96%;
+      height: 96%;
+      margin-bottom: 0px;
+      box-shadow: lavender;
+      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+      border-radius: 5px 5px 5px 5px;
+    }
   }
 `;
 
@@ -159,9 +311,9 @@ const PriceMenuWrapper = styled.div`
 `;
 const Price = styled.div`
   color: ${colors.magenta[60]};
-  font-size: 30px;
-  font-weight: 400;
-  margin-right: 10px;
+  font-size: 25px;
+  font-weight: 700;
+  margin-right: 0px;
 `;
 
 const BookButton = styled(Button)`
@@ -188,6 +340,11 @@ const TourIcon = styled(FaSuitcase)`
 const Gap = styled.div`
   display: inline-block;
   width: 5px;
+`;
+
+const Space = styled.div`
+  display: inline-block;
+  width: 20px;
 `;
 
 const TourIncludingListItem = styled.li`
@@ -225,25 +382,27 @@ const ButtonEventAdminWrapper = styled.div`
   justify-content: space-between;
 `;
 
+/** TODO
+ * 1) Them icon Language (chi de 1 languagua, khi re vao thi ra tooltip)
+ * 2) Them icon so nguoi - DONE
+ * 3) Cho gia tien Tour len tren - DONE
+ */
 const useStyles = makeStyles(styles);
 
-function AdminTourReview({ location }) {
+function GuideTourReview({ location }) {
   const classes = useStyles();
 
   const dataQueryParams = qs.parse(location.search);
   const { uid } = dataQueryParams;
   const { id } = dataQueryParams;
-
-  const [images, setImages] = useState([]);
+  const [tourPhotos, setTourPhotos] = useState([]);
   const [isApprove, setIsApprove] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [tourDetails, setTourDetails] = useState({
-    tour: [],
-    reviews: { totalReview: 0, listReviews: [] },
-  });
+  const [tourDetails, setTourDetails] = useState({});
 
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const tourQuery = useMemo(() => {
     const query = {};
@@ -251,46 +410,35 @@ function AdminTourReview({ location }) {
     query.id = id;
     return query;
   }, [uid, id]);
+
   const user = getUserProfile();
 
   useEffect(() => {
-    let shouldCancel = false;
-
-    const fetchImage = async () => {
-      const response = await API.getTourPhotos(tourQuery);
-
-      if (!shouldCancel && response.data && response.data.length > 0) {
-        setImages(
-          response.data.map(photo => ({
-            original: getCndResourceUrl(photo.name),
-            description: photo.caption,
-            thumbnail: getCndResourceUrl(photo.name),
-          }))
-        );
-      }
-    };
-    fetchImage();
-    return () => (shouldCancel = true);
-  }, []);
-
-  useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
-      const res = await API.getTourDetail(tourQuery);
-      setTourDetails({
-        tour: res.tour,
-        reviews: {
-          totalReview: res.total_review,
-          listReviews: res.review,
-        },
-      });
+      const res = await API.getTourPhotos(tourQuery);
+      if (res.status === false) {
+        const data = [{ photo: defaultImage, subcaption: 'no image' }];
+        setTourPhotos(data);
+      } else {
+        setTourPhotos(res.data);
+      }
+      setLoading(false);
     };
     fetchData();
+    const interval = setInterval(() => fetchData(), 200000);
+    return () => {
+      clearInterval(interval);
+    };
   }, [tourQuery]);
 
   useEffect(() => {
     const fetchTourDetails = async () => {
       try {
         setLoading(true);
+        const { data: details } = await safeFuncCall(() => API.adminReviewTour(tourQuery));
+        setTourDetails(_.mapKeys(details[0], (v, k) => _.camelCase(k)));
+
         const descDays = {};
         const { data: transport } = await safeFuncCall(() => API.getTourFeeTransport(tourQuery));
         _.forEach(transport, ({ Trans: transports }, day) => {
@@ -324,7 +472,6 @@ function AdminTourReview({ location }) {
         setLoading(false);
       }
     };
-
     fetchTourDetails();
   }, [tourQuery]);
 
@@ -334,6 +481,17 @@ function AdminTourReview({ location }) {
     setIsApprove(true);
     notification.success({ message: 'You have successfully approve tour.' });
     setLoading(false);
+  };
+  
+  const handleDeleteTour = async data => {
+    setLoading(true);    
+    //await API.deleteTour(id, uid);
+    //_.remove(allTours?.tours, tour => {
+    //  return tour.ID === data.id;
+    //});
+    setLoading(false);
+    notification.success({ message: `You have successfully deleted ${tourDetails.name} .` });
+    navigate('/app/my_tours')
   };
 
   return (
@@ -345,23 +503,34 @@ function AdminTourReview({ location }) {
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={12}>
               <div className={classes.description}>
-                {user?.role === 3 && (
+                {user?.role === 2 && (
                   <ButtonEventAdminWrapper>
                     <div>
-                      {tourDetails.tour[0]?.status !== 1 && !isApprove && (
+                      {tourDetails.status !== 1 && !isApprove && (
                         <Popconfirm
-                          title="Are you sure to approve tour?"
-                          onConfirm={handleApproveTour}
+                          title="Are you sure to delete tour?"
+                          onConfirm={handleDeleteTour}
                           okText="Yes"
                           cancelText="No"
                         >
-                          <Button color="info">Approve</Button>
+                          <Button color="info">Delete</Button>
                         </Popconfirm>
                       )}
+                      {tourDetails.status == 1 && !isApprove && (
+                          <Popconfirm
+                          title="Are you sure to disable tour?"
+                          onConfirm={handleDeleteTour}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                            <Button color="info">Disable</Button>
+                          </Popconfirm>
+                        )
+                      }
                       <Button color="danger">
-                        <Link to="/app/admin" style={{ color: '#ffffff' }}>
+                        <Link to="/app/my_tours" style={{ color: '#ffffff' }}>
                           Cancel
-                        </Link>
+                        </Link>  
                       </Button>
 
                       {/* <Button className="style-button-edit">
@@ -386,34 +555,182 @@ function AdminTourReview({ location }) {
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <SmallScreen>
-                    <Title style={{ textAlign: 'left' }}>{tourDetails.tour[0]?.name}</Title>
+                    <TitleWrapper>
+                      <Title style={{ textAlign: 'left', fontSize: '20px' }}>
+                        {tourDetails.name}
+                      </Title>
+                      <SocialWrapper>
+                        <NavItem
+                          className="nav-item"
+                          title=""
+                          icon={<FaBookmark style={{ color: '#f12f60' }} />}
+                          isActive
+                        />
+                        <Space />
+                        <NavItem
+                          className="nav-item"
+                          title=""
+                          icon={<FaTwitter style={{ color: '#f12f60' }} />}
+                          isActive
+                        />
+                        <Space />
+                        <NavItem
+                          className="nav-item"
+                          title=""
+                          icon={<FaShare style={{ color: '#f12f60' }} />}
+                          isActive
+                        />
+                      </SocialWrapper>
+                    </TitleWrapper>
                     <SubTitle style={{ textAlign: 'left' }}>
                       <span style={{ fontSize: '25px' }}>4.5</span>
                       <Gap />
                       <RatingStars rate={4.5} style={{ verticalAlign: 'text-bottom' }} />
                       {/* <RatingStars rate={reviews?.rate} style={{ verticalAlign: 'text-bottom' }} /> */}
                     </SubTitle>
-                    <div style={{ textAlign: 'left', fontSize: '11px' }}>1,305 votes</div>
+                    <div style={{ textAlign: 'left', fontSize: '10px' }}>1,305 votes</div>
                   </SmallScreen>
 
                   <BigScreen>
-                    <Title style={{ textAlign: 'left' }}>{tourDetails.tour[0]?.name}</Title>
-                    <SubTitle style={{ textAlign: 'left' }}>
-                      <span style={{ fontSize: '25px' }}>4.5</span>
-                      <Gap />
-                      <RatingStars rate={4.5} style={{ verticalAlign: 'text-bottom' }} />
-                    </SubTitle>
-                    <div style={{ textAlign: 'left', fontSize: '11px' }}>1,305 votes</div>
+                    <TitleWrapper>
+                      <Title style={{ textAlign: 'left' }}>{tourDetails.name}</Title>
+                      <SocialWrapper>
+                        <NavItem className="nav-item" title="" icon={<FaBookmark />} isActive />
+                        <Space />
+                        <NavItem className="nav-item" title="" icon={<FaTwitter />} isActive />
+                        <Space />
+                        <NavItem className="nav-item" title="" icon={<FaShare />} isActive />
+                      </SocialWrapper>
+                    </TitleWrapper>
+                    <VoteWrapper>
+                      <SubTitle style={{ textAlign: 'left' }}>
+                        <span style={{ fontSize: '25px' }}>4.5</span>
+                        <Gap />
+                        <RatingStars rate={4.5} style={{ verticalAlign: 'text-bottom' }} />
+                        <div style={{ textAlign: 'left', fontSize: '11px' }}>1,305 votes</div>
+                      </SubTitle>
+                      <TotalWrapper>
+                        <Price>
+                          <NumberFormat
+                            value={tourDetails.total || 0}
+                            displayType="text"
+                            thousandSeparator
+                            prefix="$"
+                          />
+                        </Price>
+                      </TotalWrapper>
+                    </VoteWrapper>
                   </BigScreen>
                 </div>
               </GridItem>
             </GridContainer>
 
+            {tourPhotos.length > 0 && (
+              <GridContainer justify="center">
+                <GridItem xs={12} sm={12} md={12}>
+                  <div className={classes.description}>
+                    <SmallScreen>
+                      <ImgMainWrapper>
+                        <img
+                          src={tourPhotos[0]?.photo || defaultImage}
+                          className="imgstyle"
+                          onClick={() => setIsOpen(true)}
+                        />
+                        {tourPhotos.length > 1 && (
+                          <Button
+                            className="buttonOnImage"
+                            color="rose"
+                            size="sm"
+                            onClick={() => setIsOpen(true)}
+                          >
+                            1 / {tourPhotos.length} photos
+                          </Button>
+                        )}
+                      </ImgMainWrapper>
+                    </SmallScreen>
+                    <BigScreen>
+                      <PhotoWrapper>
+                        <ImgMainWrapper>
+                          <img
+                            src={
+                              tourPhotos[Math.floor(Math.random() * tourPhotos.length)]?.photo ||
+                              defaultImage
+                            }
+                            className="imgstyle"
+                            onClick={() => setIsOpen(true)}
+                          />
+                        </ImgMainWrapper>
+                        <ImgSecondWrapper>
+                          <RowWrapper>
+                            <ImgWrapper>
+                              <img
+                                src={
+                                  tourPhotos[Math.floor(Math.random() * tourPhotos.length)]
+                                    ?.photo || defaultImage
+                                }
+                                className="imgstyle"
+                                onClick={() => setIsOpen(true)}
+                              />
+                            </ImgWrapper>
+                            <ImgWrapper>
+                              <img
+                                src={
+                                  tourPhotos[Math.floor(Math.random() * tourPhotos.length)]
+                                    ?.photo || defaultImage
+                                }
+                                className="imgstyle"
+                                onClick={() => setIsOpen(true)}
+                              />
+                            </ImgWrapper>
+                          </RowWrapper>
+                          <RowWrapper>
+                            <ImgWrapper>
+                              <img
+                                src={
+                                  tourPhotos[Math.floor(Math.random() * tourPhotos.length)]
+                                    ?.photo || defaultImage
+                                }
+                                className="imgstyle"
+                                onClick={() => setIsOpen(true)}
+                              />
+                            </ImgWrapper>
+                            <ImgWrapper>
+                              <img
+                                src={
+                                  tourPhotos[Math.floor(Math.random() * tourPhotos.length)]
+                                    ?.photo || defaultImage
+                                }
+                                className="imgstyle"
+                                onClick={() => setIsOpen(true)}
+                              />
+                              {tourPhotos.length > 5 && (
+                                <Button
+                                  className="buttonOnImage"
+                                  color="rose"
+                                  size="sm"
+                                  onClick={() => setIsOpen(true)}
+                                >
+                                  +{tourPhotos.length - 5} Photos
+                                </Button>
+                              )}
+                            </ImgWrapper>
+                          </RowWrapper>
+                        </ImgSecondWrapper>
+                      </PhotoWrapper>
+                    </BigScreen>
+                  </div>
+                </GridItem>
+              </GridContainer>
+            )}
+            <div>
+              <ReactBnbGallery show={isOpen} photos={tourPhotos} onClose={() => setIsOpen(false)} />
+            </div>
+
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description} style={{ paddingTop: '0px' }}>
                   <FormatQuote style={{ color: '#e91e63' }} />
-                  <i>{tourDetails.tour[0]?.shortDesc}</i>
+                  <i>{tourDetails.shortDesc}</i>
                   <FormatQuote style={{ color: '#e91e63' }} />
                 </div>
               </GridItem>
@@ -425,23 +742,23 @@ function AdminTourReview({ location }) {
                   <HeaderWrapper>
                     <LocationWrapper>
                       <h2 style={{ textAlign: 'left' }}>
-                        {tourDetails.tour[0]?.city &&
-                          tourDetails.tour[0]?.country &&
-                          `${tourDetails.tour[0]?.city}, ${tourDetails.tour[0]?.country}`}
+                        {tourDetails.city &&
+                          tourDetails.country &&
+                          `${tourDetails.city}, ${tourDetails.country}`}
                       </h2>
                       <TagWrapper style={{ textAlign: 'left' }}>
-                        {tourDetails.tour[0]?.tag &&
-                          _.map(tourDetails.tour[0]?.tag.split(';'), tag => (
-                            <Tag key={tag}>{tag}</Tag>
-                          ))}
+                        {tourDetails.tag &&
+                          _.map(tourDetails.tag.split(';'), tag => <Tag key={tag}>{tag}</Tag>)}
                       </TagWrapper>
                     </LocationWrapper>
                     <TourGuideWrapper>
-                      <span style={{ paddingBottom: '5px' }}>Tour post by</span>
+                      {/* <span style={{ paddingBottom: '5px' }}>Tour post by</span> */}
                       <TourGuideListItem
                         // level={tourDetails?.level}
-                        avatar={tourDetails.tour[0]?.avatar}
-                        name={tourDetails.tour[0]?.fullName}
+                        avatar={tourDetails.avatar}
+                        uid={tourDetails.uid}
+                        id={tourDetails.id}
+                        // name={tourDetails.tour[0]?.fullName}
                       />
                     </TourGuideWrapper>
                   </HeaderWrapper>
@@ -466,25 +783,18 @@ function AdminTourReview({ location }) {
                         icon={<FaRegCalendarAlt style={{ color: '#f12f60' }} />}
                         isActive
                       />
-                      {/* <NavItem
-                        className="nav-item"
-                        title={tourDetails.language || 'No language'}
-                        icon={<MdGTranslate />}
-                        isActive
-                      />
                       <NavItem
                         className="nav-item"
-                        title={`${tourDetails.availableTours || 0} Tours`}
-                        icon={<FaSuitcase />}
+                        title={tourDetails.language || 'No language'}
+                        icon={<FaLanguage style={{ color: '#f12f60' }} />}
                         isActive
                       />
                       <NavItem
                         className="nav-item"
                         title={`${tourDetails.minPax || 0}-${tourDetails.maxPax || 0}`}
-                        icon={<FaUsers />}
+                        icon={<FaUsers style={{ color: '#f12f60' }} />}
                         isActive
-                      /> */}
-                      <Price>${tourDetails.tour[0]?.total || 0}</Price>
+                      />
                     </PriceMenuWrapper>
                     <BookButton color="rose" loading={loading} disabled={loading}>
                       Book now
@@ -498,13 +808,16 @@ function AdminTourReview({ location }) {
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <h2 style={{ textAlign: 'left' }}>Tour description</h2>
-                  {/* <TourDescription>
-                    <div dangerouslySetInnerHTML={{ __html: tourDetails.content }} />                   
-                  </TourDescription> */}
                   <div
                     style={{ textAlign: 'left' }}
-                    dangerouslySetInnerHTML={{ __html: tourDetails.tour[0]?.content }}
+                    dangerouslySetInnerHTML={{ __html: tourDetails.content }}
                   />
+
+                  <SectionTitle style={{ textAlign: 'left' }}>
+                    <TourIcon />
+                    <Gap />
+                    Tour including
+                  </SectionTitle>
                   <DescriptionWrapper style={{ textAlign: 'left' }}>
                     <ul>
                       {_.map(
@@ -596,54 +909,45 @@ function AdminTourReview({ location }) {
               </GridItem>
             </GridContainer>
 
-            <GridContainer justify="center">
-              <GridItem xs={12} sm={12} md={12}>
-                <div className={classes.description}>
-                  {tourDetails.tourIncluding && (
-                    <>
-                      <SectionTitle>
-                        <TourIcon />
-                        <Gap />
-                        Tour including:
-                      </SectionTitle>
-                      <ul>
-                        {_.map(tourDetails.tourIncluding, i => (
-                          <TourIncludingListItem key={i}>{i}</TourIncludingListItem>
-                        ))}
-                      </ul>
-                    </>
-                  )}
-                  <br />
-                  <br />
-
-                  <SectionHeader
-                    title={
-                      // eslint-disable-next-line react/jsx-wrap-multilines
-                      <>{`Reviews (${tourDetails.reviews?.totalReview})`}</>
-                    }
-                  />
-                  <ListWrapper style={{ textAlign: 'left' }}>
-                    {_.map(tourDetails.reviews?.listReviews, (comment, index) => (
-                      <CommentListItem
-                        key={index}
-                        content={comment.content}
-                        user={comment.fullname}
-                        date={comment.createdAt}
-                        avatar={comment.avatar}
-                        className="comment"
-                      />
-                    ))}
-                  </ListWrapper>
-                </div>
-              </GridItem>
-            </GridContainer>
-
+            {tourDetails.reviews?.totalReview > 0 && (
+              <GridContainer justify="center">
+                <GridItem xs={12} sm={12} md={12}>
+                  <div className={classes.description}>
+                    <SectionHeader
+                      title={
+                        // eslint-disable-next-line react/jsx-wrap-multilines
+                        <>{`Reviews (${tourDetails.reviews?.totalReview})`}</>
+                      }
+                    />
+                    <ListWrapper style={{ textAlign: 'left' }}>
+                      {_.map(tourDetails.reviews?.listReviews, (comment, index) => (
+                        <CommentListItem
+                          key={index}
+                          content={comment.content}
+                          user={comment.fullname}
+                          date={comment.createdAt}
+                          avatar={comment.avatar}
+                          className="comment"
+                        />
+                      ))}
+                    </ListWrapper>
+                  </div>
+                </GridItem>
+              </GridContainer>
+            )}
+            {/* <ModalFeedback
+              showModal={showModal}
+              setShowModal={setShowModal}
+              user={user}
+              uid={tourQuery.uid}
+              id={tourQuery.id}
+            /> */}
             <ModalFeedback
               showModal={showModal}
               setShowModal={setShowModal}
               user={user}
               tour={tourQuery}
-              id={tourDetails.tour[0]?.id || 0}
+              id={tourDetails.id || 0}
             />
           </Spin>
         </div>
@@ -653,4 +957,4 @@ function AdminTourReview({ location }) {
   );
 }
 
-export default AdminTourReview;
+export default GuideTourReview;

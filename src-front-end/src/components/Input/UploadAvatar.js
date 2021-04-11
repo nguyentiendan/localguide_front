@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 0px;
   @media (min-width: 575px) {
     flex-direction: row;
     justify-content: space-between;
@@ -81,7 +81,7 @@ const UploadAvatar = ({ uid, src, title }) => {
   );
   return (
     <Wrapper>
-      <h2>{title} Profile</h2>
+      {/*<h2>{title} Profile</h2>*/}
       <label htmlFor="avatar">
         <Spin spinning={loading}>
           <UploadCustom>

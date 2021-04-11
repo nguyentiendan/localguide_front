@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { navigate, Link } from 'gatsby';
 import { Card, Tag, Badge, Popconfirm, Tooltip } from 'antd';
-import { DeleteOutlined, StarFilled, MessageOutlined } from '@ant-design/icons';
+import { DeleteOutlined, StarFilled, MessageOutlined, EditOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
-
+import NumberFormat from 'react-number-format';
 import ModalFeedback from '../../Feedback/ModalFeedback';
 import { getUserProfile } from '../../../utils/auth';
 import * as API from '../../../apis';
@@ -74,7 +74,7 @@ const TourCard = ({
     const fetchAllFeedback = async () => {
       if (showModal) {
         const res = await API.getAllFeedbackOfGuide({ uid, id });
-        console.log(res);
+        console.log(res)
       }
     };
     fetchAllFeedback();
@@ -97,14 +97,22 @@ const TourCard = ({
       <CardWrapper
         hoverable
         style={{ width: '100%', cursor: 'pointer', minWidth: 300, minHeight: 400, borderRadius: 10 }}
-        cover={<WrapperImageCard><Image src={coverImg || backpackers} onClick={() => navigate(`/app/edit_tour?q=${id}`)} /><span className='styled-box-price'>{price}</span></WrapperImageCard>}
+        cover={<WrapperImageCard><Image src={coverImg || backpackers} onClick={() => navigate(`/app/tour_review?uid=${uid}&id=${id}`)} /><span className='styled-box-price'><NumberFormat value={price} displayType="text" thousandSeparator prefix="$" /> </span></WrapperImageCard>}
         actions={
           status
             ? [
-              <MessageOutlined key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
+              <MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
+              <Link to={`/app/edit_tour?q=${id}`}>
+                <EditOutlined title="Edit Tour" />
+              </Link>
             ]
             : [
-              <MessageOutlined key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
+                <MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
+                <Link to={`/app/edit_tour?q=${id}`}>
+                  <EditOutlined title="Edit Tour" />
+                </Link>
+              
+              /*<MessageOutlined key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
               <Popconfirm
                 title="Are you sure to delete this tour?"
                 onConfirm={() => handleDeleteTour({ uid, id, title })}
@@ -112,11 +120,12 @@ const TourCard = ({
                 cancelText="No"
               >
                 <DeleteOutlined key="delete" />
-              </Popconfirm>,
+              </Popconfirm>,*/
+              
             ]
         }
       >
-        <Link to={`/app/edit_tour?q=${id}`}>
+        <Link to={`/app/tour_review?uid=${uid}&id=${id}`}>
           <Card.Meta
             title={<b>{title}</b>}
             description={

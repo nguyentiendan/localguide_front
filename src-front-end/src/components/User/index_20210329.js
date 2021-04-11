@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Form, Input, Select, Button, InputNumber, Row, Col, Spin, notification } from 'antd';
-import GridContainer from '../Grid/GridContainer';
-import GridItem from '../Grid/GridItem.js';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -113,16 +111,6 @@ const UserProfile = ({ uid }) => {
 
   return (
     <Spin spinning={isloading}>
-      <div className={classes.container}>
-        <GridContainer justify="center">
-          <GridItem xs={12} sm={12} md={12}>
-            ssss
-          </GridItem>
-        </GridContainer>
-      </div>  
-    </Spin>
-    
-    /*<Spin spinning={isloading}>
       <FormWrapper
         {...formItemLayout}
         form={form}
@@ -263,7 +251,7 @@ const UserProfile = ({ uid }) => {
           </Button>
         </Form.Item>
       </FormWrapper>
-    </Spin>*/
+    </Spin>
   );
 };
 

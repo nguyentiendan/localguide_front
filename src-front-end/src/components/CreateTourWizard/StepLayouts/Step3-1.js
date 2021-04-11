@@ -28,7 +28,6 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
 
   return (
     <Wrapper>
-      Create Tour
       <SubTitle>Description about tour</SubTitle>
       <div>
         <SunEditor

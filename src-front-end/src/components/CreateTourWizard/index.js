@@ -23,12 +23,14 @@ import {
 } from '../../apis';
 import { useRequiredUser } from '../../utils/useAuth';
 import TourPreview from '../TourPreview';
+import img from "../../assets/img/mocks/places/cat-ba.jpg"
+import { AiOutlineSync } from 'react-icons/ai';
 
 const CREATE_TOUR_STEPS = [
   {
     title: 'Basic information',
-    layouts: [StepLayout.Step1_1, StepLayout.Step1_2],
-    image: '/mocks/places/cao-bang.jpg',
+    layouts: [StepLayout.Step1_1, StepLayout.Step1_2],    
+    image: img,
     validation: tour => !tour.tourName,
   },
   {
@@ -38,7 +40,7 @@ const CREATE_TOUR_STEPS = [
   {
     title: 'Tour Advance',
     layouts: [StepLayout.Step3_1, StepLayout.Step3_2],
-    image: '/mocks/places/hoi-an.jpg',
+    //image: '/mocks/places/hoi-an.jpg',
   },
   {
     title: 'Add photos of tour',
@@ -77,6 +79,7 @@ const transformTourData = tourCreationInfo => ({
   id: tourCreationInfo.id,
   name: tourCreationInfo.tourName,
   shortDesc: tourCreationInfo.tourShortDescription,
+  recommend: tourCreationInfo.tourRecommend,
   country: tourCreationInfo.country,
   city: tourCreationInfo.city,
   day: tourCreationInfo.duration,
@@ -161,6 +164,13 @@ const CreateTourWizard = ({ location }) => {
       // ignore
     }
   }, [currentStepNumber, loading, tourCreationInfo]);
+  
+  const goCancel = useCallback(async () => {
+    if (loading) {
+      return;
+    }
+    await navigate('app/my_tours');
+  }, [loading]);
 
   const goForward = async () => {
     if (loading) {
@@ -250,6 +260,7 @@ const CreateTourWizard = ({ location }) => {
           id: data[0].id,
           tourName: data[0].name,
           tourShortDescription: data[0].shortDesc,
+          tourRecommend:data[0].recommend,
           tags: data[0].tag ? data[0].tag.split(';') : [],
           country: data[0].country,
           city: data[0].city,
@@ -308,6 +319,7 @@ const CreateTourWizard = ({ location }) => {
             totalSteps={CREATE_TOUR_STEPS.length}
             onBack={goBack}
             onNext={goForward}
+            onCancel={goCancel}
             onPreview={onPreview}
             loading={loading}
             isFinished={currentStepNumber === TOTAL_STEPS}

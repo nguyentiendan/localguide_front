@@ -27,8 +27,8 @@ const SubTitle = styled.h5`
 `;
 
 const Avatar = styled.img`
-  width: 70px;
-  height: 70px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   object-fit: cover;
   object-position: center;
