@@ -56,7 +56,7 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
         tourId: tour?.rawID || id,
         content: dataCreateFeedback.trim(),
       });
-      
+
       const newFeedback = { ...data[0] };
       newFeedback.uuid = uuidv4();
       setDataFeedback([...dataFeedback, newFeedback]);

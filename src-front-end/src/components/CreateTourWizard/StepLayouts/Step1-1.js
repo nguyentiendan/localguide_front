@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { Tag, Input, Spin } from 'antd';
-import Checkbox from '../../Checkbox';
+import { Tag, Input, Spin, Alert } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { Alert } from 'antd';
+import Checkbox from '../../Checkbox';
+
 import colors from '../../../assets/styles/colors';
 import * as API from '../../../apis';
 
@@ -27,7 +27,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   const [newTagInputVisible, setNewTagInputVisible] = useState(false);
   const [newTagValue, setNewTagValue] = useState('');
   const [defaultTags, setDefaultTags] = useState([]);
-  //const [recommend, setRecommend] = useState(false);
+  // const [recommend, setRecommend] = useState(false);
   const newTagInputRef = useRef();
   const tagOptions = useMemo(() => _.union(defaultTags, tourCreationInfo.tags || []), [
     tourCreationInfo,
@@ -39,11 +39,12 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   ]);
   const tourRecommend = useMemo(() => tourCreationInfo.tourRecommend, [tourCreationInfo]);
   const selectedTags = useMemo(() => tourCreationInfo.tags || [], [tourCreationInfo]);
- 
- /* TODO
- * 1) Fix validate tour name, tour name must longer than 15 characters
- */ 
-  const updateTourName = useCallback (
+
+  /* TODO
+   * 1) Fix validate tour name, tour name must longer than 15 characters
+   */
+
+  const updateTourName = useCallback(
     newTourName => {
       if (newTourName.length > 255) {
         return;
@@ -56,7 +57,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     [onUpdate, tourCreationInfo]
   );
 
-  const updateTourShortDescription = useCallback (
+  const updateTourShortDescription = useCallback(
     newTourShortDescription => {
       if (newTourShortDescription.length > 255) {
         return;
@@ -69,7 +70,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     [onUpdate, tourCreationInfo]
   );
 
-  const updateSelectedTags = useCallback (
+  const updateSelectedTags = useCallback(
     tagOption => {
       onUpdate({
         ...tourCreationInfo,
@@ -78,17 +79,17 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     },
     [onUpdate, tourCreationInfo]
   );
-  
-  const updateRecommend = useCallback (
+
+  const updateRecommend = useCallback(
     recommend => {
       onUpdate({
         ...tourCreationInfo,
         tourRecommend: recommend,
       });
-    },    
-    [onUpdate, tourCreationInfo]    
+    },
+    [onUpdate, tourCreationInfo]
   );
-  console.log(tourRecommend)
+  console.log(tourRecommend);
   const addTagOptions = useCallback(
     tagOption => {
       onUpdate({
@@ -133,9 +134,9 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
       setLoading(false);
     })();
   }, []);
-  
-  //console.log(tourCreationInfo)
-  
+
+  // console.log(tourCreationInfo)
+
   return (
     <Spin spinning={loading}>
       <Wrapper>

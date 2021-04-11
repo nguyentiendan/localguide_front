@@ -482,16 +482,16 @@ function GuideTourReview({ location }) {
     notification.success({ message: 'You have successfully approve tour.' });
     setLoading(false);
   };
-  
+
   const handleDeleteTour = async data => {
-    setLoading(true);    
-    //await API.deleteTour(id, uid);
-    //_.remove(allTours?.tours, tour => {
+    setLoading(true);
+    // await API.deleteTour(id, uid);
+    // _.remove(allTours?.tours, tour => {
     //  return tour.ID === data.id;
-    //});
+    // });
     setLoading(false);
     notification.success({ message: `You have successfully deleted ${tourDetails.name} .` });
-    navigate('/app/my_tours')
+    navigate('/app/my_tours');
   };
 
   return (
@@ -517,20 +517,19 @@ function GuideTourReview({ location }) {
                         </Popconfirm>
                       )}
                       {tourDetails.status == 1 && !isApprove && (
-                          <Popconfirm
+                        <Popconfirm
                           title="Are you sure to disable tour?"
                           onConfirm={handleDeleteTour}
                           okText="Yes"
                           cancelText="No"
                         >
-                            <Button color="info">Disable</Button>
-                          </Popconfirm>
-                        )
-                      }
+                          <Button color="info">Disable</Button>
+                        </Popconfirm>
+                      )}
                       <Button color="danger">
                         <Link to="/app/my_tours" style={{ color: '#ffffff' }}>
                           Cancel
-                        </Link>  
+                        </Link>
                       </Button>
 
                       {/* <Button className="style-button-edit">

@@ -58,15 +58,15 @@ const Navigation = ({
               Preview
             </Button>
           )}
-            <Button
-              onClick={onCancel}
-              style={{ marginLeft: 20, marginRight: 20, width: 100 }}
-              type="primary"
-              size="large"              
-              loading={loading}
-            >
-              Cancel
-            </Button>
+          <Button
+            onClick={onCancel}
+            style={{ marginLeft: 20, marginRight: 20, width: 100 }}
+            type="primary"
+            size="large"
+            loading={loading}
+          >
+            Cancel
+          </Button>
           {!isFinished && (
             <Button
               onClick={onNext}

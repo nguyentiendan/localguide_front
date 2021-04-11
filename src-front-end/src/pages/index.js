@@ -15,7 +15,7 @@ import GridContainer from '../components/Grid/GridContainer.js';
 import GridItem from '../components/Grid/GridItem.js';
 import Footer from '../components/Footer/Footer.js';
 import TeamSection from '../components/Sections/TeamSection';
-//import TourSection from '../components/Sections/TourSection';
+// import TourSection from '../components/Sections/TourSection';
 import TourSection from '../components/Sections/TourSection_20210327';
 import DestinationSection from '../components/Sections/DestinationSection';
 import BlogSection from '../components/Sections/BlogSection';

@@ -3,19 +3,19 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 
 import { makeStyles } from '@material-ui/core/styles';
+import { Form, Input, Select, Button, InputNumber, Row, Col, Spin, notification } from 'antd';
 import Layout from '../components/CustomLayout';
 import Parallax from '../components/Parallax/Parallax.js';
 import SEO from '../components/SEO';
 import GridContainer from '../components/Grid/GridContainer.js';
 import GridItem from '../components/Grid/GridItem.js';
-//import Input from '../components/Input';
+// import Input from '../components/Input';
 import Footer from '../components/Footer/Footer.js';
 import { getUserProfile } from '../utils/auth';
 import UserProfileComponent from '../components/User';
 import UploadAvatar from '../components/Input/UploadAvatar';
 import * as API from '../apis';
 import styles from '../assets/styles/profilePage.js';
-import { Form, Input,Select, Button, InputNumber, Row, Col, Spin, notification } from 'antd';
 
 const useStyles = makeStyles(styles);
 
@@ -38,7 +38,7 @@ const Field = styled.div`
 
 function UserProfile() {
   const uid = getUserProfile();
-  
+
   const [userProfile] = useState(getUserProfile());
   const classes = useStyles();
 
@@ -48,7 +48,6 @@ function UserProfile() {
   const [rootCity, setRootCity] = useState([]);
   const [rootCountry, setRootCountry] = useState([]);
   const [isloading, setIsloading] = useState(false);
-  
 
   const fetchAdminProfile = useCallback(async () => {
     setIsloading(true);
@@ -132,28 +131,20 @@ function UserProfile() {
   };
 
   return (
-    <Layout>    
+    <Layout>
       <SEO title="User Profile" />
       <Parallax small filter image={require('../assets/img/home-banner.jpg')} />
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div className={classes.container}>
-          
-          <FormWrapper
-            form={form} 
-            {...formItemLayout}
-            onFinish={onFinish}
-            scrollToFirstError
-          >
-            
-            <Form.Item name="avatar" style={{justifyContent:'center',paddingTop:'10px'}}>
-              <UploadAvatar uid={uid.uid} src={profile.avatar} title="" />              
+          <FormWrapper form={form} {...formItemLayout} onFinish={onFinish} scrollToFirstError>
+            <Form.Item name="avatar" style={{ justifyContent: 'center', paddingTop: '10px' }}>
+              <UploadAvatar uid={uid.uid} src={profile.avatar} title="" />
             </Form.Item>
-            
-            
-            <Form.Item name="profile" style={{justifyContent:'center',}}>
+
+            <Form.Item name="profile" style={{ justifyContent: 'center' }}>
               <h2>{profile.fullname} Profile</h2>
             </Form.Item>
-            
+
             <Form.Item
               name="fullname"
               label="Full Name"
@@ -172,7 +163,7 @@ function UserProfile() {
             >
               <Input />
             </Form.Item>
-            
+
             <Form.Item
               name="email"
               label="E-mail"
@@ -211,10 +202,15 @@ function UserProfile() {
               <Input />
             </Form.Item>
 
-            <Form.Item name="sex" label="Gender" initialValue={profile.sex === '0' ? '0' : '1'} key={profile.sex}>
+            <Form.Item
+              name="sex"
+              label="Gender"
+              initialValue={profile.sex === '0' ? '0' : '1'}
+              key={profile.sex}
+            >
               <Select
                 placeholder="Gender"
-                style={{width:'150px'}}                
+                style={{ width: '150px' }}
                 onChange={value => {
                   form.setFieldsValue({ sex: value });
                 }}
@@ -223,7 +219,7 @@ function UserProfile() {
                 <Select.Option value="0">Female</Select.Option>
               </Select>
             </Form.Item>
-            
+
             <Form.Item
               name="age"
               label="Age"
@@ -231,13 +227,18 @@ function UserProfile() {
               initialValue={profile.age}
               style={{ flexGrow: 0.15 }}
             >
-              <InputNumber style={{width:'100px'}}/>
+              <InputNumber style={{ width: '100px' }} />
             </Form.Item>
 
-            <Form.Item name="country" label="Country" initialValue={profile.country} key={profile.country}>
+            <Form.Item
+              name="country"
+              label="Country"
+              initialValue={profile.country}
+              key={profile.country}
+            >
               <Select
                 placeholder="Country"
-                style={{width:'150px'}}              
+                style={{ width: '150px' }}
                 onChange={handleSelectCountryAndCity}
               >
                 {rootCountry?.map(item => (
@@ -245,12 +246,12 @@ function UserProfile() {
                     {item.name}
                   </Select.Option>
                 ))}
-              </Select>                
+              </Select>
             </Form.Item>
-            <Form.Item name="city" label="City" initialValue={profile.city} key={profile.city}>                    
+            <Form.Item name="city" label="City" initialValue={profile.city} key={profile.city}>
               <Select
                 placeholder="City"
-                style={{width:'150px'}}
+                style={{ width: '150px' }}
                 onChange={value => {
                   form.setFieldsValue({ city: value });
                 }}
@@ -262,22 +263,22 @@ function UserProfile() {
                 ))}
               </Select>
             </Form.Item>
-                              
-            <Row >
+
+            <Row>
               <Col span={12}>
-                <Form.Item {...tailFormItemLayout} >
+                <Form.Item {...tailFormItemLayout}>
                   <Button type="primary" htmlType="submit">
                     Update your Profile
-                  </Button>              
+                  </Button>
                 </Form.Item>
               </Col>
             </Row>
           </FormWrapper>
-        </div>  
-        {/*<Wrapper>
+        </div>
+        {/* <Wrapper>
           <UserProfileComponent uid={userProfile?.uid} />
-        </Wrapper>*/}
-        <Footer/>
+        </Wrapper> */}
+        <Footer />
       </div>
     </Layout>
   );

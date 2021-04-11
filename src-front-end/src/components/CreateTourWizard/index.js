@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import qs from 'query-string';
 
 import { Modal } from 'antd';
+import { AiOutlineSync } from 'react-icons/ai';
 import StartCreateTour from './StartCreateTour';
 import ProgressBar from './ProgressBar';
 import Scene from './Scene';
@@ -23,13 +24,12 @@ import {
 } from '../../apis';
 import { useRequiredUser } from '../../utils/useAuth';
 import TourPreview from '../TourPreview';
-import img from "../../assets/img/mocks/places/cat-ba.jpg"
-import { AiOutlineSync } from 'react-icons/ai';
+import img from '../../assets/img/mocks/places/cat-ba.jpg';
 
 const CREATE_TOUR_STEPS = [
   {
     title: 'Basic information',
-    layouts: [StepLayout.Step1_1, StepLayout.Step1_2],    
+    layouts: [StepLayout.Step1_1, StepLayout.Step1_2],
     image: img,
     validation: tour => !tour.tourName,
   },
@@ -40,7 +40,7 @@ const CREATE_TOUR_STEPS = [
   {
     title: 'Tour Advance',
     layouts: [StepLayout.Step3_1, StepLayout.Step3_2],
-    //image: '/mocks/places/hoi-an.jpg',
+    // image: '/mocks/places/hoi-an.jpg',
   },
   {
     title: 'Add photos of tour',
@@ -164,7 +164,7 @@ const CreateTourWizard = ({ location }) => {
       // ignore
     }
   }, [currentStepNumber, loading, tourCreationInfo]);
-  
+
   const goCancel = useCallback(async () => {
     if (loading) {
       return;
@@ -260,7 +260,7 @@ const CreateTourWizard = ({ location }) => {
           id: data[0].id,
           tourName: data[0].name,
           tourShortDescription: data[0].shortDesc,
-          tourRecommend:data[0].recommend,
+          tourRecommend: data[0].recommend,
           tags: data[0].tag ? data[0].tag.split(';') : [],
           country: data[0].country,
           city: data[0].city,

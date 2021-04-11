@@ -81,7 +81,7 @@ const UploadAvatar = ({ uid, src, title }) => {
   );
   return (
     <Wrapper>
-      {/*<h2>{title} Profile</h2>*/}
+      {/* <h2>{title} Profile</h2> */}
       <label htmlFor="avatar">
         <Spin spinning={loading}>
           <UploadCustom>

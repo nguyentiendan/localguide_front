@@ -107,12 +107,12 @@ const TourCard = ({
               </Link>
             ]
             : [
-                <MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
-                <Link to={`/app/edit_tour?q=${id}`}>
-                  <EditOutlined title="Edit Tour" />
-                </Link>
+              <MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
+              <Link to={`/app/edit_tour?q=${id}`}>
+                <EditOutlined title="Edit Tour" />
+              </Link>
               
-              /*<MessageOutlined key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
+              /* <MessageOutlined key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
               <Popconfirm
                 title="Are you sure to delete this tour?"
                 onConfirm={() => handleDeleteTour({ uid, id, title })}
@@ -120,7 +120,7 @@ const TourCard = ({
                 cancelText="No"
               >
                 <DeleteOutlined key="delete" />
-              </Popconfirm>,*/
+              </Popconfirm>, */
               
             ]
         }

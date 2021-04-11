@@ -3,19 +3,19 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 
 import { makeStyles } from '@material-ui/core/styles';
+import { Form, Input, Select, Button, InputNumber, Row, Col, Spin, notification } from 'antd';
 import Layout from '../components/CustomLayout';
 import Parallax from '../components/Parallax/Parallax.js';
 import SEO from '../components/SEO';
 import GridContainer from '../components/Grid/GridContainer.js';
 import GridItem from '../components/Grid/GridItem.js';
-//import Input from '../components/Input';
+// import Input from '../components/Input';
 import Footer from '../components/Footer/Footer.js';
 import { getUserProfile } from '../utils/auth';
 import UserProfileComponent from '../components/User';
 import UploadAvatar from '../components/Input/UploadAvatar';
 import * as API from '../apis';
 import styles from '../assets/styles/profilePage.js';
-import { Form, Input,Select, Button, InputNumber, Row, Col, Spin, notification } from 'antd';
 
 const useStyles = makeStyles(styles);
 
@@ -26,7 +26,7 @@ const Field = styled.div`
 
 function UserProfile() {
   const uid = getUserProfile();
-  
+
   const [userProfile] = useState(getUserProfile());
   const classes = useStyles();
 
@@ -36,7 +36,6 @@ function UserProfile() {
   const [rootCity, setRootCity] = useState([]);
   const [rootCountry, setRootCountry] = useState([]);
   const [isloading, setIsloading] = useState(false);
-  
 
   const fetchAdminProfile = useCallback(async () => {
     setIsloading(true);
@@ -106,7 +105,7 @@ function UserProfile() {
   };
 
   return (
-    <Layout>    
+    <Layout>
       <SEO title="User Profile" />
       <Parallax small filter image={require('../assets/img/home-banner.jpg')} />
       <div className={classNames(classes.main, classes.mainRaised)}>
@@ -136,7 +135,7 @@ function UserProfile() {
                   >
                     <Input />
                   </Form.Item>
-                  
+
                   <Form.Item
                     name="email"
                     label="E-mail"
@@ -171,15 +170,20 @@ function UserProfile() {
                     <Input />
                   </Form.Item>
 
-                  <Form.Item name="job" label="Your job" initialValue={profile.job} key={profile.job}>
+                  <Form.Item
+                    name="job"
+                    label="Your job"
+                    initialValue={profile.job}
+                    key={profile.job}
+                  >
                     <Input />
                   </Form.Item>
-    
-                  <Form.Item name="sex" label="Gender" >
+
+                  <Form.Item name="sex" label="Gender">
                     <Select
                       placeholder="Gender"
                       key={profile.sex}
-                      style={{width:'150px'}}
+                      style={{ width: '150px' }}
                       defaultValue={profile.sex === '0' ? '0' : '1'}
                       onChange={value => {
                         form.setFieldsValue({ sex: value });
@@ -189,7 +193,7 @@ function UserProfile() {
                       <Option value="0">Female</Option>
                     </Select>
                   </Form.Item>
-                  
+
                   <Form.Item
                     name="age"
                     label="Age"
@@ -197,14 +201,14 @@ function UserProfile() {
                     initialValue={profile.age}
                     style={{ flexGrow: 0.15 }}
                   >
-                    <InputNumber style={{width:'100px'}}/>
+                    <InputNumber style={{ width: '100px' }} />
                   </Form.Item>
 
                   <Form.Item name="country" label="Country">
                     <Select
                       placeholder="Country"
                       key={profile.country}
-                      style={{width:'150px'}}
+                      style={{ width: '150px' }}
                       defaultValue={profile.country}
                       onChange={handleSelectCountryAndCity}
                     >
@@ -213,13 +217,13 @@ function UserProfile() {
                           {item.name}
                         </Option>
                       ))}
-                    </Select>                
+                    </Select>
                   </Form.Item>
-                  <Form.Item name="city" label="City">                    
+                  <Form.Item name="city" label="City">
                     <Select
                       placeholder="City"
                       key={profile.city}
-                      style={{width:'150px'}}
+                      style={{ width: '150px' }}
                       defaultValue={profile.city}
                       onChange={value => {
                         form.setFieldsValue({ city: value });
@@ -232,22 +236,21 @@ function UserProfile() {
                       ))}
                     </Select>
                   </Form.Item>
-                                    
+
                   <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit">
                       Update your Profile
-                    </Button>                    
+                    </Button>
                   </Form.Item>
-                  
                 </Form>
-              </div>  
+              </div>
             </GridItem>
           </GridContainer>
-        </div>  
-        {/*<Wrapper>
+        </div>
+        {/* <Wrapper>
           <UserProfileComponent uid={userProfile?.uid} />
-        </Wrapper>*/}
-        <Footer/>
+        </Wrapper> */}
+        <Footer />
       </div>
     </Layout>
   );

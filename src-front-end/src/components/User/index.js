@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Form, Input, Select, Button, InputNumber, Row, Col, Spin, notification } from 'antd';
-import GridContainer from '../Grid/GridContainer';
-import GridItem from '../Grid/GridItem.js';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import GridContainer from '../Grid/GridContainer';
+import GridItem from '../Grid/GridItem.js';
 
 import * as API from '../../apis';
 import UploadAvatar from '../Input/UploadAvatar';
@@ -119,10 +119,10 @@ const UserProfile = ({ uid }) => {
             ssss
           </GridItem>
         </GridContainer>
-      </div>  
+      </div>
     </Spin>
-    
-    /*<Spin spinning={isloading}>
+
+    /* <Spin spinning={isloading}>
       <FormWrapper
         {...formItemLayout}
         form={form}
@@ -263,7 +263,7 @@ const UserProfile = ({ uid }) => {
           </Button>
         </Form.Item>
       </FormWrapper>
-    </Spin>*/
+    </Spin> */
   );
 };
 

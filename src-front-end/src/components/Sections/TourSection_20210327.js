@@ -15,7 +15,6 @@ import GridItem from '../Grid/GridItem.js';
 import * as API from '../../apis';
 import styles from '../../assets/styles/commonStyle.js';
 
-
 const useStyles = makeStyles(styles);
 
 const ListWrapper = styled.div`
@@ -60,9 +59,7 @@ function TourSection() {
       clearInterval(interval);
     };
   }, []);
-  
-  
-  
+
   return (
     <div className={classes.container}>
       <Spin spinning={loading}>
@@ -86,7 +83,7 @@ function TourSection() {
                           day={tour.day}
                           city={tour.city}
                           className="tour"
-                        />                      
+                        />
                       );
                     })}
                 </ListContainer>
