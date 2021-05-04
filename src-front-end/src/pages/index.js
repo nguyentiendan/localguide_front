@@ -8,6 +8,8 @@ import _ from 'lodash';
 import classNames from 'classnames';
 // @material-ui/core components
 import { makeStyles } from '@material-ui/core/styles';
+import Img from 'gatsby-image';
+import PropTypes from 'prop-types';
 import Layout from '../components/CustomLayout';
 import SEO from '../components/SEO';
 import Parallax from '../components/Parallax/Parallax.js';
@@ -19,8 +21,45 @@ import TeamSection from '../components/Sections/TeamSection';
 import TourSection from '../components/Sections/TourSection_20210327';
 import DestinationSection from '../components/Sections/DestinationSection';
 import BlogSection from '../components/Sections/BlogSection';
-
+import ReviewSection from '../components/Sections/ReviewSection';
+import WorkSection from '../components/Sections/WorkSection';
 import styles from '../assets/styles/landingPage.js';
+
+import CommentListItem from '../components/CommentListItem';
+import JoinUsSection from '../components/JoinUsSection';
+import SectionHeader from '../components/SectionHeader';
+
+import exploreTourImg from '../assets/img/explore-tour.jpg';
+
+const ListContainer = styled.div`
+  display: inline-flex;
+  flex-direction: row;
+  overflow: hidden;
+
+  & .tour-guide + .tour-guide {
+    margin-left: 3rem;
+  }
+
+  & .destination + .destination,
+  & .tour + .tour {
+    margin-left: 1rem;
+  }
+
+  & .blog + .blog {
+    margin-left: 1.5rem;
+  }
+`;
+
+const Gap = styled.div`
+  display: inline-block;
+  width: 15px;
+`;
+
+const ExploreTourWrapper = styled.div`
+  max-height: 400px;
+  position: relative;
+  margin: 2rem -1rem;
+`;
 
 const useStyles = makeStyles(styles);
 
@@ -51,10 +90,29 @@ function IndexPage() {
           <DestinationSection />
           <TourSection />
           <BlogSection />
+          <ReviewSection />
+          {/* <WorkSection /> */}
+
+          <ExploreTourWrapper>
+            <Img fluid={exploreTourImg} style={{ position: 'initial' }} />
+          </ExploreTourWrapper>
+
+          <JoinUsSection />
         </Spin>
       </div>
       <Footer />
     </Layout>
   );
 }
+
+IndexPage.propTypes = {
+  data: PropTypes.shape({
+    exploreTourImg: PropTypes.shape({
+      childImageSharp: PropTypes.shape({
+        fluid: PropTypes.shape({}),
+      }),
+    }),
+  }).isRequired,
+};
+
 export default IndexPage;

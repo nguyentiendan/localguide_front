@@ -242,13 +242,18 @@ const GuideProfile = ({ uid }) => {
           <Input />
         </Form.Item>
 
-        <Form.Item name="sex" label="Gender" style={{ marginBottom: 0 }}>
+        <Form.Item
+          name="sex"
+          label="Gender"
+          style={{ marginBottom: 0 }}
+          initialValue={profile.sex === '0' ? '0' : '1'}
+        >
           <Row gutter={8}>
             <Col span={12}>
               <Select
                 placeholder="Gender"
                 key={profile.sex}
-                defaultValue={profile.sex === '0' ? '0' : '1'}
+                // defaultValue={profile.sex === '0' ? '0' : '1'}
                 onChange={value => {
                   form.setFieldsValue({ sex: value });
                 }}
@@ -270,13 +275,19 @@ const GuideProfile = ({ uid }) => {
             </Col>
           </Row>
         </Form.Item>
-        <div style={{ width: '100%' }}>
-          <Form.Item name="country" label="Country">
-            <Row>
+
+        <Form.Item
+          name="country"
+          label="Country"
+          style={{ marginBottom: 0 }}
+          initialValue={profile.country}
+        >
+          <Row gutter={8}>
+            <Col span={12}>
               <Select
                 placeholder="Country"
                 key={profile.country}
-                defaultValue={profile.country}
+                // defaultValue={profile.country}
                 onChange={handleSelectCountryAndCity}
               >
                 {rootCountry?.map(item => (
@@ -285,27 +296,27 @@ const GuideProfile = ({ uid }) => {
                   </Option>
                 ))}
               </Select>
-            </Row>
-          </Form.Item>
-          <Form.Item name="city" label="City">
-            <Row>
-              <Select
-                placeholder="City"
-                key={profile.city}
-                defaultValue={profile.city}
-                onChange={value => {
-                  form.setFieldsValue({ city: value });
-                }}
-              >
-                {rootCity?.map(item => (
-                  <Option value={item.city_name} key={item.city_name}>
-                    {item.city_name}
-                  </Option>
-                ))}
-              </Select>
-            </Row>
-          </Form.Item>
-        </div>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="city" label="City" initialValue={profile.city}>
+                <Select
+                  placeholder="City"
+                  key={profile.city}
+                  // defaultValue={profile.city}
+                  onChange={value => {
+                    form.setFieldsValue({ city: value });
+                  }}
+                >
+                  {rootCity?.map(item => (
+                    <Option value={item.city_name} key={item.city_name}>
+                      {item.city_name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form.Item>
 
         <Form.Item
           name="education"
@@ -385,7 +396,7 @@ const GuideProfile = ({ uid }) => {
               ref={editorRef}
               setContents={profile.experience}
               lang="en"
-              width="500"
+              // width="670"
               height="300"
               placeholder="Please type content here..."
               showToolbar

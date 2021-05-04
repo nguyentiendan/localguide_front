@@ -67,6 +67,7 @@ const UploadCustom = styled.div`
 const UploadAvatar = ({ uid, src, title }) => {
   const [avatarBlob, setAvatarBlob] = useState();
   const [loading, setLoading] = useState(false);
+
   const handleUploadCoverPhoto = useCallback(
     async file => {
       try {
@@ -79,6 +80,7 @@ const UploadAvatar = ({ uid, src, title }) => {
     },
     [uid]
   );
+
   return (
     <Wrapper>
       {/* <h2>{title} Profile</h2> */}

@@ -303,7 +303,7 @@ const IconWrapper = styled.img`
 `;
 const useStyles = makeStyles(styles);
 
-function GuideProfile({ location }) {
+function GuideDetail({ location }) {
   const [profile, setProfile] = useState({
     guide: {},
     reviews: { totalReview: 0, listReviews: [] },
@@ -693,4 +693,4 @@ function GuideProfile({ location }) {
     </Layout>
   );
 }
-export default GuideProfile;
+export default GuideDetail;

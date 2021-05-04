@@ -17,7 +17,7 @@ function MyTour() {
           <Tours />
         </Tabs.TabPane>
         <Tabs.TabPane tab={<TabTitle title="Profile" />} key="2">
-          <Profile uid={userProfile?.uid} />
+          {/* <Profile uid={userProfile?.uid} /> */}
         </Tabs.TabPane>
         <Tabs.TabPane tab={<TabTitle title="My Bookings" />} key="3">
           My Bookings

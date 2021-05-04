@@ -370,6 +370,7 @@ export async function createTourSchedule({ tourId, day, pickup, schedule }) {
   });
 }
 
+// Admin get all Tour
 export async function adminGetAllTour({ uid, token }) {
   return request({
     url: `/admin/tour/${uid}?page=1`,
@@ -378,6 +379,17 @@ export async function adminGetAllTour({ uid, token }) {
     token,
   });
 }
+
+// Admin get all Guide
+export async function adminGetAllGuide({ token }) {
+  return request({
+    url: `/admin/guide/getAll`,
+    method: 'GET',
+    authRequired: true,
+    token,
+  });
+}
+
 export async function getAdminProfile({ uid }) {
   return request({
     url: `account/admin/${uid}`,

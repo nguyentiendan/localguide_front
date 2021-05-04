@@ -64,6 +64,7 @@ function UserProfile() {
 
   const onFinish = async values => {
     setIsloading(true);
+    console.log(values);
     await API.editProfile({
       ...values,
       uid,

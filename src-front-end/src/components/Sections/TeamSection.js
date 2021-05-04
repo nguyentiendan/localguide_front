@@ -48,6 +48,7 @@ const useStyles = makeStyles(styles);
 function TeamSection() {
   const [tourGuides, setTourGuides] = useState();
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState();
 
   const classes = useStyles();
 
@@ -56,7 +57,12 @@ function TeamSection() {
       try {
         setLoading(true);
         const response = await API.getAllTourGuides();
-        setTourGuides(response.data);
+        if (response.data.length == 0) {
+          setData(0);
+        } else {
+          setTourGuides(response.data);
+        }
+
         // TODO : if network down or data not found => call mock API
       } catch (error) {
         console.error(error);
@@ -64,43 +70,47 @@ function TeamSection() {
         setLoading(false);
       }
     };
+
     fetchTourGuides();
     const interval = setInterval(() => fetchTourGuides(), 100000);
     return () => {
       clearInterval(interval);
     };
   }, []);
+  // console.log(tourGuides.length)
 
   return (
     <div className={classes.container}>
-      <Spin spinning={loading}>
-        <GridContainer justify="center">
-          <GridItem xs={12} sm={12} md={12}>
-            <div className={classes.description}>
-              <SectionHeader title="Tour Guide" />
-              <ListWrapper>
-                <ListContainer>
-                  {tourGuides &&
-                    tourGuides.map((guide, index) => {
-                      return (
-                        <GuideListItem
-                          key={index}
-                          id={guide.id}
-                          uid={guide.uid}
-                          name={guide.fullname}
-                          level={guide.level}
-                          intro={guide.intro}
-                          avatar={guide.avatar}
-                          className="tour-guide"
-                        />
-                      );
-                    })}
-                </ListContainer>
-              </ListWrapper>
-            </div>
-          </GridItem>
-        </GridContainer>
-      </Spin>
+      {data > 0 && (
+        <Spin spinning={loading}>
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={12} md={12}>
+              <div className={classes.description}>
+                <SectionHeader title="Tour Guide" />
+                <ListWrapper>
+                  <ListContainer>
+                    {tourGuides &&
+                      tourGuides.map((guide, index) => {
+                        return (
+                          <GuideListItem
+                            key={index}
+                            id={guide.id}
+                            uid={guide.uid}
+                            name={guide.fullname}
+                            level={guide.level}
+                            intro={guide.intro}
+                            avatar={guide.avatar}
+                            className="tour-guide"
+                          />
+                        );
+                      })}
+                  </ListContainer>
+                </ListWrapper>
+              </div>
+            </GridItem>
+          </GridContainer>
+        </Spin>
+      )}
     </div>
   );
 }

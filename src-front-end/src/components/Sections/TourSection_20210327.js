@@ -39,6 +39,8 @@ const ListContainer = styled.div`
 function TourSection() {
   const [tours, setTours] = useState();
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState();
+
   const classes = useStyles();
 
   useEffect(() => {
@@ -46,7 +48,11 @@ function TourSection() {
       try {
         setLoading(true);
         const response = await API.getAllTours();
-        setTours(response.data);
+        if (response.data.length == 0) {
+          setData(0);
+        } else {
+          setTours(response.data);
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -62,36 +68,38 @@ function TourSection() {
 
   return (
     <div className={classes.container}>
-      <Spin spinning={loading}>
-        <GridContainer justify="center">
-          <GridItem xs={12} sm={12} md={12}>
-            <div className={classes.description}>
-              <SectionHeader title="Popular Tour" />
-              <ListWrapper>
-                <ListContainer>
-                  {tours &&
-                    tours.map((tour, index) => {
-                      return (
-                        <TourListItem
-                          key={index}
-                          id={tour.id}
-                          uid={tour.uid}
-                          name={tour.name}
-                          description={tour.shortDesc}
-                          cover={tour.cover}
-                          country={tour.country}
-                          day={tour.day}
-                          city={tour.city}
-                          className="tour"
-                        />
-                      );
-                    })}
-                </ListContainer>
-              </ListWrapper>
-            </div>
-          </GridItem>
-        </GridContainer>
-      </Spin>
+      {data > 0 && (
+        <Spin spinning={loading}>
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={12} md={12}>
+              <div className={classes.description}>
+                <SectionHeader title="Popular Tour" />
+                <ListWrapper>
+                  <ListContainer>
+                    {tours &&
+                      tours.map((tour, index) => {
+                        return (
+                          <TourListItem
+                            key={index}
+                            id={tour.id}
+                            uid={tour.uid}
+                            name={tour.name}
+                            description={tour.shortDesc}
+                            cover={tour.cover}
+                            country={tour.country}
+                            day={tour.day}
+                            city={tour.city}
+                            className="tour"
+                          />
+                        );
+                      })}
+                  </ListContainer>
+                </ListWrapper>
+              </div>
+            </GridItem>
+          </GridContainer>
+        </Spin>
+      )}
     </div>
   );
 }

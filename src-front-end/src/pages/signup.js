@@ -138,8 +138,7 @@ function SignUpPage() {
           setPassword('');
           setConfirmPassword('');
           setError('');
-
-          // TODO : show popup after signup
+          // TODO : show popup after signup or di chuyển đến 1 trang Thank you
           alert(message);
         } else {
           setLoading(false);

@@ -123,6 +123,7 @@ function Tours() {
       try {
         setLoadingAllTour(true);
         const res = await API.adminGetAllTour({ uid: user.uid, token: user.token });
+        console.log(res.data);
         setData(res.data);
       } catch (error) {
         console.error(error);

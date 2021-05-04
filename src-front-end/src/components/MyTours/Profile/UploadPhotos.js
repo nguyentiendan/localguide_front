@@ -193,12 +193,10 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
   };
 
   const deletePhotoAntd = async name => {
-    console.log('DeletePhotoAntd');
     setIsloading(true);
     try {
       const nameImage = name.split('/')[7];
       await API.deletePhotoGuide({ name: nameImage, uid });
-      console.log(name);
       const removedPhotos = [...image];
       _.remove(removedPhotos, photo => photo.name === name);
       setImage(removedPhotos);
@@ -217,10 +215,12 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
       fileList = fileList.map(file => {
         return file.originFileObj;
       });
+
       const { data } = await API.uploadMultiPhotoGuide({
         uid,
         file: fileList,
       });
+
       setImage(data);
       setIsloading(false);
     } catch (e) {

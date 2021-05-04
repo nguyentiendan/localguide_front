@@ -169,7 +169,7 @@ const AdminProfile = ({ uid }) => {
         scrollToFirstError
       >
         <Form.Item name="avatar">
-          <UploadAvatar uid={uid} src={profile.avatar} title="Admin" />
+          Admin Profile <UploadAvatar uid={uid} src={profile.avatar} title="Admin" />
         </Form.Item>
 
         <Form.Item

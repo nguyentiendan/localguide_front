@@ -52,15 +52,18 @@ function Tours() {
     setLoading(false);
     notification.success({ message: `You have successfully deleted ${data.title} tour.` });
   };
+
   return (
     <Wrapper>
+      {allTours.tours.length == 0 && <div>You don’t have any tours.</div>}
       <FilterWrapper>
         <br />
         <Button
           icon={<PlusOutlined />}
           type="primary"
           size="large"
-          onClick={() => navigate('/app/create_tour')}
+          // onClick={() => navigate('/app/create_tour')}
+          onClick={() => navigate('/admin/createTour')}
         >
           Create Tour
         </Button>

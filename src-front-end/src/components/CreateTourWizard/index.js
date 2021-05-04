@@ -169,7 +169,7 @@ const CreateTourWizard = ({ location }) => {
     if (loading) {
       return;
     }
-    await navigate('app/my_tours');
+    await navigate('admin/guide_tourList/');
   }, [loading]);
 
   const goForward = async () => {
