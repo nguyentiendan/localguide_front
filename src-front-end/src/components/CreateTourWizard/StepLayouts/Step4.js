@@ -186,9 +186,9 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const { coverPhoto, photos = [] } = tourCreationInfo;
 
   const handleCoverPhotoChange = uploadedCoverPhoto => {
-    console.log(tourCreationInfo)
+    console.log(tourCreationInfo);
     onUpdate({
-      //...tourCreationInfo,
+      // ...tourCreationInfo,
       coverPhoto: { ...uploadedCoverPhoto },
     });
   };
@@ -204,8 +204,8 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     setLoading(true);
     if (!tourCreationInfo.id) {
       return;
-    }    
-    try {      
+    }
+    try {
       const uploadedRes = await uploadCoverPhoto({ uid, tourId: tourCreationInfo.id, file });
       handleCoverPhotoChange(uploadedRes.data[0]);
     } catch (e) {
@@ -231,7 +231,8 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
         tourId: tourCreationInfo.id,
         file: fileList,
       });
-      setImage(uploadedRes.data);      
+      console.log(uploadedRes.data);
+      setImage(uploadedRes.data);
     } catch (e) {
       // ignored
     }
@@ -267,10 +268,10 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const deletePhoto = async name => {
     setLoading(true);
     try {
-      const nameImage = name.split('/')[3];
-      await API.deletePhoto({ name: nameImage, tourId, uid });
+      const nameImage = name.split('/')[5];
+      await API.deleteTourPhoto({ nameImage, tourId, uid });
       const removedPhotos = [...photos];
-      _.remove(removedPhotos, photo => photo.name === name);
+      _.remove(removedPhotos, p => p.photo === name);
       onUpdate({
         ...tourCreationInfo,
         photos: removedPhotos,
@@ -284,7 +285,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     setLoading(true);
     try {
       const nameImage = name.split('/')[7];
-      await API.deletePhoto({ name: nameImage, tourId, uid });
+      await API.deleteTourPhoto({ name: nameImage, tourId, uid });
       const removedPhotos = [...image];
       _.remove(removedPhotos, photo => photo.name === name);
       setImage(removedPhotos);
@@ -294,13 +295,13 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     setLoading(false);
   };
 
-  const deleteCoverPhoto = async name => {    
+  const deleteCoverPhoto = async name => {
     setLoading(true);
     try {
-      const nameImage = name.split('/')[6];      
+      const nameImage = name.split('/')[6];
       await API.deleteCover({ nameImage, tourId, uid });
       onUpdate({
-      //  ...tourCreationInfo,
+        //  ...tourCreationInfo,
         coverPhoto: ' ',
       });
     } catch (e) {
@@ -327,6 +328,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
         </SubTitle>
         <br />
         <Row gutter={32} style={{ flexDirection: 'column' }} key="row_1">
+          <h2>Cover image of tour</h2>
           <Col span={5} key="col_1">
             {coverPhoto?.name != ' ' && (
               <ImgEditor
@@ -341,31 +343,33 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
               />
             )}
 
-            {(              
-                <Upload
-                  className="cover-photo-upload"
-                  listType="picture-card"
-                  fileList={[]}
-                  action={handleUploadCoverPhoto} key="upload_cover"
-                >
-                  {coverPhoto?.name === ' ' && ( uploadButton('Upload cover photo')) || coverPhoto?.name === undefined && ( uploadButton('Upload cover photo'))}
-                </Upload>  
-              
-            )}
+            {
+              <Upload
+                className="cover-photo-upload"
+                listType="picture-card"
+                fileList={[]}
+                action={handleUploadCoverPhoto}
+                key="upload_cover"
+              >
+                {(coverPhoto?.name === ' ' && uploadButton('Upload cover photo')) ||
+                  (coverPhoto?.name === undefined && uploadButton('Upload cover photo'))}
+              </Upload>
+            }
           </Col>
           <Col span={18} key="col_2">
+            <h2>Tour Photo</h2>
             <Row gutter={16} key="row_2">
-              {_.map(photos, (photo, index) => (
-                <Col key={index + "photo"} span={6}>
+              {_.map(photos, (p, index) => (
+                <Col key={`${index}photo`} span={6}>
                   <ImgEditor
-                    src={photo.name}
-                    //src={
+                    src={p.photo}
+                    // src={
                     //  photo.name.split('/')[0] === 'static'
                     //    ? getCndResourceUrl(photo.name)
                     //    : photo.name
-                    //}
-                    name={photo.name}
-                    caption={photo.caption}
+                    // }
+                    name={p.photo}
+                    caption={p.caption}
                     updateCaption={updateCaption}
                     deletePhoto={deletePhoto}
                     zoomImage={zoomImage}
@@ -375,16 +379,17 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                   />
                 </Col>
               ))}
+              {/*
               {_.map(image, (photo, index) => {
                 return (
-                  <Col key={index + "photo_2"} span={6}>
+                  <Col key={`${index}photo_2`} span={6}>
                     <ImgEditor
                       src={photo.name}
-                      //src={
+                      // src={
                       //  photo.name.split('/')[0] === 'static'
                       //    ? getCndResourceUrl(photo.name)
                       //    : photo.name
-                      //}
+                      // }
                       name={photo.name}
                       caption={photo.caption}
                       updateCaption={updateCaptionAntd}
@@ -396,9 +401,9 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                     />
                   </Col>
                 );
-              })}
+              })} */}
             </Row>
-            <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage} >
+            <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
               {uploadButton('Upload tour photos')}
             </Upload>
           </Col>

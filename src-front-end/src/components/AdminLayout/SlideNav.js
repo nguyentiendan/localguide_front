@@ -41,7 +41,7 @@ const SlideNav = () => {
             </span>
           )}
         </Menu.Item>
-        
+
         {user.role === 3 && (
           <Menu.Item key="3">
             <UserOutlined />
@@ -83,7 +83,6 @@ const SlideNav = () => {
           <LogoutOutlined />
           <span>Logout</span>
         </Menu.Item>
-        
       </Menu>
     </div>
   );

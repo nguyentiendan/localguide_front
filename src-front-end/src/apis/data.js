@@ -335,6 +335,16 @@ export async function deleteCover({ nameImage, tourId, uid }) {
   });
 }
 
+export async function deleteTourPhoto({ nameImage, tourId, uid }) {
+  return request({
+    url: `/tour/deletePhoto`,
+    method: 'DELETE',
+    authRequired: true,
+    data: { fileName: nameImage, id: tourId, uid },
+    isFormData: true,
+  });
+}
+
 export async function deletePhotoGuide({ name, uid }) {
   return request({
     url: `/guide/deletePhoto`,

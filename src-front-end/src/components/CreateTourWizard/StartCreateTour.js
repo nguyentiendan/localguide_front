@@ -24,7 +24,7 @@ const SubTitle = styled.h3`
 `;
 const UnderlineText = styled.span`
   text-decoration: underline;
-`; 
+`;
 
 const StartCreateTour = ({ onStart, location }) => {
   return (
@@ -49,7 +49,7 @@ const StartCreateTour = ({ onStart, location }) => {
         <Button onClick={onStart}>
           {location.pathname === '/admin/editTour' ? 'Edit Tour' : 'Start'}
         </Button>
-        <Button style={{ marginLeft: 20 }} onClick={() => navigate('admin/guide_tourList/')} >
+        <Button style={{ marginLeft: 20 }} onClick={() => navigate('admin/guide_tourList/')}>
           Cancel
         </Button>
       </div>

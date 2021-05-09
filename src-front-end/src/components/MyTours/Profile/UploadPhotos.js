@@ -149,7 +149,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
   });
   const removeImage = useRef(null);
   const [image, setImage] = useState([]);
-  
+
   const updateCaption = useCallback(
     async (caption, name) => {
       const nameImage = name.split('/')[7];
@@ -180,10 +180,10 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
 
   const deletePhoto = async name => {
     setIsloading(true);
-    try {      
-      const nameImage = name.split('/')[5];    
+    try {
+      const nameImage = name.split('/')[5];
       await API.deletePhotoGuide({ name: nameImage, uid });
-      
+
       const removedPhotos = [...photos];
       _.remove(removedPhotos, photo => photo.photo === name);
       setPhotos(removedPhotos);
@@ -221,7 +221,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
         uid,
         file: fileList,
       });
-    
+
       setImage(data);
       setIsloading(false);
     } catch (e) {
@@ -283,16 +283,16 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
                 />
               </Col>
             );
-          })}*/}
+          })} */}
         </Row>
-        <Dragger listType="picture-card"  multiple ref={removeImage} onChange={handleUploadPhoto} >            
+        <Dragger listType="picture-card" multiple ref={removeImage} onChange={handleUploadPhoto}>
           <p className="ant-upload-drag-icon">
             <InboxOutlined />
           </p>
           <p className="ant-upload-text">Click or drag file to this area to upload</p>
           <p className="ant-upload-hint">Support for a single or bulk upload.</p>
         </Dragger>
-        {/*<Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
+        {/* <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
           {photos.length >= 100 ? null : uploadButton('Upload photo')}
         </Upload> */}
       </Col>

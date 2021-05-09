@@ -17,4 +17,3 @@ EditTour.propTypes = {
 };
 
 export default EditTour;
-
