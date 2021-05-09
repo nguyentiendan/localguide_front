@@ -186,8 +186,9 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const { coverPhoto, photos = [] } = tourCreationInfo;
 
   const handleCoverPhotoChange = uploadedCoverPhoto => {
+    console.log(tourCreationInfo)
     onUpdate({
-      ...tourCreationInfo,
+      //...tourCreationInfo,
       coverPhoto: { ...uploadedCoverPhoto },
     });
   };
@@ -200,27 +201,25 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   // };
 
   const handleUploadCoverPhoto = async file => {
+    setLoading(true);
     if (!tourCreationInfo.id) {
       return;
-    }
-    try {
-      setLoading(true);
-      const uploadedRes = await uploadCoverPhoto({ tourId: tourCreationInfo.id, file });
+    }    
+    try {      
+      const uploadedRes = await uploadCoverPhoto({ uid, tourId: tourCreationInfo.id, file });
       handleCoverPhotoChange(uploadedRes.data[0]);
     } catch (e) {
       // ignored
     }
-
     setLoading(false);
   };
 
   const handleUploadPhoto = async info => {
+    setLoading(true);
     if (!tourCreationInfo.id) {
       return;
     }
-
     try {
-      setLoading(true);
       let fileList = [...info.fileList];
       fileList = fileList.slice(-5);
       removeImage.current.fileList = fileList;
@@ -228,14 +227,15 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
         return file.originFileObj;
       });
       const uploadedRes = await uploadMultiPhoto({
+        uid,
         tourId: tourCreationInfo.id,
         file: fileList,
       });
-      setImage(uploadedRes.data);
-      setLoading(false);
+      setImage(uploadedRes.data);      
     } catch (e) {
       // ignored
     }
+    setLoading(false);
   };
 
   const updateCaption = useCallback(
@@ -294,13 +294,14 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     setLoading(false);
   };
 
-  const deleteCoverPhoto = async name => {
+  const deleteCoverPhoto = async name => {    
     setLoading(true);
     try {
-      await API.deletePhoto({ name, tourId, uid });
+      const nameImage = name.split('/')[6];      
+      await API.deleteCover({ nameImage, tourId, uid });
       onUpdate({
-        ...tourCreationInfo,
-        coverPhoto: undefined,
+      //  ...tourCreationInfo,
+        coverPhoto: ' ',
       });
     } catch (e) {
       // ignored
@@ -325,9 +326,9 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
           publish.
         </SubTitle>
         <br />
-        <Row gutter={32} style={{ flexDirection: 'column' }}>
-          <Col span={5}>
-            {coverPhoto && (
+        <Row gutter={32} style={{ flexDirection: 'column' }} key="row_1">
+          <Col span={5} key="col_1">
+            {coverPhoto?.name != ' ' && (
               <ImgEditor
                 src={coverPhoto.name}
                 name={coverPhoto.name}
@@ -340,25 +341,29 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
               />
             )}
 
-            <Upload
-              className="cover-photo-upload"
-              listType="picture-card"
-              fileList={[]}
-              action={handleUploadCoverPhoto}
-            >
-              {coverPhoto?.name ? null : uploadButton('Upload cover photo')}
-            </Upload>
+            {(              
+                <Upload
+                  className="cover-photo-upload"
+                  listType="picture-card"
+                  fileList={[]}
+                  action={handleUploadCoverPhoto} key="upload_cover"
+                >
+                  {coverPhoto?.name === ' ' && ( uploadButton('Upload cover photo')) || coverPhoto?.name === undefined && ( uploadButton('Upload cover photo'))}
+                </Upload>  
+              
+            )}
           </Col>
-          <Col span={18}>
-            <Row gutter={16}>
+          <Col span={18} key="col_2">
+            <Row gutter={16} key="row_2">
               {_.map(photos, (photo, index) => (
-                <Col key={photo.name} span={6}>
+                <Col key={index + "photo"} span={6}>
                   <ImgEditor
-                    src={
-                      photo.name.split('/')[0] === 'static'
-                        ? getCndResourceUrl(photo.name)
-                        : photo.name
-                    }
+                    src={photo.name}
+                    //src={
+                    //  photo.name.split('/')[0] === 'static'
+                    //    ? getCndResourceUrl(photo.name)
+                    //    : photo.name
+                    //}
                     name={photo.name}
                     caption={photo.caption}
                     updateCaption={updateCaption}
@@ -372,13 +377,14 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
               ))}
               {_.map(image, (photo, index) => {
                 return (
-                  <Col key={photo.name} span={6}>
+                  <Col key={index + "photo_2"} span={6}>
                     <ImgEditor
-                      src={
-                        photo.name.split('/')[0] === 'static'
-                          ? getCndResourceUrl(photo.name)
-                          : photo.name
-                      }
+                      src={photo.name}
+                      //src={
+                      //  photo.name.split('/')[0] === 'static'
+                      //    ? getCndResourceUrl(photo.name)
+                      //    : photo.name
+                      //}
                       name={photo.name}
                       caption={photo.caption}
                       updateCaption={updateCaptionAntd}
@@ -392,8 +398,8 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                 );
               })}
             </Row>
-            <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
-              {uploadButton('Upload photo')}
+            <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage} >
+              {uploadButton('Upload tour photos')}
             </Upload>
           </Col>
           <Modal

@@ -41,6 +41,7 @@ const SlideNav = () => {
             </span>
           )}
         </Menu.Item>
+        
         {user.role === 3 && (
           <Menu.Item key="3">
             <UserOutlined />
@@ -49,6 +50,7 @@ const SlideNav = () => {
             </span>
           </Menu.Item>
         )}
+
         <Menu.Item key="4">
           <ProfileOutlined />
           {user.role === 3 && (
@@ -62,6 +64,7 @@ const SlideNav = () => {
             </span>
           )}
         </Menu.Item>
+
         <Menu.Item key="5">
           <ProfileOutlined />
           {user.role === 3 && (
@@ -75,10 +78,12 @@ const SlideNav = () => {
             </span>
           )}
         </Menu.Item>
+
         <Menu.Item key="6" onClick={logout}>
           <LogoutOutlined />
           <span>Logout</span>
         </Menu.Item>
+        
       </Menu>
     </div>
   );

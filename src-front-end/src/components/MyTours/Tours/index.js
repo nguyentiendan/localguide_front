@@ -65,7 +65,7 @@ function Tours() {
           // onClick={() => navigate('/app/create_tour')}
           onClick={() => navigate('/admin/createTour')}
         >
-          Create Tour
+          Create New Tour
         </Button>
         <br />
         <br />

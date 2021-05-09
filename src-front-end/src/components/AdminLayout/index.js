@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Layout, Menu } from 'antd';
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
-import { AuthProvider } from useAuth from '../../utils/useAuth';
+import { AuthProvider } from '../../utils/useAuth';
 import SlideNav from "./SlideNav";
 
 
@@ -42,7 +42,7 @@ const AdminLayout = ({ children }) => {
               background: '#fff',
             }}
           >
-            <div style={{ margin: '0 auto' }}>{children}</div>
+            <div style={{ margin: '0 auto' }} >{children}</div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>©2021 Created by Localguide Pal</Footer>
         </Layout>

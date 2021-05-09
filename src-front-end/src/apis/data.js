@@ -260,22 +260,22 @@ export async function uploadCoverPhoto({ tourId, file }) {
   });
 }
 
-export async function uploadPhoto({ tourId, file }) {
+export async function uploadPhoto({ uid, tourId, file }) {
   return request({
     url: `/tour/uploadOneFile`,
     method: 'POST',
     authRequired: true,
-    data: { id: tourId, uploadFile: file },
+    data: { uid, id: tourId, uploadFile: file },
     isFormData: true,
   });
 }
 
-export async function uploadMultiPhoto({ tourId, file }) {
+export async function uploadMultiPhoto({ uid, tourId, file }) {
   return request({
     url: `/tour/uploadMultiFile`,
     method: 'POST',
     authRequired: true,
-    data: { id: tourId, uploadFiles: file },
+    data: { uid, id: tourId, uploadFiles: file },
     isFormData: true,
   });
 }
@@ -325,12 +325,12 @@ export async function getTourCoverPhoto({ id, uid }) {
   });
 }
 
-export async function deletePhoto({ name, tourId }) {
+export async function deleteCover({ nameImage, tourId, uid }) {
   return request({
-    url: `/tour/deletePhoto`,
+    url: `/tour/deleteCover`,
     method: 'DELETE',
     authRequired: true,
-    data: { fileName: name, id: tourId },
+    data: { fileName: nameImage, id: tourId, uid },
     isFormData: true,
   });
 }

@@ -76,6 +76,7 @@ const GuideProfile = ({ uid }) => {
   const [language, setLanguage] = useState({
     tags: [],
   });
+  
   const fetchGuideProfile = useCallback(async () => {
     setIsloading(true);
     const res = await API.getGuideProfile(uid);
@@ -156,8 +157,7 @@ const GuideProfile = ({ uid }) => {
     fetchCity();
   };
 
-  const onFinish = async values => {
-    console.log(values);
+  const onFinish = async values => {    
     setIsloading(true);
     await API.editProfile({
       ...values,
@@ -180,6 +180,7 @@ const GuideProfile = ({ uid }) => {
         name="Profile"
         onFinish={onFinish}
         scrollToFirstError
+        
       >
         <Form.Item name="avatar">
           <UploadAvatar uid={uid} src={profile.avatar} title="Guide" />
@@ -198,12 +199,12 @@ const GuideProfile = ({ uid }) => {
               message: 'Value should be less than 100 character',
             },
           ]}
-          key={profile.fullname}
+          key={profile.fullname===''? 'fullname': profile.fullname}
           initialValue={profile.fullname}
         >
           <Input />
         </Form.Item>
-
+          
         <Form.Item
           name="email"
           label="E-mail"
@@ -217,7 +218,7 @@ const GuideProfile = ({ uid }) => {
               message: 'Please input your E-mail!',
             },
           ]}
-          key={profile.email}
+          key={profile.email===''? 'email': profile.email}
           initialValue={profile.email}
         >
           <Input disabled={profile.email} />
@@ -232,16 +233,18 @@ const GuideProfile = ({ uid }) => {
               message: 'Please input your Mobile phone!',
             },
           ]}
-          key={profile.mobile}
+          key={profile.mobile===''? 'mobile': profile.mobile}
           initialValue={profile.mobile}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item name="job" label="Your job" key={profile.job} initialValue={profile.job}>
+        <Form.Item name="job" label="Your job" 
+          key={profile.job===''? 'job': profile.job}
+          initialValue={profile.job}>
           <Input />
         </Form.Item>
-
+          
         <Form.Item
           name="sex"
           label="Gender"
@@ -252,7 +255,7 @@ const GuideProfile = ({ uid }) => {
             <Col span={12}>
               <Select
                 placeholder="Gender"
-                key={profile.sex}
+                key={profile.sex===''? 'sex': profile.sex}
                 // defaultValue={profile.sex === '0' ? '0' : '1'}
                 onChange={value => {
                   form.setFieldsValue({ sex: value });
@@ -266,7 +269,7 @@ const GuideProfile = ({ uid }) => {
               <Form.Item
                 name="age"
                 label="Age"
-                key={profile.age}
+                key={profile.age===''? 'age': profile.age}
                 initialValue={profile.age}
                 style={{ flexGrow: 0.15 }}
               >
@@ -286,7 +289,7 @@ const GuideProfile = ({ uid }) => {
             <Col span={12}>
               <Select
                 placeholder="Country"
-                key={profile.country}
+                key={profile.country===''? 'country': profile.country}
                 // defaultValue={profile.country}
                 onChange={handleSelectCountryAndCity}
               >
@@ -301,7 +304,7 @@ const GuideProfile = ({ uid }) => {
               <Form.Item name="city" label="City" initialValue={profile.city}>
                 <Select
                   placeholder="City"
-                  key={profile.city}
+                  key={profile.city===''? 'city': profile.city}
                   // defaultValue={profile.city}
                   onChange={value => {
                     form.setFieldsValue({ city: value });
@@ -321,7 +324,7 @@ const GuideProfile = ({ uid }) => {
         <Form.Item
           name="education"
           label="Education"
-          key={profile.education}
+          key={profile.education===''? 'education': profile.education}
           initialValue={profile.education}
         >
           <Input />
@@ -330,7 +333,7 @@ const GuideProfile = ({ uid }) => {
         <Form.Item
           name="specialities"
           label="Certification"
-          key={profile.specialities}
+          key={profile.specialities===''? 'specialities': profile.specialities}
           initialValue={profile.specialities}
         >
           <Input />
@@ -339,7 +342,7 @@ const GuideProfile = ({ uid }) => {
         <Form.Item
           name="language"
           label="Language"
-          key={profile.language}
+          key={profile.language===''? 'language': profile.language}
           initialValue={profile.language}
         >
           <TagInterests
@@ -352,7 +355,7 @@ const GuideProfile = ({ uid }) => {
         <Form.Item
           name="interests"
           label="Interests"
-          key={profile.interests}
+          key={profile.interests===''? 'interests': profile.interests}
           initialValue={profile.interests}
         >
           <TagInterests
@@ -362,7 +365,11 @@ const GuideProfile = ({ uid }) => {
           />
         </Form.Item>
 
-        <Form.Item name="extras" label="Extras" key={profile.extras} initialValue={profile.extras}>
+        <Form.Item 
+          name="extras" 
+          label="Extras" 
+          key={profile.extras===''? 'extras': profile.extras}
+          initialValue={profile.extras}>
           <TagInterests
             createInfo={extras}
             setCreateInfo={setExtras}
@@ -379,16 +386,16 @@ const GuideProfile = ({ uid }) => {
               message: 'Value should be less than 255 character',
             },
           ]}
-          key={profile.intro}
+          key={profile.intro===''? 'intro': profile.intro}
           initialValue={profile.intro}
         >
           <Input.TextArea />
         </Form.Item>
-
+          
         <Form.Item
           name="experience"
           label="Experience"
-          key={profile.experience}
+          key="experience"
           initialValue={profile.experience}
         >
           <div>
@@ -443,16 +450,16 @@ const GuideProfile = ({ uid }) => {
           </div>
         </Form.Item>
 
-        <Form.Item label="Photos">
+        <Form.Item label="Photos" key="upload">
           <UploadPhotos
             photos={photos}
             uid={uid}
             setPhotos={setPhotos}
             setIsloading={setIsloading}
           />
-        </Form.Item>
+          </Form.Item>
 
-        <Form.Item {...tailFormItemLayout}>
+        <Form.Item {...tailFormItemLayout} key="submit">
           <Button type="primary" htmlType="submit">
             Submit
           </Button>

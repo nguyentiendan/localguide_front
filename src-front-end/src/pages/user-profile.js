@@ -159,7 +159,7 @@ function UserProfile() {
                   message: 'Value should be less than 100 character',
                 },
               ]}
-              key={profile.fullname}
+              key={profile.fullname===''? 'fullname': profile.fullname}
               initialValue={profile.fullname}
             >
               <Input />
@@ -178,7 +178,7 @@ function UserProfile() {
                   message: 'Please input your E-mail!',
                 },
               ]}
-              key={profile.email}
+              key={profile.email===''? 'fullname': profile.email}
               initialValue={profile.email}
             >
               <Input disabled={profile.email} />
@@ -193,13 +193,15 @@ function UserProfile() {
                   message: 'Please input your Mobile phone!',
                 },
               ]}
-              key={profile.mobile}
+              key={profile.mobile===''? 'mobile': profile.mobile}
               initialValue={profile.mobile}
             >
               <Input />
             </Form.Item>
 
-            <Form.Item name="job" label="Your job" initialValue={profile.job} key={profile.job}>
+            <Form.Item name="job" label="Your job" 
+              initialValue={profile.job} 
+              key={profile.job===''? 'job': profile.job}>
               <Input />
             </Form.Item>
 
@@ -207,7 +209,7 @@ function UserProfile() {
               name="sex"
               label="Gender"
               initialValue={profile.sex === '0' ? '0' : '1'}
-              key={profile.sex}
+              key={profile.sex===''? 'sex': profile.sex}
             >
               <Select
                 placeholder="Gender"
@@ -224,7 +226,7 @@ function UserProfile() {
             <Form.Item
               name="age"
               label="Age"
-              key={profile.age}
+              key={profile.age===''? 'age': profile.age}
               initialValue={profile.age}
               style={{ flexGrow: 0.15 }}
             >
@@ -235,7 +237,7 @@ function UserProfile() {
               name="country"
               label="Country"
               initialValue={profile.country}
-              key={profile.country}
+              key={profile.country===''? 'country': profile.country}
             >
               <Select
                 placeholder="Country"
@@ -249,7 +251,9 @@ function UserProfile() {
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item name="city" label="City" initialValue={profile.city} key={profile.city}>
+            <Form.Item name="city" label="City" 
+              initialValue={profile.city} 
+              key={profile.city===''? 'city': profile.city}>
               <Select
                 placeholder="City"
                 style={{ width: '150px' }}

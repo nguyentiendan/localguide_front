@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Link } from 'gatsby';
+import { navigate } from 'gatsby';
 import colors from '../../assets/styles/colors';
 import Button from '../Button';
 
@@ -24,7 +24,7 @@ const SubTitle = styled.h3`
 `;
 const UnderlineText = styled.span`
   text-decoration: underline;
-`;
+`; 
 
 const StartCreateTour = ({ onStart, location }) => {
   return (
@@ -47,12 +47,10 @@ const StartCreateTour = ({ onStart, location }) => {
       <br />
       <div>
         <Button onClick={onStart}>
-          {location.pathname === '/app/edit_tour' ? 'Edit Tour' : 'Start'}
+          {location.pathname === '/admin/editTour' ? 'Edit Tour' : 'Start'}
         </Button>
-        <Button style={{ marginLeft: 20 }}>
-          <Link to="/app/my_tours" style={{ color: '#ffffff' }}>
-            Cancel
-          </Link>
+        <Button style={{ marginLeft: 20 }} onClick={() => navigate('admin/guide_tourList/')} >
+          Cancel
         </Button>
       </div>
     </Wrapper>

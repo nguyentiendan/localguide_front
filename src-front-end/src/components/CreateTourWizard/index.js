@@ -104,7 +104,7 @@ const Wrapper = styled.div`
   `)}
 `;
 
-const CreateTourWizard = ({ location }) => {
+const CreateTourWizard = ({ location }) => {  
   const { user } = useRequiredUser();
   const [loading, setLoading] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -120,6 +120,7 @@ const CreateTourWizard = ({ location }) => {
   const startCreateTour = useCallback(() => {
     setCurrentStepNumber(1);
   }, []);
+
   const saveOrUpdateTour = async () => {
     if (!tourCreationInfo || !tourCreationInfo.tourName) {
       return;
@@ -225,6 +226,7 @@ const CreateTourWizard = ({ location }) => {
     },
     [tourCreationInfo]
   );
+  
   const isNextDisabled = useMemo(() => {
     if (currentStepNumber === 0) {
       return false;

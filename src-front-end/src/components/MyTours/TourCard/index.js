@@ -102,13 +102,13 @@ const TourCard = ({
           status
             ? [
               <MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
-              <Link to={`/app/edit_tour?q=${id}`}>
+              <Link to={`/admin/editTour?q=${id}`}>
                 <EditOutlined title="Edit Tour" />
               </Link>
             ]
             : [
               <MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
-              <Link to={`/app/edit_tour?q=${id}`}>
+              <Link to={`/admin/editTour?q=${id}`}>
                 <EditOutlined title="Edit Tour" />
               </Link>
               
