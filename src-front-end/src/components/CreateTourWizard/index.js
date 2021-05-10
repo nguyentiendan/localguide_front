@@ -271,7 +271,7 @@ const CreateTourWizard = ({ location }) => {
           minPax: data[0].minPax,
           maxPax: data[0].maxPax,
           guideFee: data[0].guideFee,
-          coverPhoto: { name: data[0].cover },
+          coverPhoto: { photo: data[0].cover },
           total: data[0].total,
           meal: res.meal,
           other: res.other,

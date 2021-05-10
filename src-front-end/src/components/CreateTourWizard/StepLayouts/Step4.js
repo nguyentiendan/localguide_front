@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { PlusOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, EyeOutlined, DeleteOutlined, InboxOutlined } from '@ant-design/icons';
 import { Modal, Col, Input, Row, Space, Spin, Upload } from 'antd';
 
 import colors from '../../../assets/styles/colors';
@@ -166,6 +166,8 @@ ImgEditor.defaultProps = {
   index: 0,
 };
 
+const { Dragger } = Upload;
+
 const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const [loading, setLoading] = useState(false);
   const [zoomImage, setZoomImage] = useState({
@@ -185,21 +187,21 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
 
   const { coverPhoto, photos = [] } = tourCreationInfo;
 
-  const handleCoverPhotoChange = uploadedCoverPhoto => {
-    console.log(tourCreationInfo);
+  const handleCoverPhotoChange = uploadedCoverPhoto => {    
     onUpdate({
       // ...tourCreationInfo,
-      coverPhoto: { ...uploadedCoverPhoto },
+      coverPhoto : { ...uploadedCoverPhoto },
     });
   };
-
+  
   // const handlePhotosChange = uploadedPhotos => {
   //   onUpdate({
   //     ...tourCreationInfo,
   //     photos: uploadedPhotos,
   //   });
   // };
-
+  
+  //upload cover image of Tour
   const handleUploadCoverPhoto = async file => {
     setLoading(true);
     if (!tourCreationInfo.id) {
@@ -207,13 +209,14 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     }
     try {
       const uploadedRes = await uploadCoverPhoto({ uid, tourId: tourCreationInfo.id, file });
-      handleCoverPhotoChange(uploadedRes.data[0]);
+      handleCoverPhotoChange(uploadedRes.data[0]);      
     } catch (e) {
       // ignored
     }
     setLoading(false);
   };
 
+  //upload photo of Tour
   const handleUploadPhoto = async info => {
     setLoading(true);
     if (!tourCreationInfo.id) {
@@ -230,8 +233,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
         uid,
         tourId: tourCreationInfo.id,
         file: fileList,
-      });
-      console.log(uploadedRes.data);
+      });      
       setImage(uploadedRes.data);
     } catch (e) {
       // ignored
@@ -284,10 +286,10 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const deletePhotoAntd = async name => {
     setLoading(true);
     try {
-      const nameImage = name.split('/')[7];
-      await API.deleteTourPhoto({ name: nameImage, tourId, uid });
-      const removedPhotos = [...image];
-      _.remove(removedPhotos, photo => photo.name === name);
+      const nameImage = name.split('/')[5];
+      await API.deleteTourPhoto({ nameImage, tourId, uid });
+      const removedPhotos = [...image];      
+      _.remove(removedPhotos, p => p.photo === name);
       setImage(removedPhotos);
     } catch (e) {
       // ignored
@@ -316,7 +318,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
       <div className="ant-upload-text">{text}</div>
     </div>
   );
-
+  console.log(coverPhoto)
   return (
     <Spin spinning={loading}>
       <Wrapper>
@@ -330,11 +332,11 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
         <Row gutter={32} style={{ flexDirection: 'column' }} key="row_1">
           <h2>Cover image of tour</h2>
           <Col span={5} key="col_1">
-            {coverPhoto?.name != ' ' && (
+            {coverPhoto?.photo != ' ' && (
               <ImgEditor
-                src={coverPhoto.name}
-                name={coverPhoto.name}
-                caption={coverPhoto.caption}
+                src={coverPhoto.photo}
+                name={coverPhoto.photo}
+                caption={coverPhoto.subcaption}
                 updateCaption={updateCaption}
                 deletePhoto={deleteCoverPhoto}
                 type="Cover"
@@ -351,8 +353,8 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                 action={handleUploadCoverPhoto}
                 key="upload_cover"
               >
-                {(coverPhoto?.name === ' ' && uploadButton('Upload cover photo')) ||
-                  (coverPhoto?.name === undefined && uploadButton('Upload cover photo'))}
+                {(coverPhoto?.photo === ' ' && uploadButton('Upload cover photo')) ||
+                  (coverPhoto?.photo === undefined && uploadButton('Upload cover photo'))}
               </Upload>
             }
           </Col>
@@ -363,11 +365,6 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                 <Col key={`${index}photo`} span={6}>
                   <ImgEditor
                     src={p.photo}
-                    // src={
-                    //  photo.name.split('/')[0] === 'static'
-                    //    ? getCndResourceUrl(photo.name)
-                    //    : photo.name
-                    // }
                     name={p.photo}
                     caption={p.caption}
                     updateCaption={updateCaption}
@@ -379,19 +376,14 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                   />
                 </Col>
               ))}
-              {/*
-              {_.map(image, (photo, index) => {
+              
+              {_.map(image, (p, index) => {
                 return (
                   <Col key={`${index}photo_2`} span={6}>
                     <ImgEditor
-                      src={photo.name}
-                      // src={
-                      //  photo.name.split('/')[0] === 'static'
-                      //    ? getCndResourceUrl(photo.name)
-                      //    : photo.name
-                      // }
-                      name={photo.name}
-                      caption={photo.caption}
+                      src={p.photo}
+                      name={p.photo}
+                      caption={p.caption}
                       updateCaption={updateCaptionAntd}
                       deletePhoto={deletePhotoAntd}
                       zoomImage={zoomImage}
@@ -401,11 +393,18 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
                     />
                   </Col>
                 );
-              })} */}
+              })} 
             </Row>
-            <Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
+            <Dragger listType="picture-card" multiple ref={removeImage} onChange={handleUploadPhoto}>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">Click or drag file to this area to upload</p>
+              <p className="ant-upload-hint">Support for a single or bulk upload.</p>
+            </Dragger>  
+            {/*<Upload listType="picture-card" onChange={handleUploadPhoto} multiple ref={removeImage}>
               {uploadButton('Upload tour photos')}
-            </Upload>
+            </Upload>*/}
           </Col>
           <Modal
             visible={zoomImage.previewVisible}
@@ -428,8 +427,8 @@ StepLayout.propTypes = {
   tourCreationInfo: PropTypes.shape({
     id: PropTypes.number,
     coverPhoto: PropTypes.shape({
-      name: PropTypes.string,
-      caption: PropTypes.string,
+      photo: PropTypes.string,
+      subcaption: PropTypes.string,
     }),
     photos: PropTypes.arrayOf(
       PropTypes.shape({

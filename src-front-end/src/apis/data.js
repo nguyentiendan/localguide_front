@@ -240,6 +240,7 @@ export async function getCityOfCountry(countryCode) {
   });
 }
 
+//upload multi photo for Guide
 export async function uploadMultiPhotoGuide({ uid, file }) {
   return request({
     url: `/guide/uploadPhoto`,
@@ -250,6 +251,7 @@ export async function uploadMultiPhotoGuide({ uid, file }) {
   });
 }
 
+//upload cover image for Tour
 export async function uploadCoverPhoto({ tourId, file }) {
   return request({
     url: `/tour/uploadCover`,
@@ -270,6 +272,7 @@ export async function uploadPhoto({ uid, tourId, file }) {
   });
 }
 
+//upload multi photo for Tour
 export async function uploadMultiPhoto({ uid, tourId, file }) {
   return request({
     url: `/tour/uploadMultiFile`,

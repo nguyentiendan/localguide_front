@@ -183,9 +183,8 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
     try {
       const nameImage = name.split('/')[5];
       await API.deletePhotoGuide({ name: nameImage, uid });
-
       const removedPhotos = [...photos];
-      _.remove(removedPhotos, photo => photo.photo === name);
+      _.remove(removedPhotos, p => p.photo === name);
       setPhotos(removedPhotos);
     } catch (e) {
       // ignored
@@ -199,7 +198,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
       const nameImage = name.split('/')[5];
       await API.deletePhotoGuide({ name: nameImage, uid });
       const removedPhotos = [...image];
-      _.remove(removedPhotos, photo => photo.name === name);
+      _.remove(removedPhotos, p => p.photo === name);
       setImage(removedPhotos);
     } catch (e) {
       // ignored
@@ -216,7 +215,6 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
       fileList = fileList.map(file => {
         return file.originFileObj;
       });
-
       const { data } = await API.uploadMultiPhotoGuide({
         uid,
         file: fileList,
@@ -234,7 +232,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
       <div className="ant-upload-text">{text}</div>
     </div>
   );
-
+console.log(image)
   return (
     <Wrapper>
       <Col span={24}>
@@ -261,7 +259,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
               </Col>
             );
           })}
-          {/*
+          
           {_.map(image, (p, index) => {
             return (
               <Col key={index} span={6}>
@@ -283,7 +281,7 @@ const UploadPhotos = ({ photos, uid, setPhotos, setIsloading }) => {
                 />
               </Col>
             );
-          })} */}
+          })} 
         </Row>
         <Dragger listType="picture-card" multiple ref={removeImage} onChange={handleUploadPhoto}>
           <p className="ant-upload-drag-icon">
