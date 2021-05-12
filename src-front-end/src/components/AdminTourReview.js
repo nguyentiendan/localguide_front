@@ -389,12 +389,9 @@ const ButtonEventAdminWrapper = styled.div`
  */
 const useStyles = makeStyles(styles);
 
-function AdminTourReview({ location }) {
+function AdminTourReview({ uid, id }) {
   const classes = useStyles();
 
-  const dataQueryParams = qs.parse(location.search);
-  const { uid } = dataQueryParams;
-  const { id } = dataQueryParams;
   const [tourPhotos, setTourPhotos] = useState([]);
   const [isApprove, setIsApprove] = useState(false);
   const [showModal, setShowModal] = useState(false);

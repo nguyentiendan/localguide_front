@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {
-  Divider,
-  Row,
-  Col,
-  Form,
-  Button,
-  Table,
-  Tag,
-  Space,
-  Badge,
-  Select,
-  Spin,
-  InputNumber,
-} from 'antd';
+import {Divider, Row, Col, Form, Button, Table, Tag, Space, Badge, Select, Spin, InputNumber,} from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -63,7 +50,7 @@ const columns = [
     render: (name, tour) => (
       <div>
         <TourTitle>
-          <a href={`/app/admin_tour_review?uid=${tour.uid}&id=${tour.id}`}>{name}</a>
+          <a href={`/admin/adminTourReview?uid=${tour.uid}&id=${tour.id}`} target="_blank">{name}</a>          
         </TourTitle>
       </div>
     ),
@@ -118,6 +105,7 @@ function Tours() {
   const [rootCity, setRootCity] = useState([]);
 
   const user = getUserProfile();
+  
   useEffect(() => {
     const getAllTours = async () => {
       try {

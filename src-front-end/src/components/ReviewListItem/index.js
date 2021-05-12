@@ -41,6 +41,12 @@ const Delimiter = styled.div`
 
 const Content = styled.div``;
 
+//fix moment constructor error. moment construction falls back to js Date()
+moment.createFromInputFallback = function(config) {
+  // unreliable string magic, or
+  config._d = new Date(config._i);
+};
+
 const CommentListItem = ({ className, user, avatar, date, content }) => (
   <Wrapper className={className}>
     <AvatarWrapper src={avatar} icon={<UserOutlined />} size="large" />

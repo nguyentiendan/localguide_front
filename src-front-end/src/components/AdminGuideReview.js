@@ -303,7 +303,7 @@ const IconWrapper = styled.img`
 `;
 const useStyles = makeStyles(styles);
 
-function GuideDetail({ location }) {
+function AdminGuideReview({ uid, id }) {
   const [profile, setProfile] = useState({
     guide: {},
     reviews: { totalReview: 0, listReviews: [] },
@@ -319,15 +319,12 @@ function GuideDetail({ location }) {
   const imageClasses_1 = classNames(classes.imgRaised, classes.imgRounded, classes.imgFluid);
   const [photos, setPhotos] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const dataQueryParams = qs.parse(location.search);
+  //const dataQueryParams = qs.parse(location.search);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async () => {      
       setLoading(true);
-      const res = await API.getGuideProfileOverview({
-        uid: dataQueryParams.uid,
-        guideId: dataQueryParams.id,
-      });
+      const res = await API.getGuideProfileOverview({uid,guideId:id});
       setProfile({
         guide: res.guide,
         reviews: {
@@ -338,12 +335,12 @@ function GuideDetail({ location }) {
       setLoading(false);
     };
     fetchData();
-  }, [setProfile, dataQueryParams.uid, dataQueryParams.id]);
+  }, [setProfile, uid, id]);
 
   useEffect(() => {
     const fetchRelatedTour = async () => {
       const res = await API.getRelatedTour({
-        uid: dataQueryParams.uid,
+        uid,
       });
       setTour({
         related: {
@@ -369,7 +366,7 @@ function GuideDetail({ location }) {
 
   useLayoutEffect(() => {
     const fetchPhotos = async () => {
-      const res = await API.getPhotosGuide({ uid: dataQueryParams.uid });
+      const res = await API.getPhotosGuide({ uid });
       if (res.status === false) {
         setPhotos('');
       } else {
@@ -391,11 +388,7 @@ function GuideDetail({ location }) {
         return null;
     }
   };
-  /*
-  //TODO  
-  4-Save Country
-  */
-
+ 
   return (
     <Layout scrollHeight={300}>
       <SEO title="Guide Profile" />
@@ -693,4 +686,4 @@ function GuideDetail({ location }) {
     </Layout>
   );
 }
-export default GuideDetail;
+export default AdminGuideReview;

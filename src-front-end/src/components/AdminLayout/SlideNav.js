@@ -32,12 +32,12 @@ const SlideNav = () => {
           <RocketOutlined />
           {user.role === 3 && (
             <span>
-              <Link to="/admin/tourList/">Tour List</Link>
+              <Link to="/admin/adminTourList/">Tour List</Link>
             </span>
           )}
           {user.role === 2 && (
             <span>
-              <Link to="/admin/guide_tourList/">Tour List</Link>
+              <Link to="/admin/guideTourList/">Tour List</Link>
             </span>
           )}
         </Menu.Item>
@@ -46,7 +46,7 @@ const SlideNav = () => {
           <Menu.Item key="3">
             <UserOutlined />
             <span>
-              <Link to="/admin/guideList/">Guide List</Link>
+              <Link to="/admin/adminGuideList/">Guide List</Link>
             </span>
           </Menu.Item>
         )}
@@ -60,7 +60,7 @@ const SlideNav = () => {
           )}
           {user.role === 2 && (
             <span>
-              <Link to="/admin/guide_profile">Profile</Link>
+              <Link to="/admin/guideProfile">Profile</Link>
             </span>
           )}
         </Menu.Item>

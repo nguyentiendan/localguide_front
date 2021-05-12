@@ -93,9 +93,9 @@ function IndexPage() {
           <ReviewSection />
           {/* <WorkSection /> */}
 
-          <ExploreTourWrapper>
+          {/*<ExploreTourWrapper>
             <Img fluid={exploreTourImg} style={{ position: 'initial' }} />
-          </ExploreTourWrapper>
+          </ExploreTourWrapper>*/}
 
           <JoinUsSection />
         </Spin>
@@ -105,7 +105,7 @@ function IndexPage() {
   );
 }
 
-IndexPage.propTypes = {
+{/*IndexPage.propTypes = {
   data: PropTypes.shape({
     exploreTourImg: PropTypes.shape({
       childImageSharp: PropTypes.shape({
@@ -113,6 +113,6 @@ IndexPage.propTypes = {
       }),
     }),
   }).isRequired,
-};
+};*/}
 
 export default IndexPage;

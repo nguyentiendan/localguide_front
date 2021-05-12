@@ -72,33 +72,33 @@ function DestinationSection() {
               <ListWrapper>
                 <ListContainer>
                   <DestinationListItem
-                    key={1}
+                    key="1"
                     name="Greate Tour in Tokyo"
                     location="Tokyo"
                     picture={backpackers}
                     className="destination"
                     id={1}
-                    uid={134234234234234}
+                    uid="134234234234234"
                   />
 
                   <DestinationListItem
-                    key={2}
+                    key="2"
                     name="Greate Tour in Osaka"
                     location="Tokyo"
                     picture={backpackers}
                     className="destination"
                     id={1}
-                    uid={1123123123123}
+                    uid="1123123123123"
                   />
 
                   <DestinationListItem
-                    key={3}
+                    key="3"
                     name="Greate Tour in Nagoya"
                     location="Tokyo"
                     picture={backpackers}
                     className="destination"
                     id={1}
-                    uid={1123123123123}
+                    uid="11231231231232222"
                   />
                 </ListContainer>
               </ListWrapper>

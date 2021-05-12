@@ -1,38 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {
-  Divider,
-  Row,
-  Col,
-  Form,
-  Button,
-  Table,
-  Tag,
-  Space,
-  Badge,
-  Select,
-  Spin,
-  InputNumber,
-} from 'antd';
+import {Divider, Avatar, Form,  Button,  Table,  Tag,  Space,  Badge, Spin,} from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
+import { UserOutlined } from '@ant-design/icons';
 
 import colors from '../../../assets/styles/colors';
 import * as API from '../../../apis';
 import { getUserProfile } from '../../../utils/auth';
 
-const { Option } = Select;
-
 const Wrapper = styled(Spin)``;
-const FilterWrapper = styled(Form)`
-  label {
-    width: 75px;
-  }
-`;
 const ListWrapper = styled.div``;
-const TourTitle = styled.span`
+
+const GuideTitle = styled.span`
   color: ${colors.blue[80]};
   font-weight: bold;
+`;
+
+const AvatarWrapper = styled(Avatar)`
+  && {
+    margin-right: 1.5rem;
+  }
 `;
 
 const STATUS = {
@@ -60,15 +48,17 @@ const columns = [
     title: 'Guide name',
     dataIndex: 'fullname',
     key: 'fullname',
-    render: (name, tour) => (
+    render: (name, guide) => (
       <div>
-        <TourTitle>
-          <a href={`/app/admin_tour_review?uid=${tour.uid}&id=${tour.id}`}>{name}</a>
-        </TourTitle>
+        <GuideTitle>
+          <AvatarWrapper src={guide.avatar} icon={<UserOutlined />} size="small"  />
+          {guide.role === 1 && name}
+          {guide.role === 3 && name}
+          {guide.role === 2 && <a href={`/admin/adminGuideReview?uid=${guide.uid}&id=${guide.id}`} target="_blank">{name}</a> } 
+        </GuideTitle>
       </div>
     ),
   },
-
   {
     title: 'Mail',
     dataIndex: 'email',
@@ -77,12 +67,17 @@ const columns = [
   {
     title: 'Country',
     dataIndex: 'country',
-    key: 'country',
+    key: 'country',    
+  },
+  {
+    title: 'City',
+    dataIndex: 'city',
+    key: 'city',    
   },
   {
     title: 'Updated Date',
     key: 'updatedAt',
-    render: (updatedAt, guide) => moment(guide.updatedAt).format('YYYY-MM-DD'),
+    render: (updatedDate, guide) => moment(guide.updatedAt).format('YYYY-MM-DD'),
   },
   {
     title: 'Role',
@@ -113,17 +108,17 @@ function Guides() {
   const [data, setData] = useState([]);
   const [dataFilter, setDataFilter] = useState(null);
   const [loadingAllGuide, setLoadingAllGuide] = useState(false);
-  const [rootCountry, setRootCountry] = useState([]);
+  
   const [isloading, setIsloading] = useState(false);
-  const [rootCity, setRootCity] = useState([]);
+  
 
   const user = getUserProfile();
-
+  
   useEffect(() => {
     const getAllGuides = async () => {
       try {
-        setLoadingAllGuide(true);
-        const res = await API.adminGetAllGuide({ token: user.token });
+        setLoadingAllGuide(true);        
+        const res = await API.adminGetAllGuide({uid: user.uid, token: user.token });
         console.log(res.data);
         setData(res.data);
       } catch (error) {
@@ -135,6 +130,7 @@ function Guides() {
     getAllGuides();
   }, []);
 
+console.log(loadingAllGuide)
   return (
     <Wrapper spinning={isloading}>
       <ListWrapper>

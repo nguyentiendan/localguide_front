@@ -40,7 +40,7 @@ export async function getGuideProfile(uid) {
 }
 
 // Get GuideProfile
-export async function getGuideProfileOverview({ uid, guideId }) {
+export async function getGuideProfileOverview({ uid, guideId }) {  
   return request({
     url: `/account/guide/${uid}/${guideId}`,
     method: 'GET',
@@ -282,6 +282,7 @@ export async function uploadMultiPhoto({ uid, tourId, file }) {
     isFormData: true,
   });
 }
+
 export async function uploadAvatar({ uid, file }) {
   return request({
     url: `/account/uploadAvatar`,
@@ -394,12 +395,13 @@ export async function adminGetAllTour({ uid, token }) {
 }
 
 // Admin get all Guide
-export async function adminGetAllGuide({ token }) {
+export async function adminGetAllGuide({ uid, token }) {
   return request({
     url: `/admin/guide/getAll`,
     method: 'GET',
     authRequired: true,
     token,
+    params: { uid },
   });
 }
 

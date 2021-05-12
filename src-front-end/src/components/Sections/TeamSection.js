@@ -56,10 +56,11 @@ function TeamSection() {
     const fetchTourGuides = async () => {
       try {
         setLoading(true);
-        const response = await API.getAllTourGuides();
+        const response = await API.getAllTourGuides();        
         if (response.data.length == 0) {
           setData(0);
         } else {
+          setData(response.data.length);
           setTourGuides(response.data);
         }
 
@@ -77,8 +78,7 @@ function TeamSection() {
       clearInterval(interval);
     };
   }, []);
-  // console.log(tourGuides.length)
-
+   
   return (
     <div className={classes.container}>
       {data > 0 && (
