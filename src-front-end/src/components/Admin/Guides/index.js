@@ -52,9 +52,9 @@ const columns = [
       <div>
         <GuideTitle>
           <AvatarWrapper src={guide.avatar} icon={<UserOutlined />} size="small"  />
-          {guide.role === 1 && name}
-          {guide.role === 3 && name}
-          {guide.role === 2 && <a href={`/admin/adminGuideReview?uid=${guide.uid}&id=${guide.id}`} target="_blank">{name}</a> } 
+          {((guide.role === 1 || guide.role === 3) && guide.reqActive === 0) && name}
+          {(guide.role === 1 && guide.reqActive === 1 ) && <a href={`/app/adminUserReview?uid=${guide.uid}&id=${guide.id}`} target="_blank">{name}</a> } 
+          {guide.role === 2 && <a href={`/app/adminGuideReview?uid=${guide.uid}&id=${guide.id}`} target="_blank">{name}</a> } 
         </GuideTitle>
       </div>
     ),
@@ -96,7 +96,8 @@ const columns = [
     key: 'status',
     render: (status, guide) => (
       <Space size="middle">
-        {guide.status === 1 && <Tag color="success">Active</Tag>}
+        {(guide.status === 1 && guide.reqActive == 0) && <Tag color="success">Active</Tag>}
+        {(guide.status === 1 && guide.reqActive == 1) && <Tag color="processing">Waiting</Tag>}
         {guide.status === 0 && <Tag color="error">Not Active</Tag>}
       </Space>
     ),
@@ -130,7 +131,6 @@ function Guides() {
     getAllGuides();
   }, []);
 
-console.log(loadingAllGuide)
   return (
     <Wrapper spinning={isloading}>
       <ListWrapper>

@@ -53,7 +53,7 @@ export default function HeaderLinks() {
             ),       
             user.role === 2 && (    
               <a 
-                href="/app/my_tours"
+                href="/app/guideAdmin"
                 target="_blank"
                 className={classes.dropdownLink}
               >
@@ -62,7 +62,7 @@ export default function HeaderLinks() {
             ),
             user.role === 1 && (
               <a 
-                href="/user-profile"
+                href="/app/profile"
                 target="_blank"
                 className={classes.dropdownLink}
               >

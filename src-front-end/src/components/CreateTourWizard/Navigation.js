@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
+import { Popconfirm } from 'antd';
 
 const Wrapper = styled.div`
   display: flex;
@@ -22,6 +23,7 @@ const Navigation = ({
   onBack,
   onNext,
   onCancel,
+  onConfirm,
   onPreview,
   loading,
   isNextDisabled,
@@ -58,8 +60,14 @@ const Navigation = ({
               Preview
             </Button>
           )}
+          <Popconfirm
+            title="Create tour is not complete. Are you sure?"
+            onConfirm={onConfirm}
+            okText="Yes"
+            cancelText="No"
+          >
           <Button
-            onClick={onCancel}
+            //onClick={onCancel}
             style={{ marginLeft: 20, marginRight: 20, width: 100 }}
             type="primary"
             size="large"
@@ -67,6 +75,7 @@ const Navigation = ({
           >
             Cancel
           </Button>
+          </Popconfirm>
           {!isFinished && (
             <Button
               onClick={onNext}
@@ -102,6 +111,7 @@ Navigation.propTypes = {
   onBack: PropTypes.func,
   onNext: PropTypes.func,
   onCancel: PropTypes.func,
+  onConfirm: PropTypes.func,
   onPreview: PropTypes.func,
   loading: PropTypes.bool,
   isNextDisabled: PropTypes.bool,
@@ -116,6 +126,7 @@ Navigation.defaultProps = {
   onBack: () => {},
   onNext: () => {},
   onCancel: () => {},
+  onConfirm: () => {},
   onPreview: () => {},
   loading: false,
   isNextDisabled: false,

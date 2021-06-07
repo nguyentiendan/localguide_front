@@ -1,19 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import {
-  UserOutlined,
-  ProfileOutlined,
-  LogoutOutlined,
-  DashboardOutlined,
-  RocketOutlined,
-} from '@ant-design/icons';
+import React from 'react';
+import {UserOutlined, ProfileOutlined, LogoutOutlined, DashboardOutlined,RocketOutlined,} from '@ant-design/icons';
 import { Link } from 'gatsby';
 import { Menu } from 'antd';
 import useAuth from '../../utils/useAuth';
 
 const SlideNav = () => {
   const { user, logout } = useAuth();
+
   if (!user) {
-    return null;
+    return null;  
   }
 
   return (
@@ -25,19 +20,20 @@ const SlideNav = () => {
         <Menu.Item key="1">
           <DashboardOutlined />
           <span>
-            <Link to="/admin/">Dashboard</Link>
+            {/*<Link to="app/admin/">Dashboard</Link>*/}
+            <a href="app/admin/">Dashboard</a>
           </span>
         </Menu.Item>
         <Menu.Item key="2">
           <RocketOutlined />
           {user.role === 3 && (
             <span>
-              <Link to="/admin/adminTourList/">Tour List</Link>
+              <Link to="/app/adminTourList/">Tour List</Link>
             </span>
           )}
           {user.role === 2 && (
             <span>
-              <Link to="/admin/guideTourList/">Tour List</Link>
+              <Link to="/app/guideTourList/">Tour List</Link>
             </span>
           )}
         </Menu.Item>
@@ -46,25 +42,18 @@ const SlideNav = () => {
           <Menu.Item key="3">
             <UserOutlined />
             <span>
-              <Link to="/admin/adminGuideList/">Guide List</Link>
+              <Link to="/app/adminGuideList/">Guide List</Link>
             </span>
           </Menu.Item>
         )}
-
+        {user.role === 2 && (
         <Menu.Item key="4">
-          <ProfileOutlined />
-          {user.role === 3 && (
+          <ProfileOutlined />                    
             <span>
-              <Link to="/admin/profile">Profile</Link>
-            </span>
-          )}
-          {user.role === 2 && (
-            <span>
-              <Link to="/admin/guideProfile">Profile</Link>
-            </span>
-          )}
+              <Link to="/app/guideProfile">Profile</Link>
+            </span>        
         </Menu.Item>
-
+        )}  
         <Menu.Item key="5">
           <ProfileOutlined />
           {user.role === 3 && (

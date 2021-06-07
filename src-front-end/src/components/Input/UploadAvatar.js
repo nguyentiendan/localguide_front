@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { UserOutlined, EditOutlined } from '@ant-design/icons';
+import { EditOutlined,CameraOutlined } from '@ant-design/icons';
 import { Spin, Avatar } from 'antd';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
@@ -17,6 +17,14 @@ const Wrapper = styled.div`
     justify-content: space-between;
     align-items: center;
   }
+`;
+const NoImage = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-weight:700px;
 `;
 
 const UploadCustom = styled.div`
@@ -83,12 +91,14 @@ const UploadAvatar = ({ uid, src, title }) => {
 
   return (
     <Wrapper>
-      {/* <h2>{title} Profile</h2> */}
+      {/*<h2>{title} Profile</h2>*/}
       <label htmlFor="avatar">
         <Spin spinning={loading}>
           <UploadCustom>
-            <EditOutlined />
-            <Avatar size={128} icon={<UserOutlined />} src={avatarBlob || src} />
+            {/*<EditOutlined />*/}
+            <CameraOutlined />
+            <Avatar size={128}  src={avatarBlob || src} />
+            {(src == '' || avatarBlob == '') && (<NoImage>No Image</NoImage>) }
             <input
               id="avatar"
               type="file"

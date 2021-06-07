@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Form, Input, Select, Button, InputNumber, Row, Col, Spin, notification } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import styled from 'styled-components';
 import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css';
 import * as API from '../../../apis';
 import TagInterests from '../../HandleTag/Interests';
 import UploadAvatar from '../../Input/UploadAvatar';
-import 'suneditor/dist/css/suneditor.min.css';
+import UploadPhotos from './UploadPhotos';
 
 const FormWrapper = styled(Form)`
   display: flex;
@@ -53,13 +54,14 @@ const tailFormItemLayout = {
   },
 };
 
-const AdminProfile = ({ uid }) => {
+const GuideProfile = ({ uid }) => {
   const [form] = Form.useForm();
   const { country } = form.getFieldsValue();
   const [profile, setProfile] = useState({});
   const [rootCountry, setRootCountry] = useState([]);
   const [rootCity, setRootCity] = useState([]);
   const [isloading, setIsloading] = useState(false);
+  const [photos, setPhotos] = useState([]);
   const [defaultTags, setDefaultTags] = useState({
     interests: [],
     language: [],
@@ -75,24 +77,25 @@ const AdminProfile = ({ uid }) => {
     tags: [],
   });
 
-  useEffect(() => {
-    const fetchAdminProfile = async () => {
-      setIsloading(true);
-      const res = await API.getAdminProfile({ uid });
-      const resCountry = await API.getAllCountry();
-      setInterests({
-        ...interests,
-        tags: res.data?.interest ? res.data?.interest?.split(';') : [],
-      });
-      setExtras({ ...extras, tags: res.data?.extras ? res.data?.extras?.split(';') : [] });
-      setLanguage({ ...language, tags: res.data?.language ? res.data?.language?.split(';') : [] });
+  const fetchGuideProfile = useCallback(async () => {
+    setIsloading(true);
+    const res = await API.getGuideProfile(uid);
+    const resCountry = await API.getAllCountry();
+    setInterests({
+      ...interests,
+      tags: res.guide?.interest ? res.guide?.interest?.split(';') : [],
+    });
+    setExtras({ ...extras, tags: res.guide?.extras ? res.guide?.extras?.split(';') : [] });
+    setLanguage({ ...language, tags: res.guide?.language ? res.guide?.language?.split(';') : [] });
 
-      setProfile(res.data);
-      setRootCountry(resCountry.data);
-      setIsloading(false);
-    };
-    fetchAdminProfile();
+    setRootCountry(resCountry.data);
+    setProfile(res.guide);
+    setIsloading(false);
   }, [API.getAdminProfile, API.getAllCountry, setIsloading, setProfile, setRootCountry]);
+
+  useEffect(() => {
+    fetchGuideProfile();
+  }, [fetchGuideProfile]);
 
   useEffect(() => {
     (async () => {
@@ -115,6 +118,16 @@ const AdminProfile = ({ uid }) => {
       }
     })();
   }, [API.getAllInterest, API.getAllExtra, API.getAllLang, setDefaultTags]);
+
+  useEffect(() => {
+    const fetchPhotos = async () => {
+      setIsloading(true);
+      const res = await API.getPhotosGuide({ uid });
+      setPhotos(res.data);
+      setIsloading(false);
+    };
+    fetchPhotos();
+  }, [setPhotos, API.getPhotosGuide, setIsloading]);
 
   useEffect(() => {
     const fetchCity = async () => {
@@ -169,7 +182,7 @@ const AdminProfile = ({ uid }) => {
         scrollToFirstError
       >
         <Form.Item name="avatar">
-          Admin Profile <UploadAvatar uid={uid} src={profile.avatar} title="Admin" />
+          <UploadAvatar uid={uid} src={profile.avatar} title="Guide" />
         </Form.Item>
 
         <Form.Item
@@ -185,7 +198,7 @@ const AdminProfile = ({ uid }) => {
               message: 'Value should be less than 100 character',
             },
           ]}
-          key={profile.fullname}
+          key={profile.fullname === '' ? 'fullname' : profile.fullname}
           initialValue={profile.fullname}
         >
           <Input />
@@ -204,7 +217,7 @@ const AdminProfile = ({ uid }) => {
               message: 'Please input your E-mail!',
             },
           ]}
-          key={profile.email}
+          key={profile.email === '' ? 'email' : profile.email}
           initialValue={profile.email}
         >
           <Input disabled={profile.email} />
@@ -219,23 +232,33 @@ const AdminProfile = ({ uid }) => {
               message: 'Please input your Mobile phone!',
             },
           ]}
-          key={profile.mobile}
+          key={profile.mobile === '' ? 'mobile' : profile.mobile}
           initialValue={profile.mobile}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item name="job" label="Your job" initialValue={profile.job} key={profile.job}>
+        <Form.Item
+          name="job"
+          label="Your job"
+          key={profile.job === '' ? 'job' : profile.job}
+          initialValue={profile.job}
+        >
           <Input />
         </Form.Item>
 
-        <Form.Item name="sex" label="Gender" style={{ marginBottom: 0 }}>
+        <Form.Item
+          name="sex"
+          label="Gender"
+          style={{ marginBottom: 0 }}
+          initialValue={profile.sex === '0' ? '0' : '1'}
+        >
           <Row gutter={8}>
             <Col span={12}>
               <Select
                 placeholder="Gender"
-                key={profile.sex}
-                defaultValue={profile.sex === '0' ? '0' : '1'}
+                key={profile.sex === '' ? 'sex' : profile.sex}
+                // defaultValue={profile.sex === '0' ? '0' : '1'}
                 onChange={value => {
                   form.setFieldsValue({ sex: value });
                 }}
@@ -248,7 +271,7 @@ const AdminProfile = ({ uid }) => {
               <Form.Item
                 name="age"
                 label="Age"
-                key={profile.age}
+                key={profile.age === '' ? 'age' : profile.age}
                 initialValue={profile.age}
                 style={{ flexGrow: 0.15 }}
               >
@@ -258,13 +281,18 @@ const AdminProfile = ({ uid }) => {
           </Row>
         </Form.Item>
 
-        <div style={{ width: '100%' }}>
-          <Form.Item name="country" label="Country">
-            <Row>
+        <Form.Item
+          name="country"
+          label="Country"
+          style={{ marginBottom: 0 }}
+          initialValue={profile.country}
+        >
+          <Row gutter={8}>
+            <Col span={12}>
               <Select
                 placeholder="Country"
-                key={profile.country}
-                defaultValue={profile.country}
+                key={profile.country === '' ? 'country' : profile.country}
+                // defaultValue={profile.country}
                 onChange={handleSelectCountryAndCity}
               >
                 {rootCountry?.map(item => (
@@ -273,33 +301,33 @@ const AdminProfile = ({ uid }) => {
                   </Option>
                 ))}
               </Select>
-            </Row>
-          </Form.Item>
-          <Form.Item name="city" label="City">
-            <Row>
-              <Select
-                placeholder="City"
-                key={profile.city}
-                defaultValue={profile.city}
-                onChange={value => {
-                  form.setFieldsValue({ city: value });
-                }}
-              >
-                {rootCity?.map(item => (
-                  <Option value={item.city_name} key={item.city_name}>
-                    {item.city_name}
-                  </Option>
-                ))}
-              </Select>
-            </Row>
-          </Form.Item>
-        </div>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="city" label="City" initialValue={profile.city}>
+                <Select
+                  placeholder="City"
+                  key={profile.city === '' ? 'city' : profile.city}
+                  // defaultValue={profile.city}
+                  onChange={value => {
+                    form.setFieldsValue({ city: value });
+                  }}
+                >
+                  {rootCity?.map(item => (
+                    <Option value={item.city_name} key={item.city_name}>
+                      {item.city_name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form.Item>
 
         <Form.Item
           name="education"
           label="Education"
+          key={profile.education === '' ? 'education' : profile.education}
           initialValue={profile.education}
-          key={profile.education}
         >
           <Input />
         </Form.Item>
@@ -307,8 +335,8 @@ const AdminProfile = ({ uid }) => {
         <Form.Item
           name="certificated"
           label="Certification"
+          key={profile.certificated === '' ? 'certificated' : profile.certificated}
           initialValue={profile.certificated}
-          key={profile.certificated}
         >
           <Input />
         </Form.Item>
@@ -316,8 +344,8 @@ const AdminProfile = ({ uid }) => {
         <Form.Item
           name="language"
           label="Language"
+          key={profile.language === '' ? 'language' : profile.language}
           initialValue={profile.language}
-          key={profile.language}
         >
           <TagInterests
             createInfo={language}
@@ -329,8 +357,8 @@ const AdminProfile = ({ uid }) => {
         <Form.Item
           name="interests"
           label="Interests"
+          key={profile.interests === '' ? 'interests' : profile.interests}
           initialValue={profile.interests}
-          key={profile.interests}
         >
           <TagInterests
             createInfo={interests}
@@ -339,7 +367,12 @@ const AdminProfile = ({ uid }) => {
           />
         </Form.Item>
 
-        <Form.Item name="extras" label="Extras" initialValue={profile.extras} key={profile.extras}>
+        <Form.Item
+          name="extras"
+          label="Extras"
+          key={profile.extras === '' ? 'extras' : profile.extras}
+          initialValue={profile.extras}
+        >
           <TagInterests
             createInfo={extras}
             setCreateInfo={setExtras}
@@ -348,18 +381,33 @@ const AdminProfile = ({ uid }) => {
         </Form.Item>
 
         <Form.Item
+          name="intro"
+          label="Introduction"
+          rules={[
+            {
+              max: 255,
+              message: 'Value should be less than 255 character',
+            },
+          ]}
+          key={profile.intro === '' ? 'intro' : profile.intro}
+          initialValue={profile.intro}
+        >
+          <Input.TextArea />
+        </Form.Item>
+
+        <Form.Item
           name="experience"
           label="Experience"
+          key="experience"
           initialValue={profile.experience}
-          key={profile.experience}
         >
           <div>
             <SunEditor
               ref={editorRef}
               setContents={profile.experience}
               lang="en"
-              width="100%"
-              height="200"
+              // width="670"
+              height="300"
               placeholder="Please type content here..."
               showToolbar
               enableToolbar
@@ -367,13 +415,54 @@ const AdminProfile = ({ uid }) => {
                 form.setFieldsValue({ experience: value });
               }}
               setOptions={{
-                buttonList: [['undo', 'redo', 'bold', 'underline', 'italic', 'fullScreen']],
+                buttonList: [
+                  [
+                    'undo',
+                    'redo',
+                    'font',
+                    'fontSize',
+                    'formatBlock',
+                    'blockquote',
+                    'bold',
+                    'underline',
+                    'italic',
+                    'strike',
+                    'subscript',
+                    'superscript',
+                    'fontColor',
+                    'hiliteColor',
+                    'textStyle',
+                    'removeFormat',
+                    'outdent',
+                    'indent',
+                    'align',
+                    'horizontalRule',
+                    'list',
+                    'lineHeight',
+                    'link',
+                    'image',
+                    'video',
+                    'showBlocks',
+                    'codeView',
+                    'preview',
+                    'fullScreen',
+                  ],
+                ],
               }}
             />
           </div>
         </Form.Item>
 
-        <Form.Item {...tailFormItemLayout}>
+        <Form.Item label="Photos" key="upload">
+          <UploadPhotos
+            photos={photos}
+            uid={uid}
+            setPhotos={setPhotos}
+            setIsloading={setIsloading}
+          />
+        </Form.Item>
+
+        <Form.Item {...tailFormItemLayout} key="submit">
           <Button type="primary" htmlType="submit">
             Submit
           </Button>
@@ -383,8 +472,8 @@ const AdminProfile = ({ uid }) => {
   );
 };
 
-AdminProfile.propTypes = {
+GuideProfile.propTypes = {
   uid: PropTypes.string.isRequired,
 };
 
-export default AdminProfile;
+export default GuideProfile;

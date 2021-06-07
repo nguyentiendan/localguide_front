@@ -8,7 +8,7 @@ import HeaderLinks from '../Header/HeaderLinks.js';
 import 'antd/dist/antd.less';
 
 const CustomLayout = ({ children, noLogin, scrollHeight, textColor }) => {
-  const data = useStaticQuery(graphql`
+  /*const data = useStaticQuery(graphql`
     query SiteTitleQuery {
       site {
         siteMetadata {
@@ -16,7 +16,7 @@ const CustomLayout = ({ children, noLogin, scrollHeight, textColor }) => {
         }
       }
     }
-  `);
+  `);*/
 
   return (
     <AuthProvider>

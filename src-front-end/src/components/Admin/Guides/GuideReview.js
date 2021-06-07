@@ -1,6 +1,6 @@
 /* eslint-disable react/no-danger */
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useEffect, useState, useLayoutEffect, } from 'react';
+import React, { useEffect, useState, useLayoutEffect,} from 'react';
 import styled from 'styled-components';
 import { Avatar, Tag, Spin } from 'antd';
 import { UserOutlined, CrownOutlined } from '@ant-design/icons';
@@ -12,33 +12,33 @@ import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ReactBnbGallery from 'react-bnb-gallery';
-import SectionHeader from '../components/SectionHeader';
-import breakpoints from '../assets/styles/breakpoints';
-import CommentListItem from '../components/CommentListItem';
-import RatingStars from '../components/RatingStars';
-import TourRelatedListItem from '../components/TourRelated';
-import Layout from '../components/CustomLayout';
-import SEO from '../components/SEO';
-import Parallax from '../components/Parallax/Parallax.js';
-import GridContainer from '../components/Grid/GridContainer.js';
-import GridItem from '../components/Grid/GridItem.js';
-import Footer from '../components/Footer/Footer.js';
-import InterestsOrExtras from '../components/InterestsOrExtras';
-import SmallScreen from '../components/Responsive/SmallScreen';
-import BigScreen from '../components/Responsive/BigScreen';
-import Button from '../components/CustomButtons/Button';
-import { bigScreenCss, smallScreenCss } from '../assets/styles/responsive-css';
-import * as API from '../apis';
-import iconTour from '../assets/img/icon-tour.svg';
-import iconReview from '../assets/img/icon-review.svg';
-import iconLicense from '../assets/img/icon-license.svg';
-import iconCustomer from '../assets/img/icon-customer.svg';
-import iconLanguage from '../assets/img/icon-language.svg';
-import iconLocation from '../assets/img/icon-location.svg';
-import iconSex from '../assets/img/icon-sex.svg';
-import styles from '../assets/styles/profilePage.js';
+import SectionHeader from '../../SectionHeader';
+import breakpoints from '../../../assets/styles/breakpoints';
+import CommentListItem from '../../CommentListItem';
+import RatingStars from '../../RatingStars';
+import TourRelatedListItem from '../../TourRelated';
+import Layout from '../../CustomLayout';
+
+import Parallax from '../../Parallax/Parallax.js';
+import GridContainer from '../../Grid/GridContainer.js';
+import GridItem from '../../Grid/GridItem.js';
+import Footer from '../../Footer/Footer.js';
+import InterestsOrExtras from '../../InterestsOrExtras';
+import SmallScreen from '../../Responsive/SmallScreen';
+import BigScreen from '../../Responsive/BigScreen';
+import Button from '../../CustomButtons/Button';
+import { bigScreenCss, smallScreenCss } from '../../../assets/styles/responsive-css';
+import * as API from '../../../apis';
+import iconTour from '../../../assets/img/icon-tour.svg';
+import iconReview from '../../../assets/img/icon-review.svg';
+import iconLicense from '../../../assets/img/icon-license.svg';
+import iconCustomer from '../../../assets/img/icon-customer.svg';
+import iconLanguage from '../../../assets/img/icon-language.svg';
+import iconLocation from '../../../assets/img/icon-location.svg';
+import iconSex from '../../../assets/img/icon-sex.svg';
+import styles from '../../../assets/styles/profilePage.js';
 import 'react-bnb-gallery/dist/style.css';
-import defaultImage from '../assets/img/noimage-600x400.jpg';
+import defaultImage from '../../../assets/img/noimage-600x400.jpg';
 
 const InfoAvatarAndBackgroundImg = styled.div`
   .info__guide {
@@ -303,7 +303,7 @@ const IconWrapper = styled.img`
 `;
 const useStyles = makeStyles(styles);
 
-function GuideDetail({ location }) {
+function AdminGuideReview({ uid, id }) {
   const [profile, setProfile] = useState({
     guide: {},
     reviews: { totalReview: 0, listReviews: [] },
@@ -319,15 +319,12 @@ function GuideDetail({ location }) {
   const imageClasses_1 = classNames(classes.imgRaised, classes.imgRounded, classes.imgFluid);
   const [photos, setPhotos] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const dataQueryParams = qs.parse(location.search);
+  //const dataQueryParams = qs.parse(location.search);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async () => {      
       setLoading(true);
-      const res = await API.getGuideProfileOverview({
-        uid: dataQueryParams.uid,
-        guideId: dataQueryParams.id,
-      });
+      const res = await API.getGuideProfileOverview({uid,guideId:id});
       setProfile({
         guide: res.guide,
         reviews: {
@@ -338,12 +335,12 @@ function GuideDetail({ location }) {
       setLoading(false);
     };
     fetchData();
-  }, [setProfile, dataQueryParams.uid, dataQueryParams.id]);
+  }, [setProfile, uid, id]);
 
   useEffect(() => {
     const fetchRelatedTour = async () => {
       const res = await API.getRelatedTour({
-        uid: dataQueryParams.uid,
+        uid,
       });
       setTour({
         related: {
@@ -369,7 +366,7 @@ function GuideDetail({ location }) {
 
   useLayoutEffect(() => {
     const fetchPhotos = async () => {
-      const res = await API.getPhotosGuide({ uid: dataQueryParams.uid });
+      const res = await API.getPhotosGuide({ uid });
       if (res.status === false) {
         setPhotos('');
       } else {
@@ -391,15 +388,10 @@ function GuideDetail({ location }) {
         return null;
     }
   };
-  /*
-  //TODO  
-  4-Save Country
-  */
-
+ 
   return (
-    <Layout scrollHeight={300}>
-      <SEO title="Guide Profile" />
-      <Parallax small filter image={require('../assets/img/home-banner.jpg')} />
+    <Layout scrollHeight={300}>      
+      <Parallax small filter image={require('../../../assets/img/home-banner.jpg')} />
       <div className={classNames(classes.main, classes.mainRaised)}>
         <Spin spinning={loading}>
           <div className={classes.container}>
@@ -693,4 +685,4 @@ function GuideDetail({ location }) {
     </Layout>
   );
 }
-export default GuideDetail;
+export default AdminGuideReview;

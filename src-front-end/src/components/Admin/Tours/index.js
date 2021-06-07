@@ -50,7 +50,7 @@ const columns = [
     render: (name, tour) => (
       <div>
         <TourTitle>
-          <a href={`/admin/adminTourReview?uid=${tour.uid}&id=${tour.id}`} target="_blank">{name}</a>          
+          <a href={`/app/adminTourReview?uid=${tour.uid}&id=${tour.id}`} target="_blank">{name}</a>          
         </TourTitle>
       </div>
     ),
@@ -95,7 +95,7 @@ const columns = [
   },
 ];
 
-function Tours() {
+function AdminTourList() {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
   const [dataFilter, setDataFilter] = useState(null);
@@ -258,4 +258,4 @@ function Tours() {
   );
 }
 
-export default Tours;
+export default AdminTourList;

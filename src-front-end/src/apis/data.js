@@ -56,7 +56,7 @@ export async function getRelatedTour({ uid }) {
 }
 
 // Get User Profile
-export async function getUserProfile(uid) {
+export async function getUserProfileReview(uid) {
   return request({
     url: `/account/user/${uid}`,
     method: 'GET',
@@ -441,6 +441,15 @@ export async function getAllLang() {
   return request({
     url: '/lang/getAllLang',
     method: 'GET',
+  });
+}
+
+// User request approve
+export function sendRequestApprove(uid) {
+  return request({
+    url: '/account/requestApprove',
+    method: 'POST',
+    data: { uid },
   });
 }
 

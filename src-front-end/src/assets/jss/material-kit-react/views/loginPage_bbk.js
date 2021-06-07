@@ -23,7 +23,7 @@ const signupPageStyle = {
     border: '0',
     alignItems: 'center',
     '&:before': {
-      background: '#dcdcdc',
+      background: 'rgba(0, 0, 0, 0.5)',
     },
     '&:before,&:after': {
       position: 'absolute',
@@ -50,12 +50,11 @@ const signupPageStyle = {
   cardHeader: {
     width: 'auto',
     textAlign: 'center',
-    //marginLeft: '20px',
-    //marginRight: '20px',
-    marginTop: '5px',
-    backgroundColor: "#fafafa",
-    //padding: '10px 0',
-    //marginBottom: '5px',
+    marginLeft: '20px',
+    marginRight: '20px',
+    marginTop: '-40px',
+    padding: '10px 0',
+    marginBottom: '5px',
   },
   socialIcons: {
     maxWidth: '24px',

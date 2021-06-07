@@ -5,9 +5,7 @@ import _ from 'lodash';
 import { navigate } from 'gatsby';
 import PropTypes from 'prop-types';
 import qs from 'query-string';
-
 import { Modal } from 'antd';
-import { AiOutlineSync } from 'react-icons/ai';
 import StartCreateTour from './StartCreateTour';
 import ProgressBar from './ProgressBar';
 import Scene from './Scene';
@@ -170,7 +168,16 @@ const CreateTourWizard = ({ location }) => {
     if (loading) {
       return;
     }
-    await navigate('admin/guide_tourList/');
+    await navigate('app/guideTourList/');
+
+  }, [loading]);
+  
+  const goConfirm = useCallback(async () => {
+    if (loading) {
+      return;
+    }
+    await navigate('app/guideTourList/');
+
   }, [loading]);
 
   const goForward = async () => {
@@ -322,6 +329,7 @@ const CreateTourWizard = ({ location }) => {
             onBack={goBack}
             onNext={goForward}
             onCancel={goCancel}
+            onConfirm={goConfirm}
             onPreview={onPreview}
             loading={loading}
             isFinished={currentStepNumber === TOTAL_STEPS}
