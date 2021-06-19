@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import { Link } from 'gatsby';
 import styled from 'styled-components';
-
+import { Modal, Button } from 'antd';
 import { makeStyles } from '@material-ui/core/styles';
 import * as API from '../apis';
 import breakpoints from '../assets/styles/breakpoints';
 import { ENTER } from '../constants/keys';
 import Layout from '../components/CustomLayout';
-import SEO from '../components/SEO';
 import Input from '../components/Input';
-import Button from '../components/CustomButtons/Button.js';
+//import Button from '../components/CustomButtons/Button.js';
 import GridContainer from '../components/Grid/GridContainer.js';
 import GridItem from '../components/Grid/GridItem.js';
 import Card from '../components/Card/Card.js';
@@ -87,8 +85,21 @@ function ForgotPassPage() {
         if (status === true) {
           setEmail('');
           setErrorMessage('');
-          // TODO : show popup after send pass
-          alert(message);
+          Modal.info({
+            title: 'Notice',
+            content: (
+              <div>
+                <p>We have send a new password.<br/>
+                  Please check your email</p>                
+              </div>
+            ), 
+            closable:false,
+            keyboard:false,      
+            centered:true,
+            okText: 'Close',      
+            onOk() {},
+          });
+          
         } else {
           setLoading(false);
           setErrorMessage(message);
@@ -102,7 +113,6 @@ function ForgotPassPage() {
 
   return (
     <Layout noLogin>
-      <SEO title="Forgot Password" />
       <div
         className={classes.pageHeader}
         style={{
@@ -143,10 +153,11 @@ function ForgotPassPage() {
                       loading={loading}
                       disabled={loading}
                       onClick={handleOnSubmit}
+                      type="primary"
                     >
                       Send new password
                     </Button>
-                    <Button href="/login" color="transparent">
+                    <Button href="/login" color="transparent" type="link">
                       Login
                     </Button>
                   </Actions>

@@ -2,8 +2,8 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useEffect, useState, useLayoutEffect,} from 'react';
 import styled from 'styled-components';
-import { Avatar, Tag, Spin } from 'antd';
-import { UserOutlined, CrownOutlined } from '@ant-design/icons';
+import { Avatar, Tag, Spin, Button, Drawer, Modal, Input, message } from 'antd';
+import { UserOutlined, CrownOutlined, AppstoreAddOutlined,CommentOutlined, SwitcherOutlined } from '@ant-design/icons';
 import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
 import _ from 'lodash';
 import qs from 'query-string';
@@ -14,7 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import ReactBnbGallery from 'react-bnb-gallery';
 import SectionHeader from '../../SectionHeader';
 import breakpoints from '../../../assets/styles/breakpoints';
-import CommentListItem from '../../CommentListItem';
+import ReviewListItem from '../../CommentListItem';
 import RatingStars from '../../RatingStars';
 import TourRelatedListItem from '../../TourRelated';
 import Layout from '../../CustomLayout';
@@ -26,7 +26,7 @@ import Footer from '../../Footer/Footer.js';
 import InterestsOrExtras from '../../InterestsOrExtras';
 import SmallScreen from '../../Responsive/SmallScreen';
 import BigScreen from '../../Responsive/BigScreen';
-import Button from '../../CustomButtons/Button';
+//import Button from '../../CustomButtons/Button';
 import { bigScreenCss, smallScreenCss } from '../../../assets/styles/responsive-css';
 import * as API from '../../../apis';
 import iconTour from '../../../assets/img/icon-tour.svg';
@@ -39,6 +39,12 @@ import iconSex from '../../../assets/img/icon-sex.svg';
 import styles from '../../../assets/styles/profilePage.js';
 import 'react-bnb-gallery/dist/style.css';
 import defaultImage from '../../../assets/img/noimage-600x400.jpg';
+import { getUserProfile, ISADMIN } from '../../../utils/auth';
+import { navigate } from 'gatsby';
+import { Fab, Action } from 'react-tiny-fab';
+import 'react-tiny-fab/dist/styles.css';
+import CommentListItem from "../../CommentListItem/UserReviewCommentListItem";
+
 
 const InfoAvatarAndBackgroundImg = styled.div`
   .info__guide {
@@ -302,8 +308,10 @@ const IconWrapper = styled.img`
   margin-bottom: 0;
 `;
 const useStyles = makeStyles(styles);
+const { TextArea } = Input;
 
 function AdminGuideReview({ uid, id }) {
+  const [userProfile] = useState(getUserProfile());
   const [profile, setProfile] = useState({
     guide: {},
     reviews: { totalReview: 0, listReviews: [] },
@@ -315,11 +323,12 @@ function AdminGuideReview({ uid, id }) {
   const [rootCountry, setRootCountry] = useState({});
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
-  const imageClasses = classNames(classes.imgRaised, classes.imgRoundedCircle, classes.imgFluid);
-  const imageClasses_1 = classNames(classes.imgRaised, classes.imgRounded, classes.imgFluid);
   const [photos, setPhotos] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  //const dataQueryParams = qs.parse(location.search);
+  const [visible, setVisible] = useState(false);
+  const [comments, setComments] = useState({});
+  const [replyComment, setReplyComment] = useState([]);
+  const [content, setContent] = useState();
 
   useEffect(() => {
     const fetchData = async () => {      
@@ -375,6 +384,78 @@ function AdminGuideReview({ uid, id }) {
     };
     fetchPhotos();
   }, []);
+
+  useEffect(() => {
+    const fetchAllComment = async () => {      
+      setLoading(true);        
+      const res = await API.GetAllUserReviewComment({id}); //id : account id
+      setComments(res.data)      
+      setLoading(false);
+    }
+    fetchAllComment();
+  }, []);
+
+  const handleGetAllReply = async (commentId) => {    
+    setLoading(true);
+    const res = await API.handleGetAllReply({ id: commentId });
+    setReplyComment(res.data);
+    setLoading(false);
+  };
+  
+  const handleCreateComment = async (uid, id) => {    
+    if (content) {            
+      const { data } = await API.handleCreateComment({
+        uid, 
+        userId:parseInt(id), 
+        content
+      });
+      const newComment = {...data[0] };
+      setComments([...comments, newComment]);
+      setContent('');
+    }
+  };
+
+  const handleCreateReply = async (e, commentId,uid) => {    
+    if ( (e.target.value).trim() != "" ) {
+      const { data } = await API.handleCreateReply2({
+        uid,
+        commentId,
+        content: e.target.value,
+      });
+      const newReply = { ...data[0] };
+      setReplyComment([...replyComment, newReply]);
+    }
+  };
+  
+  const handleDeleteComment = async (id)  => {
+    const newData = _.remove(comments, item => {
+      return item.id !== id;
+    });
+    setComments(newData);    
+    let res = await API.handleDeleteComment(id);
+    if (res.status) { 
+      message.success("Delete success")
+    }
+  };
+
+  const handleDeleteReply = async (replyId)  => {    
+    const newData = _.remove(replyComment, item => {
+      return item.id !== replyId;
+    });
+    setReplyComment(newData);
+    let res = await API.handleDeleteReply2( replyId );    
+    if (res.status) { 
+      message.success("Delete success")
+    }
+  };
+
+  const showComment = () => {
+    setVisible(true);
+  };
+  
+  const onClose = () => {
+    setVisible(false);
+  };
 
   const handleLevelGuide = level => {
     switch (level) {
@@ -558,7 +639,8 @@ function AdminGuideReview({ uid, id }) {
                         {photos.length > 1 && (
                           <Button
                             className="buttonOnImage"
-                            color="rose"
+                            //color="rose"
+                            type="primary"
                             size="sm"
                             onClick={() => setIsOpen(true)}
                           >
@@ -625,7 +707,8 @@ function AdminGuideReview({ uid, id }) {
                               {photos.length > 5 && (
                                 <Button
                                   className="buttonOnImage"
-                                  color="rose"
+                                  //color="rose"
+                                  type="primary"
                                   size="sm"
                                   onClick={() => setIsOpen(true)}
                                 >
@@ -664,7 +747,7 @@ function AdminGuideReview({ uid, id }) {
                     )}
                     <ListWrapper>
                       {_.map(profile.reviews?.listReviews, (comment, index) => (
-                        <CommentListItem
+                        <ReviewListItem
                           key={index}
                           content={comment.content}
                           user={comment.fullname}
@@ -680,6 +763,84 @@ function AdminGuideReview({ uid, id }) {
             </div>
           )}
         </Spin>
+        <Fab      
+          mainButtonStyles={{ backgroundColor: '#f12f60',}}
+          icon={<AppstoreAddOutlined />}          
+          alwaysShowTitle={true}          
+        >
+          <Action
+            style={{backgroundColor: '#F897AF',}}
+            text="Disable"
+            //onClick={() => confirmModal()} 
+          >
+            <SwitcherOutlined />
+          </Action>  
+          <Action
+            style={{backgroundColor: '#F897AF',}}
+            text="Comment"            
+            onClick={showComment}
+          >
+            <CommentOutlined />
+          </Action>
+        </Fab>
+
+        <Drawer
+          title="Comments"
+          width={350}
+          closable={false}
+          onClose={onClose}
+          visible={visible}          
+          bodyStyle={{paddingBottom: 80 }}
+          footer={
+            <div
+              style={{
+                textAlign: 'left',
+                //height:150,
+              }}
+            > 
+              <TextArea
+                rows={4}
+                showCount
+                maxLength={300}
+                placeholder="Please input comment"                
+                value={content || ''}
+                onChange={e => setContent((e.target.value).slice(0,300))}
+                style={{ marginTop: 5 }}
+              />
+              <Button 
+                onClick={onClose} 
+                style={{ marginTop: 5, marginRight: 8 }}>
+                Cancel
+              </Button>
+              <Button 
+                type="primary"
+                onClick={() => {
+                  //setIsFeedback(true);
+                  handleCreateComment(userProfile.uid, id);
+                }}                
+              >
+                Comment
+              </Button>
+            </div>
+          }
+        >
+          <div>
+            {comments.length > 0 && (
+              <Spin spinning={loading}>          
+                  <CommentListItem
+                    comments={comments}
+                    replyComment={replyComment}
+                    handleGetAllReply={handleGetAllReply}
+                    handleCreateReply={handleCreateReply}
+                    handleDeleteComment={handleDeleteComment}
+                    handleDeleteReply={handleDeleteReply}              
+                    uid={userProfile.uid}   //uid of user logining 
+                    className="comment"
+                  />                    
+              </Spin>
+            )}      
+          </div>
+        </Drawer>
       </div>
       <Footer />
     </Layout>

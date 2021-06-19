@@ -2,8 +2,8 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useEffect, useState, useLayoutEffect,} from 'react';
 import styled from 'styled-components';
-import { Avatar, Tag, Spin } from 'antd';
-import { UserOutlined, CrownOutlined } from '@ant-design/icons';
+import { Button, Drawer, Avatar, Tag, Spin, Modal, Input,message } from 'antd';
+import { UserOutlined, CrownOutlined, AppstoreAddOutlined,CommentOutlined, SwitcherOutlined } from '@ant-design/icons';
 import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
 import _ from 'lodash';
 import qs from 'query-string';
@@ -21,7 +21,7 @@ import Footer from '../Footer/Footer.js';
 import InterestsOrExtras from '../InterestsOrExtras';
 import SmallScreen from '../Responsive/SmallScreen';
 import BigScreen from '../Responsive/BigScreen';
-import Button from '../CustomButtons/Button';
+//import Button from '../CustomButtons/Button';
 import { bigScreenCss, smallScreenCss } from '../../assets/styles/responsive-css';
 import * as API from '../../apis';
 import iconTour from '../../assets/img/icon-tour.svg';
@@ -36,6 +36,10 @@ import 'react-bnb-gallery/dist/style.css';
 import defaultImage from '../../assets/img/noimage-600x400.jpg';
 import { getUserProfile, ISUSER } from '../../utils/auth';
 import { navigate } from 'gatsby';
+import { Fab, Action } from 'react-tiny-fab';
+import 'react-tiny-fab/dist/styles.css';
+import CommentListItem from "../CommentListItem/UserReviewCommentListItem";
+import NoticeModal from "./NoticeModal"; 
 
 const InfoAvatarAndBackgroundImg = styled.div`
   .info__guide {
@@ -70,7 +74,6 @@ const InfoAvatarAndBackgroundImg = styled.div`
     }
   }
 `;
-
 
 const InfoIntroduction = styled.div`
   .general__information {
@@ -141,26 +144,34 @@ const useStyles = makeStyles(styles);
 
 function UserReview({ location }) {
   const [userProfile] = useState(getUserProfile());
-  if (userProfile.role != ISUSER) {
-    navigate('/');
-    return null;
-  }
+  //if (userProfile.role != ISUSER) {
+  //  navigate('/');
+  //  return null;
+  //}
   const classes = useStyles();
   const dataQueryParams = qs.parse(location.search);
   const uid = dataQueryParams.uid
+  const id = dataQueryParams.id
   
   const [profile, setProfile] = useState({});
   const [rootCountry, setRootCountry] = useState({});
   const [loading, setLoading] = useState(false);
-
+  const [visible, setVisible] = useState(false);
+  const [comments, setComments] = useState({});
+  const [replyComment, setReplyComment] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  
   useEffect(() => {
     const fetchData = async () => {      
       setLoading(true);      
       const res = await API.getUserProfile(uid);       
-      if( (res.data.reqActive == 0) && (res.data.role == 1)) {
-        navigate('/app/profile');
-        return null;
-      }       
+      
+      //show modal notice user become a guide
+      if(res.data.role != userProfile.role) {
+        //setVisible(true)
+        setShowModal(true)
+      }
+     
       setProfile(res.data);
       setLoading(false);
     };
@@ -174,6 +185,56 @@ function UserReview({ location }) {
       setRootCountry(newData);
     })();
   }, []);  
+  
+  const handleGetAllReply = async (commentId) => {    
+    setLoading(true);
+    const res = await API.handleGetAllReply({ id: commentId });
+    setReplyComment(res.data);
+    setLoading(false);
+  };
+  
+  const handleCreateReply = async (e, commentId,uid) => {    
+    if ( (e.target.value).trim() != "" ) {
+      const { data } = await API.handleCreateReply2({
+        uid,
+        commentId,
+        content: e.target.value,
+      });
+      const newReply = { ...data[0] };
+      setReplyComment([...replyComment, newReply]);
+    }
+  };
+  
+  const handleDeleteReply = async (replyId)  => {    
+    const newData = _.remove(replyComment, item => {
+      return item.id !== replyId;
+    });
+    setReplyComment(newData);
+    let res = await API.handleDeleteReply2( replyId );    
+    if (res.status) { 
+      message.success("Delete success")
+    }
+  };
+
+  const showComment = () => {
+    setVisible(true);
+    const fetchAllComment = async () => {      
+      setLoading(true);        
+      const res = await API.GetAllUserReviewComment({id}); //id : account id
+      setComments(res.data)      
+      setLoading(false);      
+    }
+    fetchAllComment();
+    const interval = setInterval(() => fetchAllComment(), 50000);
+    return () => {
+      clearInterval(interval);
+    };    
+    
+  };
+  
+  const onClose = () => {
+    setVisible(false);
+  };
 
   const handleLevelGuide = level => {
     switch (level) {
@@ -187,10 +248,10 @@ function UserReview({ location }) {
         return null;
     }
   };
- 
+  
   return (
     <Layout scrollHeight={300}> 
-      {((profile.reqActive == 0) && (profile.role == 1)) && (
+      {/*{((profile.reqActive == 0 || profile.reqActive == 1) && (profile.role == 1)) && (*/}
         <>   
       <Parallax small filter image={require('../../assets/img/home-banner.jpg')} />
       <div className={classNames(classes.main, classes.mainRaised)}>
@@ -227,8 +288,7 @@ function UserReview({ location }) {
                 <div className={classes.description}>
                   <InfoIntroduction>
                     <div className="general__information">
-                      {/* <h1>Biography</h1> */}
-                      <div className="list__icon">
+                      {/*<div className="list__icon">
                         <div className="flex-center" style={{ flexDirection: 'column' }}>
                           <IconWrapper src={iconTour} alt="Tours" />
                           <p style={{ color: '#525F6B' }}>20 Tours</p>
@@ -245,7 +305,7 @@ function UserReview({ location }) {
                           <IconWrapper src={iconCustomer} alt="Customers" />
                           <p style={{ color: '#525F6B' }}>365 Customers</p>
                         </div>
-                      </div>
+                      </div>*/}
                     </div>
                     {profile.user?.intro !== '' && (
                       <div
@@ -310,11 +370,70 @@ function UserReview({ location }) {
               </GridItem>
             </GridContainer>
           </div> 
+                
+          {(profile.reqActive === 1 && 
+          <Fab      
+            mainButtonStyles={{ backgroundColor: '#f12f60',}}
+            icon={<AppstoreAddOutlined />}          
+            alwaysShowTitle={true}          
+          >          
+            <Action
+              style={{backgroundColor: '#F897AF',}}
+              text="Comment"            
+              onClick={showComment}
+            >
+              <CommentOutlined />
+            </Action>
+          </Fab>
+          )}
+          <Drawer
+            title="Comments"
+            width={350}
+            closable={false}
+            onClose={onClose}
+            visible={visible}          
+            bodyStyle={{paddingBottom: 80 }}
+            footer={
+              <div
+                style={{
+                  textAlign: 'left',
+                  //height:150,
+                }}
+              >               
+                <Button 
+                  onClick={onClose} 
+                  type="primary"
+                  style={{ marginTop: 5, marginRight: 8 }}
+                >
+                  Cancel
+                </Button>              
+              </div>
+            }
+          >
+            
+            <div>
+              {comments.length > 0 && (
+                <Spin spinning={loading}>          
+                    <CommentListItem
+                      comments={comments}
+                      replyComment={replyComment}
+                      handleGetAllReply={handleGetAllReply}
+                      handleCreateReply={handleCreateReply}
+                      //handleDeleteComment={}
+                      handleDeleteReply={handleDeleteReply}              
+                      uid={userProfile.uid}   //uid of user logining 
+                      className="comment"
+                    />                    
+                </Spin>
+              )}      
+            </div>
+          </Drawer>
         </Spin>
+        <NoticeModal visible={showModal}  />
       </div>
       <Footer />
       </>
-    )}  
+    {/* )}  */}
     </Layout>
   );
 }

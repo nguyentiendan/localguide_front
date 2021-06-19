@@ -7,7 +7,7 @@ const Step2 = () => {
 
   return (
     <>
-      <AdvanceProfile uid={userProfile?.uid}/>
+      <AdvanceProfile uid={userProfile?.uid} role={userProfile?.role} />
     </>
   )
 }

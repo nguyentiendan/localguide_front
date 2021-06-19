@@ -25,10 +25,11 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
         setLoading(true);
         let res = null;
         if (user.role === 3) {
-          res = await API.handleGetAllFeedback({ uid: user.uid, id: tour?.rawID || id });
+          res = await API.handleGetAllFeedback({ uid: user.uid, id: tour?.rawID || id });          
         } else {
           res = await API.getAllFeedbackOfGuide({ uid: user.uid, id });
         }
+        
         const newData = res.data.map(item => {
           const newItem = { ...item };
           newItem.uuid = uuidv4();
@@ -50,13 +51,14 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
   ]);
 
   const handleCreateFeedback = async () => {
+    
     if (dataCreateFeedback.trim()) {
       const { data } = await API.handleCreateFeedback({
         uid: user.uid,
         tourId: tour?.rawID || id,
         content: dataCreateFeedback.trim(),
       });
-
+      
       const newFeedback = { ...data[0] };
       newFeedback.uuid = uuidv4();
       setDataFeedback([...dataFeedback, newFeedback]);
@@ -72,7 +74,7 @@ const ModalFeedback = ({ showModal, setShowModal, user, tour, id }) => {
       });
       const newFeedback = { ...data[0] };
       newFeedback.uuid = uuidv4();
-      setDataReply([...dataReply, newFeedback]);
+      setDataReply([...dataReply, newFeedback]);      
     }
   };
   const handleGetAllReply = async idFeedback => {

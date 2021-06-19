@@ -10,35 +10,41 @@ import * as API from '../../apis';
 import { getUserProfile, ISUSER } from '../../utils/auth';
 import { navigate } from 'gatsby';
 import styles from '../../assets/styles/profilePage.js';
+import NoticeModal from "./NoticeModal"; 
 
 const useStyles = makeStyles(styles);
 
 const StartProfile = () => {
   const classes = useStyles();
+  const [visible, setVisible] = useState(false);
   const [userProfile] = useState(getUserProfile());
   const uid = userProfile.uid
-  if ( userProfile.role != ISUSER ) {
-    navigate('/');
-    return null;
-  }
+  
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState({});
 
   const fetchUserProfile = useCallback(async () => {
     setLoading(true);
-    const res = await API.getUserProfile(uid);
-    if(res.data.reqActive != 1) {
-      navigate('/app/profile');
+    const res = await API.getUserProfile(uid);    
+    //show modal notice user become a guide
+    if(res.data.role != userProfile.role) {
+      setVisible(true)
+    }
+    if (res.data.role != ISUSER ) {
+      navigate('/');
       return null;
     }
+    
     setProfile(res.data);    
     setLoading(false);
   }, []);
 
   useEffect(() => {
     fetchUserProfile();    
-  }, [fetchUserProfile]);
+  }, []);
   
+  
+
   return (    
     <Layout>      
        {profile.reqActive == 1 && (
@@ -54,7 +60,7 @@ const StartProfile = () => {
                  extra={
                    [
                      <Button type="primary" key="1">
-                       <a href={`/app/profileReview?uid=${userProfile.uid}`} target="_blank">Review your profile</a>
+                       <a href={`/app/profileReview?uid=${userProfile.uid}&id=${userProfile.id}`} target="_blank">Review profile</a>
                      </Button>,
                      <Button type="primary" key="2">
                        <a href="/app/becomeGuide" target="_blank">Modify</a>
@@ -66,6 +72,7 @@ const StartProfile = () => {
              <Footer />
            </div>
          </Spin>
+         <NoticeModal visible={visible}  />
          </>
         )    
       }      

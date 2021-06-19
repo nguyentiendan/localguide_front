@@ -12,6 +12,7 @@ import UploadAvatar from "../Input/UploadAvatar"
 import * as API from '../../apis';
 import styles from '../../assets/styles/profilePage.js';
 import { getUserProfile, ISUSER } from '../../utils/auth';
+import NoticeModal from "./NoticeModal"; 
 
 const useStyles = makeStyles(styles);
 
@@ -42,27 +43,16 @@ function Profile() {
   const [rootCity, setRootCity] = useState([]);
   const [rootCountry, setRootCountry] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   
-  const confirmModal = () => {
-    Modal.confirm({
-      title: 'Confirmation',
-      content: (
-        <div>
-          <p>Become a guide, you can ...... </p>
-          <p>Some text to deacription........</p>
-        </div>
-      ),
-      closable:true,
-      centered:true,
-      okText: 'Start',      
-      onOk() {
-        navigate('/app/becomeGuide');
-      },
-      onCancel() {
-        //console.log('Cancel');
-      },      
-    });
-  }
+  const handleOk = () => {
+    navigate('/app/becomeGuide');
+  };
+
+  const handleCancel = () => {
+    setShowModal(false);     
+  };
 
   const fetchUserProfile = useCallback(async () => {
     setLoading(true);
@@ -71,6 +61,10 @@ function Profile() {
       navigate('/app/start');
       return null;
     }
+    //show modal notice user become a guide
+    if(res.data.role != userProfile.role) {
+      setVisible(true)
+    }
     const resCountry = await API.getAllCountry();
     setRootCountry(resCountry.data);
     setProfile(res.data);
@@ -78,8 +72,9 @@ function Profile() {
   }, [API.getAllCountry, setLoading, setProfile, setRootCountry]);
 
   useEffect(() => {
-    fetchUserProfile();    
-  }, [fetchUserProfile]);
+    fetchUserProfile();  
+  }, []);
+
 
   const onFinish = async values => {
     setLoading(true);
@@ -149,16 +144,16 @@ function Profile() {
       },
     },
   };
-   
+  
   return (
     <Layout>
-    {profile.reqActive == 0 && (
+    {profile.reqActive === 0 && (
       <>
       <SEO title="User Profile" />
       <Parallax small filter image={require('../../assets/img/home-banner.jpg')} />
         <div className={classNames(classes.main, classes.mainRaised)}>
           <div className={classes.container} style={{backgroundColor: "#fafafa",border: "1px dashed #e9e9e9",borderRadius: "2px"}}>
-            <Spin spinning={loading}>    
+            <Spin spinning={loading}>
               <FormWrapper form={form} {...formItemLayout} onFinish={onFinish} scrollToFirstError>
                 
                 <Form.Item style={{ justifyContent: 'center',  paddingTop: '20px',paddingBottom: '0px'  }}>
@@ -233,38 +228,35 @@ function Profile() {
 
                 <Form.Item 
                   name="sex" 
-                  label="Gender" style={{ marginBottom: 0 }}
+                  label="Gender" 
                   key={profile.sex === '' ? 'sex' : profile.sex}
                   initialValue={profile.sex === '0' ? '0' : '1'}
                 >
-                  <Row gutter={8}>
-                    <Col span={12}>
-                      <Select
-                        size="large" 
-                        placeholder="Gender"
-                        //style={{ width: '150px' }}
-                        defaultValue={profile.sex === '0' ? '0' : '1'}
-                        onChange={value => {
-                          form.setFieldsValue({ sex: value });
-                        }}
-                      >
-                        <Select.Option value="1">Male</Select.Option>
-                        <Select.Option value="0">Female</Select.Option>
-                      </Select>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        name="age"
-                        label="Age"
-                        key={profile.age === '' ? 'age' : profile.age}
-                        initialValue={profile.age}
-                        style={{ flexGrow: 0.15 }}
-                      >
-                        <InputNumber size="large" />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Form.Item>  
+                  
+                  <Select
+                    size="large" 
+                    placeholder="Gender"
+                    style={{ width: '200px' }}
+                    //defaultValue={profile.sex === '0' ? '0' : '1'}
+                    onChange={value => {
+                      form.setFieldsValue({ sex: value });
+                    }}
+                  >
+                    <Select.Option value="1">Male</Select.Option>
+                    <Select.Option value="0">Female</Select.Option>
+                  </Select>
+                </Form.Item>
+                    
+                <Form.Item
+                  name="age"
+                  label="Age"
+                  key={profile.age === '' ? 'age' : profile.age}
+                  initialValue={profile.age}
+                  style={{ flexGrow: 0.15 }}
+                >
+                  <InputNumber size="large" />
+                </Form.Item>
+                
                 <Form.Item
                   name="country"
                   label="Country"
@@ -311,13 +303,52 @@ function Profile() {
                   <Button style={{ margin: '0 8px' }}  type="primary" htmlType="submit">
                     Update Profile
                   </Button>
-                  <a href="#" onClick={() => confirmModal()} >Become a tour guide?</a>
+                  ||
+                  <a href="#" onClick={() => setShowModal(true) } >  Become a tour guide?</a>
                 </Form.Item>
                 
               </FormWrapper>      
             </Spin>
           </div>
         <Footer />
+
+        <Modal
+          visible={showModal}
+          title="Guide Terms"
+          closable="true"
+          onOk={handleOk}
+          onCancel={handleCancel}
+          width={800}
+          footer={[
+            <Button 
+              key="back" 
+              onClick={handleCancel}
+            >
+              Cancel
+            </Button>,
+            <Button 
+              key="submit" 
+              type="primary"
+              loading={loading}
+              onClick={handleOk}
+            >
+              Agree this terms
+            </Button>,          
+          ]}
+        > 
+          <p>Become a guide, please confirm ....Become a guide, please confirmBecome a guide, please confirmBecome a guide, please confirm</p>
+          <ul>
+            <li>Some contents...</li>
+            <li>Some contents...</li>
+            <li>Some contents...</li>
+            <li>Some contents...</li>
+            <li>Some contents...</li>
+            <li>Some contents...</li>
+            <li>Some contents...</li>
+            <li>Some contents...</li>
+          </ul>
+        </Modal>
+        <NoticeModal visible={visible}  />
       </div>
       </>
    )} 

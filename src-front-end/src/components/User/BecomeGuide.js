@@ -2,7 +2,7 @@ import React, { useState, } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
-import { Steps, Form, Input, Select, Button, InputNumber, Row, Col, Spin, notification, message } from 'antd';
+import { Steps, Form, Button, Spin, message } from 'antd';
 import Layout from '../CustomLayout';
 import Parallax from '../Parallax/Parallax.js';
 import Footer from '../Footer/Footer.js';
@@ -11,7 +11,6 @@ import { navigate } from 'gatsby';
 import * as API from '../../apis';
 import styles from '../../assets/styles/profilePage.js';
 import StepLayout from './StepLayouts';
-
 
 const useStyles = makeStyles(styles);
 
@@ -81,18 +80,17 @@ const BECOME_GUIDE_STEP = [
 
 function BecomeGuide() {
   const [profile] = useState(getUserProfile());
-  if (profile.role != ISUSER) {
-    navigate('/');
-    return null;
-  }
-
   const uid = profile.uid;
   const [form] = Form.useForm();
   const classes = useStyles();
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(false);
   
-  
+  if (profile.role != ISUSER) {
+    navigate('/');
+    return null;
+  }
+
   const handlePrev = () => {
     setCurrent(current - 1);
   };
@@ -103,6 +101,7 @@ function BecomeGuide() {
   
   const key = 'updatable';
   const onFinish = async values => {
+    setLoading(true);
     if (loading) {
       return;
     }
@@ -125,7 +124,7 @@ function BecomeGuide() {
     } catch (e) {
       // ignore
     }
-    setLoading(false);     
+    setLoading(false);
   };
  
   return (
@@ -133,43 +132,44 @@ function BecomeGuide() {
       <Parallax small filter image={require('../../assets/img/home-banner.jpg')} />
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div className={classes.container} >    
-          <Steps current={current} style={{paddingTop:"50px"}} >
-            {BECOME_GUIDE_STEP.map(item => (
-              <Step key={item.title} title={item.title} />
-            ))}
-          </Steps>
-          <FormWrapper form={form} {...formItemLayout} onFinish={onFinish} scrollToFirstError>
-            <StepContent>
-              {BECOME_GUIDE_STEP[current].content}  
-              <StepAction>                
-                {current < BECOME_GUIDE_STEP.length - 1 && (
-                  <>
-                  <Button style={{ margin: '0 8px' }} type="primary" onClick={() => handleCancel()}>
-                    Cancel
-                  </Button>
+          <Spin spinning={loading}>
+            <Steps current={current} style={{paddingTop:"50px"}} >
+              {BECOME_GUIDE_STEP.map(item => (
+                <Step key={item.title} title={item.title} />
+              ))}
+            </Steps>
+            <FormWrapper form={form} {...formItemLayout} onFinish={onFinish} scrollToFirstError>
+              <StepContent>
+                {BECOME_GUIDE_STEP[current].content}  
+                <StepAction>                
+                  {current < BECOME_GUIDE_STEP.length - 1 && (
+                    <>
+                      <Button style={{ margin: '0 8px' }} type="primary" onClick={() => handleCancel()}>
+                        Cancel
+                      </Button>
 
-                  <Button type="primary" htmlType="submit">
-                    Next
-                  </Button>
-                  </>
-                )}
-                {current === BECOME_GUIDE_STEP.length - 1 && (
-                  /*<Button type="primary" onClick={() => message.success('Processing complete!')}>*/
-                  <Button type="primary" onClick={() => handleCancel()}>
-                    Cancel
-                  </Button>
-                )}
-                {current > 0 && (
-                  <Button style={{ margin: '0 8px' }} onClick={() => handlePrev()}>
-                    Previous
-                  </Button>
-                )}
-              </StepAction>           
-            </StepContent>
-            
-          </FormWrapper>
+                      <Button type="primary" htmlType="submit">
+                        Next
+                      </Button>
+                    </>
+                  )}
+                  {current === BECOME_GUIDE_STEP.length - 1 && (
+                    /*<Button type="primary" onClick={() => message.success('Processing complete!')}>*/
+                    <Button type="primary" onClick={() => handleCancel()}>
+                      Cancel
+                    </Button>
+                  )}
+                  {current > 0 && (
+                    <Button style={{ margin: '0 8px' }} onClick={() => handlePrev()}>
+                      Previous
+                    </Button>
+                  )}
+                </StepAction>           
+              </StepContent>            
+            </FormWrapper>
+          </Spin>
         </div>
-        <Footer />
+        <Footer />        
       </div>
     </Layout>
   );

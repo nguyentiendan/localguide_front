@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'gatsby';
 import styled from 'styled-components';
-
+import { Modal, Button } from 'antd';
 import { makeStyles } from '@material-ui/core/styles';
 import * as API from '../apis';
 import breakpoints from '../assets/styles/breakpoints';
@@ -10,7 +10,7 @@ import SEO from '../components/SEO';
 import Input from '../components/Input';
 import Checkbox from '../components/Checkbox';
 import Layout from '../components/CustomLayout';
-import Button from '../components/CustomButtons/Button.js';
+//import Button from '../components/CustomButtons/Button.js';
 import GridContainer from '../components/Grid/GridContainer.js';
 import GridItem from '../components/Grid/GridItem.js';
 import Card from '../components/Card/Card.js';
@@ -20,6 +20,7 @@ import CardFooter from '../components/Card/CardFooter.js';
 import Footer from '../components/Footer/Footer.js';
 import styles from '../assets/jss/material-kit-react/views/loginPage.js';
 import image from '../assets/img/bg7.jpg';
+import { navigate } from 'gatsby';
 
 const useStyles = makeStyles(styles);
 
@@ -138,8 +139,23 @@ function SignUpPage() {
           setPassword('');
           setConfirmPassword('');
           setError('');
-          // TODO : show popup after signup or di chuyển đến 1 trang Thank you
-          alert(message);
+          
+          Modal.info({
+            title: 'Thank you',
+            content: (
+              <div>
+                <p>Your account was created successful</p>
+                <p>Please check email to active your account</p>            
+              </div>
+            ), 
+            closable:false,
+            keyboard:false,      
+            centered:true,
+            okText: 'Close',      
+            onOk() {           
+              navigate("/")
+            },
+          });
         } else {
           setLoading(false);
           setError({ email: message });
@@ -250,10 +266,11 @@ function SignUpPage() {
                       loading={loading}
                       disabled={loading}
                       onClick={handleOnSubmit}
+                      type="primary"
                     >
                       Create
                     </Button>
-                    <Button href="/login" color="transparent">
+                    <Button href="/login" color="transparent" type="link">
                       Have an account ?
                     </Button>
                   </Actions>

@@ -60,6 +60,7 @@ export async function getUserProfileReview(uid) {
   return request({
     url: `/account/user/${uid}`,
     method: 'GET',
+    authRequired: true,
   });
 }
 
@@ -102,14 +103,14 @@ export async function deleteTour({ id, uid }) {
     data: { uid, id },
   });
 }
-
-export async function getAllFeedback({ uid, id }) {
+//Not User
+/*export async function getAllFeedback({ uid, id }) {
   return request({
     url: `admin/tourFeedback/getAll?uid=${uid}&id=${id}`,
     method: 'GET',
     authRequired: true,
   });
-}
+}*/
 
 export async function getAllFeedbackOfGuide({ uid, id }) {
   return request({
@@ -445,11 +446,22 @@ export async function getAllLang() {
 }
 
 // User request approve
-export function sendRequestApprove(uid) {
+export async function sendRequestApprove({uid}) {
   return request({
     url: '/account/requestApprove',
     method: 'POST',
+    authRequired: true,
     data: { uid },
+  });
+}
+
+// Admin approve User become Guide
+export async function approveUser({uid, id}) {
+  return request({
+    url: '/admin/approveUser',
+    method: 'POST',
+    authRequired: true,
+    data: { uid, id: Number(id) },
   });
 }
 
@@ -587,6 +599,66 @@ export async function handleEditReply({ id, content }) {
 export async function handleDeleteReply({ id }) {
   return request({
     url: '/admin/tourReplyFb/delete',
+    method: 'DELETE',
+    data: { id },
+    authRequired: true,
+  });
+}
+
+// Get all User Review comment
+export async function GetAllUserReviewComment({ id }) {
+  return request({
+    url: 'admin/userReviewComment/getAll',
+    method: 'GET',
+    authRequired: true,
+    params: { id: Number(id) },
+  });
+}
+
+// Get all User Review reply of comment
+export async function handleGetAllReply({ id }) {
+  return request({
+    url: '/admin/userReviewComment/getAllReply',
+    method: 'GET',
+    authRequired: true,
+    params: { id: Number(id) },
+  });
+}
+
+// Create Comment User Review
+export async function handleCreateComment({ uid, userId, content }) {
+  return request({
+    url: '/admin/userReviewComment/create',
+    method: 'POST',
+    authRequired: true,
+    data: { uid, userId, content },
+  });
+}
+
+// Create Reply of Comment
+export async function handleCreateReply2({ uid, commentId, content }) {
+  return request({
+    url: '/admin/userReviewComment/createReply',
+    method: 'POST',
+    authRequired: true,
+    data: { uid, commentId, content },
+  });
+}
+
+// Delete comment
+export async function handleDeleteComment(id) {    
+  return request({
+    url: '/admin/userReviewComment/delComment',
+    method: 'DELETE',
+    data: { id },
+    authRequired: true,
+  });
+}
+
+// Delete reply
+export async function handleDeleteReply2(id) { 
+  return request({
+    url: '/admin/userReviewComment/delReply',
     method: 'DELETE',
     data: { id },
     authRequired: true,

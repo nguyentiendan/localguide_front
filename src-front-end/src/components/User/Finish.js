@@ -50,7 +50,7 @@ function Finish({uid}) {
   useEffect(() => {    
     setLoading(true);
     const fetchUserProfile = async () => {
-      const res = await API.getUserProfile(uid);  
+      const res = await API.getUserProfile(uid);        
       if(res.data?.reqActive === 1) { 
         setDisable(true);
       }
@@ -58,9 +58,9 @@ function Finish({uid}) {
         setIsOK(false);
       }  
       setProfile(res.data);
+
     };
-    fetchUserProfile(); 
-    
+    fetchUserProfile();     
     setLoading(false);
   }, []);
   
@@ -93,10 +93,12 @@ function Finish({uid}) {
           key="success"
           status="success"
           title="Successfully update your profile!"
-          subTitle="Please send request approve to administrator"
+          subTitle={
+            (profile.reqActive === 1 || disable == true) ? ("Your profile is waiting admin approve."):("Please send request approve to administrator")
+          }          
           extra={[
             <Button type="primary" key="review">              
-              <a href={`/app/profileReview?uid=${uid}`} target="_blank">Review</a>          
+              <a href={`/app/profileReview?uid=${uid}&id=${profile.id}`} target="_blank">Review</a>          
             </Button>,
             
             <Popconfirm

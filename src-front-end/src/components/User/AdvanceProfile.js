@@ -1,23 +1,23 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
-import { Form, Input, Textarea, Button, Select,  InputNumber, Spin, notification,Modal,} from 'antd';
-import { navigate } from 'gatsby';
-import UploadAvatar from "../Input/UploadAvatar"
+import { Form, Input, Spin, } from 'antd';
 import * as API from '../../apis';
 import TagInterests from '../HandleTag/Interests';
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import styles from '../../assets/styles/profilePage.js';
+import NoticeModal from "./NoticeModal"; 
 
 const useStyles = makeStyles(styles);
 
-function AdvanceProfile({uid}) { 
-  //const [userProfile] = useState(getUserProfile());
+function AdvanceProfile({uid, role}) { 
   const classes = useStyles();
   //const [form] = Form.useForm();
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
+
   const [defaultTags, setDefaultTags] = useState({
     interest: [],
     language: [],
@@ -37,6 +37,11 @@ function AdvanceProfile({uid}) {
     setLoading(true);
     const res = await API.getUserProfile(uid);
     
+    //show modal notice user become a guide
+    if(res.data.role != role) {
+      setVisible(true)
+    }
+
     setInterest({ ...interest,tags: res.data?.interest ? res.data?.interest?.split(';') : [] });    
     setExtras({ ...extras, tags: res.data?.extras ? res.data?.extras?.split(';') : [] });
     setLanguage({ ...language, tags: res.data?.language ? res.data?.language?.split(';') : [] });
@@ -48,7 +53,7 @@ function AdvanceProfile({uid}) {
 
   useEffect(() => {
     fetchUserProfile();
-  }, [fetchUserProfile]);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -135,165 +140,168 @@ function AdvanceProfile({uid}) {
   const editorRef = useRef();
   
   return (
-    <Spin spinning={loading}>    
-      {/*<FormWrapper form={form} {...formItemLayout} onFinish={onFinishAdvance} scrollToFirstError>*/}        
-        <Form.Item style={{ justifyContent: 'center',  paddingTop: '20px',paddingBottom: '0px'  }}>
-          <h2>{profile.fullname}'s Advance Profile</h2>
-        </Form.Item>              
+    <div>
+      <Spin spinning={loading}>    
+        {/*<FormWrapper form={form} {...formItemLayout} onFinish={onFinishAdvance} scrollToFirstError>*/}        
+          <Form.Item style={{ justifyContent: 'center',  paddingTop: '20px',paddingBottom: '0px'  }}>
+            <h2>{profile.fullname}'s Advance Profile</h2>
+          </Form.Item>              
 
-        <Form.Item
-          name="intro"
-          label="Short introdution"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your introdution!',
-            },
-            {
-              max: 200,
-              message: 'Value should be less than 200 character',
-            },
-          ]}
-          key={profile.intro === '' ? 'intro' : profile.intro}
-          initialValue={profile.intro}
-        >
-          <Input.TextArea size="large" />
-        </Form.Item>
+          <Form.Item
+            name="intro"
+            label="Short introdution"
+            rules={[
+              {
+                required: true,
+                message: 'Please input your introdution!',
+              },
+              {
+                max: 200,
+                message: 'Value should be less than 200 character',
+              },
+            ]}
+            key={profile.intro === '' ? 'intro' : profile.intro}
+            initialValue={profile.intro}
+          >
+            <Input.TextArea size="large" />
+          </Form.Item>
 
-        <Form.Item
-          name="education"
-          label="Education"
-          rules={[            
-            {
-              required: true,
-              message: 'Please input your education!',
-            },
-          ]}
-          key={profile.education === '' ? 'education' : profile.education}
-          initialValue={profile.education}
-        >
-          <Input size="large"  />
-        </Form.Item>
-        
-        <Form.Item
-          name="certification"
-          label="Certification"
-          rules={[            
-            {
-              required: true,
-              message: 'Please input your certification!',
-            },
-          ]}
-          key={profile.certification === '' ? 'certification' : profile.certification}
-          initialValue={profile.certification}
-        >
-          <Input size="large"  />
-        </Form.Item>
+          <Form.Item
+            name="education"
+            label="Education"
+            rules={[            
+              {
+                required: true,
+                message: 'Please input your education!',
+              },
+            ]}
+            key={profile.education === '' ? 'education' : profile.education}
+            initialValue={profile.education}
+          >
+            <Input size="large"  />
+          </Form.Item>
+          
+          <Form.Item
+            name="certification"
+            label="Certification"
+            rules={[            
+              {
+                required: true,
+                message: 'Please input your certification!',
+              },
+            ]}
+            key={profile.certification === '' ? 'certification' : profile.certification}
+            initialValue={profile.certification}
+          >
+            <Input size="large"  />
+          </Form.Item>
 
-        <Form.Item
-          //name="language"
-          label="Language"          
-          key={profile.language === '' ? 'language' : profile.language}
-          initialValue={profile.language}
-        >
-          <TagInterests
-            createInfo={language}
-            setCreateInfo={setLanguage}
-            defaultTags={defaultTags.language}
-            onChange={handleLanguage(language)}
-          />
-        </Form.Item>
-
-        <Form.Item
-          //name="interest"
-          label="Interests"
-          key={profile.interest === '' ? 'interest' : profile.interest}
-          initialValue={profile.interest}
-        >
-          <TagInterests
-            createInfo={interest}
-            setCreateInfo={setInterest}
-            defaultTags={defaultTags.interest}
-            onChange={handleInterest(interest)}
-          />
-        </Form.Item>
-
-        <Form.Item
-          //name="extras"
-          label="Extras"
-          key={profile.extras === '' ? 'extras' : profile.extras}
-          initialValue={profile.extras}
-        >
-          <TagInterests
-            createInfo={extras}
-            setCreateInfo={setExtras}
-            defaultTags={defaultTags.extras}
-            onChange={handleExtra(extras)}
-          />
-        </Form.Item>  
-
-        <Form.Item
-          name="experience"
-          label="Experience"
-          key="experience"
-          initialValue={profile.experience}
-        >
-          <div>
-            <SunEditor
-              ref={editorRef}
-              setContents={profile.experience}
-              lang="en"
-              // width="670"
-              height="300"
-              placeholder="Please enter your experience ..."
-              showToolbar
-              enableToolbar
-              //onChange={value => {
-              //  form.setFieldsValue({ experience: value });
-              //}}
-              onChange={value => {
-                handleExperience(value);
-              }}              
-              setOptions={{
-                buttonList: [
-                  [
-                    'undo',
-                    'redo',
-                    'font',
-                    'fontSize',
-                    'formatBlock',
-                    'blockquote',
-                    'bold',
-                    'underline',
-                    'italic',
-                    'strike',
-                    'subscript',
-                    'superscript',
-                    'fontColor',
-                    'hiliteColor',
-                    'textStyle',
-                    'removeFormat',
-                    'outdent',
-                    'indent',
-                    'align',
-                    'horizontalRule',
-                    'list',
-                    'lineHeight',
-                    'link',
-                    'image',
-                    'video',
-                    'showBlocks',
-                    'codeView',
-                    'preview',
-                    'fullScreen',
-                  ],
-                ],
-              }}
+          <Form.Item
+            //name="language"
+            label="Language"          
+            key={profile.language === '' ? 'language' : profile.language}
+            initialValue={profile.language}
+          >
+            <TagInterests
+              createInfo={language}
+              setCreateInfo={setLanguage}
+              defaultTags={defaultTags.language}
+              onChange={handleLanguage(language)}
             />
-          </div>
-        </Form.Item>
-      {/*</FormWrapper>*/}
-    </Spin>                
+          </Form.Item>
+
+          <Form.Item
+            //name="interest"
+            label="Interests"
+            key={profile.interest === '' ? 'interest' : profile.interest}
+            initialValue={profile.interest}
+          >
+            <TagInterests
+              createInfo={interest}
+              setCreateInfo={setInterest}
+              defaultTags={defaultTags.interest}
+              onChange={handleInterest(interest)}
+            />
+          </Form.Item>
+
+          <Form.Item
+            //name="extras"
+            label="Extras"
+            key={profile.extras === '' ? 'extras' : profile.extras}
+            initialValue={profile.extras}
+          >
+            <TagInterests
+              createInfo={extras}
+              setCreateInfo={setExtras}
+              defaultTags={defaultTags.extras}
+              onChange={handleExtra(extras)}
+            />
+          </Form.Item>  
+
+          <Form.Item
+            name="experience"
+            label="Experience"
+            key="experience"
+            initialValue={profile.experience}
+          >
+            <div>
+              <SunEditor
+                ref={editorRef}
+                setContents={profile.experience}
+                lang="en"
+                // width="670"
+                height="300"
+                placeholder="Please enter your experience ..."
+                showToolbar
+                enableToolbar
+                //onChange={value => {
+                //  form.setFieldsValue({ experience: value });
+                //}}
+                onChange={value => {
+                  handleExperience(value);
+                }}              
+                setOptions={{
+                  buttonList: [
+                    [
+                      'undo',
+                      'redo',
+                      'font',
+                      'fontSize',
+                      'formatBlock',
+                      'blockquote',
+                      'bold',
+                      'underline',
+                      'italic',
+                      'strike',
+                      'subscript',
+                      'superscript',
+                      'fontColor',
+                      'hiliteColor',
+                      'textStyle',
+                      'removeFormat',
+                      'outdent',
+                      'indent',
+                      'align',
+                      'horizontalRule',
+                      'list',
+                      'lineHeight',
+                      'link',
+                      'image',
+                      'video',
+                      'showBlocks',
+                      'codeView',
+                      'preview',
+                      'fullScreen',
+                    ],
+                  ],
+                }}
+              />
+            </div>
+          </Form.Item>
+        {/*</FormWrapper>*/}
+      </Spin>
+      <NoticeModal visible={visible}  />
+    </div>  
   );
 }
 

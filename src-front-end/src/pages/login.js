@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, navigate } from 'gatsby';
 import styled from 'styled-components';
 import jwt from 'jsonwebtoken';
-
+import { Button } from 'antd';
 import { makeStyles } from '@material-ui/core/styles';
 import * as API from '../apis';
 import { useLocalStorage } from '../utils/storage';
@@ -12,7 +12,7 @@ import { ENTER } from '../constants/keys';
 import SEO from '../components/SEO';
 import Input from '../components/Input';
 import Layout from '../components/CustomLayout';
-import Button from '../components/CustomButtons/Button.js';
+//import Button from '../components/CustomButtons/Button.js';
 import GridContainer from '../components/Grid/GridContainer.js';
 import GridItem from '../components/Grid/GridItem.js';
 import Card from '../components/Card/Card.js';
@@ -189,10 +189,10 @@ function LoginPage() {
                   </Field>
 
                   <Actions>
-                    <Button color="rose" loading={loading} disabled={loading} onClick={handleLogin}>
+                    <Button color="rose" loading={loading} disabled={loading} onClick={handleLogin} type="primary">
                       Login
                     </Button>
-                    <Button href="/signup/" color="transparent">
+                    <Button href="/signup/" color="transparent" type="link">
                       Create Account
                     </Button>
                   </Actions>

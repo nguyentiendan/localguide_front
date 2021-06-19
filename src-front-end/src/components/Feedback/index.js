@@ -38,7 +38,7 @@ const Feedback = ({
   const [feedbackId, setFeedbackId] = useState({});
   return (
     <FeedbackWrapper>
-      {feedback?.map(comment => {
+      {feedback?.map(comment => {        
         return (
           <Comment
             actions={[
@@ -50,7 +50,7 @@ const Feedback = ({
                   handleGetAllReply(comment.ID)
                 }}
                 style={{ color: '#555' }}
-              >
+              >                
                 {comment.Num ? `${comment.Num} Replies` : 'Reply to'}
               </Button>,
             ]}
