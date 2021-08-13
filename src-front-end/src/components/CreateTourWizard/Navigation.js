@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
+import { Popconfirm } from 'antd';
 
 const Wrapper = styled.div`
   display: flex;
@@ -21,6 +22,8 @@ const Navigation = ({
   currentStepNumber,
   onBack,
   onNext,
+  onCancel,
+  onConfirm,
   onPreview,
   loading,
   isNextDisabled,
@@ -32,7 +35,7 @@ const Navigation = ({
     totalSteps,
     currentStepNumber,
   ]);
-
+  
   return (
     <Wrapper>
       <LayoutWrapper>
@@ -45,19 +48,26 @@ const Navigation = ({
         >
           Back
         </Button>
-        <div>
-          {isLastStep && (
-            <Button
-              onClick={onPreview}
-              style={{ marginLeft: 20, marginRight: 20, width: 100 }}
-              type="primary"
-              size="large"
-              disabled={loading || isNextDisabled}
+        <div>          
+        {!isFinished && (
+          <>
+            <Popconfirm
+              title="Create tour is not complete. Are you sure?"
+              onConfirm={onConfirm}
+              okText="Yes"
+              cancelText="No"
             >
-              Preview
-            </Button>
-          )}
-          {!isFinished && (
+              <Button
+                //onClick={onCancel}
+                style={{ marginLeft: 20, marginRight: 20, width: 100 }}
+                type="primary"
+                size="large"
+                loading={loading}
+              >
+                Cancel
+              </Button>
+            </Popconfirm>
+            
             <Button
               onClick={onNext}
               style={{ marginLeft: 20, marginRight: 20, width: 100 }}
@@ -68,7 +78,8 @@ const Navigation = ({
             >
               Next
             </Button>
-          )}
+          </>
+        )}
           {isFinished && (
             <Button
               onClick={onFinish}
@@ -77,7 +88,7 @@ const Navigation = ({
               size="large"
               disabled={loading || isNextDisabled}
             >
-              {canSkipped ? `Skip for now` : `Done`}
+              Done
             </Button>
           )}
         </div>
@@ -91,6 +102,8 @@ Navigation.propTypes = {
   currentStepNumber: PropTypes.number,
   onBack: PropTypes.func,
   onNext: PropTypes.func,
+  onCancel: PropTypes.func,
+  onConfirm: PropTypes.func,
   onPreview: PropTypes.func,
   loading: PropTypes.bool,
   isNextDisabled: PropTypes.bool,
@@ -104,6 +117,8 @@ Navigation.defaultProps = {
   currentStepNumber: 0,
   onBack: () => {},
   onNext: () => {},
+  onCancel: () => {},
+  onConfirm: () => {},
   onPreview: () => {},
   loading: false,
   isNextDisabled: false,

@@ -1,7 +1,20 @@
 import { slugify } from './src/utils/slug';
 import * as API from './src/apis';
 
-async function createTourGuideNodes({ createNode, createNodeId, createContentDigest }) {
+exports.onCreatePage = async ({ page, actions }) => {
+  const { createPage } = actions;
+
+  // page.matchPath is a special key that's used for matching pages
+  // only on the client.
+  if (page.path.match(/^\/app/)) {
+    page.matchPath = `/app/*`;
+
+    // Update the page.
+    createPage(page);
+  }
+};
+
+/* async function createTourGuideNodes({ createNode, createNodeId, createContentDigest }) {
   try {
     const { data: allTourGuides } = await API.getAllTourGuides();
     allTourGuides.forEach(tourGuide => {
@@ -27,8 +40,9 @@ async function createTourGuideNodes({ createNode, createNodeId, createContentDig
     console.error(error);
   }
 }
+*/
 
-async function createDestinationNodes({ createNode, createNodeId, createContentDigest }) {
+/* async function createDestinationNodes({ createNode, createNodeId, createContentDigest }) {
   try {
     const allDestinations = await API.getAllDestinations();
     allDestinations.forEach(destination => {
@@ -54,7 +68,8 @@ async function createDestinationNodes({ createNode, createNodeId, createContentD
     console.error(error);
   }
 }
-
+*/
+/*
 async function createBlogNodes({ createNode, createNodeId, createContentDigest }) {
   try {
     const allBlogs = await API.getAllBlogs();
@@ -81,8 +96,8 @@ async function createBlogNodes({ createNode, createNodeId, createContentDigest }
     console.error(error);
   }
 }
-
-async function createTourNodes({ createNode, createNodeId, createContentDigest }) {
+*/
+/* async function createTourNodes({ createNode, createNodeId, createContentDigest }) {
   try {
     const { data: allTours } = await API.getAllTours();
     console.log(allTours);
@@ -108,8 +123,9 @@ async function createTourNodes({ createNode, createNodeId, createContentDigest }
   } catch (error) {
     console.error(error);
   }
-}
+} */
 
+/*
 async function createReviewNodes({ createNode, createNodeId, createContentDigest }) {
   try {
     const reviews = await API.getAllReviews();
@@ -133,7 +149,8 @@ async function createReviewNodes({ createNode, createNodeId, createContentDigest
     console.error(error);
   }
 }
-
+*/
+/*
 exports.sourceNodes = async function sourceNodes({ actions, createNodeId, createContentDigest }) {
   const { createNode } = actions;
 
@@ -145,7 +162,8 @@ exports.sourceNodes = async function sourceNodes({ actions, createNodeId, create
     createReviewNodes({ createNode, createNodeId, createContentDigest }),
   ]);
 };
-
+*/
+/*
 exports.createPages = async function createPages({ actions, graphql }) {
   const { data } = await graphql(`
     query {
@@ -185,3 +203,4 @@ exports.createPages = async function createPages({ actions, graphql }) {
     context: { id: -999 },
   });
 };
+*/

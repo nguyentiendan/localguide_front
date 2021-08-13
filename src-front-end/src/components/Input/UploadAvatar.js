@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { UserOutlined, EditOutlined } from '@ant-design/icons';
+import { CameraOutlined } from '@ant-design/icons';
 import { Spin, Avatar } from 'antd';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
@@ -11,12 +11,20 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 0px;
   @media (min-width: 575px) {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
+`;
+const NoImage = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-weight:700px;
 `;
 
 const UploadCustom = styled.div`
@@ -67,6 +75,7 @@ const UploadCustom = styled.div`
 const UploadAvatar = ({ uid, src, title }) => {
   const [avatarBlob, setAvatarBlob] = useState();
   const [loading, setLoading] = useState(false);
+
   const handleUploadCoverPhoto = useCallback(
     async file => {
       try {
@@ -79,14 +88,17 @@ const UploadAvatar = ({ uid, src, title }) => {
     },
     [uid]
   );
+  
   return (
     <Wrapper>
-      <h2>{title} Profile</h2>
+      {/*<h2>{title} Profile</h2>*/}
       <label htmlFor="avatar">
         <Spin spinning={loading}>
           <UploadCustom>
-            <EditOutlined />
-            <Avatar size={128} icon={<UserOutlined />} src={avatarBlob || src} />
+            {/*<EditOutlined />*/}
+            <CameraOutlined />
+            <Avatar size={128}  src={avatarBlob || src} />
+            {(src == '' && avatarBlob == '') && (<NoImage>No Image</NoImage>) }
             <input
               id="avatar"
               type="file"

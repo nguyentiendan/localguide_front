@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { Tag, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
-import colors from '../../styles/colors';
+import colors from '../../assets/styles/colors';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -39,7 +39,7 @@ const TagInterests = ({ createInfo, setCreateInfo, defaultTags }) => {
         tags: _.xor(selectedTags, [tagOption]),
       });
     },
-    [onUpdate, createInfo]
+    [onUpdate, createInfo]    
   );
 
   const addTagOptions = useCallback(

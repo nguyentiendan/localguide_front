@@ -1,7 +1,7 @@
 import { math } from 'polished';
 
 import { hideAt } from '../../utils/responsive';
-import breakpoints from '../../styles/breakpoints';
+import breakpoints from '../../assets/styles/breakpoints';
 
 const SmallScreen = hideAt({ min: math(`${breakpoints.md} + 1px`) });
 

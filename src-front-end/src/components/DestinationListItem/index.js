@@ -2,14 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
-import colors from '../../styles/colors';
+import RatingStars from '../RatingStars';
+import colors from '../../assets/styles/colors';
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   position: relative;
-  width: 325px;
+  //width: 325px;
+  width: 310px;
 `;
 
 const Title = styled.h3`
@@ -23,7 +25,8 @@ const SubTitle = styled.h5`
 `;
 
 const Picture = styled.img`
-  width: 325px;
+  //width: 325px;
+  width: 310px;
   height: 175px;
   border-radius: 6px;
   object-fit: cover;
@@ -33,11 +36,12 @@ const Picture = styled.img`
 
 const DestinationListItem = ({ className, name, location, picture, id, uid }) => (
   <Wrapper className={className}>
-    <Link to={`/tours/${uid}/${id}?status=view`}>
+    <Link to={`/tour?uid=${uid}&id=${id}`}>
       <Picture src={picture} />
       <Title>{name}</Title>
       <SubTitle>{location}</SubTitle>
     </Link>
+    <RatingStars rate={4.5} style={{ verticalAlign: 'text-bottom' }} />
   </Wrapper>
 );
 

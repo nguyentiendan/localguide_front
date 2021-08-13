@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import { darken } from 'polished';
 
 import Spinner from '../Spinner';
-import colors from '../../styles/colors';
+import colors from '../../assets/styles/colors';
 
 const fontSize = {
   small: '1rem',

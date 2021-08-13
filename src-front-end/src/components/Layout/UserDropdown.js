@@ -6,8 +6,8 @@ import { math } from 'polished';
 import { Link } from 'gatsby';
 import useAuth from '../../utils/useAuth';
 import { hideAt } from '../../utils/responsive';
-import breakpoints from '../../styles/breakpoints';
-import colors from '../../styles/colors';
+import breakpoints from '../../assets/styles/breakpoints';
+import colors from '../../assets/styles/colors';
 import Dropdown from '../Dropdown';
 import Menu from '../Menu';
 
@@ -59,17 +59,17 @@ function UserDropdown({ avatarSize, ...rest }) {
       <Menu>
         {user.role === 3 && (
           <Menu.Item>
-            <Link to="/admin">Admin settings</Link>
+            <Link to="/app/admin">Admin settings</Link>
           </Menu.Item>
         )}
         {user.role === 1 && (
           <Menu.Item>
-            <Link to="/user-profile">Profile</Link>
+            <Link to="/app/profile">Profile</Link>
           </Menu.Item>
         )}
         {user.role === 2 && (
           <Menu.Item>
-            <Link to="/my-tours">Guide Admin</Link>
+            <Link to="/app/guideAdmin">Guide Admin</Link>
           </Menu.Item>
         )}
         {(user.role === 1 || user.role === 2) && <Menu.Item>Change password</Menu.Item>}

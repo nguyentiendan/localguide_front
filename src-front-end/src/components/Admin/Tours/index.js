@@ -1,24 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {
-  Divider,
-  Row,
-  Col,
-  Form,
-  Button,
-  Table,
-  Tag,
-  Space,
-  Badge,
-  Select,
-  Spin,
-  InputNumber,
-} from 'antd';
+import {Divider, Avatar, Tooltip, Form, Table, Tag, Space, Badge, Select, Spin,} from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { Link } from 'gatsby';
 import _ from 'lodash';
 
-import colors from '../../../styles/colors';
+import colors from '../../../assets/styles/colors';
 import * as API from '../../../apis';
 import { getUserProfile } from '../../../utils/auth';
 
@@ -36,80 +23,96 @@ const TourTitle = styled.span`
   font-weight: bold;
 `;
 
+const GuideTitle = styled.span`
+  color: ${colors.blue[80]};
+  font-weight: bold;
+`;
+
+const AvatarWrapper = styled(Avatar)`
+  && {
+    margin-right: 1.5rem;
+  }
+`;
+
 const STATUS = {
   APPROVED: 1,
-  WAITING_FOR_APPROVAL: 0,
-  DELETED: 2,
+  WAITING_FOR_APPROVAL: 2,  
 };
 const statusFilter = [
   {
-    name: 'Waiting for Approval',
-    code: 0,
+    name: 'Waiting approve',
+    code: 2,
   },
   {
     name: 'Approved',
     code: 1,
-  },
-  {
-    name: 'Deleted',
-    code: 2,
-  },
+  },  
 ];
 
 const columns = [
   {
     title: 'Tour name',
-    dataIndex: 'Name',
-    key: 'Name',
+    dataIndex: 'name',
+    key: 'name',
     render: (name, tour) => (
-      <Badge count={tour.feedback} offset={[15, 0]}>
-        <Link to={`adminReview/${tour.UID}/${tour.ID}`}>
-          <TourTitle>{name}</TourTitle>
-        </Link>
-      </Badge>
+      <div>
+        <TourTitle>
+          <a href={`/app/adminTourReview?uid=${tour.uid}&id=${tour.id}`} target="_blank">{name}</a>          
+        </TourTitle>
+      </div>
     ),
   },
   {
     title: 'Post by',
-    dataIndex: 'Fullname',
-    key: 'Fullname',
+    dataIndex: 'fullName',
+    key: 'fullName',
+    render: (fullName, tour) => (
+      <div>
+        <GuideTitle>
+          <AvatarWrapper src={tour.avatar} icon={<UserOutlined />} size="small"  /><a href={`/app/adminGuideReview?uid=${tour.uid}&id=${tour.id}`} target="_blank">{fullName}</a> 
+        </GuideTitle>
+      </div>
+    ),
   },
   {
     title: 'Price',
-    dataIndex: 'Total',
-    key: 'Total',
+    dataIndex: 'total',
+    key: 'total',
   },
   {
     title: 'Duration',
-    dataIndex: 'Day',
-    key: 'Day',
+    dataIndex: 'day',
+    key: 'day',
   },
   {
     title: 'Pax',
-    key: 'MaxPax',
-    dataIndex: 'MaxPax',
+    key: 'maxPax',
+    dataIndex: 'maxPax',
   },
   {
     title: 'Updated Date',
-    key: 'UpdatedAt',
-    render: (updatedDate, tour) => moment(tour.UpdatedAt).format('YYYY-MM-DD'),
+    key: 'updatedAt',
+    render: (updatedDate, tour) => ( 
+      <Tooltip title={moment(tour.updatedAt).fromNow()}>
+        {moment(tour.updatedAt).format('YYYY-MM-DD')}
+      </Tooltip>
+    ),
   },
   {
     title: 'Status',
-    key: 'Status',
+    key: 'status',
     render: (status, tour) => (
       <Space size="middle">
-        {tour.Status === STATUS.APPROVED && <Tag color="success">APPROVED</Tag>}
-        {tour.Status === STATUS.WAITING_FOR_APPROVAL && (
-          <Tag color="warning">WAITING FOR APPROVAL</Tag>
-        )}
-        {tour.Status === STATUS.DELETED && <Tag color="error">DELETED</Tag>}
+        {tour.status === STATUS.APPROVED && <Tag color="success">Approved</Tag>}
+        {tour.status === STATUS.WAITING_FOR_APPROVAL && (
+          <Tag color="warning">Waiting approve</Tag>
+        )}        
       </Space>
     ),
-  },
+  },  
 ];
 
-function Tours() {
+function AdminTourList() {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
   const [dataFilter, setDataFilter] = useState(null);
@@ -119,6 +122,7 @@ function Tours() {
   const [rootCity, setRootCity] = useState([]);
 
   const user = getUserProfile();
+  
   useEffect(() => {
     const getAllTours = async () => {
       try {
@@ -134,6 +138,8 @@ function Tours() {
     getAllTours();
   }, []);
 
+  console.log(data)
+  /*
   useEffect(() => {
     const fetchCountry = async () => {
       setIsloading(true);
@@ -162,6 +168,7 @@ function Tours() {
     setDataFilter(res.data);
     setIsloading(false);
   };
+
   const handleClearFilter = async () => {
     setIsloading(true);
     await API.handleFillterTourAdmin({ uid: user.uid, data: '' });
@@ -169,10 +176,11 @@ function Tours() {
     form.setFieldsValue({ status: null, total: 0, day: 1, country: '', city: '' });
     setIsloading(false);
   };
+  */
 
   return (
     <Wrapper spinning={isloading}>
-      <FilterWrapper onFinish={handleFinish} form={form}>
+      {/*<FilterWrapper onFinish={handleFinish} form={form}>
         <Divider orientation="left">Filter</Divider>
         <Row gutter={32}>
           <Col span={8}>
@@ -253,7 +261,7 @@ function Tours() {
             </Form.Item>
           </Col>
         </Row>
-      </FilterWrapper>
+      </FilterWrapper>*/}
       <br />
       <ListWrapper>
         <Divider orientation="left">Tour List</Divider>
@@ -261,7 +269,10 @@ function Tours() {
           columns={columns}
           dataSource={dataFilter || data}
           loading={loadingAllTour}
-          rowKey="ID"
+          rowKey="id"
+          bordered
+          //title={() => 'Header'}
+          //footer={() => 'Footer'}
           pagination={{ pageSize: 40 }}
         />
       </ListWrapper>
@@ -269,4 +280,4 @@ function Tours() {
   );
 }
 
-export default Tours;
+export default AdminTourList;

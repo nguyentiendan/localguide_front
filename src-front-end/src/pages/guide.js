@@ -1,114 +1,201 @@
 /* eslint-disable react/no-danger */
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useState, useLayoutEffect, } from 'react';
 import styled from 'styled-components';
-import { Avatar, Tag } from 'antd';
+import { Avatar, Tag, Spin } from 'antd';
 import { UserOutlined, CrownOutlined } from '@ant-design/icons';
+import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
 import _ from 'lodash';
-import Gallery from 'react-grid-gallery';
 import qs from 'query-string';
-import PropTypes from 'prop-types';
+import classNames from 'classnames';
+// @material-ui/core components
+import { makeStyles } from '@material-ui/core/styles';
 
+import ReactBnbGallery from 'react-bnb-gallery';
 import SectionHeader from '../components/SectionHeader';
-import breakpoints from '../styles/breakpoints';
-import { smallScreenCss } from '../styles/responsive-css';
+import breakpoints from '../assets/styles/breakpoints';
 import CommentListItem from '../components/CommentListItem';
 import RatingStars from '../components/RatingStars';
-import DestinationListItem from '../components/DestinationListItem';
-import { getCndResourceUrl } from '../utils/commons';
-import Layout from '../components/Layout';
+import TourRelatedListItem from '../components/TourRelated';
+import Layout from '../components/CustomLayout';
+import SEO from '../components/SEO';
+import Parallax from '../components/Parallax/Parallax.js';
+import GridContainer from '../components/Grid/GridContainer.js';
+import GridItem from '../components/Grid/GridItem.js';
+import Footer from '../components/Footer/Footer.js';
 import InterestsOrExtras from '../components/InterestsOrExtras';
+import SmallScreen from '../components/Responsive/SmallScreen';
+import BigScreen from '../components/Responsive/BigScreen';
+import Button from '../components/CustomButtons/Button';
+import { bigScreenCss, smallScreenCss } from '../assets/styles/responsive-css';
 import * as API from '../apis';
-import iconTour from '../images/icon-tour.svg';
-import iconReview from '../images/icon-review.svg';
-import iconLicense from '../images/icon-license.svg';
-import iconCustomer from '../images/icon-customer.svg';
-import iconBooking from '../images/icon-booking.svg';
-import iconLanguage from '../images/icon-language.svg';
-import iconLocation from '../images/icon-location.svg';
-import iconSex from '../images/icon-sex.svg';
-import banner from '../images/home-banner.jpg';
+import iconTour from '../assets/img/icon-tour.svg';
+import iconReview from '../assets/img/icon-review.svg';
+import iconLicense from '../assets/img/icon-license.svg';
+import iconCustomer from '../assets/img/icon-customer.svg';
+import iconLanguage from '../assets/img/icon-language.svg';
+import iconLocation from '../assets/img/icon-location.svg';
+import iconSex from '../assets/img/icon-sex.svg';
+import styles from '../assets/styles/profilePage.js';
+import 'react-bnb-gallery/dist/style.css';
+import defaultImage from '../assets/img/noimage-600x400.jpg';
 
 const InfoAvatarAndBackgroundImg = styled.div`
-  background: url(${banner}) no-repeat center;
-  background-size: cover;
-  .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    height: 250px;
-  }
   .info__guide {
+    height: 15px;
     display: flex;
     position: relative;
-    bottom: -115px;
+    bottom: 28px;
     align-items: center;
     .info__guide__details {
-      margin-left: 25px;
+      margin-left: 10px;
       line-height: 30px;
       .guide__details__best {
-        display: none;
+        display: inline-block;
       }
-    }
-  }
-  .info__book-now {
-    display: flex;
-    align-items: flex-end;
-    display: none;
-  }
-  .guide__details__booking {
-    display: flex;
-    width: 115px;
-    background-color: #f12f60;
-    border-radius: 4px;
-    padding: 0px 8px;
-    color: #ffffff;
-    & > img {
-      width: 20px;
-      margin-bottom: 0px;
-      margin-right: 5px;
     }
   }
   @media (min-width: 768px) {
     .info__guide {
-      bottom: -70px;
+      height: 15px;
+      bottom: 43px;
       .info__guide__details {
         .guide__details__best {
           display: inline-block;
         }
-        .guide__details__booking {
-          display: none;
-        }
       }
-    }
-    .info__book-now {
-      display: block;
     }
   }
   @media (min-width: 992px) {
-    .container {
-      height: 465px;
-    }
     .info__guide {
-      bottom: -70px;
-    }
-    .info__book-now {
-      display: flex;
+      height: 15px;
+      bottom: 43px;
     }
   }
 `;
 
-const GalleryWrapper = styled.div`
-  display: block;
-  margin-top: 0;
-  .ReactGridGallery_tile {
-    background: none !important;
+const PhotoWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+`;
+
+const ImgMainWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  .imgstyle {
+    width: 98%;
+    height: 100%;
+    //padding-right:8px;
+    box-shadow: lavender;
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+    border-radius: 5px 5px 5px 5px;
+    margin-bottom: 6px;
   }
-  img {
-    object-fit: cover !important;
-    margin-left: 0 !important;
-    padding: 2px !important;
-    border-radius: 8px;
+  .buttonOnImage {
+    font-weight: 400;
+    color: white;
+    margin: 0;
+    position: absolute;
+    top: 88%;
+    left: 78%;
+    font-size: 11px;
+    transform: translate(-50%, -50%);
+  }
+
+  @media (min-width: 768px) {
+    width: 50%;
+    height: 400px;
+    .imgstyle {
+      width: 98%;
+      height: 100%;
+      //padding-right:8px;
+      box-shadow: lavender;
+      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+      border-radius: 5px 5px 5px 5px;
+      margin-bottom: 6px;
+    }
+  }
+  @media (min-width: 992px) {
+    width: 50%;
+    height: 400px;
+    .imgstyle {
+      width: 98%;
+      height: 100%;
+      //padding-right:8px;
+      box-shadow: lavender;
+      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+      border-radius: 5px 5px 5px 5px;
+      margin-bottom: 6px;
+    }
+  }
+`;
+const ImgSecondWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: 400px;
+  flex: 1;
+`;
+
+const RowWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  height: 200px;
+  margin-bottom: 0px;
+`;
+
+const ImgWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  //flex-basis: 100%;
+  flex: 1;
+  .imgstyle {
+    width: 96%;
+    height: 96%;
+    margin-bottom: 0px;
+    box-shadow: lavender;
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+    border-radius: 5px 5px 5px 5px;
+    cursor: pointer;
+  }
+  .buttonOnImage {
+    font-weight: 500;
+    color: white;
+    margin: 0;
+    position: absolute;
+    top: 92%;
+    left: 87%;
+    font-size: 12px;
+    transform: translate(-50%, -50%);
+  }
+
+  @media (min-width: 768px) {
+    .imgstyle {
+      width: 96%;
+      height: 96%;
+      margin-bottom: 0px;
+      box-shadow: lavender;
+      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+      border-radius: 5px 5px 5px 5px;
+    }
+  }
+  @media (min-width: 992px) {
+    .imgstyle {
+      width: 96%;
+      height: 96%;
+      margin-bottom: 0px;
+      box-shadow: lavender;
+      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
+      border-radius: 5px 5px 5px 5px;
+    }
   }
 `;
 
@@ -121,7 +208,7 @@ const InfoIntroduction = styled.div`
       display: flex;
       justify-content: space-between;
       text-align: center;
-      gap: 60px;
+      gap: 40px;
       color: #ee305f;
       flex-grow: 0.6;
     }
@@ -138,10 +225,10 @@ const InfoIntroduction = styled.div`
     .details__information__item {
       display: flex;
       color: #ee305f;
-      gap: 20px;
+      gap: 15px;
       align-items: center;
-      margin-bottom: 20px;
-      & > h3 {
+      margin-bottom: 10px;
+      & > h4 {
         margin: 0;
         color: #525f6b;
         font-weight: 400;
@@ -149,17 +236,19 @@ const InfoIntroduction = styled.div`
     }
   }
   .mt-40 {
-    margin-top: 40px;
+    margin-top: 15px;
   }
   @media (min-width: 768px) {
     .general__information {
       margin-top: 0px;
+      padding-right: 30px;
     }
   }
   @media (min-width: 992px) {
     .general__information {
       flex-direction: row;
       justify-content: space-between;
+      padding-right: 30px;
       .list__icon {
         justify-content: flex-end;
       }
@@ -187,12 +276,12 @@ const ListContainer = styled.div`
   flex-direction: row;
   overflow: hidden;
 
-  & .tour-guide + .tour-guide {
-    margin-left: 3rem;
+  & .tour-related + .tour-related {
+    margin-left: 2rem;
   }
 
   ${smallScreenCss(`
-    & .tour-guide + .tour-guide {
+    & .tour-related + .tour-related {
       margin-left: 1rem;
     }
   `)}
@@ -208,60 +297,33 @@ const ListContainer = styled.div`
 `;
 
 const IconWrapper = styled.img`
-  width: 35px;
-  height: 35px;
+  width: 25px;
+  height: 25px;
   margin-bottom: 0;
 `;
+const useStyles = makeStyles(styles);
 
-function User({ location }) {
+function GuideDetail({ location }) {
   const [profile, setProfile] = useState({
     guide: {},
     reviews: { totalReview: 0, listReviews: [] },
-    tours: [],
   });
+  const [tour, setTour] = useState({
+    related: { tours: [], allTour: [] },
+  });
+
   const [rootCountry, setRootCountry] = useState({});
+  const [loading, setLoading] = useState(false);
+  const classes = useStyles();
+  const imageClasses = classNames(classes.imgRaised, classes.imgRoundedCircle, classes.imgFluid);
+  const imageClasses_1 = classNames(classes.imgRaised, classes.imgRounded, classes.imgFluid);
   const [photos, setPhotos] = useState([]);
-  const [thumbnailWidths, setThumbnailWidths] = useState([]);
-  const galleryWrapperComp = useRef();
+  const [isOpen, setIsOpen] = useState(false);
   const dataQueryParams = qs.parse(location.search);
-
-  useLayoutEffect(() => {
-    if (!galleryWrapperComp || !galleryWrapperComp.current || !photos) {
-      return () => {};
-    }
-    const updateSize = _.debounce(() => {
-      const wrapperWidth = galleryWrapperComp.current.offsetWidth;
-      const maxColumn = Math.round(wrapperWidth / 275);
-      const minColumn = 2;
-      const maxRows = Math.ceil(photos.length / ((maxColumn + minColumn) / 2));
-      let widths = [];
-      for (let i = 0; i < maxRows; i++) {
-        const randomColumns = Math.floor(Math.random() * (maxColumn - minColumn + 1) + minColumn);
-        const minWidth = (wrapperWidth * 0.6) / randomColumns;
-        const maxWidth = (wrapperWidth * 1.25) / randomColumns;
-        const rowWidths = [];
-        for (let j = 0; j < randomColumns; j++) {
-          if (widths.length === photos.length - 1) {
-            rowWidths.push(wrapperWidth - _.sum(rowWidths));
-            break;
-          } else if (j === randomColumns - 1) {
-            rowWidths.push(wrapperWidth - _.sum(rowWidths));
-          } else {
-            rowWidths.push(Math.floor(Math.random() * (maxWidth - minWidth + 1) + minWidth));
-          }
-        }
-        widths = [...widths, ...rowWidths];
-      }
-      setThumbnailWidths(widths);
-    }, 350);
-    window.addEventListener('resize', updateSize);
-    updateSize();
-
-    return () => window.removeEventListener('resize', updateSize);
-  }, [galleryWrapperComp, photos]);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       const res = await API.getGuideProfileOverview({
         uid: dataQueryParams.uid,
         guideId: dataQueryParams.id,
@@ -272,21 +334,30 @@ function User({ location }) {
           totalReview: res.total_review,
           listReviews: res.review,
         },
-        tours: res.tour,
       });
+      setLoading(false);
     };
     fetchData();
   }, [setProfile, dataQueryParams.uid, dataQueryParams.id]);
 
-  useLayoutEffect(() => {
-    const fetchPhotos = async () => {
-      const res = await API.getPhotosGuide({
+  useEffect(() => {
+    const fetchRelatedTour = async () => {
+      const res = await API.getRelatedTour({
         uid: dataQueryParams.uid,
       });
-      setPhotos(res.data);
+      setTour({
+        related: {
+          tours: res.tour,
+          allTour: res.allTour,
+        },
+      });
     };
-    fetchPhotos();
-  }, [setProfile, API.getPhotosGuide, dataQueryParams.uid]);
+    fetchRelatedTour();
+    const interval = setInterval(() => fetchRelatedTour(), 200000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -294,6 +365,18 @@ function User({ location }) {
       const newData = _.keyBy(data, item => item.code);
       setRootCountry(newData);
     })();
+  }, []);
+
+  useLayoutEffect(() => {
+    const fetchPhotos = async () => {
+      const res = await API.getPhotosGuide({ uid: dataQueryParams.uid });
+      if (res.status === false) {
+        setPhotos('');
+      } else {
+        setPhotos(res.data);
+      }
+    };
+    fetchPhotos();
   }, []);
 
   const handleLevelGuide = level => {
@@ -308,172 +391,306 @@ function User({ location }) {
         return null;
     }
   };
+  /*
+  //TODO  
+  4-Save Country
+  */
 
   return (
-    <div>
-      <InfoAvatarAndBackgroundImg>
-        <Layout noHeader>
-          <div className="container">
-            <div className="info__guide">
-              <Avatar size={128} icon={<UserOutlined />} src={profile.guide?.avatar} />
-              <div className="info__guide__details">
-                <h2 style={{ color: '#ffffff' }}>{profile.guide?.fullname}</h2>
-                <Tag icon={<CrownOutlined />} color="#f12f60" className="guide__details__best">
-                  {handleLevelGuide(profile.guide?.level)}
-                </Tag>
-                <div className="guide__details__booking">
-                  <img src={iconBooking} alt="booking" />
-                  Book now
+    <Layout scrollHeight={300}>
+      <SEO title="Guide Profile" />
+      <Parallax small filter image={require('../assets/img/home-banner.jpg')} />
+      <div className={classNames(classes.main, classes.mainRaised)}>
+        <Spin spinning={loading}>
+          <div className={classes.container}>
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description}>
+                  <InfoAvatarAndBackgroundImg>
+                    <div className="info__guide">
+                      <Avatar size={128} icon={<UserOutlined />} src={profile.guide?.avatar} />
+                      <div className="info__guide__details">
+                        <h2 style={{ color: '#ffffff' }}>{profile.guide?.fullname}</h2>
+                        <Tag
+                          icon={<CrownOutlined />}
+                          color="#f12f60"
+                          className="guide__details__best"
+                        >
+                          {handleLevelGuide(profile.guide?.level)}
+                        </Tag>
+                        <p style={{ color: '#EE305F', margin: 0 }}>
+                          Possible to plan personalised tour
+                        </p>
+                      </div>
+                    </div>
+                  </InfoAvatarAndBackgroundImg>
                 </div>
-                <p style={{ color: '#EE305F', margin: 0 }}>Possible to plan personalised tour</p>
-              </div>
-            </div>
-            <div className="info__book-now">
-              <div style={{ color: '#ffffff', textAlign: 'center', cursor: 'pointer' }}>
-                <IconWrapper src={iconBooking} alt="Booking" />
-                <p style={{ margin: 0 }}>Book now</p>
-              </div>
-            </div>
+              </GridItem>
+            </GridContainer>
           </div>
-        </Layout>
-      </InfoAvatarAndBackgroundImg>
-      <Layout noHeader>
-        <InfoIntroduction>
-          <div className="general__information">
-            <h1>Biography</h1>
-            <div className="list__icon">
-              <div className="flex-center" style={{ flexDirection: 'column' }}>
-                <IconWrapper src={iconTour} alt="Tours" />
-                <p style={{ color: '#525F6B' }}>20 Tours</p>
-              </div>
-              <div className="flex-center" style={{ flexDirection: 'column' }}>
-                <IconWrapper src={iconReview} alt="Review" />
-                <p style={{ color: '#525F6B' }}>45 Reviews</p>
-              </div>
-              <div className="flex-center" style={{ flexDirection: 'column' }}>
-                <IconWrapper src={iconLicense} alt="License" />
-                <p style={{ color: '#525F6B' }}>Have license</p>
-              </div>
-              <div className="flex-center" style={{ flexDirection: 'column' }}>
-                <IconWrapper src={iconCustomer} alt="Customers" />
-                <p style={{ color: '#525F6B' }}>365 Customers</p>
-              </div>
-            </div>
+          <div className={classes.container}>
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div className={classes.description}>
+                  <InfoIntroduction>
+                    <div className="general__information">
+                      {/* <h1>Biography</h1> */}
+                      <div className="list__icon">
+                        <div className="flex-center" style={{ flexDirection: 'column' }}>
+                          <IconWrapper src={iconTour} alt="Tours" />
+                          <p style={{ color: '#525F6B' }}>20 Tours</p>
+                        </div>
+                        <div className="flex-center" style={{ flexDirection: 'column' }}>
+                          <IconWrapper src={iconReview} alt="Review" />
+                          <p style={{ color: '#525F6B' }}>45 Reviews</p>
+                        </div>
+                        <div className="flex-center" style={{ flexDirection: 'column' }}>
+                          <IconWrapper src={iconLicense} alt="License" />
+                          <p style={{ color: '#525F6B' }}>Have license</p>
+                        </div>
+                        <div className="flex-center" style={{ flexDirection: 'column' }}>
+                          <IconWrapper src={iconCustomer} alt="Customers" />
+                          <p style={{ color: '#525F6B' }}>365 Customers</p>
+                        </div>
+                      </div>
+                    </div>
+                    {profile.guide?.intro !== '' && (
+                      <div
+                        className={classes.description}
+                        style={{ paddingTop: '0px', paddingBottom: '10px' }}
+                      >
+                        <FormatQuote style={{ color: '#e91e63' }} />
+                        <i>{profile.guide?.intro}</i>
+                        <FormatQuote style={{ color: '#e91e63' }} />
+                      </div>
+                    )}
+                    <h1>Biography</h1>
+                    <div dangerouslySetInnerHTML={{ __html: profile.guide?.experience }} />
+
+                    <div className="details__information mt-40">
+                      {profile.guide?.language && (
+                        <div className="details__information__item">
+                          <IconWrapper src={iconLanguage} alt="Customers" />
+                          <h4>{profile.guide?.language?.split(';').join(', ')}</h4>
+                        </div>
+                      )}
+                      {(profile.guide?.city || profile.guide?.country) && (
+                        <div className="details__information__item">
+                          <IconWrapper src={iconLocation} alt="Customers" />
+                          <h4>
+                            {profile.guide?.city}
+                            {profile.guide?.city && ','} {rootCountry[profile.guide?.country]?.name}
+                          </h4>
+                        </div>
+                      )}
+                      {profile.guide?.sex && (
+                        <div className="details__information__item">
+                          <IconWrapper src={iconSex} alt="Customers" />
+                          <h4>
+                            {profile.guide?.sex === 0 ? 'Female' : 'Male'} {profile.guide?.age}
+                          </h4>
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-40">
+                      {profile.guide?.interest && (
+                        <InterestsOrExtras data={profile.guide?.interest} title="Interests" />
+                      )}
+                      {profile.guide?.extras && (
+                        <InterestsOrExtras data={profile.guide?.extras} title="Extras" />
+                      )}
+                    </div>
+                    {profile.guide?.education && (
+                      <div className="education__information">
+                        <b>Education:</b>
+                        <p>{profile.guide?.education}</p>
+                      </div>
+                    )}
+                    {profile.guide?.certificated && (
+                      <div className="education__information">
+                        <b>Certification:</b>
+                        <p>{profile.guide?.certificated}</p>
+                      </div>
+                    )}
+                  </InfoIntroduction>
+                </div>
+              </GridItem>
+            </GridContainer>
           </div>
-          <div dangerouslySetInnerHTML={{ __html: profile.guide?.experience }} />
-          <div className="details__information mt-40">
-            {profile.guide?.language && (
-              <div className="details__information__item">
-                <IconWrapper src={iconLanguage} alt="Customers" />
-                <h3>{profile.guide?.language?.split(';').join(', ')}</h3>
-              </div>
-            )}
-            {(profile.guide?.city || profile.guide?.country) && (
-              <div className="details__information__item">
-                <IconWrapper src={iconLocation} alt="Customers" />
-                <h3>
-                  {profile.guide?.city}
-                  {profile.guide?.city && ','} {rootCountry[profile.guide?.country]?.name}
-                </h3>
-              </div>
-            )}
-            {profile.guide?.sex && (
-              <div className="details__information__item">
-                <IconWrapper src={iconSex} alt="Customers" />
-                <h3>
-                  {profile.guide?.sex === 0 ? 'Female' : 'Male'} {profile.guide?.age}
-                </h3>
-              </div>
-            )}
-          </div>
-          <div className="mt-40">
-            {profile.guide?.interest && (
-              <InterestsOrExtras data={profile.guide?.interest} title="Interests" />
-            )}
-            {profile.guide?.extras && (
-              <InterestsOrExtras data={profile.guide?.extras} title="Extras" />
-            )}
-          </div>
-          {profile.guide?.education && (
-            <div className="education__information">
-              <b>Education:</b>
-              <p>{profile.guide?.education}</p>
+
+          {tour.related?.tours.length > 0 && (
+            <div className={classes.container}>
+              <GridContainer justify="center">
+                <GridItem xs={12} sm={12} md={12}>
+                  <div className={classes.description}>
+                    {tour.related?.allTour > 3 && (
+                      <SectionHeader title="Related Tour" subTitle="View all" />
+                    )}
+                    {tour.related?.tours.length > 0 && tour.related?.allTour <= 3 && (
+                      <SectionHeader title="Related Tour" />
+                    )}
+                    <ListWrapper>
+                      <ListContainer>
+                        {_.map(tour.related?.tours, (tour, index) => (
+                          <TourRelatedListItem
+                            key={index}
+                            name={tour.name}
+                            location={`${tour.city} ${tour.country}`}
+                            picture={tour.cover}
+                            className="tour-related"
+                            id={tour.id}
+                            uid={tour.uid}
+                          />
+                        ))}
+                      </ListContainer>
+                    </ListWrapper>
+                  </div>
+                </GridItem>
+              </GridContainer>
             </div>
           )}
-          {profile.guide?.specialities && (
-            <div className="education__information">
-              <b>Certification:</b>
-              <p>{profile.guide?.specialities}</p>
+          <br />
+          {photos.length > 0 && (
+            <div className={classes.container}>
+              <GridContainer justify="center">
+                <GridItem xs={12} sm={12} md={12}>
+                  <div className={classes.description}>
+                    <SectionHeader title={<>Photos ({photos.length})</>} />
+                    <SmallScreen>
+                      <ImgMainWrapper>
+                        <img
+                          src={photos[0]?.photo || defaultImage}
+                          className="imgstyle"
+                          onClick={() => setIsOpen(true)}
+                        />
+                        {photos.length > 1 && (
+                          <Button
+                            className="buttonOnImage"
+                            color="rose"
+                            size="sm"
+                            onClick={() => setIsOpen(true)}
+                          >
+                            1 / {photos.length} photos
+                          </Button>
+                        )}
+                      </ImgMainWrapper>
+                    </SmallScreen>
+                    <BigScreen>
+                      <PhotoWrapper>
+                        <ImgMainWrapper>
+                          <img
+                            src={
+                              photos[Math.floor(Math.random() * photos.length)]?.photo ||
+                              defaultImage
+                            }
+                            className="imgstyle"
+                            onClick={() => setIsOpen(true)}
+                          />
+                        </ImgMainWrapper>
+                        <ImgSecondWrapper>
+                          <RowWrapper>
+                            <ImgWrapper>
+                              <img
+                                src={
+                                  photos[Math.floor(Math.random() * photos.length)]?.photo ||
+                                  defaultImage
+                                }
+                                className="imgstyle"
+                                onClick={() => setIsOpen(true)}
+                              />
+                            </ImgWrapper>
+                            <ImgWrapper>
+                              <img
+                                src={
+                                  photos[Math.floor(Math.random() * photos.length)]?.photo ||
+                                  defaultImage
+                                }
+                                className="imgstyle"
+                                onClick={() => setIsOpen(true)}
+                              />
+                            </ImgWrapper>
+                          </RowWrapper>
+                          <RowWrapper>
+                            <ImgWrapper>
+                              <img
+                                src={
+                                  photos[Math.floor(Math.random() * photos.length)]?.photo ||
+                                  defaultImage
+                                }
+                                className="imgstyle"
+                                onClick={() => setIsOpen(true)}
+                              />
+                            </ImgWrapper>
+                            <ImgWrapper>
+                              <img
+                                src={
+                                  photos[Math.floor(Math.random() * photos.length)]?.photo ||
+                                  defaultImage
+                                }
+                                className="imgstyle"
+                                onClick={() => setIsOpen(true)}
+                              />
+                              {photos.length > 5 && (
+                                <Button
+                                  className="buttonOnImage"
+                                  color="rose"
+                                  size="sm"
+                                  onClick={() => setIsOpen(true)}
+                                >
+                                  +{photos.length - 5} Photos
+                                </Button>
+                              )}
+                            </ImgWrapper>
+                          </RowWrapper>
+                        </ImgSecondWrapper>
+                      </PhotoWrapper>
+                    </BigScreen>
+                  </div>
+                </GridItem>
+              </GridContainer>
             </div>
           )}
-        </InfoIntroduction>
-        <ListWrapper>
-          <GalleryWrapper ref={galleryWrapperComp}>
-            {photos?.length > 0 && (
-              <>
-                <SectionHeader title="Photo" />
-                <Gallery
-                  enableImageSelection={false}
-                  images={_.map(photos, (photo, i) => ({
-                    src: getCndResourceUrl(photo.name),
-                    thumbnail: getCndResourceUrl(photo.name),
-                    caption: photo.caption,
-                    thumbnailWidth: thumbnailWidths[i] || 240,
-                    thumbnailHeight: 175,
-                  }))}
-                />
-              </>
-            )}
-          </GalleryWrapper>
-        </ListWrapper>
-        {profile.tours.length > 0 && <SectionHeader title="Related Tour" subTitle="View all" />}
-        <ListWrapper>
-          <ListContainer>
-            {_.map(profile.tours, (tour, index) => (
-              <DestinationListItem
-                key={index}
-                name={tour.Name}
-                location={`${tour.City} ${tour.Country}`}
-                picture={tour.Cover}
-                className="destination"
-                id={tour.ID}
-                uid={tour.UID}
-              />
-            ))}
-          </ListContainer>
-        </ListWrapper>
-        {profile.reviews?.listReviews?.length > 0 && (
-          <SectionHeader
-            title={
-              // eslint-disable-next-line react/jsx-wrap-multilines
-              <>
-                Reviews ({profile.reviews?.totalReview})
-                <Gap />
-                <RatingStars rate={5} />
-              </>
-            }
-          />
-        )}
-        <ListWrapper>
-          {_.map(profile.reviews?.listReviews, (comment, index) => (
-            <CommentListItem
-              key={index}
-              content={comment.Content}
-              user={comment.Fullname}
-              date={comment.Created_At}
-              avatar={comment.Avatar}
-              className="comment"
-            />
-          ))}
-        </ListWrapper>
-      </Layout>
-    </div>
+          <div>
+            <ReactBnbGallery show={isOpen} photos={photos} onClose={() => setIsOpen(false)} />
+          </div>
+          <br />
+          {profile.reviews?.totalReview > 0 && (
+            <div className={classes.container}>
+              <GridContainer justify="center">
+                <GridItem xs={12} sm={12} md={12}>
+                  <div className={classes.description}>
+                    {profile.reviews?.listReviews?.length > 0 && (
+                      <SectionHeader
+                        title={
+                          <>
+                            Reviews ({profile.reviews?.totalReview})
+                            <Gap />
+                            <RatingStars rate={4.5} />
+                          </>
+                        }
+                      />
+                    )}
+                    <ListWrapper>
+                      {_.map(profile.reviews?.listReviews, (comment, index) => (
+                        <CommentListItem
+                          key={index}
+                          content={comment.content}
+                          user={comment.fullname}
+                          date={comment.createdAt}
+                          avatar={comment.avatar}
+                          className="comment"
+                        />
+                      ))}
+                    </ListWrapper>
+                  </div>
+                </GridItem>
+              </GridContainer>
+            </div>
+          )}
+        </Spin>
+      </div>
+      <Footer />
+    </Layout>
   );
 }
-export default User;
-
-User.propTypes = {
-  location: PropTypes.shape({
-    search: PropTypes.string,
-  }).isRequired,
-};
+export default GuideDetail;

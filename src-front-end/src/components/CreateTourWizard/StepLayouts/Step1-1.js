@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { Tag, Input, Spin } from 'antd';
+import { Tag, Input, Spin, Alert } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import Checkbox from '../../Checkbox';
 
-import colors from '../../../styles/colors';
+import colors from '../../../assets/styles/colors';
 import * as API from '../../../apis';
 
 const Wrapper = styled.div`
@@ -17,15 +18,18 @@ const Title = styled.h2`
   color: ${colors.grey[70]};
 `;
 
-const SubTitle = styled.h3`
+const SubTitle = styled.h4`
   font-weight: normal;
 `;
+
+const { TextArea } = Input;
 
 const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   const [loading, setLoading] = useState(false);
   const [newTagInputVisible, setNewTagInputVisible] = useState(false);
   const [newTagValue, setNewTagValue] = useState('');
   const [defaultTags, setDefaultTags] = useState([]);
+  // const [recommend, setRecommend] = useState(false);
   const newTagInputRef = useRef();
   const tagOptions = useMemo(() => _.union(defaultTags, tourCreationInfo.tags || []), [
     tourCreationInfo,
@@ -35,7 +39,12 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   const tourShortDescription = useMemo(() => tourCreationInfo.tourShortDescription, [
     tourCreationInfo,
   ]);
+  const tourRecommend = useMemo(() => tourCreationInfo.tourRecommend, [tourCreationInfo]);
   const selectedTags = useMemo(() => tourCreationInfo.tags || [], [tourCreationInfo]);
+
+  /* TODO
+   * 1) Fix validate tour name, tour name must longer than 15 characters
+   */
 
   const updateTourName = useCallback(
     newTourName => {
@@ -73,6 +82,16 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     [onUpdate, tourCreationInfo]
   );
 
+  const updateRecommend = useCallback(
+    recommend => {
+      onUpdate({
+        ...tourCreationInfo,
+        tourRecommend: recommend,
+      });
+    },
+    [onUpdate, tourCreationInfo]
+  );
+  
   const addTagOptions = useCallback(
     tagOption => {
       onUpdate({
@@ -118,6 +137,8 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     })();
   }, []);
 
+  // console.log(tourCreationInfo)
+
   return (
     <Spin spinning={loading}>
       <Wrapper>
@@ -128,17 +149,30 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
           value={tourName}
           onChange={e => updateTourName(e.target.value)}
           size="large"
+          maxLength={200}
+          allowClear
           style={{ maxWidth: 400 }}
         />
         <br />
         <br />
-        <Input
+        <SubTitle>Tour short description</SubTitle>
+        <TextArea 
+          size="large" 
+          showCount
+          maxLength={200}
+          allowClear
+          value={tourShortDescription}
+          onChange={e => updateTourShortDescription(e.target.value)}
+          placeholder="Please provide a short description about tour in 3 lines."
+          style={{ maxWidth: 400 }}
+        />
+        {/*<Input
           placeholder="Short description about tour"
           value={tourShortDescription}
           onChange={e => updateTourShortDescription(e.target.value)}
           size="large"
           style={{ maxWidth: 400 }}
-        />
+        />*/}
         <br />
         <br />
         <br />
@@ -172,6 +206,15 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
             &nbsp;Type your own
           </Tag>
         )}
+        <br />
+        <br />
+        <br />
+        <SubTitle>Recommend tour</SubTitle>
+        <Checkbox
+          label="Make it to recommend tour"
+          onChange={event => updateRecommend(event.target.checked)}
+          checked={tourRecommend}
+        />
       </Wrapper>
     </Spin>
   );
@@ -181,6 +224,7 @@ StepLayout.propTypes = {
   tourCreationInfo: PropTypes.shape({
     tourName: PropTypes.string,
     tourShortDescription: PropTypes.string,
+    tourRecommend: PropTypes.bool,
     tags: PropTypes.arrayOf(PropTypes.string),
   }),
   onUpdate: PropTypes.func,

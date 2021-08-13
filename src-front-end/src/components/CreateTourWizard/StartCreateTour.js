@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Link } from 'gatsby';
-import colors from '../../styles/colors';
+import { navigate } from 'gatsby';
+import colors from '../../assets/styles/colors';
 import Button from '../Button';
 
 const Wrapper = styled.div`
@@ -47,12 +47,10 @@ const StartCreateTour = ({ onStart, location }) => {
       <br />
       <div>
         <Button onClick={onStart}>
-          {location.pathname === '/edit-tour' ? 'Edit Tour' : 'Start'}
+          {location.pathname === '/app/editTour' ? 'Edit Tour' : 'Start'}
         </Button>
-        <Button style={{ marginLeft: 20 }}>
-          <Link to="/my-tours" style={{ color: '#ffffff' }}>
-            Cancel
-          </Link>
+        <Button style={{ marginLeft: 20 }} onClick={() => navigate('app/guideTourList/')}>
+          Cancel
         </Button>
       </div>
     </Wrapper>

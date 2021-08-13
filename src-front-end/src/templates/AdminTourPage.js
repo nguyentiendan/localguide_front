@@ -15,13 +15,13 @@ import SEO from '../components/SEO';
 import SmallScreen from '../components/Responsive/SmallScreen';
 import BigScreen from '../components/Responsive/BigScreen';
 import RatingStars from '../components/RatingStars';
-import colors from '../styles/colors';
+import colors from '../assets/styles/colors';
 import SectionHeader from '../components/SectionHeader';
 import CommentListItem from '../components/CommentListItem';
-import breakpoints from '../styles/breakpoints';
+import breakpoints from '../assets/styles/breakpoints';
 import NavItem from '../components/Layout/NavItem';
 import Button from '../components/Button';
-import { bigScreenCss, smallScreenCss } from '../styles/responsive-css';
+import { bigScreenCss, smallScreenCss } from '../assets/styles/responsive-css';
 import TourGuideListItem from '../components/TourGuideListItem';
 import { getUserProfile } from '../utils/auth';
 import { getCndResourceUrl, safeFuncCall } from '../utils/commons';
@@ -253,6 +253,7 @@ function AdminTourPage({ data, id, uid }) {
         setLoading(true);
         const { data: details } = await safeFuncCall(() => API.adminReviewTour(tourQuery));
         setTourDetails(_.mapKeys(details[0], (v, k) => _.camelCase(k)));
+
         const { data: photos } = await safeFuncCall(() => API.getTourPhotos(tourQuery));
         setTourPhotos(photos);
 
@@ -327,6 +328,7 @@ function AdminTourPage({ data, id, uid }) {
 
     return () => window.removeEventListener('resize', updateSize);
   }, [galleryWrapperComp, tourPhotos]);
+  
   const handleApproveTour = async () => {
     setLoading(true);
     await API.handleAdminApproveTour({ uid: tourDetails?.uid, id: tour?.rawID || id });
@@ -354,13 +356,13 @@ function AdminTourPage({ data, id, uid }) {
                   </Popconfirm>
                 )}
                 <Button className="style-button-cancel">
-                  <Link to="/admin" style={{ color: '#ffffff' }}>
+                  <Link to="/app/admin" style={{ color: '#ffffff' }}>
                     Cancel
                   </Link>
                 </Button>
 
                 {/* <Button className="style-button-edit">
-                    <Link to={`/edit-tour?q=${tourDetails?.id}`} style={{ color: '#ffffff' }}>
+                    <Link to={`/app/edit_tour?q=${tourDetails?.id}`} style={{ color: '#ffffff' }}>
                       Edit
                     </Link>
                   </Button> */}
@@ -621,6 +623,7 @@ AdminTourPage.defaultProps = {
 
 export default AdminTourPage;
 
+/*
 export const pageQuery = graphql`
   query($id: Int!) {
     tour(rawID: { eq: $id }) {
@@ -653,3 +656,4 @@ export const pageQuery = graphql`
     }
   }
 `;
+*/

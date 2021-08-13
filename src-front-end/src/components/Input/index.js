@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 
-import colors from '../../styles/colors';
+import colors from '../../assets/styles/colors';
 import Spinner from '../Spinner';
 
 const BEFORE_ICON_PADDING = 16;
@@ -16,12 +16,12 @@ const Wrapper = styled.div`
 `;
 
 const Label = styled.label.attrs({ className: 'label' })`
-  line-height: 21px;
+  line-height: 20px;
   font: inherit;
   font-size: 1rem;
   font-weight: 500;
   color: #2e2e2e;
-  padding: 6px 0;
+  padding: 3px 0;
   text-align: left;
 `;
 
@@ -115,7 +115,7 @@ const LoadingIcon = styled(Spinner).attrs({ color: '#10abe2' })`
 
 const Message = styled.div`
   font-size: 0.875rem;
-  margin-top: 0.375rem;
+  margin-top: 0.075rem;
   color: ${props => (props.hasError ? '#ff5a54' : '#59c156')};
 `;
 

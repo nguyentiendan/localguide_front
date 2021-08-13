@@ -1,4 +1,4 @@
-const colors = require('./src/styles/colors');
+const colors = require('./src/assets/styles/colors');
 
 require('dotenv').config({
   path: `.env.${process.env.NODE_ENV}`,
@@ -28,7 +28,7 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-typography',
       options: {
-        pathToConfigModule: 'src/styles/typography',
+        pathToConfigModule: 'src/assets/styles/typography',
       },
     },
     {
@@ -40,7 +40,7 @@ module.exports = {
         background_color: colors.magenta[50],
         theme_color: colors.magenta[50],
         display: 'minimal-ui',
-        icon: 'src/images/logo-small.png',
+        icon: 'src/assets/img/logo-small.png',
       },
     },
     {

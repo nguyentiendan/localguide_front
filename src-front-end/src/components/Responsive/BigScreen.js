@@ -1,5 +1,5 @@
 import { hideAt } from '../../utils/responsive';
-import breakpoints from '../../styles/breakpoints';
+import breakpoints from '../../assets/styles/breakpoints';
 
 const BigScreen = hideAt({ max: breakpoints.md });
 

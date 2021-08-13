@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Input from '../Input';
 import Button from '../Button';
-import colors from '../../styles/colors';
+import colors from '../../assets/styles/colors';
 
 const Wrapper = styled.div`
   position: relative;
