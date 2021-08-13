@@ -51,19 +51,18 @@ function TourSection() {
     const fetchAllTour = async () => {
       try {
         setLoading(true);
-        const response = await API.getAllTours();
+        const response = await API.getAllPopularTours();
         setTours(response.data);
-      } catch (error) {
-        console.error(error);
+      } catch (error) {        
       } finally {
         setLoading(false);
       }
     };
     fetchAllTour();
-    const interval = setInterval(() => fetchAllTour(), 100000);
+    /*const interval = setInterval(() => fetchAllTour(), 100000);
     return () => {
       clearInterval(interval);
-    };
+    };*/
   }, []);
 
   const SampleNextArrow = props => {

@@ -35,7 +35,7 @@ const Navigation = ({
     totalSteps,
     currentStepNumber,
   ]);
-
+  
   return (
     <Wrapper>
       <LayoutWrapper>
@@ -48,35 +48,26 @@ const Navigation = ({
         >
           Back
         </Button>
-        <div>
-          {isLastStep && (
-            <Button
-              onClick={onPreview}
-              style={{ marginLeft: 20, marginRight: 20, width: 100 }}
-              type="primary"
-              size="large"
-              disabled={loading || isNextDisabled}
+        <div>          
+        {!isFinished && (
+          <>
+            <Popconfirm
+              title="Create tour is not complete. Are you sure?"
+              onConfirm={onConfirm}
+              okText="Yes"
+              cancelText="No"
             >
-              Preview
-            </Button>
-          )}
-          <Popconfirm
-            title="Create tour is not complete. Are you sure?"
-            onConfirm={onConfirm}
-            okText="Yes"
-            cancelText="No"
-          >
-          <Button
-            //onClick={onCancel}
-            style={{ marginLeft: 20, marginRight: 20, width: 100 }}
-            type="primary"
-            size="large"
-            loading={loading}
-          >
-            Cancel
-          </Button>
-          </Popconfirm>
-          {!isFinished && (
+              <Button
+                //onClick={onCancel}
+                style={{ marginLeft: 20, marginRight: 20, width: 100 }}
+                type="primary"
+                size="large"
+                loading={loading}
+              >
+                Cancel
+              </Button>
+            </Popconfirm>
+            
             <Button
               onClick={onNext}
               style={{ marginLeft: 20, marginRight: 20, width: 100 }}
@@ -87,7 +78,8 @@ const Navigation = ({
             >
               Next
             </Button>
-          )}
+          </>
+        )}
           {isFinished && (
             <Button
               onClick={onFinish}
@@ -96,7 +88,7 @@ const Navigation = ({
               size="large"
               disabled={loading || isNextDisabled}
             >
-              {canSkipped ? `Skip for now` : `Done`}
+              Done
             </Button>
           )}
         </div>

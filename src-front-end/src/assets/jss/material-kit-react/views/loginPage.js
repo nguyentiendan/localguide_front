@@ -36,7 +36,8 @@ const signupPageStyle = {
       content: '""',
     },
     '& footer li a,& footer li a:hover,& footer li a:active': {
-      color: '#FFFFFF',
+      //color: '#FFFFFF',
+      color: '#f12f60',
     },
     '& footer': {
       position: 'absolute',

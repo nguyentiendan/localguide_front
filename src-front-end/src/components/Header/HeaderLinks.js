@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React from "react";
+import React, { useEffect } from "react";
 import styled, { css } from 'styled-components';
 
 // @material-ui/core components
@@ -17,6 +17,8 @@ import styles from "../../assets/jss/material-kit-react/components/headerLinksSt
 import useAuth from '../../utils/useAuth';
 import { isBrowser } from '../../utils/browser';
 
+import { Avatar } from 'antd';
+import {  UserOutlined } from '@ant-design/icons';
 
 const Delimiter = styled.hr`
   height: 1px;
@@ -33,14 +35,21 @@ export default function HeaderLinks() {
     <>
       <ListItem className={classes.listItem}>
         <CustomDropdown
+          caret
           noLiPadding
-          buttonText="Menu"
+          buttonText={
+            <>
+            <Avatar src={user.avatar} icon={<UserOutlined />} size="small" /> 
+            &nbsp;&nbsp; <b>{user.fullname}</b>
+            </>
+          }
+          //dropdownHeader=""
           hoverColor="rose"
           buttonProps={{
             className: classes.navLink,
             color: "transparent"
           }}
-          buttonIcon={Apps}
+          //buttonIcon={Apps}
           dropdownList={[
             user.role === 3 && ( 
               <a 
@@ -60,7 +69,7 @@ export default function HeaderLinks() {
                 Guide Admin
               </a>
             ),
-            user.role === 1 && (
+            (user.role === 1 && (user.reqActive === 0 || user.reqActive === 1)) && (
               <a 
                 href="/app/profile"
                 target="_blank"
@@ -69,17 +78,38 @@ export default function HeaderLinks() {
                 Your Profile
               </a>
             ),
+            (user.role === 1 && user.reqActive === 2 ) && (
+              <a 
+                href="/app/becomeGuide"
+                target="_blank"
+                className={classes.dropdownLink}
+              >
+                Your Profile
+              </a>
+            ),
+            (user.role === 1 ) && (
             <a
-              href="/"
+              href="/app/changePass"
               target="_blank"
               className={classes.dropdownLink}
             >
               Change Password
+            </a>
+            ),
+            { divider: true },
+            <a
+              href="/"
+              target="_blank"
+              className={classes.dropdownLink}
+              onClick={logout}
+            >
+              Logout
             </a>,
           ]}
         />
       </ListItem>
-      <ListItem className={classes.listItem}>
+
+      {/*<ListItem className={classes.listItem}>
         <Button
           href="#"
           color="transparent"
@@ -89,7 +119,7 @@ export default function HeaderLinks() {
         >
           <ExitToApp className={classes.icons} /> Logout
         </Button>
-      </ListItem>
+        </ListItem>*/}
     </>
   ) : (
     <>

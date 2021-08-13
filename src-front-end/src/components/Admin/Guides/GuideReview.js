@@ -2,9 +2,9 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useEffect, useState, useLayoutEffect,} from 'react';
 import styled from 'styled-components';
-import { Avatar, Tag, Spin, Button, Drawer, Modal, Input, message } from 'antd';
-import { UserOutlined, CrownOutlined, AppstoreAddOutlined,CommentOutlined, SwitcherOutlined } from '@ant-design/icons';
-import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
+import { Avatar, Tag, Spin, Button, Drawer, Input, message } from 'antd';
+import { UserOutlined, CrownOutlined, AppstoreAddOutlined,CommentOutlined, } from '@ant-design/icons';
+import { FormatQuote, } from '@material-ui/icons';
 import _ from 'lodash';
 import qs from 'query-string';
 import classNames from 'classnames';
@@ -14,11 +14,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import ReactBnbGallery from 'react-bnb-gallery';
 import SectionHeader from '../../SectionHeader';
 import breakpoints from '../../../assets/styles/breakpoints';
-import ReviewListItem from '../../CommentListItem';
+import CommentListItem from '../../CommentListItem';
 import RatingStars from '../../RatingStars';
 import TourRelatedListItem from '../../TourRelated';
 import Layout from '../../CustomLayout';
-
 import Parallax from '../../Parallax/Parallax.js';
 import GridContainer from '../../Grid/GridContainer.js';
 import GridItem from '../../Grid/GridItem.js';
@@ -39,12 +38,10 @@ import iconSex from '../../../assets/img/icon-sex.svg';
 import styles from '../../../assets/styles/profilePage.js';
 import 'react-bnb-gallery/dist/style.css';
 import defaultImage from '../../../assets/img/noimage-600x400.jpg';
-import { getUserProfile, ISADMIN } from '../../../utils/auth';
-import { navigate } from 'gatsby';
+import { getUserProfile,} from '../../../utils/auth';
 import { Fab, Action } from 'react-tiny-fab';
 import 'react-tiny-fab/dist/styles.css';
-import CommentListItem from "../../CommentListItem/UserReviewCommentListItem";
-
+import ReviewCommentListItem from "../../CommentListItem/ReviewCommentListItem";
 
 const InfoAvatarAndBackgroundImg = styled.div`
   .info__guide {
@@ -385,16 +382,6 @@ function AdminGuideReview({ uid, id }) {
     fetchPhotos();
   }, []);
 
-  useEffect(() => {
-    const fetchAllComment = async () => {      
-      setLoading(true);        
-      const res = await API.GetAllUserReviewComment({id}); //id : account id
-      setComments(res.data)      
-      setLoading(false);
-    }
-    fetchAllComment();
-  }, []);
-
   const handleGetAllReply = async (commentId) => {    
     setLoading(true);
     const res = await API.handleGetAllReply({ id: commentId });
@@ -406,7 +393,8 @@ function AdminGuideReview({ uid, id }) {
     if (content) {            
       const { data } = await API.handleCreateComment({
         uid, 
-        userId:parseInt(id), 
+        reviewId:parseInt(id),
+        type:'user',
         content
       });
       const newComment = {...data[0] };
@@ -451,6 +439,13 @@ function AdminGuideReview({ uid, id }) {
 
   const showComment = () => {
     setVisible(true);
+    const fetchAllComment = async () => {      
+      setLoading(true);              
+      const res = await API.GetAllReviewComment({id, type:'user',}); //id : account id
+      setComments(res.data)      
+      setLoading(false);
+    }
+    fetchAllComment();
   };
   
   const onClose = () => {
@@ -747,7 +742,7 @@ function AdminGuideReview({ uid, id }) {
                     )}
                     <ListWrapper>
                       {_.map(profile.reviews?.listReviews, (comment, index) => (
-                        <ReviewListItem
+                        <CommentListItem
                           key={index}
                           content={comment.content}
                           user={comment.fullname}
@@ -768,13 +763,13 @@ function AdminGuideReview({ uid, id }) {
           icon={<AppstoreAddOutlined />}          
           alwaysShowTitle={true}          
         >
-          <Action
+          {/*<Action
             style={{backgroundColor: '#F897AF',}}
             text="Disable"
             //onClick={() => confirmModal()} 
           >
             <SwitcherOutlined />
-          </Action>  
+          </Action>*/}
           <Action
             style={{backgroundColor: '#F897AF',}}
             text="Comment"            
@@ -827,7 +822,7 @@ function AdminGuideReview({ uid, id }) {
           <div>
             {comments.length > 0 && (
               <Spin spinning={loading}>          
-                  <CommentListItem
+                  <ReviewCommentListItem
                     comments={comments}
                     replyComment={replyComment}
                     handleGetAllReply={handleGetAllReply}

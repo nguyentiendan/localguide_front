@@ -13,8 +13,7 @@ const GuideEditTour = () => {
   }
   
   return (
-    <AdminLayout>
-      <h2>Edit Tour</h2>
+    <AdminLayout>      
       <EditTourWizard location={location} />
     </AdminLayout>
   );

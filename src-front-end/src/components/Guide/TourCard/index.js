@@ -6,7 +6,6 @@ import { Card, Tag, Badge, Popconfirm, Tooltip } from 'antd';
 import { DeleteOutlined, StarFilled, MessageOutlined, EditOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import NumberFormat from 'react-number-format';
-import ModalFeedback from '../../Feedback/ModalFeedback';
 import { getUserProfile } from '../../../utils/auth';
 import * as API from '../../../apis';
 import backpackers from '../../../assets/img/mocks/blogs/backpackers.png';
@@ -67,18 +66,8 @@ const TourCard = ({
   totalReview,
   price
 }) => {
-  const [showModal, setShowModal] = useState(false);
+  
   const user = getUserProfile();
-
-  useEffect(() => {
-    const fetchAllFeedback = async () => {
-      if (showModal) {
-        const res = await API.getAllFeedbackOfGuide({ uid, id });
-        console.log(res)
-      }
-    };
-    fetchAllFeedback();
-  }, [showModal]);
 
   const HandleDescription = () => {
     switch (status) {
@@ -92,6 +81,7 @@ const TourCard = ({
         return null;
     }
   };
+
   return (
     <Badge style={{ width: '100%' }}>
       <CardWrapper
@@ -101,13 +91,13 @@ const TourCard = ({
         actions={
           status
             ? [
-              <MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
+              /*<MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,*/
               <Link to={`/app/editTour?q=${id}`}>
                 <EditOutlined title="Edit Tour" />
               </Link>
             ]
             : [
-              <MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,
+              /*<MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,*/
               <Link to={`/app/editTour?q=${id}`}>
                 <EditOutlined title="Edit Tour" />
               </Link>
@@ -148,8 +138,7 @@ const TourCard = ({
             }
           />
         </a>
-      </CardWrapper>
-      <ModalFeedback showModal={showModal} setShowModal={setShowModal} user={user} id={id} />
+      </CardWrapper>      
     </Badge>
   );
 };

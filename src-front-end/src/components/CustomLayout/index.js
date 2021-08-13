@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { graphql, useStaticQuery } from 'gatsby';
 import { AuthProvider } from '../../utils/useAuth';
 import GlobalStyle from '../../assets/styles/GlobalStyle';
 import Header from '../Header/Header.js';
@@ -12,19 +11,19 @@ const CustomLayout = ({ children, noLogin, scrollHeight, textColor }) => {
   return (
     <AuthProvider>
       <GlobalStyle />
-      <Header
+      { !noLogin && <Header
         link="/"
         absolute
         color="transparent"
         textColor={textColor}
         brand="Localguide Pal"
-        rightLinks={!noLogin && <HeaderLinks />}
+        rightLinks={ <HeaderLinks />}
         fixed
         changeColorOnScroll={{
           height: scrollHeight,
           color: 'white',
         }}
-      />
+      /> }
       {children}
     </AuthProvider>
   );

@@ -1850,6 +1850,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.14.5":
+  version "7.14.6"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.14.6.tgz#535203bc0892efc7dec60bdc27b2ecf6e409062d"
+  integrity sha512-/PCB2uJ7oM44tz8YhC4Z/6PeOKXp4K588f+5M3clr1M4zbqztlo0XEfJ2LEzj/FgwfgGcIdl8n7YYjTCI0BYwg==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/standalone@^7.4.5", "@babel/standalone@^7.9.6":
   version "7.10.1"
   resolved "https://registry.yarnpkg.com/@babel/standalone/-/standalone-7.10.1.tgz#36057177f8d42628e97744e76ba4851fc7369045"
@@ -4214,6 +4221,14 @@ ansi-to-html@^0.6.11:
   integrity sha512-7ZslfB1+EnFSDO5Ju+ue5Y6It19DRnZXWv8jrGHgIlPna5Mh4jz7BV5jCbQneXNFurQcKoolaaAjHtgSBfOIuA==
   dependencies:
     entities "^1.1.2"
+
+antd-img-crop@^3.14.2:
+  version "3.14.2"
+  resolved "https://registry.yarnpkg.com/antd-img-crop/-/antd-img-crop-3.14.2.tgz#cb367928fd825a0f34bd5d3b0bcbdc9a7510bf9a"
+  integrity sha512-jzhMNxuTFkMifaCA/hM2TDhp99o0HTmo0qxv8xlA0xTVA3Lj2RPTsa71kSujAAHJm7Ox4gyXx9v3KVakZaHY3A==
+  dependencies:
+    "@babel/runtime" "^7.14.5"
+    react-easy-crop "^3.5.1"
 
 antd@^4.7.0:
   version "4.15.0"
@@ -13627,7 +13642,7 @@ material-kit-react@^1.9.0:
     classnames "2.2.6"
     history "4.10.1"
     moment "2.26.0"
-    #node-sass "4.14.1"
+    node-sass "4.14.1"
     nouislider "14.5.0"
     prop-types "15.7.2"
     react "16.13.1"
@@ -14471,6 +14486,11 @@ normalize-url@^4.1.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-4.5.0.tgz#453354087e6ca96957bd8f5baf753f5982142129"
   integrity sha512-2s47yzUxdexf1OhyRi4Em83iQk0aPvwTddtFz4hnSSw9dCEsLEGf6SwIO8ss/19S9iBb5sJaOuTvTGDeZI00BQ==
+
+normalize-wheel@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/normalize-wheel/-/normalize-wheel-1.0.1.tgz#aec886affdb045070d856447df62ecf86146ec45"
+  integrity sha1-rsiGr/2wRQcNhWRH32Ls+GFG7EU=
 
 nouislider@14.5.0:
   version "14.5.0"
@@ -17251,6 +17271,14 @@ react-draggable@^4.0.3:
   dependencies:
     classnames "^2.2.5"
     prop-types "^15.6.0"
+
+react-easy-crop@^3.5.1:
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/react-easy-crop/-/react-easy-crop-3.5.2.tgz#1fc65249e82db407c8c875159589a8029a9b7a06"
+  integrity sha512-cwSGO/wk42XDpEyrdAcnQ6OJetVDZZO2ry1i19+kSGZQ750aN06RU9y9z95B5QI6sW3SnaWQRKv5r5GSqVV//g==
+  dependencies:
+    normalize-wheel "^1.0.1"
+    tslib "2.0.1"
 
 react-element-to-jsx-string@^14.0.2:
   version "14.3.1"
@@ -20367,6 +20395,11 @@ ts-pnp@^1.1.2, ts-pnp@^1.1.6:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/ts-pnp/-/ts-pnp-1.2.0.tgz#a500ad084b0798f1c3071af391e65912c86bca92"
   integrity sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==
+
+tslib@2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.1.tgz#410eb0d113e5b6356490eec749603725b021b43e"
+  integrity sha512-SgIkNheinmEBgx1IUNirK0TUD4X9yjjBRTqqjggWCU3pUEqIk3/Uwl3yRixYKT6WjQuGiwDv4NomL3wqRCj+CQ==
 
 tslib@^1.10.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
   version "1.13.0"

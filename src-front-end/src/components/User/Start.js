@@ -10,7 +10,7 @@ import * as API from '../../apis';
 import { getUserProfile, ISUSER } from '../../utils/auth';
 import { navigate } from 'gatsby';
 import styles from '../../assets/styles/profilePage.js';
-import NoticeModal from "./NoticeModal"; 
+import NoticeModal from "./Modal/NoticeModal"; 
 
 const useStyles = makeStyles(styles);
 
@@ -30,7 +30,7 @@ const StartProfile = () => {
     if(res.data.role != userProfile.role) {
       setVisible(true)
     }
-    if (res.data.role != ISUSER ) {
+    if (res.data.role != ISUSER || res.data.reqActive == 2) {
       navigate('/');
       return null;
     }
@@ -42,9 +42,7 @@ const StartProfile = () => {
   useEffect(() => {
     fetchUserProfile();    
   }, []);
-  
-  
-
+    
   return (    
     <Layout>      
        {profile.reqActive == 1 && (

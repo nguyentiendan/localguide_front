@@ -1,7 +1,7 @@
 import React from 'react';
-import {UserOutlined, ProfileOutlined, LogoutOutlined, DashboardOutlined,RocketOutlined,} from '@ant-design/icons';
+import {UserOutlined, ProfileOutlined, LogoutOutlined, DashboardOutlined,RocketOutlined,FundViewOutlined} from '@ant-design/icons';
 import { Link } from 'gatsby';
-import { Menu } from 'antd';
+import { Popconfirm, Menu } from 'antd';
 import useAuth from '../../utils/useAuth';
 
 const SlideNav = () => {
@@ -19,10 +19,16 @@ const SlideNav = () => {
       <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
         <Menu.Item key="1">
           <DashboardOutlined />
-          <span>
-            {/*<Link to="app/admin/">Dashboard</Link>*/}
-            <a href="app/admin/">Dashboard</a>
-          </span>
+          {user.role === 3 && (
+            <span>          
+              <a href="/app/admin/">Dashboard</a>
+            </span>
+          )}
+          {user.role === 2 && (
+            <span>
+              <Link to="/app/guideAdmin/">Dashboard</Link>
+            </span>
+          )}
         </Menu.Item>
         <Menu.Item key="2">
           <RocketOutlined />
@@ -47,30 +53,41 @@ const SlideNav = () => {
           </Menu.Item>
         )}
         {user.role === 2 && (
-        <Menu.Item key="4">
-          <ProfileOutlined />                    
-            <span>
-              <Link to="/app/guideProfile">Profile</Link>
-            </span>        
-        </Menu.Item>
+          <>
+            <Menu.Item key="4">
+              <ProfileOutlined />                    
+              <span>
+                <Link to="/app/guideProfile">Profile</Link>
+              </span>        
+            </Menu.Item>,
+
+            <Menu.Item key="5">
+              <FundViewOutlined />                    
+              <span>
+                <a href="/app/reviewProfile" target="_blank" >Review Profile</a>
+              </span>        
+            </Menu.Item>
+          </>
         )}  
-        <Menu.Item key="5">
+        <Menu.Item key="6">
           <ProfileOutlined />
-          {user.role === 3 && (
+          {(user.role === 3 ||  user.role === 2) && (
             <span>
-              <Link to="/admin/profile">Change Password</Link>
+              <Link to="/app/adminChangePass">Change Password</Link>
             </span>
-          )}
-          {user.role === 2 && (
-            <span>
-              <Link to="/admin/guide_changePass">Change Password</Link>
-            </span>
-          )}
+          )}          
         </Menu.Item>
 
-        <Menu.Item key="6" onClick={logout}>
-          <LogoutOutlined />
-          <span>Logout</span>
+        <Menu.Item key="7" >
+          <Popconfirm
+            title="Are you sure to Logout?"
+            onConfirm={logout}
+            okText="Yes"
+            cancelText="No"
+          >
+            <LogoutOutlined />
+            <span>Logout</span>
+          </Popconfirm>
         </Menu.Item>
       </Menu>
     </div>

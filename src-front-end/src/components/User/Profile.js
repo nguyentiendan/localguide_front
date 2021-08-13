@@ -6,13 +6,13 @@ import Layout from '../../components/CustomLayout';
 import Parallax from '../../components/Parallax/Parallax.js';
 import SEO from '../../components/SEO';
 import Footer from '../../components/Footer/Footer.js';
-import { Form, Input, Button, Select,InputNumber, Spin, notification,Modal, Row,Col} from 'antd';
+import { Form, Input, Button, Select,InputNumber, Spin, message, Modal} from 'antd';
 import { navigate } from 'gatsby';
 import UploadAvatar from "../Input/UploadAvatar"
 import * as API from '../../apis';
 import styles from '../../assets/styles/profilePage.js';
 import { getUserProfile, ISUSER } from '../../utils/auth';
-import NoticeModal from "./NoticeModal"; 
+import NoticeModal from "./Modal/NoticeModal"; 
 
 const useStyles = makeStyles(styles);
 
@@ -31,7 +31,7 @@ const FormWrapper = styled(Form)`
 function Profile() { 
   const [userProfile] = useState(getUserProfile());
   const uid = userProfile.uid
-  if ( userProfile.role != ISUSER ) {
+  if ( userProfile.role != ISUSER || userProfile.reqActive == 2) {
     navigate('/');
     return null;
   }
@@ -78,11 +78,29 @@ function Profile() {
 
   const onFinish = async values => {
     setLoading(true);
-    await API.editProfile({
-      ...values,
-      uid,
-    });
-    notification.success({ message: 'Successfully updated your profile.' });
+    const key = 'updatable';
+
+    if (loading) {
+      return;
+    }
+    try {
+      const { status } = await API.updateBasic({
+        ...values,
+        uid,                
+      });       
+      if (status === true) {
+        message.success({ 
+          content: 'You have successfully updated your basic profile!',
+          key, duration: 2,
+          className: 'custom-class',
+          style: {
+            marginTop: '20vh',
+          },
+        });      
+      }
+    } catch (e) {
+      console.log(e)
+    }
     setLoading(false);
   };
 
@@ -116,34 +134,36 @@ function Profile() {
   
   const formItemLayout = {
     labelCol: {
-      xs: {
+      xs: {  //mobile
         span: 24,
       },
-      sm: {
+      sm: {  //pc
         span: 6, // label size
       },
     },
     wrapperCol: {
-      xs: {
+      xs: {  //mobile
         span: 24,
       },
-      sm: {
+      sm: {  //pc
         span: 12, // input box size
       },
     },
   };
+  
   const tailFormItemLayout = {
     wrapperCol: {
-      xs: {
-        span: 8,
-        offset: 0,
+      xs: { //mobile
+        span: 24,
+        offset: 5,
       },
-      sm: {
-        span: 16,
-        offset: 8,
+      sm: { //pc
+        span: 24,
+        offset: 10,
       },
     },
   };
+  
   
   return (
     <Layout>
@@ -154,7 +174,7 @@ function Profile() {
         <div className={classNames(classes.main, classes.mainRaised)}>
           <div className={classes.container} style={{backgroundColor: "#fafafa",border: "1px dashed #e9e9e9",borderRadius: "2px"}}>
             <Spin spinning={loading}>
-              <FormWrapper form={form} {...formItemLayout} onFinish={onFinish} scrollToFirstError>
+              <Form form={form} {...formItemLayout} onFinish={onFinish} scrollToFirstError>
                 
                 <Form.Item style={{ justifyContent: 'center',  paddingTop: '20px',paddingBottom: '0px'  }}>
                   <h2>{profile.fullname}'s Profile</h2>
@@ -173,14 +193,17 @@ function Profile() {
                       message: 'Please input your Full Name!',
                     },
                     {
-                      max: 100,
-                      message: 'Value should be less than 100 character',
+                      max: 50,
+                      message: 'Value should be less than 50 character',
                     },
                   ]}
                   key={profile.fullname === '' ? 'fullname' : profile.fullname}
                   initialValue={profile.fullname}
                 >
-                  <Input size="large" />
+                  <Input 
+                    size="large" 
+                    allowClear
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -214,7 +237,10 @@ function Profile() {
                   key={profile.mobile === '' ? 'mobile' : profile.mobile}
                   initialValue={profile.mobile}
                 >
-                  <Input size="large"  />
+                  <Input 
+                    size="large"
+                    allowClear
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -223,27 +249,36 @@ function Profile() {
                   initialValue={profile.job}
                   key={profile.job === '' ? 'job' : profile.job}
                 >
-                  <Input size="large" />
+                  <Input 
+                    size="large" 
+                    allowClear
+                  />
                 </Form.Item>
 
                 <Form.Item 
                   name="sex" 
                   label="Gender" 
                   key={profile.sex === '' ? 'sex' : profile.sex}
-                  initialValue={profile.sex === '0' ? '0' : '1'}
-                >
-                  
+                  initialValue={profile.sex}
+                  rules={[
+                    { 
+                      required: true, 
+                      message: 'Please select your gender!',
+                    },
+                  ]}
+                >                  
                   <Select
                     size="large" 
                     placeholder="Gender"
-                    style={{ width: '200px' }}
-                    //defaultValue={profile.sex === '0' ? '0' : '1'}
+                    style={{ width: '200px' }}                    
                     onChange={value => {
                       form.setFieldsValue({ sex: value });
                     }}
+                    allowClear
                   >
-                    <Select.Option value="1">Male</Select.Option>
-                    <Select.Option value="0">Female</Select.Option>
+                    <Select.Option value='Male'>Male</Select.Option>
+                    <Select.Option value='Female'>Female</Select.Option>
+                    <Select.Option value='Other'>Other</Select.Option>
                   </Select>
                 </Form.Item>
                     
@@ -252,7 +287,6 @@ function Profile() {
                   label="Age"
                   key={profile.age === '' ? 'age' : profile.age}
                   initialValue={profile.age}
-                  style={{ flexGrow: 0.15 }}
                 >
                   <InputNumber size="large" />
                 </Form.Item>
@@ -277,6 +311,7 @@ function Profile() {
                     ))}
                   </Select>
                 </Form.Item>  
+
                 <Form.Item
                   name="city"
                   label="City"
@@ -299,15 +334,19 @@ function Profile() {
                   </Select>
                 </Form.Item>
 
-                <Form.Item {...tailFormItemLayout}>
-                  <Button style={{ margin: '0 8px' }}  type="primary" htmlType="submit">
+                <Form.Item {...tailFormItemLayout}>  
+                  <Button 
+                    size="large" 
+                    type="primary"
+                    htmlType="submit"
+                    style={{ margin: '0 8px' }}                      
+                  >
                     Update Profile
-                  </Button>
-                  ||
-                  <a href="#" onClick={() => setShowModal(true) } >  Become a tour guide?</a>
+                  </Button>                    
+                  || <a href="#" onClick={() => setShowModal(true) } >  Become a tour guide?</a>   
                 </Form.Item>
                 
-              </FormWrapper>      
+              </Form>      
             </Spin>
           </div>
         <Footer />

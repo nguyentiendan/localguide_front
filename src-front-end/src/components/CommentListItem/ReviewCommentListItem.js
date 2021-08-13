@@ -2,7 +2,7 @@ import React, {createElement, useState} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { DeleteOutlined, CheckOutlined, FormOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import { Input,Button, Comment, Avatar, Tooltip,Modal } from 'antd';
+import { Input,Button, Comment, Avatar, Tooltip, Modal } from 'antd';
 import moment from 'moment';
 import { getUserProfile } from '../../apis';
 
@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 `;
 const { TextArea } = Input;
 
-const UserReviewCommentListItem = ({ 
+const ReviewCommentListItem = ({ 
   comments,
   replyComment,
   handleGetAllReply,
@@ -172,7 +172,7 @@ const UserReviewCommentListItem = ({
   )
 };
 
-UserReviewCommentListItem.propTypes = {
+ReviewCommentListItem.propTypes = {
   comments: PropTypes.arrayOf(PropTypes.object),
   handleGetAllReply: PropTypes.func,
   handleCreateReply: PropTypes.func,
@@ -181,10 +181,10 @@ UserReviewCommentListItem.propTypes = {
   uid: PropTypes.string,
 };
 
-UserReviewCommentListItem.defaultProps = {
+ReviewCommentListItem.defaultProps = {
   className: '',
   comments: [],
   replyComment: [],
 };
 
-export default UserReviewCommentListItem;
+export default ReviewCommentListItem;

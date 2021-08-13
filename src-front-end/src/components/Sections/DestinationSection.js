@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // @material-ui/core components
 import { makeStyles } from '@material-ui/core/styles';
-
-// @material-ui/icons
-// core components
 import styled from 'styled-components';
 import { Spin } from 'antd';
 import breakpoints from '../../assets/styles/breakpoints';
@@ -11,10 +8,8 @@ import GridContainer from '../Grid/GridContainer.js';
 import GridItem from '../Grid/GridItem.js';
 import SectionHeader from '../SectionHeader';
 import DestinationListItem from '../DestinationListItem';
-import * as API from '../../apis';
-
 import styles from '../../assets/styles/commonStyle.js';
-import backpackers from '../../assets/img/mocks/blogs/backpackers.png';
+import * as API from '../../apis';
 
 const useStyles = makeStyles(styles);
 
@@ -44,19 +39,18 @@ function DestinationSection() {
   const classes = useStyles();
 
   useEffect(() => {
-    const fetchAllTour = async () => {
+    const fetchRecommendTour = async () => {
       try {
         setLoading(true);
-        const response = await API.getAllTours();
+        const response = await API.getRecommendTours();
         setTours(response.data);
-      } catch (error) {
-        console.error(error);
+      } catch (error) {        
       } finally {
         setLoading(false);
       }
     };
-    fetchAllTour();
-    const interval = setInterval(() => fetchAllTour(), 100000);
+    fetchRecommendTour();
+    const interval = setInterval(() => fetchRecommendTour(), 100000);
     return () => {
       clearInterval(interval);
     };
@@ -71,35 +65,21 @@ function DestinationSection() {
               <SectionHeader title="Destination" />
               <ListWrapper>
                 <ListContainer>
-                  <DestinationListItem
-                    key="1"
-                    name="Greate Tour in Tokyo"
-                    location="Tokyo"
-                    picture={backpackers}
-                    className="destination"
-                    id={1}
-                    uid="134234234234234"
-                  />
-
-                  <DestinationListItem
-                    key="2"
-                    name="Greate Tour in Osaka"
-                    location="Tokyo"
-                    picture={backpackers}
-                    className="destination"
-                    id={1}
-                    uid="1123123123123"
-                  />
-
-                  <DestinationListItem
-                    key="3"
-                    name="Greate Tour in Nagoya"
-                    location="Tokyo"
-                    picture={backpackers}
-                    className="destination"
-                    id={1}
-                    uid="11231231231232222"
-                  />
+                {tours &&
+                  tours.map((tour, index) => {
+                    return (
+                      <DestinationListItem
+                        key={index}
+                        name={tour.name}
+                        location={tour.city}
+                        picture={tour.cover}
+                        className="destination"
+                        id={tour.id}
+                        uid={tour.uid}
+                      />
+                    );
+                  })
+                }  
                 </ListContainer>
               </ListWrapper>
             </div>

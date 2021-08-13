@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 
 const ContentWrapper = styled.div``;
 
-const Title = styled.h3`
+const Title = styled.h4`
   margin-bottom: 0.25rem;
   font-weight: 600;
 `;
@@ -39,16 +39,18 @@ const Delimiter = styled.div`
   border-bottom: 1px solid ${colors.grey[30]};
 `;
 
-const Content = styled.div``;
+const Content = styled.div`
+  margin-bottom : 20px;
+`;
 
-const CommentListItem = ({ className, user, avatar, date, content }) => (
-  <Wrapper className={className}>
+const CommentListItem = ({ className, user, avatar, date, content }) => (  
+  <Wrapper className={className}>    
     <AvatarWrapper src={avatar} icon={<UserOutlined />} size="large" />
     <ContentWrapper>
       <Title>{user}</Title>
       <SubTitle>{moment(date).fromNow()}</SubTitle>
-      <Content>{content}</Content>
-      <Delimiter className="delimiter" />
+      <Content>{content}</Content>      
+      {/*<Delimiter className="delimiter" />*/}      
     </ContentWrapper>
   </Wrapper>
 );

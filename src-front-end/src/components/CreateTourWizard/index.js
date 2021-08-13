@@ -21,7 +21,6 @@ import {
   getTourPhotos,
 } from '../../apis';
 import { useRequiredUser } from '../../utils/useAuth';
-import TourPreview from '../TourPreview';
 import img from '../../assets/img/mocks/places/cat-ba.jpg';
 
 const CREATE_TOUR_STEPS = [
@@ -85,8 +84,8 @@ const transformTourData = tourCreationInfo => ({
   maxPax: tourCreationInfo.maxPax,
   guideFee: tourCreationInfo.guideFee,
   total: tourCreationInfo.total,
-  content: tourCreationInfo.tourDescription,
-  cover: '',
+  content: tourCreationInfo.tourDescription,  
+  cover:'',
   tag: tourCreationInfo.tags.join(';'),
 });
 
@@ -104,8 +103,7 @@ const Wrapper = styled.div`
 
 const CreateTourWizard = ({ location }) => {
   const { user } = useRequiredUser();
-  const [loading, setLoading] = useState(false);
-  const [previewVisible, setPreviewVisible] = useState(false);
+  const [loading, setLoading] = useState(false);  
   const [tourCreationInfo, setTourCreationInfo] = useState({
     duration: 1,
     minPax: 1,
@@ -194,11 +192,11 @@ const CreateTourWizard = ({ location }) => {
     }
   };
 
-  const navigateToHomePage = useCallback(async () => {
+  const handleOnFinish = useCallback(async () => {
     if (loading) {
       return;
     }
-    await navigate('/');
+    await navigate('app/guideTourList/');
   }, [loading]);
 
   const onUpdate = useCallback(
@@ -252,10 +250,10 @@ const CreateTourWizard = ({ location }) => {
   }, [tourCreationInfo]);
 
   const onPreview = useCallback(() => {
-    setPreviewVisible(true);
+    //setPreviewVisible(true);
   }, [tourCreationInfo]);
 
-  useEffect(() => {
+  useEffect(() => {    
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -278,7 +276,8 @@ const CreateTourWizard = ({ location }) => {
           minPax: data[0].minPax,
           maxPax: data[0].maxPax,
           guideFee: data[0].guideFee,
-          coverPhoto: { photo: data[0].cover },
+          coverPhoto: data[0].cover ,
+          //coverPhoto: ( [{photo: data[0].cover}] ),          
           total: data[0].total,
           meal: res.meal,
           other: res.other,
@@ -302,7 +301,7 @@ const CreateTourWizard = ({ location }) => {
     getAllCostTourEdit,
     getAllScheduleTourEdit,
   ]);
-
+  
   return (
     <>
       {currentStepNumber === 0 && <StartCreateTour onStart={startCreateTour} location={location} />}
@@ -330,18 +329,12 @@ const CreateTourWizard = ({ location }) => {
             onNext={goForward}
             onCancel={goCancel}
             onConfirm={goConfirm}
-            onPreview={onPreview}
+            //onPreview={onPreview}
             loading={loading}
             isFinished={currentStepNumber === TOTAL_STEPS}
             canSkipped={canSkipped}
-            onFinish={navigateToHomePage}
-          />
-
-          <Modal visible={previewVisible} footer={null} onCancel={() => setPreviewVisible(false)}>
-            {previewVisible && (
-              <TourPreview uid={tourCreationInfo.uid} tourId={tourCreationInfo.id} />
-            )}
-          </Modal>
+            onFinish={handleOnFinish}
+          />          
         </Wrapper>
       )}
     </>

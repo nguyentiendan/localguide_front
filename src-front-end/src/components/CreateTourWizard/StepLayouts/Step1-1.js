@@ -18,9 +18,11 @@ const Title = styled.h2`
   color: ${colors.grey[70]};
 `;
 
-const SubTitle = styled.h3`
+const SubTitle = styled.h4`
   font-weight: normal;
 `;
+
+const { TextArea } = Input;
 
 const StepLayout = ({ tourCreationInfo, onUpdate }) => {
   const [loading, setLoading] = useState(false);
@@ -89,7 +91,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     },
     [onUpdate, tourCreationInfo]
   );
-  console.log(tourRecommend);
+  
   const addTagOptions = useCallback(
     tagOption => {
       onUpdate({
@@ -147,17 +149,30 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
           value={tourName}
           onChange={e => updateTourName(e.target.value)}
           size="large"
+          maxLength={200}
+          allowClear
           style={{ maxWidth: 400 }}
         />
         <br />
         <br />
-        <Input
+        <SubTitle>Tour short description</SubTitle>
+        <TextArea 
+          size="large" 
+          showCount
+          maxLength={200}
+          allowClear
+          value={tourShortDescription}
+          onChange={e => updateTourShortDescription(e.target.value)}
+          placeholder="Please provide a short description about tour in 3 lines."
+          style={{ maxWidth: 400 }}
+        />
+        {/*<Input
           placeholder="Short description about tour"
           value={tourShortDescription}
           onChange={e => updateTourShortDescription(e.target.value)}
           size="large"
           style={{ maxWidth: 400 }}
-        />
+        />*/}
         <br />
         <br />
         <br />

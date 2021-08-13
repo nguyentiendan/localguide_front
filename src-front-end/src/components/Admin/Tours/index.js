@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {Divider, Row, Col, Form, Button, Table, Tag, Space, Badge, Select, Spin, InputNumber,} from 'antd';
+import {Divider, Avatar, Tooltip, Form, Table, Tag, Space, Badge, Select, Spin,} from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -22,24 +23,30 @@ const TourTitle = styled.span`
   font-weight: bold;
 `;
 
+const GuideTitle = styled.span`
+  color: ${colors.blue[80]};
+  font-weight: bold;
+`;
+
+const AvatarWrapper = styled(Avatar)`
+  && {
+    margin-right: 1.5rem;
+  }
+`;
+
 const STATUS = {
   APPROVED: 1,
-  WAITING_FOR_APPROVAL: 0,
-  DELETED: 2,
+  WAITING_FOR_APPROVAL: 2,  
 };
 const statusFilter = [
   {
-    name: 'Waiting for Approval',
-    code: 0,
+    name: 'Waiting approve',
+    code: 2,
   },
   {
     name: 'Approved',
     code: 1,
-  },
-  {
-    name: 'Deleted',
-    code: 2,
-  },
+  },  
 ];
 
 const columns = [
@@ -59,6 +66,13 @@ const columns = [
     title: 'Post by',
     dataIndex: 'fullName',
     key: 'fullName',
+    render: (fullName, tour) => (
+      <div>
+        <GuideTitle>
+          <AvatarWrapper src={tour.avatar} icon={<UserOutlined />} size="small"  /><a href={`/app/adminGuideReview?uid=${tour.uid}&id=${tour.id}`} target="_blank">{fullName}</a> 
+        </GuideTitle>
+      </div>
+    ),
   },
   {
     title: 'Price',
@@ -78,21 +92,24 @@ const columns = [
   {
     title: 'Updated Date',
     key: 'updatedAt',
-    render: (updatedDate, tour) => moment(tour.updatedAt).format('YYYY-MM-DD'),
+    render: (updatedDate, tour) => ( 
+      <Tooltip title={moment(tour.updatedAt).fromNow()}>
+        {moment(tour.updatedAt).format('YYYY-MM-DD')}
+      </Tooltip>
+    ),
   },
   {
     title: 'Status',
     key: 'status',
     render: (status, tour) => (
       <Space size="middle">
-        {tour.status === STATUS.APPROVED && <Tag color="success">APPROVED</Tag>}
+        {tour.status === STATUS.APPROVED && <Tag color="success">Approved</Tag>}
         {tour.status === STATUS.WAITING_FOR_APPROVAL && (
-          <Tag color="warning">WAITING FOR APPROVAL</Tag>
-        )}
-        {tour.status === STATUS.DELETED && <Tag color="error">DELETED</Tag>}
+          <Tag color="warning">Waiting approve</Tag>
+        )}        
       </Space>
     ),
-  },
+  },  
 ];
 
 function AdminTourList() {
@@ -111,7 +128,6 @@ function AdminTourList() {
       try {
         setLoadingAllTour(true);
         const res = await API.adminGetAllTour({ uid: user.uid, token: user.token });
-        console.log(res.data);
         setData(res.data);
       } catch (error) {
         console.error(error);
@@ -122,6 +138,8 @@ function AdminTourList() {
     getAllTours();
   }, []);
 
+  console.log(data)
+  /*
   useEffect(() => {
     const fetchCountry = async () => {
       setIsloading(true);
@@ -158,10 +176,11 @@ function AdminTourList() {
     form.setFieldsValue({ status: null, total: 0, day: 1, country: '', city: '' });
     setIsloading(false);
   };
+  */
 
   return (
     <Wrapper spinning={isloading}>
-      <FilterWrapper onFinish={handleFinish} form={form}>
+      {/*<FilterWrapper onFinish={handleFinish} form={form}>
         <Divider orientation="left">Filter</Divider>
         <Row gutter={32}>
           <Col span={8}>
@@ -242,7 +261,7 @@ function AdminTourList() {
             </Form.Item>
           </Col>
         </Row>
-      </FilterWrapper>
+      </FilterWrapper>*/}
       <br />
       <ListWrapper>
         <Divider orientation="left">Tour List</Divider>
@@ -251,6 +270,9 @@ function AdminTourList() {
           dataSource={dataFilter || data}
           loading={loadingAllTour}
           rowKey="id"
+          bordered
+          //title={() => 'Header'}
+          //footer={() => 'Footer'}
           pagination={{ pageSize: 40 }}
         />
       </ListWrapper>

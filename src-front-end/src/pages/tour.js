@@ -4,16 +4,7 @@ import classNames from 'classnames';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
 import { AiOutlineSchedule } from 'react-icons/ai';
-import {
-  FaSuitcase,
-  FaMoneyCheckAlt,
-  FaRegCalendarAlt,
-  FaShare,
-  FaTwitter,
-  FaBookmark,
-  FaLanguage,
-  FaUsers,
-} from 'react-icons/fa';
+import {FaSuitcase, FaMoneyCheckAlt, FaRegCalendarAlt, FaShare, FaTwitter, FaBookmark, FaLanguage, FaUsers,} from 'react-icons/fa';
 import { MdGTranslate } from 'react-icons/md';
 import { Avatar, Spin } from 'antd';
 import _ from 'lodash';

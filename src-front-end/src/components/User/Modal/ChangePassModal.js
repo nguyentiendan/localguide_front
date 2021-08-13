@@ -1,10 +1,10 @@
 import React from 'react';
 import { Modal, Button } from 'antd';
-import useAuth from '../../utils/useAuth';
+import useAuth from '../../../utils/useAuth';
 
-const NoticeModal = (show) => {
+const ChangePassModal = (show) => {
 	const { user, logout } = useAuth();
-
+  
   return (
 		<>        
 			<Modal
@@ -23,11 +23,11 @@ const NoticeModal = (show) => {
           </Button>,                       
 				]}
 			> 
-        <p>Your account was approve become a guide.</p>
-      	<p>Please click logout button on menu bar and login again.</p>          
+        <p>You have just change password successful.</p>
+      	<p>You should be logout and login again to take effect.</p>
       </Modal>
 		</>
   );
 }
 
-export default NoticeModal;
+export default ChangePassModal;

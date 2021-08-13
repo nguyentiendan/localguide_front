@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { EditOutlined,CameraOutlined } from '@ant-design/icons';
+import { CameraOutlined } from '@ant-design/icons';
 import { Spin, Avatar } from 'antd';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
@@ -88,7 +88,7 @@ const UploadAvatar = ({ uid, src, title }) => {
     },
     [uid]
   );
-
+  
   return (
     <Wrapper>
       {/*<h2>{title} Profile</h2>*/}
@@ -98,7 +98,7 @@ const UploadAvatar = ({ uid, src, title }) => {
             {/*<EditOutlined />*/}
             <CameraOutlined />
             <Avatar size={128}  src={avatarBlob || src} />
-            {(src == '' || avatarBlob == '') && (<NoImage>No Image</NoImage>) }
+            {(src == '' && avatarBlob == '') && (<NoImage>No Image</NoImage>) }
             <input
               id="avatar"
               type="file"

@@ -1,13 +1,58 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
-import { Form, Input, Select, InputNumber, Spin,} from 'antd';
+import { Form, Input, Button, Select, InputNumber, Spin,message} from 'antd';
+import { RightOutlined } from '@ant-design/icons';
 import UploadAvatar from "../Input/UploadAvatar"
 import * as API from '../../apis';
 import styles from '../../assets/styles/profilePage.js';
-import NoticeModal from "./NoticeModal"; 
+import NoticeModal from "./Modal/NoticeModal"; 
 
 const useStyles = makeStyles(styles);
+
+const FormWrapper = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  && {
+    .ant-form-item {
+      width: 100%;
+    }
+  }
+`;
+
+const formItemLayout = {
+  labelCol: {
+    xs: {  //mobile
+      span: 24,
+    },
+    sm: {  //pc
+      span: 6, // label size
+    },
+  },
+  wrapperCol: {
+    xs: {  //mobile
+      span: 24,
+    },
+    sm: {  //pc
+      span: 12, // input box size
+    },
+  },
+};
+
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: { //mobile
+      span: 24,
+      offset: 5,
+    },
+    sm: { //pc
+      span: 24,
+      offset: 10,
+    },
+  },
+};
+
 const { Option } = Select;
 
 function BasicProfile({uid,role}) { 
@@ -19,11 +64,10 @@ function BasicProfile({uid,role}) {
   const [rootCountry, setRootCountry] = useState([]);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  
+
   const fetchUserProfile = useCallback(async () => {
     setLoading(true);
     const res = await API.getUserProfile(uid);
-    
     //show modal notice user become a guide
     if(res.data.role != role) {
       setVisible(true)
@@ -40,6 +84,7 @@ function BasicProfile({uid,role}) {
     fetchUserProfile();
   }, []);
 
+  
   useEffect(() => {
     const fetchCity = async () => {
       if (profile?.country) {
@@ -67,12 +112,39 @@ function BasicProfile({uid,role}) {
     };
     fetchCity();
   };
+
+  const onFinishBasic = async values => {
+    setLoading(true);
+    const key = 'updatable';
+
+    if (loading) {
+      return;
+    }
+    try {
+      const { status } = await API.updateBasic({
+        ...values,
+        uid,                
+      });       
+      if (status === true) {
+        message.success({ 
+          content: 'You have successfully updated your basic profile!',
+          key, duration: 2,
+          className: 'custom-class',
+          style: {
+            marginTop: '20vh',
+          },
+        });      
+      }
+    } catch (e) {
+      console.log(e)
+    }
+    setLoading(false);
+  };
   
   return (
     <div>
-      <Spin spinning={loading}>    
-        {/*<FormWrapper form={form} {...formItemLayout} onFinish={onFinishBasic} scrollToFirstError>*/}
-          
+      <Spin spinning={loading}>            
+        <FormWrapper form={form}  {...formItemLayout} name="basic" onFinish={onFinishBasic} scrollToFirstError>
           <Form.Item style={{ justifyContent: 'center',  paddingTop: '20px',paddingBottom: '0px'  }}>
             <h2>{profile.fullname}'s Profile</h2>
           </Form.Item>
@@ -97,7 +169,10 @@ function BasicProfile({uid,role}) {
             key={profile.fullname === '' ? 'fullname' : profile.fullname}
             initialValue={profile.fullname}
           >
-            <Input size="large" />          
+            <Input 
+              size="large" 
+              allowClear
+            />          
           </Form.Item>
           
           <Form.Item
@@ -135,7 +210,10 @@ function BasicProfile({uid,role}) {
             key={profile.mobile === '' ? 'mobile' : profile.mobile}
             initialValue={profile.mobile}
           >
-            <Input size="large"  />
+            <Input 
+              size="large"
+              allowClear
+            />
           </Form.Item>
 
           <Form.Item
@@ -150,27 +228,35 @@ function BasicProfile({uid,role}) {
             initialValue={profile.job}
             key={profile.job === '' ? 'job' : profile.job}
           >
-            <Input size="large" />
+            <Input 
+              size="large" 
+              allowClear
+            />
           </Form.Item>
-
+          
           <Form.Item 
             name="sex" 
             label="Gender"
             key={profile.sex === '' ? 'sex' : profile.sex}
-            initialValue={profile.sex === '0' ? '0' : '1'}
-            //rules={[{ required: true }]}
+            initialValue={profile.sex}
+            rules={[
+              { 
+                required: true, 
+                message: 'Please select your gender!',
+              },
+            ]}
           >          
             <Select
               size="large" 
               placeholder="Gender"
-              style={{ width: '200px' }}
-              //defaultValue={profile.sex === '0' ? '0' : '1'}            
+              style={{ width: '200px' }}              
               onChange={value => {
                 form.setFieldsValue({ sex: value });
               }}
             >
-              <Option value='1'>Male</Option>
-              <Option value='0'>Female</Option>
+              <Select.Option value='Male'>Male</Select.Option>
+              <Select.Option value='Female'>Female</Select.Option>
+              <Select.Option value='Other'>Other</Select.Option>
             </Select>
           </Form.Item>
             
@@ -235,8 +321,19 @@ function BasicProfile({uid,role}) {
                 </Select.Option>
               ))}
             </Select>
-          </Form.Item>        
-        {/*</FormWrapper>*/}
+          </Form.Item>
+
+          <Form.Item {...tailFormItemLayout}>            
+            <Button 
+              size="middle" 
+              type="primary"
+              htmlType="submit"
+              style={{alignContent:"center"}}           
+            >
+              Update Basic Profile<RightOutlined/>
+            </Button>            
+          </Form.Item>
+        </FormWrapper>                  
       </Spin>
       <NoticeModal visible={visible}  />
     </div>

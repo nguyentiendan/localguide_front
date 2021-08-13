@@ -9,7 +9,7 @@ const IndexPage = () => {
     navigate('/');
     return null;
   }
-
+ 
   return (
     <AdminLayout>
       <div>

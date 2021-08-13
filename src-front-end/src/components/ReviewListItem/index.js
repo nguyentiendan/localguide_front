@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 
 const ContentWrapper = styled.div``;
 
-const Title = styled.h3`
+const Title = styled.h4`
   margin-bottom: 0.25rem;
   font-weight: 600;
 `;
@@ -47,19 +47,19 @@ moment.createFromInputFallback = function(config) {
   config._d = new Date(config._i);
 };
 
-const CommentListItem = ({ className, user, avatar, date, content }) => (
+const ReviewListItem = ({ className, user, avatar, date, content }) => (
   <Wrapper className={className}>
-    <AvatarWrapper src={avatar} icon={<UserOutlined />} size="large" />
+    <AvatarWrapper src={avatar} icon={<UserOutlined />} size="large" style={{width:90,height:35}} />    
     <ContentWrapper>
       <Title>{user}</Title>
       <SubTitle>{moment(date).fromNow()}</SubTitle>
       <Content>{content}</Content>
-      <Delimiter className="delimiter" />
+      {/*<Delimiter className="delimiter" />*/}
     </ContentWrapper>
   </Wrapper>
 );
 
-CommentListItem.propTypes = {
+ReviewListItem.propTypes = {
   className: PropTypes.string,
   user: PropTypes.string.isRequired,
   avatar: PropTypes.string.isRequired,
@@ -67,9 +67,9 @@ CommentListItem.propTypes = {
   content: PropTypes.string.isRequired,
 };
 
-CommentListItem.defaultProps = {
+ReviewListItem.defaultProps = {
   className: '',
   date: '',
 };
 
-export default CommentListItem;
+export default ReviewListItem;

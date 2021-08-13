@@ -31,13 +31,15 @@ const ListWrapper = styled.div`
 
 const ListContainer = styled.div`
   display: inline-flex;
-  flex-direction: row;
-  overflow: hidden;
+  justify-content: center;
+  //display: flex;
+  //flex-direction: row;
+  //overflow: hidden;
 
-  & .destination + .destination,
-  & .tour + .tour {
-    margin-left: 2rem;
-  }
+  //& .destination + .destination,
+  //  & .tour + .tour {
+  //    margin-left: 2rem;
+  //  }
 `;
 
 function ReviewSection() {
@@ -47,7 +49,7 @@ function ReviewSection() {
   const classes = useStyles();
 
   useEffect(() => {
-    const fetchAllTour = async () => {
+    /*const fetchAllTour = async () => {
       try {
         setLoading(true);
         const response = await API.getAllTours();
@@ -62,7 +64,7 @@ function ReviewSection() {
     const interval = setInterval(() => fetchAllTour(), 100000);
     return () => {
       clearInterval(interval);
-    };
+    };*/
   }, []);
 
   return (

@@ -1,7 +1,7 @@
 import React, { useEffect, useState,} from 'react';
 import styled from 'styled-components';
-import { Button, Drawer, Avatar, Tag, Spin, Modal, Input,message } from 'antd';
-import { UserOutlined, CrownOutlined, AppstoreAddOutlined,CommentOutlined, SwitcherOutlined } from '@ant-design/icons';
+import { Form, Select, Button, Drawer, Avatar, Tag, Spin, Modal, Input,message } from 'antd';
+import { UserOutlined, CrownOutlined, AppstoreAddOutlined,CommentOutlined, SwitcherOutlined, DeleteOutlined } from '@ant-design/icons';
 import { FormatQuote,} from '@material-ui/icons';
 import _ from 'lodash';
 import classNames from 'classnames';
@@ -33,7 +33,7 @@ import { getUserProfile, ISADMIN } from '../../../utils/auth';
 import { navigate } from 'gatsby';
 import { Fab, Action } from 'react-tiny-fab';
 import 'react-tiny-fab/dist/styles.css';
-import CommentListItem from "../../CommentListItem/UserReviewCommentListItem";
+import ReviewCommentListItem from "../../CommentListItem/ReviewCommentListItem";
 
 const InfoAvatarAndBackgroundImg = styled.div`
   .info__guide {
@@ -135,13 +135,9 @@ const IconWrapper = styled.img`
   margin-bottom: 0;
 `;
 
-const BottomButton = styled.div`
-  margin: 0,
-  top: 'auto',
-  right: 20,
-  bottom: 20,
-  left: 'auto',
-  position: 'fixed',
+const Text = styled.div`
+  color: #5e5c60;
+  padding-bottom : 20px;
 `;
 
 const useStyles = makeStyles(styles);
@@ -155,6 +151,7 @@ function AdminUserReview({ uid , id}) { //uid of user Review
   }
   
   const classes = useStyles();
+  const [form] = Form.useForm();
   const [profile, setProfile] = useState({});
   const [rootCountry, setRootCountry] = useState({});
   const [loading, setLoading] = useState(false);
@@ -162,6 +159,8 @@ function AdminUserReview({ uid , id}) { //uid of user Review
   const [comments, setComments] = useState({});
   const [replyComment, setReplyComment] = useState([]);
   const [content, setContent] = useState();
+  const [showModal, setShowModal] = useState(false);
+  const [showText, setShowText] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {      
@@ -172,16 +171,6 @@ function AdminUserReview({ uid , id}) { //uid of user Review
     };
     fetchData();
   }, [setProfile, uid]);
-  
-  /*useEffect(() => {
-    const fetchAllComment = async () => {      
-      setLoading(true);        
-      const res = await API.GetAllUserReviewComment({id}); //id : account id
-      setComments(res.data)      
-      setLoading(false);      
-    }
-    fetchAllComment();    
-  }, []);*/
   
   const handleGetAllReply = async (commentId) => {    
     setLoading(true);
@@ -194,7 +183,8 @@ function AdminUserReview({ uid , id}) { //uid of user Review
     if (content) {            
       const { data } = await API.handleCreateComment({
         uid, 
-        userId:parseInt(id), 
+        reviewId:parseInt(id), 
+        type:'user',
         content
       });      
       const newComment = {...data[0] };
@@ -289,8 +279,8 @@ function AdminUserReview({ uid , id}) { //uid of user Review
   const showComment = () => {
     setVisible(true);
     const fetchAllComment = async () => {      
-      setLoading(true);        
-      const res = await API.GetAllUserReviewComment({id}); //id : account id
+      setLoading(true);              
+      const res = await API.GetAllReviewComment({id, type:'user',}); //id : account id
       setComments(res.data)      
       setLoading(false);      
     }
@@ -300,7 +290,11 @@ function AdminUserReview({ uid , id}) { //uid of user Review
   const onClose = () => {
     setVisible(false);
   };
-  
+
+  const handleCancel = () => {
+    setShowModal(false);
+  }
+
   const handleLevelGuide = level => {
     switch (level) {
       case 0:
@@ -313,7 +307,34 @@ function AdminUserReview({ uid , id}) { //uid of user Review
         return null;
     }
   };
- 
+  
+  const onReasonChange = (value) => {
+    if(value == 'other') {
+      setShowText(true);
+    } else {
+      setShowText(false);
+    }        
+  };
+
+  const onReject = async(values) => {    
+    try {
+      setLoading(true);      
+      const { status } = await API.reject(uid, id, values.reason);     
+
+      if (status === true) {        
+        message.success("Reject success")
+        setLoading(false);
+        setShowModal(false)
+      } else {
+        message.error("Have error, please check");
+        setLoading(false);
+      }
+    } catch (err) {      
+      console.log(err);
+      setLoading(false);
+    }
+  };
+
   return (
     <Layout scrollHeight={300}>     
       <Parallax small filter image={require('../../../assets/img/home-banner.jpg')} />
@@ -434,11 +455,20 @@ function AdminUserReview({ uid , id}) { //uid of user Review
             </GridContainer>
           </div> 
         </Spin>
+        <Footer />
+
         <Fab      
           mainButtonStyles={{ backgroundColor: '#f12f60',}}
           icon={<AppstoreAddOutlined />}          
           alwaysShowTitle={true}          
         >
+          <Action
+            style={{backgroundColor: '#F897AF',}}
+            text="Reject"
+            onClick={() => setShowModal(true)} 
+          >
+            <DeleteOutlined />
+          </Action>  
           <Action
             style={{backgroundColor: '#F897AF',}}
             text="Approve"
@@ -499,7 +529,7 @@ function AdminUserReview({ uid , id}) { //uid of user Review
           <div>
             {comments.length > 0 && (
               <Spin spinning={loading}>          
-                  <CommentListItem
+                  <ReviewCommentListItem
                     comments={comments}
                     replyComment={replyComment}
                     handleGetAllReply={handleGetAllReply}
@@ -513,8 +543,51 @@ function AdminUserReview({ uid , id}) { //uid of user Review
             )}      
           </div>
         </Drawer>
-      </div>
-      <Footer />
+        
+        <Modal 
+          title="Guide Reject Confirm" 
+          visible={showModal}
+          okText="Reject"  
+          onCancel={handleCancel}
+          onOk={() => {
+            form
+              .validateFields()
+              .then(values => {
+                //form.resetFields();
+                onReject(values);
+              })
+              .catch(info => {
+                //console.log('Validate Failed:', info);
+              });
+          }}        
+        > 
+          <Text>Please select the reason for the reject</Text>
+          <Form form={form}  name="reject" scrollToFirstError>                        
+            <Form.Item 
+              name="reason" 
+              rules={[
+                { required: true, message: 'Please select reason!' },
+              ]}  
+            >
+              <Select                
+                placeholder="Select a reason for reject"
+                onChange={onReasonChange}
+                allowClear
+              >
+                <Select.Option value="Not suitable to become a local guide yet">Not suitable to become a local guide yet</Select.Option>
+                <Select.Option value="Language ability need further improvement">Language ability need further improvement</Select.Option>
+                <Select.Option value="Need a unique interest/ speciality">Need a unique interest/ speciality</Select.Option>
+                <Select.Option value="other">Other reason</Select.Option>
+              </Select>
+            </Form.Item>
+            {showText &&
+              <Form.Item name="otherReason">
+                <Input.TextArea size="large" placeholder="Other reason"/>
+              </Form.Item>
+            }  
+          </Form>
+        </Modal>
+      </div>      
     </Layout>
   );
 }

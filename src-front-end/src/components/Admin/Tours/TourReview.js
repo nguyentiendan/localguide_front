@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
 import {FaSuitcase, FaMoneyCheckAlt, FaRegCalendarAlt, FaShare, FaTwitter, FaBookmark, FaLanguage, FaUsers,} from 'react-icons/fa';
-import { Avatar, Spin, notification, Popconfirm } from 'antd';
+import { CheckCircleOutlined, AppstoreAddOutlined,CommentOutlined, } from '@ant-design/icons';
+import { Drawer, Input, Button, Spin, Modal, message } from 'antd';
 import _ from 'lodash';
-import { Link } from 'gatsby';
 import { FormatQuote } from '@material-ui/icons';
 import ReactBnbGallery from 'react-bnb-gallery';
 import NumberFormat from 'react-number-format';
@@ -23,7 +23,7 @@ import SectionHeader from '../../SectionHeader';
 import CommentListItem from '../../CommentListItem';
 import breakpoints from '../../../assets/styles/breakpoints';
 import NavItem from '../../Layout/NavItem';
-import Button from '../../CustomButtons/Button';
+//import Button from '../../CustomButtons/Button';
 import { bigScreenCss, smallScreenCss } from '../../../assets/styles/responsive-css';
 import TourGuideListItem from '../../TourGuideListItem';
 import { safeFuncCall } from '../../../utils/commons';
@@ -31,7 +31,10 @@ import defaultImage from '../../../assets/img/noimage-600x400.jpg';
 import styles from '../../../assets/styles/tourPage.js';
 import 'react-bnb-gallery/dist/style.css';
 import { getUserProfile } from '../../../utils/auth';
-import ModalFeedback from '../../Feedback/ModalFeedback';
+import { Fab, Action } from 'react-tiny-fab';
+import 'react-tiny-fab/dist/styles.css';
+import ReviewCommentListItem from "../../CommentListItem/ReviewCommentListItem";
+import { navigate } from 'gatsby';
 
 const Title = styled.h1`
   font-weight: bold;
@@ -307,7 +310,7 @@ const BookButton = styled(Button)`
   flex: 0.65;
   width: 100%;
   justify-content: center;
-
+  
   ${smallScreenCss(`
     margin-top: 15px;
   `)}
@@ -364,29 +367,25 @@ const TourDescriptionItem = styled.li`
   }
 `;
 
-const ButtonEventAdminWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
 /** TODO
  * 1) Them icon Language (chi de 1 languagua, khi re vao thi ra tooltip)
- * 2) Them icon so nguoi - DONE
- * 3) Cho gia tien Tour len tren - DONE
  */
 const useStyles = makeStyles(styles);
+const { TextArea } = Input;
 
 function AdminTourReview({ uid, id }) {
   const classes = useStyles();
-
+  const user = getUserProfile();
   const [tourPhotos, setTourPhotos] = useState([]);
-  const [isApprove, setIsApprove] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  //const [isApprove, setIsApprove] = useState(false);
   const [tourDetails, setTourDetails] = useState({});
-
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [comments, setComments] = useState({});
+  const [replyComment, setReplyComment] = useState([]);
+  const [content, setContent] = useState();
 
   const tourQuery = useMemo(() => {
     const query = {};
@@ -394,9 +393,7 @@ function AdminTourReview({ uid, id }) {
     query.id = id;
     return query;
   }, [uid, id]);
-
-  const user = getUserProfile();
-
+  
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
@@ -422,7 +419,6 @@ function AdminTourReview({ uid, id }) {
         setLoading(true);
         const { data: details } = await safeFuncCall(() => API.adminReviewTour(tourQuery));
         setTourDetails(_.mapKeys(details[0], (v, k) => _.camelCase(k)));
-        console.log(tourDetails);
 
         const descDays = {};
         const { data: transport } = await safeFuncCall(() => API.getTourFeeTransport(tourQuery));
@@ -452,66 +448,119 @@ function AdminTourReview({ uid, id }) {
         });
         setTourDescriptionDays(descDays);
       } catch (error) {
-        console.error(error);
+          console.error(error);
       } finally {
-        setLoading(false);
+          setLoading(false);
       }
     };
     fetchTourDetails();
   }, [tourQuery]);
+  
+  const handleGetAllReply = async (commentId) => {    
+    setLoading(true);
+    const res = await API.handleGetAllReply({ id: commentId });
+    setReplyComment(res.data);
+    setLoading(false);
+  };
+  
+  const handleCreateComment = async (uid, id) => {    
+    if (content) {            
+      const { data } = await API.handleCreateComment({
+        uid,         
+        reviewId:parseInt(id),
+        type:'tour',
+        content
+      });
+      const newComment = {...data[0] };
+      setComments([...comments, newComment]);
+      setContent('');
+    }
+  };
+
+  const handleCreateReply = async (e, commentId,uid) => {    
+    if ( (e.target.value).trim() != "" ) {
+      const { data } = await API.handleCreateReply2({
+        uid,
+        commentId,
+        content: e.target.value,
+      });
+      const newReply = { ...data[0] };
+      setReplyComment([...replyComment, newReply]);
+    }
+  };
+  
+  const handleDeleteComment = async (id)  => {
+    const newData = _.remove(comments, item => {
+      return item.id !== id;
+    });
+    setComments(newData);    
+    let res = await API.handleDeleteComment(id);
+    if (res.status) { 
+      message.success("Delete success")
+    }
+  };
+
+  const handleDeleteReply = async (replyId)  => {    
+    const newData = _.remove(replyComment, item => {
+      return item.id !== replyId;
+    });
+    setReplyComment(newData);
+    let res = await API.handleDeleteReply2( replyId );    
+    if (res.status) { 
+      message.success("Delete success")
+    }
+  };
+
+  const showComment = () => {
+    setVisible(true);
+    const fetchAllComment = async () => {      
+      setLoading(true);      
+      const res = await API.GetAllReviewComment({id, type:'tour',}); //id : account id
+      setComments(res.data)
+      setLoading(false);
+    }
+    fetchAllComment();    
+  };
+  
+  const onClose = () => {
+    setVisible(false);
+  };
+
+  const confirmApproveTour = () => {
+    Modal.confirm({
+      title: 'Confirmation',
+      content: (
+        <div>
+          <p>Approve is make tour active</p>
+          <p>Are you sure</p>
+        </div>
+      ),
+      closable:true,
+      centered:true,
+      okText: 'OK',      
+      onOk() {           
+        handleApproveTour();
+      },
+      onCancel() {        
+      },      
+    });
+  }
 
   const handleApproveTour = async () => {
     setLoading(true);
-    await API.handleAdminApproveTour({ uid: tourDetails.tour[0]?.uid, id: tour?.rawID || id });
-    setIsApprove(true);
-    notification.success({ message: 'You have successfully approve tour.' });
+    const { status } = await API.handleAdminApproveTour({ uid, id, status:1 });
+    if (status === true) {
+      message.success("Actived success");
+      navigate("app/adminTourList/");
+    }
+    //setIsApprove(true);    
     setLoading(false);
   };
 
   return (
-    <Layout scrollHeight={10} textColor="black">      
-      {/* <Parallax small filter image={require("../assets/img/home-banner.jpg")} /> */}
+    <Layout scrollHeight={10} textColor="black">            
       <div className={classNames(classes.main, classes.mainRaised)} style={{ paddingTop: '70px' }}>
         <div className={classes.container}>
-          <GridContainer justify="center">
-            <GridItem xs={12} sm={12} md={12}>
-              <div className={classes.description}>
-                {user?.role === 3 && (
-                  <ButtonEventAdminWrapper>
-                    <div>
-                      {tourDetails.status !== 1 && !isApprove && (
-                        <Popconfirm
-                          title="Are you sure to approve tour?"
-                          onConfirm={handleApproveTour}
-                          okText="Yes"
-                          cancelText="No"
-                        >
-                          <Button color="info">Approve</Button>
-                        </Popconfirm>
-                      )}
-                      <Button color="danger">
-                        <Link to="/app/adminTourList/" style={{ color: '#ffffff' }}>
-                          Cancel
-                        </Link>
-                      </Button>
-
-                      {/* <Button className="style-button-edit">
-                          <Link to={`/app/edit_tour?q=${tourDetails?.id}`} style={{ color: '#ffffff' }}>
-                            Edit
-                          </Link>
-                        </Button> */}
-                    </div>
-                    <div>
-                      <Button color="warning" onClick={() => setShowModal(true)}>
-                        Tour Feedback
-                      </Button>
-                    </div>
-                  </ButtonEventAdminWrapper>
-                )}
-              </div>
-            </GridItem>
-          </GridContainer>
-
           <Spin spinning={loading}>
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12}>
@@ -758,8 +807,8 @@ function AdminTourReview({ uid, id }) {
                         isActive
                       />
                     </PriceMenuWrapper>
-                    <BookButton color="rose" loading={loading} disabled={loading}>
-                      Book now
+                    <BookButton type="primary" loading={loading} disabled={loading} style={{height:50}}>
+                      <span style={{fontSize:20, fontWeight:500}}>Book now</span>
                     </BookButton>
                   </PriceWrapper>
                 </div>
@@ -897,21 +946,85 @@ function AdminTourReview({ uid, id }) {
                 </GridItem>
               </GridContainer>
             )}
-            {/* <ModalFeedback
-              showModal={showModal}
-              setShowModal={setShowModal}
-              user={user}
-              uid={tourQuery.uid}
-              id={tourQuery.id}
-            /> */}
-            <ModalFeedback
-              showModal={showModal}
-              setShowModal={setShowModal}
-              user={user}
-              tour={tourQuery}
-              id={tourDetails.id || 0}
-            />
           </Spin>
+          <Fab      
+            mainButtonStyles={{ backgroundColor: '#f12f60',}}
+            icon={<AppstoreAddOutlined />}          
+            alwaysShowTitle={true}          
+          >
+            {tourDetails.status == 2 && (
+              <Action
+                style={{backgroundColor: '#F897AF',}}
+                text="Approve"
+                onClick={() => confirmApproveTour()} 
+              >
+                <CheckCircleOutlined />
+              </Action>  
+            )}            
+            <Action
+              style={{backgroundColor: '#F897AF',}}
+              text="Comment"            
+              onClick={showComment}
+            >
+              <CommentOutlined />
+            </Action>
+          </Fab>
+          <Drawer
+            title="Comments"
+            width={350}
+            closable={false}
+            onClose={onClose}
+            visible={visible}          
+            bodyStyle={{paddingBottom: 80 }}
+            footer={
+              <div
+                style={{
+                  textAlign: 'left',
+                  //height:150,
+                }}
+              > 
+                <TextArea
+                  rows={4}
+                  showCount
+                  maxLength={300}
+                  placeholder="Please input comment"                
+                  value={content || ''}
+                  onChange={e => setContent((e.target.value).slice(0,300))}
+                  style={{ marginTop: 5 }}
+                />
+                <Button 
+                  onClick={onClose} 
+                  style={{ marginTop: 5, marginRight: 8 }}>
+                  Cancel
+                </Button>
+                <Button 
+                  type="primary"
+                  onClick={() => {                    
+                    handleCreateComment(user.uid, id);
+                  }}                
+                >
+                  Comment
+                </Button>
+              </div>
+            }
+          >
+            <div>
+              {comments.length > 0 && (
+                <Spin spinning={loading}>          
+                  <ReviewCommentListItem
+                    comments={comments}
+                    replyComment={replyComment}
+                    handleGetAllReply={handleGetAllReply}
+                    handleCreateReply={handleCreateReply}
+                    handleDeleteComment={handleDeleteComment}
+                    handleDeleteReply={handleDeleteReply}              
+                    uid={user.uid}   //uid of user logining 
+                    className="comment"
+                  />         
+                </Spin>
+              )}      
+            </div>
+          </Drawer>
         </div>
       </div>
       <Footer />

@@ -94,16 +94,16 @@ function Finish({uid}) {
           status="success"
           title="Successfully update your profile!"
           subTitle={
-            (profile.reqActive === 1 || disable == true) ? ("Your profile is waiting admin approve."):("Please send request approve to administrator")
+            ( (profile.reqActive === 1 || profile.reqActive === 2) || disable == true) ? ("Your profile is waiting admin approve."):("Please send request approve to administrator")
           }          
           extra={[
             <Button type="primary" key="review">              
-              <a href={`/app/profileReview?uid=${uid}&id=${profile.id}`} target="_blank">Review</a>          
+              <a href={`/app/profileReview?uid=${uid}&id=${profile.id}`} target="_blank">Review profile</a>          
             </Button>,
             
             <Popconfirm
               key="confirm"
-              title="Are you sure ?"
+              title="By click 'OK', your profile will be sent to localguipal.com for reviewing"
               visible={visible}
               onConfirm={handleOk}
               okButtonProps={{ loading: confirmLoading }}
@@ -113,7 +113,7 @@ function Finish({uid}) {
                   <Button type="primary" key="approve" disabled>
                     Waiting admin approve
                   </Button>
-                ) : (
+                ) : ( profile.reqActive === 1 &&
                   <Button type="primary" key="approve" onClick={showPopconfirm}>
                     Request approve
                   </Button>

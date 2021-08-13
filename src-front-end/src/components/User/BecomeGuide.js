@@ -2,28 +2,16 @@ import React, { useState, } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
-import { Steps, Form, Button, Spin, message } from 'antd';
+import { Steps, Form, Button, Spin } from 'antd';
 import Layout from '../CustomLayout';
 import Parallax from '../Parallax/Parallax.js';
 import Footer from '../Footer/Footer.js';
 import { getUserProfile, ISUSER } from '../../utils/auth';
 import { navigate } from 'gatsby';
-import * as API from '../../apis';
 import styles from '../../assets/styles/profilePage.js';
 import StepLayout from './StepLayouts';
 
 const useStyles = makeStyles(styles);
-
-const FormWrapper = styled(Form)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  && {
-    .ant-form-item {
-      width: 100%;
-    }
-  }
-`;
 
 const StepContent = styled.div`
   //min-height: 200px;
@@ -41,25 +29,6 @@ const StepAction = styled.div`
   margin-bottom: 20px;
   text-align: center;
 `;
-
-const formItemLayout = {
-  labelCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 6, // label size
-    },
-  },
-  wrapperCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 12, // input box size
-    },
-  },
-};
 
 const { Step } = Steps;
 
@@ -81,15 +50,17 @@ const BECOME_GUIDE_STEP = [
 function BecomeGuide() {
   const [profile] = useState(getUserProfile());
   const uid = profile.uid;
-  const [form] = Form.useForm();
   const classes = useStyles();
   const [current, setCurrent] = useState(0);
-  const [loading, setLoading] = useState(false);
   
   if (profile.role != ISUSER) {
     navigate('/');
     return null;
   }
+
+  const handleNext = () => {
+    setCurrent(current + 1);
+  };
 
   const handlePrev = () => {
     setCurrent(current - 1);
@@ -99,75 +70,43 @@ function BecomeGuide() {
     navigate("/app/profile");
   };
   
-  const key = 'updatable';
-  const onFinish = async values => {
-    setLoading(true);
-    if (loading) {
-      return;
-    }
-    try {
-      await API.editProfile({
-        ...values,
-        uid,        
-      });       
-      message.success({ 
-        content: 'You have successfully updated your profile!',
-        key, duration: 1,
-        className: 'custom-class',
-        style: {
-          marginTop: '20vh',
-        },
-      });
-      setTimeout(() => {
-        setCurrent(current + 1);
-      }, 1000);
-    } catch (e) {
-      // ignore
-    }
-    setLoading(false);
-  };
- 
   return (
     <Layout>      
       <Parallax small filter image={require('../../assets/img/home-banner.jpg')} />
       <div className={classNames(classes.main, classes.mainRaised)}>
-        <div className={classes.container} >    
-          <Spin spinning={loading}>
-            <Steps current={current} style={{paddingTop:"50px"}} >
-              {BECOME_GUIDE_STEP.map(item => (
-                <Step key={item.title} title={item.title} />
-              ))}
-            </Steps>
-            <FormWrapper form={form} {...formItemLayout} onFinish={onFinish} scrollToFirstError>
-              <StepContent>
-                {BECOME_GUIDE_STEP[current].content}  
-                <StepAction>                
-                  {current < BECOME_GUIDE_STEP.length - 1 && (
-                    <>
-                      <Button style={{ margin: '0 8px' }} type="primary" onClick={() => handleCancel()}>
-                        Cancel
-                      </Button>
+        <div className={classes.container} >              
+          <Steps current={current} style={{paddingTop:"50px"}} >
+            {BECOME_GUIDE_STEP.map(item => (
+              <Step key={item.title} title={item.title} />
+            ))}
+          </Steps>            
+          <StepContent>
+            {BECOME_GUIDE_STEP[current].content}  
+          </StepContent>  
+          <StepAction>                
+            {current < BECOME_GUIDE_STEP.length - 1 && (
+              <>
+                <Button style={{ margin: '0 8px' }} onClick={() => handleCancel()}>
+                  Cancel
+                </Button>
 
-                      <Button type="primary" htmlType="submit">
-                        Next
-                      </Button>
-                    </>
-                  )}
-                  {current === BECOME_GUIDE_STEP.length - 1 && (
-                    /*<Button type="primary" onClick={() => message.success('Processing complete!')}>*/
-                    <Button type="primary" onClick={() => handleCancel()}>
-                      Cancel
-                    </Button>
-                  )}
-                  {current > 0 && (
-                    <Button style={{ margin: '0 8px' }} onClick={() => handlePrev()}>
-                      Previous
-                    </Button>
-                  )}
-                </StepAction>           
-              </StepContent>            
-            </FormWrapper>
-          </Spin>
+                <Button type="primary" onClick={() => handleNext()}>
+                  Next
+                </Button>
+              </>
+            )}
+            {(current === BECOME_GUIDE_STEP.length - 1 && profile.reqActive != 2 ) && (                                                            
+              <Button  onClick={() => handleCancel()}>
+                Cancel
+              </Button>                      
+            )}
+            
+            { (current > 0 ) && (                    
+              <Button type="primary" style={{ margin: '0 8px' }} onClick={() => handlePrev()}>
+                Previous
+              </Button>
+            )}
+          </StepAction>           
         </div>
         <Footer />        
       </div>

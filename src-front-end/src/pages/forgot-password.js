@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Modal, Button } from 'antd';
+import { Form, Input, Modal, Button } from 'antd';
+import { MailOutlined } from '@ant-design/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import * as API from '../apis';
-import breakpoints from '../assets/styles/breakpoints';
-import { ENTER } from '../constants/keys';
 import Layout from '../components/CustomLayout';
-import Input from '../components/Input';
-//import Button from '../components/CustomButtons/Button.js';
 import GridContainer from '../components/Grid/GridContainer.js';
 import GridItem from '../components/Grid/GridItem.js';
 import Card from '../components/Card/Card.js';
@@ -16,151 +13,108 @@ import CardHeader from '../components/Card/CardHeader.js';
 import CardFooter from '../components/Card/CardFooter.js';
 import Footer from '../components/Footer/Footer.js';
 import styles from '../assets/jss/material-kit-react/views/loginPage.js';
-import image from '../assets/img/bg7.jpg';
+
 
 const useStyles = makeStyles(styles);
-
-const Field = styled.div`
-  margin-bottom: 1.5rem;
-`;
-
-const Actions = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 2rem 0 1.5rem 0;
-
-  @media (max-width: ${breakpoints.sm}) {
-    flex-direction: column;
-    margin-bottom: 0;
-  }
-`;
-
 const Text = styled.div`
   color: #5e5c60;
+  padding-bottom : 20px;
+`;
+
+const ErrorMessage = styled.div`
+  //padding-top: 15px;
+  padding-bottom: 15px;
+  color: red;
+  font-weight: bold;
+  text-align: center;
 `;
 
 function ForgotPassPage() {
-  const [cardAnimaton, setCardAnimation] = React.useState('cardHidden');
-  setTimeout(function() {
-    setCardAnimation('');
-  }, 700);
-
   const classes = useStyles();
-
-  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // validate signup form
-  const isValid = () => {
-    let isOK = true;
-    setErrorMessage('');
-
-    const pattern = new RegExp(
-      /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-    );
-    if (email && !pattern.test(email)) {
-      isOK = false;
-      setErrorMessage('Please enter valid email');
-    }
-
-    if (!email) {
-      isOK = false;
-      setErrorMessage('Email is required');
-    }
-
-    return isOK;
-  };
-
-  const handleOnSubmit = async () => {
+  
+  const onFinish = async values => {
     if (loading) {
       return;
     }
-    if (isValid()) {
-      try {
-        setLoading(true);
+    console.log(values)
+    try {
+      setLoading(true);
+      setErrorMessage('');
+      const { message, status } = await API.forgotPassword(values.email);
+      setLoading(false);
+      if (status === true) {          
         setErrorMessage('');
-        const { message, status } = await API.forgotPassword(email);
+        Modal.info({
+          title: 'Notice',
+          content: (
+            <div>
+              <p>We have send a new password.<br/>
+                Please check your email</p>                
+            </div>
+          ), 
+          closable:false,
+          keyboard:false,      
+          centered:true,
+          okText: 'Close',      
+          onOk() {},
+        });
+        
+      } else {
         setLoading(false);
-        if (status === true) {
-          setEmail('');
-          setErrorMessage('');
-          Modal.info({
-            title: 'Notice',
-            content: (
-              <div>
-                <p>We have send a new password.<br/>
-                  Please check your email</p>                
-              </div>
-            ), 
-            closable:false,
-            keyboard:false,      
-            centered:true,
-            okText: 'Close',      
-            onOk() {},
-          });
-          
-        } else {
-          setLoading(false);
-          setErrorMessage(message);
-        }
-      } catch (error) {
-        setLoading(false);
-        setErrorMessage('An error has occurred.');
+        setErrorMessage(message);
       }
+    } catch (error) {
+      setLoading(false);
+      setErrorMessage('An error has occurred.');
     }
   };
 
   return (
     <Layout noLogin>
-      <div
-        className={classes.pageHeader}
-        style={{
-          backgroundImage: `url(${image})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'top center',
-        }}
-      >
+      <div className={classes.pageHeader}>
         <div className={classes.container}>
           <GridContainer justify="center">
-            <GridItem xs={12} sm={12} md={5}>
-              <Card className={classes[cardAnimaton]}>
-                <CardHeader color="warning" className={classes.cardHeader}>
-                  <h1>Forgot Password</h1>
+            <GridItem xs={12} sm={12} md={4}>
+              <Card >
+                <CardHeader className={classes.cardHeader}>
+                  <h2 style={{fontWeight:'bold', color:'#f12f60'}}><a href="/">LOCALGUIDEPAL</a></h2>
                 </CardHeader>
                 <CardBody>
                   <Text>
                     You forgot your password? Here you can easily retrieve a new password.
                   </Text>
-                  <Field>
-                    <Input
-                      label="Email"
-                      placeholder="Your email address"
-                      value={email}
-                      hasError={!!errorMessage}
-                      message={errorMessage}
-                      onChange={event => setEmail(event.target.value)}
-                      onKeyDown={event => {
-                        if (event.keyCode === ENTER) {
-                          handleOnSubmit();
-                        }
-                      }}
-                    />
-                  </Field>
-                  <Actions>
-                    <Button
-                      color="rose"
-                      loading={loading}
-                      disabled={loading}
-                      onClick={handleOnSubmit}
-                      type="primary"
+                  <ErrorMessage>{errorMessage}</ErrorMessage>
+                  <Form
+                    name="forgotpass"
+                    className="forgotpass-form"
+                    onFinish={onFinish}
+                  >
+                    <Form.Item
+                      name="email"
+                      rules={[
+                        { required: true, message: 'Please input your email!' },
+                        { type: 'email', message: 'Email is not valid!'},
+                      ]}
                     >
-                      Send new password
-                    </Button>
-                    <Button href="/login" color="transparent" type="link">
-                      Login
-                    </Button>
-                  </Actions>
+                      <Input size="large" prefix={<MailOutlined />} placeholder="Your email" />
+                    </Form.Item>
+                    
+                    <Form.Item>
+                      <Button 
+                        size="large" 
+                        type="primary" 
+                        htmlType="submit"
+                        style={{width:"100%"}}
+                      >
+                        Reset password
+                      </Button>
+                      <br/><br/>
+                      Or <a href="/login">Login</a>
+                    </Form.Item>
+                  </Form>
                 </CardBody>
               </Card>
               <CardFooter className={classes.cardFooter} />

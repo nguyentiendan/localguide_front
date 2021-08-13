@@ -35,11 +35,10 @@ import styles from '../../assets/styles/profilePage.js';
 import 'react-bnb-gallery/dist/style.css';
 import defaultImage from '../../assets/img/noimage-600x400.jpg';
 import { getUserProfile, ISUSER } from '../../utils/auth';
-import { navigate } from 'gatsby';
 import { Fab, Action } from 'react-tiny-fab';
 import 'react-tiny-fab/dist/styles.css';
-import CommentListItem from "../CommentListItem/UserReviewCommentListItem";
-import NoticeModal from "./NoticeModal"; 
+import ReviewCommentListItem from "../CommentListItem/ReviewCommentListItem";
+import NoticeModal from "./Modal/NoticeModal"; 
 
 const InfoAvatarAndBackgroundImg = styled.div`
   .info__guide {
@@ -164,14 +163,11 @@ function UserReview({ location }) {
   useEffect(() => {
     const fetchData = async () => {      
       setLoading(true);      
-      const res = await API.getUserProfile(uid);       
-      
+      const res = await API.getUserProfile(uid);             
       //show modal notice user become a guide
-      if(res.data.role != userProfile.role) {
-        //setVisible(true)
+      if(res.data.role != userProfile.role) {        
         setShowModal(true)
-      }
-     
+      }     
       setProfile(res.data);
       setLoading(false);
     };
@@ -216,20 +212,19 @@ function UserReview({ location }) {
     }
   };
 
-  const showComment = () => {
+  const showComment = () => {    
     setVisible(true);
     const fetchAllComment = async () => {      
       setLoading(true);        
-      const res = await API.GetAllUserReviewComment({id}); //id : account id
+      const res = await API.GetAllReviewComment({id, type:'user'}); //id : account id
       setComments(res.data)      
       setLoading(false);      
     }
     fetchAllComment();
-    const interval = setInterval(() => fetchAllComment(), 50000);
-    return () => {
-      clearInterval(interval);
-    };    
-    
+    //const interval = setInterval(() => fetchAllComment(), 50000);
+    //return () => {
+    //  clearInterval(interval);
+    //};        
   };
   
   const onClose = () => {
@@ -371,7 +366,7 @@ function UserReview({ location }) {
             </GridContainer>
           </div> 
                 
-          {(profile.reqActive === 1 && 
+          {( (profile.reqActive === 1 || profile.reqActive === 2) && 
           <Fab      
             mainButtonStyles={{ backgroundColor: '#f12f60',}}
             icon={<AppstoreAddOutlined />}          
@@ -414,16 +409,16 @@ function UserReview({ location }) {
             <div>
               {comments.length > 0 && (
                 <Spin spinning={loading}>          
-                    <CommentListItem
-                      comments={comments}
-                      replyComment={replyComment}
-                      handleGetAllReply={handleGetAllReply}
-                      handleCreateReply={handleCreateReply}
-                      //handleDeleteComment={}
-                      handleDeleteReply={handleDeleteReply}              
-                      uid={userProfile.uid}   //uid of user logining 
-                      className="comment"
-                    />                    
+                  <ReviewCommentListItem
+                    comments={comments}
+                    replyComment={replyComment}
+                    handleGetAllReply={handleGetAllReply}
+                    handleCreateReply={handleCreateReply}
+                    //handleDeleteComment={}
+                    handleDeleteReply={handleDeleteReply}              
+                    uid={userProfile.uid}   //uid of user logining 
+                    className="comment"
+                  />                    
                 </Spin>
               )}      
             </div>

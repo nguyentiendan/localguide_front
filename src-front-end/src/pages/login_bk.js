@@ -2,11 +2,7 @@ import React, { useState } from 'react';
 import { Link, navigate } from 'gatsby';
 import styled from 'styled-components';
 import jwt from 'jsonwebtoken';
-
-
-import { Form, Input, Button, Checkbox } from 'antd';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
-
+import { Button } from 'antd';
 import { makeStyles } from '@material-ui/core/styles';
 import * as API from '../apis';
 import { useLocalStorage } from '../utils/storage';
@@ -14,7 +10,7 @@ import { AUTH_TOKEN_KEY } from '../utils/auth';
 import breakpoints from '../assets/styles/breakpoints';
 import { ENTER } from '../constants/keys';
 import SEO from '../components/SEO';
-//import Input from '../components/Input';
+import Input from '../components/Input';
 import Layout from '../components/CustomLayout';
 //import Button from '../components/CustomButtons/Button.js';
 import GridContainer from '../components/Grid/GridContainer.js';
@@ -26,7 +22,6 @@ import CardFooter from '../components/Card/CardFooter.js';
 import Footer from '../components/Footer/Footer.js';
 import styles from '../assets/jss/material-kit-react/views/loginPage.js';
 import image from '../assets/img/bg7.jpg';
-
 
 const useStyles = makeStyles(styles);
 
@@ -142,54 +137,65 @@ function LoginPage() {
   };
 
   return (
-    <Layout noLogin textColor="red">
+    <Layout noLogin>
       <SEO title="Login" />
-      <div className={classes.pageHeader}>
+      <div
+        className={classes.pageHeader}
+        style={{
+          backgroundImage: `url(${image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'top center',
+        }}
+      >
         <div className={classes.container}>
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={5}>
-              <Card >
-                <CardHeader  className={classes.cardHeader}>
+              <Card className={classes[cardAnimaton]}>
+                <CardHeader color="warning" className={classes.cardHeader}>
                   <h1>Login</h1>
                 </CardHeader>
                 <CardBody>
                   <ErrorMessage>{errorMessage}</ErrorMessage>
-                  <Form
-                    name="normal_login"
-                    className="login-form"
-                    initialValues={{ remember: true }}
-                    //onFinish={onFinish}
-                  >
-                    <Form.Item
-                      name="username"
-                      rules={[{ required: true, message: 'Please input your Username!' }]}
-                    >
-                      <Input size="large" prefix={<MailOutlined />} placeholder="Your email address" />
-                    </Form.Item>
-                    <Form.Item
-                      name="password"
-                      rules={[{ required: true, message: 'Please input your Password!' }]}
-                    >
-                      <Input.Password 
-                        size="large"
-                        placeholder="Password"
-                        prefix={<LockOutlined />}
-                      />                      
-                    </Form.Item>
-                    <Form.Item>
-                      <Form.Item name="remember" valuePropName="checked" noStyle>
-                        <Checkbox>Remember me</Checkbox>
-                      </Form.Item>
-                      
-                    </Form.Item>
+                  <Field>
+                    <Input
+                      label="Email"
+                      placeholder="Your email address"
+                      value={email}
+                      hasError={!!error.email}
+                      message={error.email}
+                      onChange={event => setEmail(event.target.value)}
+                      onKeyDown={event => {
+                        if (event.keyCode === ENTER) {
+                          handleLogin();
+                        }
+                      }}
+                    />
+                  </Field>
+                  <Field>
+                    <Input
+                      type="password"
+                      label="Password"
+                      placeholder="**********"
+                      value={password}
+                      hasError={!!error.password}
+                      message={error.password}
+                      onChange={event => setPassword(event.target.value)}
+                      onKeyDown={event => {
+                        if (event.keyCode === ENTER) {
+                          handleLogin();
+                        }
+                      }}
+                    />
+                  </Field>
 
-                    <Form.Item>
-                      <Button size="large" type="primary" htmlType="submit" style={{width:"100%"}}>
-                        Log in
-                      </Button>
-                      Or <a href="">register now!</a>
-                    </Form.Item>
-                  </Form>
+                  <Actions>
+                    <Button color="rose" loading={loading} disabled={loading} onClick={handleLogin} type="primary">
+                      Login
+                    </Button>
+                    <Button href="/signup/" color="transparent" type="link">
+                      Create Account
+                    </Button>
+                  </Actions>
                 </CardBody>
                 <CardFooter className={classes.cardFooter}>
                   <ForgotPasswordLink to="/forgot-password/">
@@ -200,7 +206,7 @@ function LoginPage() {
             </GridItem>
           </GridContainer>
         </div>
-        <Footer blackFont />
+        <Footer whiteFont />
       </div>
     </Layout>
   );
