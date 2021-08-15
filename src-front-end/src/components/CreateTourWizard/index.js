@@ -5,7 +5,6 @@ import _ from 'lodash';
 import { navigate } from 'gatsby';
 import PropTypes from 'prop-types';
 import qs from 'query-string';
-import { Modal } from 'antd';
 import StartCreateTour from './StartCreateTour';
 import ProgressBar from './ProgressBar';
 import Scene from './Scene';
@@ -84,8 +83,8 @@ const transformTourData = tourCreationInfo => ({
   maxPax: tourCreationInfo.maxPax,
   guideFee: tourCreationInfo.guideFee,
   total: tourCreationInfo.total,
-  content: tourCreationInfo.tourDescription,  
-  cover:'',
+  content: tourCreationInfo.tourDescription,
+  cover: '',
   tag: tourCreationInfo.tags.join(';'),
 });
 
@@ -103,7 +102,7 @@ const Wrapper = styled.div`
 
 const CreateTourWizard = ({ location }) => {
   const { user } = useRequiredUser();
-  const [loading, setLoading] = useState(false);  
+  const [loading, setLoading] = useState(false);
   const [tourCreationInfo, setTourCreationInfo] = useState({
     duration: 1,
     minPax: 1,
@@ -162,20 +161,32 @@ const CreateTourWizard = ({ location }) => {
     }
   }, [currentStepNumber, loading, tourCreationInfo]);
 
+  const goFirst = useCallback(async () => {
+    if (loading) {
+      return;
+    }
+    try {
+      // await saveOrUpdateTour();
+      if (currentStepNumber !== 0) {
+        setCurrentStepNumber(currentStepNumber - 5);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [currentStepNumber, loading, tourCreationInfo]);
+
   const goCancel = useCallback(async () => {
     if (loading) {
       return;
     }
     await navigate('app/guideTourList/');
-
   }, [loading]);
-  
+
   const goConfirm = useCallback(async () => {
     if (loading) {
       return;
     }
     await navigate('app/guideTourList/');
-
   }, [loading]);
 
   const goForward = async () => {
@@ -249,11 +260,7 @@ const CreateTourWizard = ({ location }) => {
     );
   }, [tourCreationInfo]);
 
-  const onPreview = useCallback(() => {
-    //setPreviewVisible(true);
-  }, [tourCreationInfo]);
-
-  useEffect(() => {    
+  useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -276,8 +283,7 @@ const CreateTourWizard = ({ location }) => {
           minPax: data[0].minPax,
           maxPax: data[0].maxPax,
           guideFee: data[0].guideFee,
-          coverPhoto: data[0].cover ,
-          //coverPhoto: ( [{photo: data[0].cover}] ),          
+          coverPhoto: data[0].cover,
           total: data[0].total,
           meal: res.meal,
           other: res.other,
@@ -301,7 +307,7 @@ const CreateTourWizard = ({ location }) => {
     getAllCostTourEdit,
     getAllScheduleTourEdit,
   ]);
-  
+
   return (
     <>
       {currentStepNumber === 0 && <StartCreateTour onStart={startCreateTour} location={location} />}
@@ -326,15 +332,15 @@ const CreateTourWizard = ({ location }) => {
             currentStepNumber={MAIN_STEPS_MAP[currentStepNumber]}
             totalSteps={CREATE_TOUR_STEPS.length}
             onBack={goBack}
+            onFirst={goFirst}
             onNext={goForward}
             onCancel={goCancel}
-            onConfirm={goConfirm}
-            //onPreview={onPreview}
+            onConfirm={goConfirm}            
             loading={loading}
             isFinished={currentStepNumber === TOTAL_STEPS}
             canSkipped={canSkipped}
             onFinish={handleOnFinish}
-          />          
+          />
         </Wrapper>
       )}
     </>
