@@ -2,11 +2,11 @@ import React, { useMemo, useState, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { DeleteOutlined, InboxOutlined } from '@ant-design/icons';
+import { DeleteOutlined, InboxOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Col, Row, Spin, Upload, Image, Popconfirm } from 'antd';
 import colors from '../../../assets/styles/colors';
 import * as API from '../../../apis';
-import UploadCover from "../../Input/UploadCover"
+import UploadCover from '../../Input/UploadCover';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -34,9 +34,9 @@ const Wrapper = styled.div`
   }
 `;
 
-const ImgWrap = styled.div`  
+const ImgWrap = styled.div`
   display: flex;
-  flex-direction: row;  
+  flex-direction: row;
 `;
 
 const Title = styled.h2`
@@ -52,19 +52,20 @@ const ActionButton = styled.div`
   margin-top: 15px;
   margin-left: -20px;
   margin-right: 10px;
-  
+
   .styled-icon {
     cursor: pointer;
     color: #fff;
     font-size: 16px;
-    font-weight:bolder;
-  }  
+    font-weight: bolder;
+  }
 `;
 
 const { Dragger } = Upload;
 
 const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState([]);
   const removeImage = useRef(null);
 
   const tourId = useMemo(() => {
@@ -74,42 +75,48 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const uid = useMemo(() => {
     return user && user.uid;
   }, [user]);
+
+  const { coverPhoto, photos = [] } = tourCreationInfo;
+
+  // re-sync photos
+  const updatePhoto = useCallback(async () => {
+    const resPhotos = await API.getTourPhotos({ uid, id: tourCreationInfo.id });
+    onUpdate({
+      photos: resPhotos.data,
+    });
+    setImage([]);
+  });
   
-  const { coverPhoto , photos = [] } = tourCreationInfo;
-  console.log(photos)
-  //upload photo of Tour
-  const handleUploadPhoto = useCallback (
-    async file => {
-      setLoading(true);
-      if (!tourCreationInfo.id) {
-        return;
-      }      
-      try {        
-        let fileList = [...file.fileList];        
-        if(fileList[0].status === 'done') {
-          fileList = fileList.slice(-5);        
-          removeImage.current.fileList = fileList; 
+  // upload photo of Tour
+  const handleUploadPhoto = useCallback(async info => {
+    if (!tourCreationInfo.id) {
+      return;
+    }
+    setLoading(true);
+    try {
+      let fileList = [...info.fileList];
+      for (let i = 0; i < fileList.length; i++) {
+        if (fileList[i].status === 'done') {
+          fileList = fileList.slice(-5);
+          removeImage.current.fileList = fileList;
           fileList = fileList.map(file => {
             return file.originFileObj;
-          });                  
+          });
           const uploadedRes = await API.uploadMultiPhoto({
             uid,
             tourId: tourCreationInfo.id,
             file: fileList,
           });
-          console.log(uploadedRes)
-          for (let i = 0; i < uploadedRes.data.length; i++) {
-            photos.push(uploadedRes.data[i])
-          }
-        }        
-      } catch (e) {
-        // ignored
+          setImage(uploadedRes.data);
+        }
       }
-      setLoading(false);
+    } catch (e) {
+      // ignored
     }
-  )  
-  console.log(photos)
-  /*const updateCaption = useCallback(
+    setLoading(false);
+  });
+
+  /* const updateCaption = useCallback(
     async (caption, name) => {
       setLoading(true);
       try {
@@ -121,31 +128,38 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
       setLoading(false);
     },
     [tourId, uid]
-  );*/
+  ); */
 
-  const handleDeletePhoto = useCallback (
-    async name => {
-      setLoading(true);
-      try {
-        const nameImage = name.split('/')[5];    
-        console.log(name)  
-        await API.deleteTourPhoto({ nameImage, tourId, uid });
-        let removedPhotos = [...photos];
-        console.log(removedPhotos)
-        _.remove(removedPhotos, p => p.photo === name);
-        
-        onUpdate({
-          ...tourCreationInfo,
-          photos: removedPhotos,
-        });
-      } catch (e) {
-        // ignored
+  const handleDeletePhoto = useCallback(async name => {
+    setLoading(true);
+    try {
+      const nameImage = name.split('/')[5];
+      await API.deleteTourPhoto({ nameImage, tourId, uid });
+      // remove from photos
+      for (let i = 0; i < photos.length; i++) {
+        if (nameImage === photos[i].photo.split('/')[5]) {
+          const removedPhotos = [...photos];
+          _.remove(removedPhotos, p => p.photo === name);
+          onUpdate({
+            ...tourCreationInfo,
+            photos: removedPhotos,
+          });
+        }
       }
-      setLoading(false);
+      // remove from image
+      for (let i = 0; i < image.length; i++) {
+        if (nameImage === image[i].photo.split('/')[5]) {
+          const removedPhotos = [...image];
+          _.remove(removedPhotos, p => p.photo === name);
+          setImage(removedPhotos);
+        }
+      }
+    } catch (e) {
+      // ignored
     }
-  )
-  //console.log(photos)
-  
+    setLoading(false);
+  });
+
   return (
     <Spin spinning={loading}>
       <Wrapper>
@@ -158,48 +172,77 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
         <br />
         <Row gutter={32} style={{ flexDirection: 'column' }}>
           <Col span={8}>
-            <h2>Cover image of tour</h2>            
-            <UploadCover
-              uid={uid}            
-              id={tourCreationInfo.id}
-              cover={coverPhoto}
-            />            
+            <h2>Cover image of tour</h2>
+            <UploadCover uid={uid} id={tourCreationInfo.id} cover={coverPhoto} />
           </Col>
-          <br/>          
+          <br />
           <Col span={24}>
             <h2>Tour Photos</h2>
-            <Row gutter={16} >
-              <Image.PreviewGroup >
+            <Row gutter={16}>
+              <Image.PreviewGroup>
                 {_.map(photos, (p, index) => {
-                  return ( 
+                  return (
                     <ImgWrap key={index}>
-                    <Image width={200} src={p.photo}/>
-                    <ActionButton>
-                      <Popconfirm
-                        title="Are you sure to delete this photo?"
-                        onConfirm={() => handleDeletePhoto(p.photo)}
-                        okText="Yes"
-                        cancelText="No"
-                      >
-                        <DeleteOutlined className="styled-icon"/>
-                      </Popconfirm>
-                    </ActionButton>
+                      <Image width={200} src={p.photo} />
+                      <ActionButton>
+                        <Popconfirm
+                          title="Are you sure to delete this photo?"
+                          onConfirm={() => handleDeletePhoto(p.photo)}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <DeleteOutlined className="styled-icon" />
+                        </Popconfirm>
+                      </ActionButton>
                     </ImgWrap>
                   );
-                })}      
-              </Image.PreviewGroup>               
+                })}
+
+                {_.map(image, (p, index) => {
+                  return (
+                    <ImgWrap key={index}>
+                      <Image width={200} src={p.photo} />
+                      <ActionButton>
+                        <Popconfirm
+                          title="Are you sure to delete this photo?"
+                          onConfirm={() => handleDeletePhoto(p.photo)}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <DeleteOutlined className="styled-icon" />
+                        </Popconfirm>
+                      </ActionButton>
+                    </ImgWrap>
+                  );
+                })}
+              </Image.PreviewGroup>
             </Row>
           </Col>
-          <br/><br/>          
+          <br />
+          <br />
           <Col span={12}>
-            <Dragger name="file" listType="picture-card" multiple={true} maxCount={5} ref={removeImage} onChange={handleUploadPhoto}>
+            <Dragger
+              name="file"
+              listType="picture-card"
+              multiple
+              ref={removeImage}
+              onChange={handleUploadPhoto}
+            >
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />
               </p>
               <p className="ant-upload-text">Click or drag file to this area to upload</p>
-              <p className="ant-upload-hint">Support for a single or upload <b>5 files</b> at once.</p>
-            </Dragger>            
-          </Col>          
+              <p className="ant-upload-hint">
+                Support for a single or upload <b>5 files</b> at once.
+              </p>
+            </Dragger>
+            <div>
+              <br />
+              Sometimes you will upload duplicate images, please click{' '}
+              <ReloadOutlined style={{ color: '#f12f60' }} onClick={updatePhoto} /> to re-sync
+              images.
+            </div>
+          </Col>
         </Row>
       </Wrapper>
     </Spin>
@@ -212,7 +255,7 @@ StepLayout.propTypes = {
     fullname: PropTypes.string,
   }),
   tourCreationInfo: PropTypes.shape({
-    id: PropTypes.number, 
+    id: PropTypes.number,
     photos: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string,
