@@ -53,16 +53,16 @@ function TourSection() {
         setLoading(true);
         const response = await API.getAllPopularTours();
         setTours(response.data);
-      } catch (error) {        
+      } catch (error) {
       } finally {
         setLoading(false);
       }
     };
     fetchAllTour();
-    /*const interval = setInterval(() => fetchAllTour(), 100000);
+    /* const interval = setInterval(() => fetchAllTour(), 100000);
     return () => {
       clearInterval(interval);
-    };*/
+    }; */
   }, []);
 
   const SampleNextArrow = props => {
@@ -92,9 +92,9 @@ function TourSection() {
       <div
         className={className}
         style={{
-          ...style,
+          // ...style,
           color: 'black',
-          fontSize: '15px',
+          fontSize: '1.5px',
           lineHeight: '1.5715',
           // marginInline:'50px',
         }}

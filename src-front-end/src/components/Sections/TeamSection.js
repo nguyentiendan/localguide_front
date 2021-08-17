@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import { Spin } from 'antd';
+import Slider from 'react-slick';
 import breakpoints from '../../assets/styles/breakpoints';
 import { smallScreenCss } from '../../assets/styles/responsive-css';
 
@@ -18,9 +19,12 @@ import * as API from '../../apis';
 
 import styles from '../../assets/styles/commonStyle.js';
 
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
 const ListWrapper = styled.div`
   max-width: ${breakpoints.lg};
-  overflow: auto;
+  //overflow: auto;
 
   .comment:last-child .delimiter {
     display: none;
@@ -28,8 +32,10 @@ const ListWrapper = styled.div`
 `;
 
 const ListContainer = styled.div`
-  display: inline-flex;
-  flex-direction: row;
+  //display: inline-flex;
+  //flex-direction: row;
+  display: flex;
+  justify-content: space-between;
   overflow: hidden;
 
   & .tour-guide + .tour-guide {
@@ -56,7 +62,7 @@ function TeamSection() {
     const fetchTourGuides = async () => {
       try {
         setLoading(true);
-        const response = await API.getAllTourGuides();        
+        const response = await API.getAllTourGuides();
         if (response.data.length == 0) {
           setData(0);
         } else {
@@ -78,7 +84,43 @@ function TeamSection() {
       clearInterval(interval);
     };
   }, []);
-   
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    speed: 500,
+    // nextArrow: <SampleNextArrow />,
+    // prevArrow: <SamplePrevArrow />,
+
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+          infinite: true,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          initialSlide: 2,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
   return (
     <div className={classes.container}>
       {data > 0 && (
@@ -87,25 +129,31 @@ function TeamSection() {
             <GridItem xs={12} sm={12} md={12}>
               <div className={classes.description}>
                 <SectionHeader title="Tour Guide" />
-                <ListWrapper>
+                {/* }
+               <ListWrapper>
                   <ListContainer>
-                    {tourGuides &&
-                      tourGuides.map((guide, index) => {
-                        return (
-                          <GuideListItem
-                            key={index}
-                            id={guide.id}
-                            uid={guide.uid}
-                            name={guide.fullname}
-                            level={guide.level}
-                            intro={guide.intro}
-                            avatar={guide.avatar}
-                            className="tour-guide"
-                          />
-                        );
-                      })}
+{ */}
+                <Slider {...settings}>
+                  {tourGuides &&
+                    tourGuides.map((guide, index) => {
+                      return (
+                        <GuideListItem
+                          key={index}
+                          id={guide.id}
+                          uid={guide.uid}
+                          name={guide.fullname}
+                          level={guide.level}
+                          intro={guide.intro}
+                          avatar={guide.avatar}
+                          className="tour-guide"
+                        />
+                      );
+                    })}
+                </Slider>
+                {/* }
                   </ListContainer>
                 </ListWrapper>
+{ */}
               </div>
             </GridItem>
           </GridContainer>
