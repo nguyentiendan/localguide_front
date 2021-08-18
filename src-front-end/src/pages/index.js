@@ -26,7 +26,6 @@ import styles from '../assets/styles/landingPage.js';
 import CommentListItem from '../components/CommentListItem';
 import JoinUsSection from '../components/JoinUsSection';
 import SectionHeader from '../components/SectionHeader';
-
 import exploreTourImg from '../assets/img/explore-tour.jpg';
 
 const ListContainer = styled.div`
@@ -91,9 +90,9 @@ function IndexPage() {
           <ReviewSection />
           {/* <WorkSection /> */}
 
-          {/*<ExploreTourWrapper>
+          {/* <ExploreTourWrapper>
             <Img fluid={exploreTourImg} style={{ position: 'initial' }} />
-          </ExploreTourWrapper>*/}
+          </ExploreTourWrapper> */}
 
           <JoinUsSection />
         </Spin>
@@ -103,7 +102,8 @@ function IndexPage() {
   );
 }
 
-{/*IndexPage.propTypes = {
+{
+  /* IndexPage.propTypes = {
   data: PropTypes.shape({
     exploreTourImg: PropTypes.shape({
       childImageSharp: PropTypes.shape({
@@ -111,6 +111,7 @@ function IndexPage() {
       }),
     }),
   }).isRequired,
-};*/}
+}; */
+}
 
 export default IndexPage;

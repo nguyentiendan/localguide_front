@@ -87,6 +87,7 @@ function TeamSection() {
 
   const settings = {
     dots: true,
+    arrows: true,
     infinite: true,
     slidesToShow: 3,
     slidesToScroll: 1,

@@ -94,7 +94,7 @@ function TourSection() {
         style={{
           // ...style,
           color: 'black',
-          fontSize: '1.5px',
+          fontSize: '50px',
           lineHeight: '1.5715',
           // marginInline:'50px',
         }}
@@ -111,8 +111,9 @@ function TourSection() {
     slidesToShow: 3,
     slidesToScroll: 1,
     speed: 500,
+    adaptiveHeight: true,
     nextArrow: <SampleNextArrow />,
-    // prevArrow: <SamplePrevArrow />,
+    prevArrow: <SamplePrevArrow />,
     responsive: [
       {
         breakpoint: 1024,
