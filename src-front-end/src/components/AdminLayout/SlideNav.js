@@ -67,9 +67,16 @@ const SlideNav = () => {
                 <a href="/app/reviewProfile" target="_blank" >Review Profile</a>
               </span>        
             </Menu.Item>
+
+            <Menu.Item key="6">
+              <FundViewOutlined />                    
+              <span>
+                <a href="/app/guideSchedule" target="_blank" >Schedule</a>
+              </span>        
+            </Menu.Item>
           </>
         )}  
-        <Menu.Item key="6">
+        <Menu.Item key="7">
           <ProfileOutlined />
           {(user.role === 3 ||  user.role === 2) && (
             <span>
@@ -78,7 +85,7 @@ const SlideNav = () => {
           )}          
         </Menu.Item>
 
-        <Menu.Item key="7" >
+        <Menu.Item key="8" >
           <Popconfirm
             title="Are you sure to Logout?"
             onConfirm={logout}

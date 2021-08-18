@@ -569,7 +569,7 @@ function AdminUserReview({ uid , id}) { //uid of user Review
                 { required: true, message: 'Please select reason!' },
               ]}  
             >
-              <Select                
+              <Select
                 placeholder="Select a reason for reject"
                 onChange={onReasonChange}
                 allowClear
