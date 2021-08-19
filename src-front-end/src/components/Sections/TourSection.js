@@ -25,20 +25,49 @@ const useStyles = makeStyles(styles);
 
 const ListWrapper = styled.div`
   max-width: ${breakpoints.lg};
-  overflow: auto;
+  //overflow: auto;
   .comment:last-child .delimiter {
     display: none;
   }
 `;
 
 const ListContainer = styled.div`
-  display: inline-flex;
-  flex-direction: row;
-  overflow: hidden;
+
+//  display: inline-flex;
+//  flex-direction: row;
+
+  display: flex;
+  //overflow: hidden;
+  flex-wrap: norap;
+  width: 1024px;
+  max-width: 1024px;
 
   & .destination + .destination,
   & .tour + .tour {
     margin-left: 2rem;
+  }
+
+  & .slick-slider,
+  & .slick-list {
+    width: 1024px;
+    max-width: 1024px;
+  }
+
+  & .slick-prev:before,
+  & .slick-next:before {
+    opacity: 1;
+    font-size: 15px;
+    box-shadow: 0 0 8px gray;
+    border-radius: 50%;
+    color: #000;
+    background-color: #fff;
+    padding: 10px;
+  }
+  & .slick-next:before {
+    content: '＞'
+  }
+  & .slick-prev:before {
+    content: '＜'
   }
 `;
 
@@ -72,8 +101,8 @@ function TourSection() {
         className={className}
         style={{
           // ...style,
-          color: 'black',
-          fontSize: '50px',
+          color: '＃000',
+          fontSize: '15px',
           lineHeight: '1.5715',
           marginInline: '50px',
           top: '20%',
@@ -93,8 +122,9 @@ function TourSection() {
         className={className}
         style={{
           // ...style,
-          color: 'black',
-          fontSize: '50px',
+          content: '＜',
+          color: '#000',
+          fontSize: '15px',
           lineHeight: '1.5715',
           // marginInline:'50px',
         }}
@@ -148,7 +178,9 @@ function TourSection() {
           <GridItem xs={12} sm={12} md={12}>
             <div className={classes.description}>
               <SectionHeader title="Popular Tour" />
-              <Slider {...settings}>
+              <ListWrapper>
+                <ListContainer>
+                <Slider {...settings}>
                 {tours &&
                   tours.map((tour, index) => {
                     return (
@@ -166,7 +198,9 @@ function TourSection() {
                       />
                     );
                   })}
-              </Slider>
+                  </Slider>
+                </ListContainer>
+              </ListWrapper>
             </div>
           </GridItem>
         </GridContainer>
