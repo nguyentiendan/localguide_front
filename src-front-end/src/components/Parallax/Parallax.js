@@ -2,9 +2,11 @@ import React from 'react';
 // nodejs library that concatenates classes
 import classNames from 'classnames';
 // nodejs library to set properties for components
+
 import PropTypes from 'prop-types';
 // @material-ui/core components
 import { makeStyles } from '@material-ui/core/styles';
+import FadeBg from '../FadeBg/FadeBg';
 
 // core components
 import styles from '../../assets/jss/material-kit-react/components/parallaxStyle.js';
@@ -46,10 +48,11 @@ export default function Parallax(props) {
       className={parallaxClasses}
       style={{
         ...style,
-        backgroundImage: `url(${image})`,
+        // backgroundImage: `url(${image})`,
         transform,
       }}
     >
+      <FadeBg />
       {children}
     </div>
   );
