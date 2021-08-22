@@ -11,7 +11,7 @@ const landingPageStyle = {
 
   description: {
     margin: '1.071rem auto 0',
-    maxWidth: '996px',
+    maxWidth: '1000px',
     color: '#494848',
     // textAlign: "center !important"
   },

@@ -12,7 +12,8 @@ const Wrapper = styled.div`
   flex-direction: column;
   //align-items: center;
   position: relative;
-  width: 300px;
+  //width: 300px;
+  width: 100%;
   text-align: center;
 `;
 
@@ -32,12 +33,14 @@ const Avatar = styled.img`
   border-radius: 50%;
   object-fit: cover;
   object-position: center;
+  margin: 0 auto;
   margin-bottom: 0.25rem;
   //align-items: center;
 `;
 
 const Description = styled.div`
-  width: 300px;
+  //width: 300px;
+  width: 100%;
   height: 70px;
   color: #635e69;
   font-weight: normal;

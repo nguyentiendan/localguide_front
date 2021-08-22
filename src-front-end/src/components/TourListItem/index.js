@@ -13,7 +13,8 @@ const Wrapper = styled.div`
   align-items: flex-start;
   position: relative;
   //width: 400px;
-  width: 310px;
+  //width: 310px;
+  width: calc((310/334)*100%);
   overflow: hidden;
 `;
 
@@ -41,7 +42,8 @@ const Description = styled.div`
 const Picture = styled.img`
   //width: 400px;
   //height: 200px;
-  width: 310px;
+  //width: 310px;
+  width: 100%;
   height: 175px;
   border-radius: 6px;
   object-fit: cover;

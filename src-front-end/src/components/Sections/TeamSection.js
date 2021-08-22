@@ -9,6 +9,8 @@ import breakpoints from '../../assets/styles/breakpoints';
 import { smallScreenCss } from '../../assets/styles/responsive-css';
 
 // @material-ui/icons
+import Slider from 'react-slick';
+
 // core components
 import GuideListItem from '../GuideListItem';
 import GridContainer from '../Grid/GridContainer.js';
@@ -16,11 +18,14 @@ import GridItem from '../Grid/GridItem.js';
 import SectionHeader from '../SectionHeader';
 import * as API from '../../apis';
 
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
 import styles from '../../assets/styles/commonStyle.js';
 
 const ListWrapper = styled.div`
   max-width: ${breakpoints.lg};
-  overflow: auto;
+  overflow: hidden;
 
   .comment:last-child .delimiter {
     display: none;
@@ -31,6 +36,7 @@ const ListContainer = styled.div`
   display: inline-flex;
   flex-direction: row;
   overflow: hidden;
+  width: 100%;
 
   & .tour-guide + .tour-guide {
     margin-left: 3rem;
@@ -56,7 +62,7 @@ function TeamSection() {
     const fetchTourGuides = async () => {
       try {
         setLoading(true);
-        const response = await API.getAllTourGuides();        
+        const response = await API.getAllTourGuides();
         if (response.data.length == 0) {
           setData(0);
         } else {
@@ -78,7 +84,41 @@ function TeamSection() {
       clearInterval(interval);
     };
   }, []);
-   
+
+  const settings = {
+    // dots: true,
+    autoplay: false,
+    infinite: true,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    speed: 500,
+    // nextArrow: <SampleNextArrow />,
+    // prevArrow: <SamplePrevArrow />,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 798,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
   return (
     <div className={classes.container}>
       {data > 0 && (
@@ -89,6 +129,7 @@ function TeamSection() {
                 <SectionHeader title="Tour Guide" />
                 <ListWrapper>
                   <ListContainer>
+                  <Slider {...settings}>
                     {tourGuides &&
                       tourGuides.map((guide, index) => {
                         return (
@@ -104,6 +145,7 @@ function TeamSection() {
                           />
                         );
                       })}
+                      </Slider>
                   </ListContainer>
                 </ListWrapper>
               </div>

@@ -21,6 +21,10 @@ const GlobalStyle = createGlobalStyle`
     color: ${colors.magenta[50]};
     text-decoration: none;
   }
+
+  .slick-slider {
+    width: 100%;
+  }
 `;
 
 export default GlobalStyle;

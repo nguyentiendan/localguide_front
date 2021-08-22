@@ -40,6 +40,10 @@ const ListContainer = styled.div`
   & .tour + .tour {
     margin-left: 2rem;
   }
+
+  .slick-slider {
+    width: 100% !important;
+  }
 `;
 
 function TourSection() {
@@ -118,16 +122,14 @@ function TourSection() {
         breakpoint: 1024,
         settings: {
           slidesToShow: 3,
-          slidesToScroll: 3,
-          infinite: true,
+          slidesToScroll: 1,
         },
       },
       {
-        breakpoint: 600,
+        breakpoint: 798,
         settings: {
           slidesToShow: 2,
-          slidesToScroll: 2,
-          initialSlide: 2,
+          slidesToScroll: 1,
         },
       },
       {
