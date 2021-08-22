@@ -17,10 +17,12 @@
     "mockup": "node mockup/start.js"
   },
   "dependencies": {
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
     "@pelevesque/paginate": "^0.0.9",
     "antd": "^4.7.0",
     "antd-img-crop": "^3.14.2",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "disqus-react": "^1.0.6",
     "esm": "^3.2.25",
     "gatsby": "^2.13.9",
