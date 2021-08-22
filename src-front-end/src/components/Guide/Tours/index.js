@@ -2,12 +2,19 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { navigate } from 'gatsby';
 import { Tooltip, Divider, Table, Space, Tag, Button, message, Popconfirm } from 'antd';
-import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  CalendarOutlined,
+  ScheduleOutlined,
+} from '@ant-design/icons';
 import _ from 'lodash';
 import moment from 'moment';
 import * as API from '../../../apis';
 import { getUserProfile } from '../../../utils/auth';
 import colors from '../../../assets/styles/colors';
+import AddEvent from './addEventModal';
 
 const Wrapper = styled.div``;
 const FilterWrapper = styled.div`
@@ -28,30 +35,39 @@ function TourList() {
   const [loading, setLoading] = useState(false);
   const [dataFilter, setDataFilter] = useState(null);
   const [data, setData] = useState([]);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true);      
-      const res = await API.getGuideAllTours({uid: user.uid});
-      setData(res.data)
+      setLoading(true);
+      const res = await API.getGuideAllTours({ uid: user.uid });
+      setData(res.data);
       setLoading(false);
     }
     fetchData();
   }, []);
-  
+
   const handleDeleteTour = async (uid, id) => {
     setLoading(true);
-    const {status} = await API.deleteTour({ uid, id });
+    const { status } = await API.deleteTour({ uid, id });
     if (status === true) {
       const newData = _.remove(data, item => {
         return item.id !== id;
       });
       setData(newData);
     }
-    message.success("Delete success");
-    setLoading(false);    
+    message.success('Delete success');
+    setLoading(false);
   };
-  
+
+  const showModal = () => {
+    setShow(true);
+  };
+
+  const hideModal = () => {
+    setShow(false);
+  };
+
   const STATUS = {
     APPROVED: 1,
     WAITING_FOR_APPROVAL: 2,
@@ -71,7 +87,7 @@ function TourList() {
       code: 0,
     },
   ];
-  
+
   const columns = [
     {
       title: 'Tour name',
@@ -80,7 +96,13 @@ function TourList() {
       render: (name, tour) => (
         <div>
           <TourTitle>
-            <a href={`/app/guideTourReview?uid=${tour.uid}&id=${tour.id}`} target="_blank">{name}</a>          
+            <a
+              href={`/app/guideTourReview?uid=${tour.uid}&id=${tour.id}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {name}
+            </a>
           </TourTitle>
         </div>
       ),
@@ -112,7 +134,7 @@ function TourList() {
         <Tooltip title={moment(tour.updatedAt).fromNow()}>
           {moment(tour.updatedAt).format('YYYY-MM-DD')}
         </Tooltip>
-      )
+      ),
     },
     {
       title: 'Status',
@@ -131,42 +153,52 @@ function TourList() {
       title: 'Action',
       key: 'control',
       render: (status, tour) => {
-        return (      
+        return (
           <Space size="middle">
-            <a href={`/app/editTour?q=${tour.id}`} target="_blank">
+            <a href={`/app/editTour?q=${tour.id}`} target="_blank" rel="noreferrer">
               <EditOutlined title="Edit Tour" />
             </a>
-            {(tour.status === 0 || tour.status === 2) &&  (
-                <Popconfirm
-                  title="Are you sure to delete this Tour?"
-                  onConfirm={() => handleDeleteTour(tour.uid, tour.id)}
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <DeleteOutlined title="Delete Tour" style={{color:'#f12f60'}}/>
-                </Popconfirm>
-              )          
-            }              
+            <a href="#">
+              <CalendarOutlined title="Setting schedule" onClick={showModal} />
+            </a>
+
+            {(tour.status === 0 || tour.status === 2) && (
+              <Popconfirm
+                title="Are you sure to delete this Tour?"
+                onConfirm={() => handleDeleteTour(tour.uid, tour.id)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <DeleteOutlined title="Delete Tour" style={{ color: '#f12f60' }} />
+              </Popconfirm>
+            )}
           </Space>
         );
       },
-    }
+    },
   ];
-  
+
   return (
     <Wrapper>
       {data.length == 0 && <div>You don’t have any tours.</div>}
-      
       <Button
         icon={<PlusOutlined />}
         type="primary"
-        size="large"        
+        size="large"
         onClick={() => navigate('/app/createTour')}
       >
-          Create New Tour
+        Create New Tour
       </Button>
-      <br/>
-
+      &nbsp;&nbsp;&nbsp;
+      <Button
+        icon={<ScheduleOutlined />}
+        type="primary"
+        size="large"
+        onClick={() => navigate('/app/createTour')}
+      >
+        Confirm Schedule
+      </Button>
+      <br />
       <ListWrapper>
         <Divider orientation="left">Tour List</Divider>
         <Table
@@ -175,11 +207,16 @@ function TourList() {
           loading={loading}
           rowKey="id"
           bordered
-          //title={() => 'Header'}
-          //footer={() => 'Footer'}
+          // title={() => 'Header'}
+          // footer={() => 'Footer'}
           pagination={{ pageSize: 40 }}
         />
       </ListWrapper>
+      <div>
+        <AddEvent show={show} handleClose={hideModal} uid={user.uid} data={data}>
+          Modal
+        </AddEvent>
+      </div>
     </Wrapper>
   );
 }

@@ -181,7 +181,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
         await API.createTourFee({
           tourId: tourCreationInfo.id,
           day: tourDayFee.day + 1,
-          transport: _.chain(tourDayFee.transportations)
+          transport: _.flow(tourDayFee.transportations)
             .filter(
               trans =>
                 trans.from &&
@@ -198,7 +198,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
               unit: `${trans.unit}`,
             }))
             .value(),
-          meal: _.chain(tourDayFee.meals)
+          meal: _.flow(tourDayFee.meals)
             .filter(
               meal =>
                 meal.description && meal.type && !_.isNil(meal.quantity) && !_.isNil(meal.unit)
@@ -210,7 +210,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
               unit: `${meal.unit}`,
             }))
             .value(),
-          other: _.chain(tourDayFee.others)
+          other: _.flow(tourDayFee.others)
             .filter(other => other.description && !_.isNil(other.quantity) && !_.isNil(other.unit))
             .map(other => ({
               name: other.description,
