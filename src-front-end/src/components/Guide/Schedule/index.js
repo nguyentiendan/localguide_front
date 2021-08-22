@@ -13,6 +13,7 @@ const Schedule = (uid) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const calendarRef = React.createRef()
 
   const [currentEvents ,setCurrentEvents] = useState([])
 
@@ -23,6 +24,7 @@ const Schedule = (uid) => {
       {
         title: "Atlanta Monster",
         start: new Date("2021-08-10").toISOString().replace(/T.*$/, ''),
+        color: 'green',
         uid: "99999998"
       },
       {
@@ -44,7 +46,7 @@ const Schedule = (uid) => {
     let calendarApi = selectInfo.view.calendar
     
     calendarApi.unselect() // clear date selection
-    console.log(tour)
+    console.log(calendarApi)
     if (title) {
       calendarApi.addEvent({
         id: createEventId(),
@@ -90,39 +92,77 @@ const Schedule = (uid) => {
     setTour(value)
   }
 
-  const onAddEvent = () => {    
+  const onAddEvent = () => {        
+    //console.log(tour)
+    //console.log(startDay)
+
+    let arr = {
+        title: tour,
+        start: new Date(startDay).toISOString().replace(/T.*$/, ''),
+        uid: "99999998"
+    }
     
-    console.log(tour)
-    console.log(startDay)
+    calendarEvents.push(arr)
+    setCalendarEvents(calendarEvents)
     
+    const api = calendarRef.current.getApi()
+    let calendarApi = api.view.calendar
+    
+    calendarApi.unselect() // clear date selection
+
+    calendarApi.addEvent({
+      id: createEventId(),
+      tour,
+      start: startStr,
+      end: startStr,
+      //allDay: e.allDay
+    })
+
+    console.log(calendarApi)
+
+    /*let calendarApi = e.view.calendar
+    calendarApi.addEvent({
+      id: createEventId(),
+      tour,
+      start: e.startStr,
+      end: e.endStr,
+      allDay: e.allDay
+    })*/
+
     setShowModal(false)
       
   };
   
-  
+  console.log(calendarEvents)
 
   return (
     <div style={{justifyContent:'center' }}>       
       <FullCalendar
+        ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         headerToolbar={{
           left: 'prev,next today',
           center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+          right: 'dayGridMonth,timeGridWeek,timeGridDay',          
         }}
         initialView='dayGridMonth'
         editable={true}
         selectable={true}
         selectMirror={true}
         dayMaxEvents={true}
-        weekends={true}
+        weekends={true}        
         //initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed      
         events={calendarEvents}
-        select={addTourModal}
-        //select={handleDateSelect}
+        //select={addTourModal}
+        select={handleDateSelect}
         //eventContent={renderEventContent} // custom render function
         eventClick={handleEventClick}
         eventsSet={handleEvents} // called after events are initialized/added/changed/removed    
+        eventAdd={function(e) {
+          console.log("EVENT ADD")
+          console.log(e)
+        }}
+        
         /* you can update a remote database when these fire:
         eventAdd={function(){}}
         eventChange={function(){}}

@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { navigate } from 'gatsby';
 import { Tooltip, Divider, Table, Space, Tag, Button, message, Popconfirm } from 'antd';
-import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined, EditOutlined, CalendarOutlined, ScheduleOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 import moment from 'moment';
 import * as API from '../../../apis';
 import { getUserProfile } from '../../../utils/auth';
 import colors from '../../../assets/styles/colors';
+import AddEvent from './addEventModal'
 
 const Wrapper = styled.div``;
 const FilterWrapper = styled.div`
@@ -28,6 +29,7 @@ function TourList() {
   const [loading, setLoading] = useState(false);
   const [dataFilter, setDataFilter] = useState(null);
   const [data, setData] = useState([]);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -52,6 +54,14 @@ function TourList() {
     setLoading(false);    
   };
   
+  const showModal = () => {
+    setShow(true);
+  };
+  
+  const hideModal = () => {
+    setShow(false);
+  };
+
   const STATUS = {
     APPROVED: 1,
     WAITING_FOR_APPROVAL: 2,
@@ -81,7 +91,7 @@ function TourList() {
         <div>
           <TourTitle>
             <a href={`/app/guideTourReview?uid=${tour.uid}&id=${tour.id}`} target="_blank">{name}</a>          
-          </TourTitle>
+          </TourTitle>      
         </div>
       ),
     },
@@ -135,7 +145,11 @@ function TourList() {
           <Space size="middle">
             <a href={`/app/editTour?q=${tour.id}`} target="_blank">
               <EditOutlined title="Edit Tour" />
+            </a>            
+            <a href="#">
+              <CalendarOutlined title="Setting schedule" onClick={showModal} />
             </a>
+            
             {(tour.status === 0 || tour.status === 2) &&  (
                 <Popconfirm
                   title="Are you sure to delete this Tour?"
@@ -156,7 +170,6 @@ function TourList() {
   return (
     <Wrapper>
       {data.length == 0 && <div>You don’t have any tours.</div>}
-      
       <Button
         icon={<PlusOutlined />}
         type="primary"
@@ -165,8 +178,17 @@ function TourList() {
       >
           Create New Tour
       </Button>
-      <br/>
+      &nbsp;&nbsp;&nbsp;
+      <Button
+        icon={<ScheduleOutlined />}
+        type="primary"
+        size="large"        
+        onClick={() => navigate('/app/createTour')}
+      >
+          Confirm Schedule
+      </Button>
 
+      <br/>
       <ListWrapper>
         <Divider orientation="left">Tour List</Divider>
         <Table
@@ -180,6 +202,13 @@ function TourList() {
           pagination={{ pageSize: 40 }}
         />
       </ListWrapper>
+      <div>
+        <AddEvent show={show} handleClose={hideModal} uid={user.uid} data={data}>
+          Modal
+        </AddEvent>
+      </div>
+      
+
     </Wrapper>
   );
 }
