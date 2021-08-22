@@ -17,6 +17,7 @@ import GuideTourList from '../components/Guide/GuideTourList';
 import GuideProfile from '../components/Guide/GuideProfile';
 import GuideTourReview from '../components/Guide/GuideTourReview';
 import ReviewProfile from '../components/Guide/ReviewProfile';
+import GuideSchedule from '../components/Guide/GuideSchedule';
 
 //User
 import UserProfile from '../components/User/Profile';
@@ -51,6 +52,7 @@ const App = () => (
     <PrivateRoute path="/guideProfile" component={GuideProfile} />
     <PrivateRoute path="/reviewProfile" component={ReviewProfile} />
     <PrivateRoute path="/guideTourReview" component={GuideTourReview} /> 
+    <PrivateRoute path="/guideSchedule" component={GuideSchedule} />
 
     {/* User */}
     <PrivateRoute path="/profile" component={UserProfile} />

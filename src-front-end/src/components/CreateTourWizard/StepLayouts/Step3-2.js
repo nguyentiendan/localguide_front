@@ -40,7 +40,7 @@ const transformTourSchedule = ({ day, pickUpAt, finishAt, schedule }) => {
         finishLocation: finishAt.place,
       },
     ],
-    schedule: _.chain(schedule)
+    schedule: _.flow(schedule)
       .filter(({ time, place }) => time && time[0] && time[1] && place)
       .map(({ time, place }) => ({
         from: time && time[0] && moment(time[0]).format('HH:mm'),
