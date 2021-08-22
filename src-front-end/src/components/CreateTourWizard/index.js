@@ -207,7 +207,7 @@ const CreateTourWizard = ({ location }) => {
     if (loading) {
       return;
     }
-    await navigate('app/guideTourList/');
+    await navigate('/app/guideTourList');
   }, [loading]);
 
   const onUpdate = useCallback(
