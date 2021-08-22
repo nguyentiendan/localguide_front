@@ -49,7 +49,7 @@ function ReviewSection() {
   const classes = useStyles();
 
   useEffect(() => {
-    /*const fetchAllTour = async () => {
+    /* const fetchAllTour = async () => {
       try {
         setLoading(true);
         const response = await API.getAllTours();
@@ -64,7 +64,7 @@ function ReviewSection() {
     const interval = setInterval(() => fetchAllTour(), 100000);
     return () => {
       clearInterval(interval);
-    };*/
+    }; */
   }, []);
 
   return (
@@ -78,25 +78,28 @@ function ReviewSection() {
                 <ListContainer>
                   <ReviewListItem
                     key={1}
+                    title="International Activities Of The Frankfurt Book"
                     content="A solemn declaration usually made orally by a witness under oath in response to interrogation by a lawyer or authorized public official"
                     user="User 1"
-                    date="2021/04/01"
+                    date="Dec 06, 18"
                     avatar={face1}
                     className="comment"
                   />
                   <ReviewListItem
                     key={2}
+                    title="Reading Has A Signficant Info Number Of Benefits"
                     content="The hobble decision has been coming up during testimony from some of the state's key witnesses, such as Arradondo"
                     user="User 2"
-                    date="2021/04/23"
+                    date="Mar 08,18"
                     avatar={face2}
                     className="comment"
                   />
                   <ReviewListItem
                     key={3}
+                    title="The London Book Fair Is To Be Packed With Wxcinting"
                     content="Something that someone says especially in a court of law while formally promising to tell the truth"
                     user="User 3"
-                    date="2021/04/24"
+                    date="Nov 11,18"
                     avatar={face3}
                     className="comment"
                   />

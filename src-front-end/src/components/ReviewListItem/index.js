@@ -13,6 +13,9 @@ const Wrapper = styled.div`
   align-items: flex-start;
   position: relative;
   width: 100%;
+  padding: 25px;
+  background-color: #fff;
+  box-shadow: 0px 8px 16px -2px rgba(10, 10, 10, 0.1), 0px 0px 0px 1px rgba(10, 10, 10, 0.02);
 `;
 
 const ContentWrapper = styled.div``;
@@ -41,20 +44,21 @@ const Delimiter = styled.div`
 
 const Content = styled.div``;
 
-//fix moment constructor error. moment construction falls back to js Date()
+// fix moment constructor error. moment construction falls back to js Date()
 moment.createFromInputFallback = function(config) {
   // unreliable string magic, or
   config._d = new Date(config._i);
 };
 
-const ReviewListItem = ({ className, user, avatar, date, content }) => (
+const ReviewListItem = ({ className, title, avatar, date, content }) => (
   <Wrapper className={className}>
-    <AvatarWrapper src={avatar} icon={<UserOutlined />} size="large" style={{width:90,height:35}} />    
+    {/* }<AvatarWrapper src={avatar} icon={<UserOutlined />} size="large" style={{width:90,height:35}} />{ */}
     <ContentWrapper>
-      <Title>{user}</Title>
-      <SubTitle>{moment(date).fromNow()}</SubTitle>
+      <Title>{title}</Title>
+      {/* }<SubTitle>{moment(date).fromNow()}</SubTitle>{ */}
       <Content>{content}</Content>
-      {/*<Delimiter className="delimiter" />*/}
+      {<Delimiter className="delimiter" />}
+      {date}
     </ContentWrapper>
   </Wrapper>
 );
