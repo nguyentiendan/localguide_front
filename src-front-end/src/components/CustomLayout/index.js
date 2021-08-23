@@ -7,23 +7,24 @@ import HeaderLinks from '../Header/HeaderLinks.js';
 import 'antd/dist/antd.less';
 
 const CustomLayout = ({ children, noLogin, scrollHeight, textColor }) => {
-
   return (
     <AuthProvider>
       <GlobalStyle />
-      { !noLogin && <Header
-        link="/"
-        absolute
-        color="transparent"
-        textColor={textColor}
-        brand="Localguide Pal"
-        rightLinks={ <HeaderLinks />}
-        fixed
-        changeColorOnScroll={{
-          height: scrollHeight,
-          color: 'white',
-        }}
-      /> }
+      {!noLogin && (
+        <Header
+          link="/"
+          absolute
+          color="transparent"
+          textColor={textColor}
+          brand="Localguide Pal"
+          rightLinks={<HeaderLinks />}
+          fixed
+          changeColorOnScroll={{
+            height: scrollHeight,
+            color: 'white',
+          }}
+        />
+      )}
       {children}
     </AuthProvider>
   );

@@ -14,11 +14,10 @@ import CardFooter from '../components/Card/CardFooter.js';
 import Footer from '../components/Footer/Footer.js';
 import styles from '../assets/jss/material-kit-react/views/loginPage.js';
 
-
 const useStyles = makeStyles(styles);
 const Text = styled.div`
   color: #5e5c60;
-  padding-bottom : 20px;
+  padding-bottom: 20px;
 `;
 
 const ErrorMessage = styled.div`
@@ -34,34 +33,35 @@ function ForgotPassPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  
   const onFinish = async values => {
     if (loading) {
       return;
     }
-    console.log(values)
+    console.log(values);
     try {
       setLoading(true);
       setErrorMessage('');
       const { message, status } = await API.forgotPassword(values.email);
       setLoading(false);
-      if (status === true) {          
+      if (status === true) {
         setErrorMessage('');
         Modal.info({
           title: 'Notice',
           content: (
             <div>
-              <p>We have send a new password.<br/>
-                Please check your email</p>                
+              <p>
+                We have send a new password.
+                <br />
+                Please check your email
+              </p>
             </div>
-          ), 
-          closable:false,
-          keyboard:false,      
-          centered:true,
-          okText: 'Close',      
+          ),
+          closable: false,
+          keyboard: false,
+          centered: true,
+          okText: 'Close',
           onOk() {},
         });
-        
       } else {
         setLoading(false);
         setErrorMessage(message);
@@ -78,40 +78,39 @@ function ForgotPassPage() {
         <div className={classes.container}>
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={4}>
-              <Card >
+              <Card>
                 <CardHeader className={classes.cardHeader}>
-                  <h2 style={{fontWeight:'bold', color:'#f12f60'}}><a href="/">LOCALGUIDEPAL</a></h2>
+                  <h2 style={{ fontWeight: 'bold', color: '#f12f60' }}>
+                    <a href="/">LOCALGUIDEPAL</a>
+                  </h2>
                 </CardHeader>
                 <CardBody>
                   <Text>
                     You forgot your password? Here you can easily retrieve a new password.
                   </Text>
                   <ErrorMessage>{errorMessage}</ErrorMessage>
-                  <Form
-                    name="forgotpass"
-                    className="forgotpass-form"
-                    onFinish={onFinish}
-                  >
+                  <Form name="forgotpass" className="forgotpass-form" onFinish={onFinish}>
                     <Form.Item
                       name="email"
                       rules={[
                         { required: true, message: 'Please input your email!' },
-                        { type: 'email', message: 'Email is not valid!'},
+                        { type: 'email', message: 'Email is not valid!' },
                       ]}
                     >
                       <Input size="large" prefix={<MailOutlined />} placeholder="Your email" />
                     </Form.Item>
-                    
+
                     <Form.Item>
-                      <Button 
-                        size="large" 
-                        type="primary" 
+                      <Button
+                        size="large"
+                        type="primary"
                         htmlType="submit"
-                        style={{width:"100%"}}
+                        style={{ width: '100%' }}
                       >
                         Reset password
                       </Button>
-                      <br/><br/>
+                      <br />
+                      <br />
                       Or <a href="/login">Login</a>
                     </Form.Item>
                   </Form>

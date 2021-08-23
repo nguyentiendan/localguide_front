@@ -12,7 +12,7 @@ import { ENTER } from '../constants/keys';
 import SEO from '../components/SEO';
 import Input from '../components/Input';
 import Layout from '../components/CustomLayout';
-//import Button from '../components/CustomButtons/Button.js';
+// import Button from '../components/CustomButtons/Button.js';
 import GridContainer from '../components/Grid/GridContainer.js';
 import GridItem from '../components/Grid/GridItem.js';
 import Card from '../components/Card/Card.js';
@@ -189,7 +189,13 @@ function LoginPage() {
                   </Field>
 
                   <Actions>
-                    <Button color="rose" loading={loading} disabled={loading} onClick={handleLogin} type="primary">
+                    <Button
+                      color="rose"
+                      loading={loading}
+                      disabled={loading}
+                      onClick={handleLogin}
+                      type="primary"
+                    >
                       Login
                     </Button>
                     <Button href="/signup/" color="transparent" type="link">

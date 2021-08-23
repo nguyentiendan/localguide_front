@@ -3,8 +3,17 @@ import React, { useState, useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
-import {FaSuitcase, FaMoneyCheckAlt, FaRegCalendarAlt, FaShare, FaTwitter, FaBookmark, FaLanguage, FaUsers,} from 'react-icons/fa';
-import { CheckCircleOutlined, AppstoreAddOutlined,CommentOutlined, } from '@ant-design/icons';
+import {
+  FaSuitcase,
+  FaMoneyCheckAlt,
+  FaRegCalendarAlt,
+  FaShare,
+  FaTwitter,
+  FaBookmark,
+  FaLanguage,
+  FaUsers,
+} from 'react-icons/fa';
+import { CheckCircleOutlined, AppstoreAddOutlined, CommentOutlined } from '@ant-design/icons';
 import { Drawer, Input, Button, Spin, Modal, message } from 'antd';
 import _ from 'lodash';
 import { FormatQuote } from '@material-ui/icons';
@@ -23,7 +32,7 @@ import SectionHeader from '../../SectionHeader';
 import CommentListItem from '../../CommentListItem';
 import breakpoints from '../../../assets/styles/breakpoints';
 import NavItem from '../../Layout/NavItem';
-//import Button from '../../CustomButtons/Button';
+// import Button from '../../CustomButtons/Button';
 import { bigScreenCss, smallScreenCss } from '../../../assets/styles/responsive-css';
 import TourGuideListItem from '../../TourGuideListItem';
 import { safeFuncCall } from '../../../utils/commons';
@@ -33,7 +42,7 @@ import 'react-bnb-gallery/dist/style.css';
 import { getUserProfile } from '../../../utils/auth';
 import { Fab, Action } from 'react-tiny-fab';
 import 'react-tiny-fab/dist/styles.css';
-import ReviewCommentListItem from "../../CommentListItem/ReviewCommentListItem";
+import ReviewCommentListItem from '../../CommentListItem/ReviewCommentListItem';
 import { navigate } from 'gatsby';
 
 const Title = styled.h1`
@@ -310,7 +319,7 @@ const BookButton = styled(Button)`
   flex: 0.65;
   width: 100%;
   justify-content: center;
-  
+
   ${smallScreenCss(`
     margin-top: 15px;
   `)}
@@ -377,7 +386,7 @@ function AdminTourReview({ uid, id }) {
   const classes = useStyles();
   const user = getUserProfile();
   const [tourPhotos, setTourPhotos] = useState([]);
-  //const [isApprove, setIsApprove] = useState(false);
+  // const [isApprove, setIsApprove] = useState(false);
   const [tourDetails, setTourDetails] = useState({});
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -393,7 +402,7 @@ function AdminTourReview({ uid, id }) {
     query.id = id;
     return query;
   }, [uid, id]);
-  
+
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
@@ -448,37 +457,37 @@ function AdminTourReview({ uid, id }) {
         });
         setTourDescriptionDays(descDays);
       } catch (error) {
-          console.error(error);
+        console.error(error);
       } finally {
-          setLoading(false);
+        setLoading(false);
       }
     };
     fetchTourDetails();
   }, [tourQuery]);
-  
-  const handleGetAllReply = async (commentId) => {    
+
+  const handleGetAllReply = async commentId => {
     setLoading(true);
     const res = await API.handleGetAllReply({ id: commentId });
     setReplyComment(res.data);
     setLoading(false);
   };
-  
-  const handleCreateComment = async (uid, id) => {    
-    if (content) {            
+
+  const handleCreateComment = async (uid, id) => {
+    if (content) {
       const { data } = await API.handleCreateComment({
-        uid,         
-        reviewId:parseInt(id),
-        type:'tour',
-        content
+        uid,
+        reviewId: parseInt(id),
+        type: 'tour',
+        content,
       });
-      const newComment = {...data[0] };
+      const newComment = { ...data[0] };
       setComments([...comments, newComment]);
       setContent('');
     }
   };
 
-  const handleCreateReply = async (e, commentId,uid) => {    
-    if ( (e.target.value).trim() != "" ) {
+  const handleCreateReply = async (e, commentId, uid) => {
+    if (e.target.value.trim() != '') {
       const { data } = await API.handleCreateReply2({
         uid,
         commentId,
@@ -488,40 +497,40 @@ function AdminTourReview({ uid, id }) {
       setReplyComment([...replyComment, newReply]);
     }
   };
-  
-  const handleDeleteComment = async (id)  => {
+
+  const handleDeleteComment = async id => {
     const newData = _.remove(comments, item => {
       return item.id !== id;
     });
-    setComments(newData);    
-    let res = await API.handleDeleteComment(id);
-    if (res.status) { 
-      message.success("Delete success")
+    setComments(newData);
+    const res = await API.handleDeleteComment(id);
+    if (res.status) {
+      message.success('Delete success');
     }
   };
 
-  const handleDeleteReply = async (replyId)  => {    
+  const handleDeleteReply = async replyId => {
     const newData = _.remove(replyComment, item => {
       return item.id !== replyId;
     });
     setReplyComment(newData);
-    let res = await API.handleDeleteReply2( replyId );    
-    if (res.status) { 
-      message.success("Delete success")
+    const res = await API.handleDeleteReply2(replyId);
+    if (res.status) {
+      message.success('Delete success');
     }
   };
 
   const showComment = () => {
     setVisible(true);
-    const fetchAllComment = async () => {      
-      setLoading(true);      
-      const res = await API.GetAllReviewComment({id, type:'tour',}); //id : account id
-      setComments(res.data)
+    const fetchAllComment = async () => {
+      setLoading(true);
+      const res = await API.GetAllReviewComment({ id, type: 'tour' }); // id : account id
+      setComments(res.data);
       setLoading(false);
-    }
-    fetchAllComment();    
+    };
+    fetchAllComment();
   };
-  
+
   const onClose = () => {
     setVisible(false);
   };
@@ -535,30 +544,29 @@ function AdminTourReview({ uid, id }) {
           <p>Are you sure</p>
         </div>
       ),
-      closable:true,
-      centered:true,
-      okText: 'OK',      
-      onOk() {           
+      closable: true,
+      centered: true,
+      okText: 'OK',
+      onOk() {
         handleApproveTour();
       },
-      onCancel() {        
-      },      
+      onCancel() {},
     });
-  }
+  };
 
   const handleApproveTour = async () => {
     setLoading(true);
-    const { status } = await API.handleAdminApproveTour({ uid, id, status:1 });
+    const { status } = await API.handleAdminApproveTour({ uid, id, status: 1 });
     if (status === true) {
-      message.success("Actived success");
-      navigate("app/adminTourList/");
+      message.success('Actived success');
+      navigate('app/adminTourList/');
     }
-    //setIsApprove(true);    
+    // setIsApprove(true);
     setLoading(false);
   };
 
   return (
-    <Layout scrollHeight={10} textColor="black">            
+    <Layout scrollHeight={10} textColor="black">
       <div className={classNames(classes.main, classes.mainRaised)} style={{ paddingTop: '70px' }}>
         <div className={classes.container}>
           <Spin spinning={loading}>
@@ -807,8 +815,13 @@ function AdminTourReview({ uid, id }) {
                         isActive
                       />
                     </PriceMenuWrapper>
-                    <BookButton type="primary" loading={loading} disabled={loading} style={{height:50}}>
-                      <span style={{fontSize:20, fontWeight:500}}>Book now</span>
+                    <BookButton
+                      type="primary"
+                      loading={loading}
+                      disabled={loading}
+                      style={{ height: 50 }}
+                    >
+                      <span style={{ fontSize: 20, fontWeight: 500 }}>Book now</span>
                     </BookButton>
                   </PriceWrapper>
                 </div>
@@ -947,25 +960,21 @@ function AdminTourReview({ uid, id }) {
               </GridContainer>
             )}
           </Spin>
-          <Fab      
-            mainButtonStyles={{ backgroundColor: '#f12f60',}}
-            icon={<AppstoreAddOutlined />}          
-            alwaysShowTitle={true}          
+          <Fab
+            mainButtonStyles={{ backgroundColor: '#f12f60' }}
+            icon={<AppstoreAddOutlined />}
+            alwaysShowTitle
           >
             {tourDetails.status == 2 && (
               <Action
-                style={{backgroundColor: '#F897AF',}}
+                style={{ backgroundColor: '#F897AF' }}
                 text="Approve"
-                onClick={() => confirmApproveTour()} 
+                onClick={() => confirmApproveTour()}
               >
                 <CheckCircleOutlined />
-              </Action>  
-            )}            
-            <Action
-              style={{backgroundColor: '#F897AF',}}
-              text="Comment"            
-              onClick={showComment}
-            >
+              </Action>
+            )}
+            <Action style={{ backgroundColor: '#F897AF' }} text="Comment" onClick={showComment}>
               <CommentOutlined />
             </Action>
           </Fab>
@@ -974,34 +983,32 @@ function AdminTourReview({ uid, id }) {
             width={350}
             closable={false}
             onClose={onClose}
-            visible={visible}          
-            bodyStyle={{paddingBottom: 80 }}
+            visible={visible}
+            bodyStyle={{ paddingBottom: 80 }}
             footer={
               <div
                 style={{
                   textAlign: 'left',
-                  //height:150,
+                  // height:150,
                 }}
-              > 
+              >
                 <TextArea
                   rows={4}
                   showCount
                   maxLength={300}
-                  placeholder="Please input comment"                
+                  placeholder="Please input comment"
                   value={content || ''}
-                  onChange={e => setContent((e.target.value).slice(0,300))}
+                  onChange={e => setContent(e.target.value.slice(0, 300))}
                   style={{ marginTop: 5 }}
                 />
-                <Button 
-                  onClick={onClose} 
-                  style={{ marginTop: 5, marginRight: 8 }}>
+                <Button onClick={onClose} style={{ marginTop: 5, marginRight: 8 }}>
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   type="primary"
-                  onClick={() => {                    
+                  onClick={() => {
                     handleCreateComment(user.uid, id);
-                  }}                
+                  }}
                 >
                   Comment
                 </Button>
@@ -1010,19 +1017,19 @@ function AdminTourReview({ uid, id }) {
           >
             <div>
               {comments.length > 0 && (
-                <Spin spinning={loading}>          
+                <Spin spinning={loading}>
                   <ReviewCommentListItem
                     comments={comments}
                     replyComment={replyComment}
                     handleGetAllReply={handleGetAllReply}
                     handleCreateReply={handleCreateReply}
                     handleDeleteComment={handleDeleteComment}
-                    handleDeleteReply={handleDeleteReply}              
-                    uid={user.uid}   //uid of user logining 
+                    handleDeleteReply={handleDeleteReply}
+                    uid={user.uid} // uid of user logining
                     className="comment"
-                  />         
+                  />
                 </Spin>
-              )}      
+              )}
             </div>
           </Drawer>
         </div>

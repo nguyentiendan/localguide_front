@@ -41,7 +41,7 @@ const Delimiter = styled.div`
 
 const Content = styled.div``;
 
-//fix moment constructor error. moment construction falls back to js Date()
+// fix moment constructor error. moment construction falls back to js Date()
 moment.createFromInputFallback = function(config) {
   // unreliable string magic, or
   config._d = new Date(config._i);
@@ -49,12 +49,17 @@ moment.createFromInputFallback = function(config) {
 
 const ReviewListItem = ({ className, user, avatar, date, content }) => (
   <Wrapper className={className}>
-    <AvatarWrapper src={avatar} icon={<UserOutlined />} size="large" style={{width:90,height:35}} />    
+    <AvatarWrapper
+      src={avatar}
+      icon={<UserOutlined />}
+      size="large"
+      style={{ width: 90, height: 35 }}
+    />
     <ContentWrapper>
       <Title>{user}</Title>
       <SubTitle>{moment(date).fromNow()}</SubTitle>
       <Content>{content}</Content>
-      {/*<Delimiter className="delimiter" />*/}
+      {/* <Delimiter className="delimiter" /> */}
     </ContentWrapper>
   </Wrapper>
 );

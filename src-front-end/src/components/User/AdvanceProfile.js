@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
 import { Form, Input, Button, Select, Spin, message } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
+import SunEditor, { buttonList } from 'suneditor-react';
 import * as API from '../../apis';
 import TagInterests from '../HandleTag/Interests';
-import SunEditor,{buttonList} from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import styles from '../../assets/styles/profilePage.js';
-import NoticeModal from "./Modal/NoticeModal"; 
+import NoticeModal from './Modal/NoticeModal';
 
 const useStyles = makeStyles(styles);
 const FormWrapper = styled(Form)`
@@ -24,18 +24,22 @@ const FormWrapper = styled(Form)`
 
 const formItemLayout = {
   labelCol: {
-    xs: {  //mobile
+    xs: {
+      // mobile
       span: 24,
     },
-    sm: {  //pc
+    sm: {
+      // pc
       span: 6, // label size
     },
   },
   wrapperCol: {
-    xs: {  //mobile
+    xs: {
+      // mobile
       span: 24,
     },
-    sm: {  //pc
+    sm: {
+      // pc
       span: 12, // input box size
     },
   },
@@ -43,11 +47,13 @@ const formItemLayout = {
 
 const tailFormItemLayout = {
   wrapperCol: {
-    xs: { //mobile
+    xs: {
+      // mobile
       span: 24,
       offset: 5,
     },
-    sm: { //pc
+    sm: {
+      // pc
       span: 24,
       offset: 10,
     },
@@ -56,13 +62,13 @@ const tailFormItemLayout = {
 
 const { TextArea } = Input;
 
-function AdvanceProfile({uid, role}) { 
+function AdvanceProfile({ uid, role }) {
   const classes = useStyles();
   const [form] = Form.useForm();
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [experience,setExperience] = useState();
+  const [experience, setExperience] = useState();
 
   const [defaultTags, setDefaultTags] = useState({
     interest: [],
@@ -82,20 +88,20 @@ function AdvanceProfile({uid, role}) {
   const fetchUserProfile = useCallback(async () => {
     setLoading(true);
     const res = await API.getUserProfile(uid);
-    
-    //show modal notice user become a guide
-    if(res.data.role != role) {
-      setVisible(true)
+
+    // show modal notice user become a guide
+    if (res.data.role != role) {
+      setVisible(true);
     }
 
-    setInterest({ ...interest,tags: res.data?.interest ? res.data?.interest?.split(';') : [] });    
+    setInterest({ ...interest, tags: res.data?.interest ? res.data?.interest?.split(';') : [] });
     setExtras({ ...extras, tags: res.data?.extras ? res.data?.extras?.split(';') : [] });
     setLanguage({ ...language, tags: res.data?.language ? res.data?.language?.split(';') : [] });
-    
+
     setProfile(res.data);
     setLoading(false);
-  }, [setLoading, setProfile,]);
-  //}, [API.getUserProfile,  setLoading, setProfile,]);
+  }, [setLoading, setProfile]);
+  // }, [API.getUserProfile,  setLoading, setProfile,]);
 
   useEffect(() => {
     fetchUserProfile();
@@ -122,46 +128,53 @@ function AdvanceProfile({uid, role}) {
       }
     })();
   }, [API.getAllInterest, API.getAllExtra, API.getAllLang, setDefaultTags]);
-  
-  const onFinishAdvance = async values => {        
+
+  const onFinishAdvance = async values => {
     setLoading(true);
     const key = 'updatable';
 
     if (loading) {
       return;
     }
-    try {      
+    try {
       await API.updateAdvance({
         ...values,
         uid,
-        experience: experience,
+        experience,
         interest: interest.tags?.join(';'),
         extras: extras.tags?.join(';'),
         language: language.tags?.join(';'),
-      });       
-      message.success({ 
+      });
+      message.success({
         content: 'You have successfully updated your advance profile!',
-        key, duration: 2,
+        key,
+        duration: 2,
         className: 'custom-class',
         style: {
           marginTop: '20vh',
         },
-      });      
+      });
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
     setLoading(false);
   };
 
   const editorRef = useRef();
-  
+
   return (
     <div>
-      <Spin spinning={loading}>    
-        <FormWrapper form={form}  {...formItemLayout} name="advance" onFinish={onFinishAdvance} scrollToFirstError>
-          <Form.Item style={{ justifyContent: 'center',  paddingTop: '20px',paddingBottom: '0px'  }}>
+      <Spin spinning={loading}>
+        <FormWrapper
+          form={form}
+          {...formItemLayout}
+          name="advance"
+          onFinish={onFinishAdvance}
+          scrollToFirstError
+        >
+          <Form.Item style={{ justifyContent: 'center', paddingTop: '20px', paddingBottom: '0px' }}>
             <h2>{profile.fullname}'s Advance Profile</h2>
-          </Form.Item>              
+          </Form.Item>
 
           <Form.Item
             name="intro"
@@ -177,68 +190,65 @@ function AdvanceProfile({uid, role}) {
               },
             ]}
             key={profile.intro === '' ? 'intro' : profile.intro}
-            initialValue={profile.intro}            
+            initialValue={profile.intro}
           >
-            <TextArea 
-              size="large" 
+            <TextArea
+              size="large"
               showCount
               maxLength={200}
               allowClear
               placeholder="Please provide a short self intro in 3 lines to express your unique background, offerings, fields or interest, etc."
             />
           </Form.Item>
-                    
-          <Form.Item 
-            name="education" 
-            label="Education"            
-            rules={[            
+
+          <Form.Item
+            name="education"
+            label="Education"
+            rules={[
               {
                 required: true,
                 message: 'Please select your education!',
               },
             ]}
             key={profile.education === '' ? 'education' : profile.education}
-            initialValue={profile.education}            
-          >          
+            initialValue={profile.education}
+          >
             <Select
-              size="large" 
+              size="large"
               placeholder="Select education"
-              style={{ width: '200px' }}              
+              style={{ width: '200px' }}
               onChange={value => {
                 form.setFieldsValue({ education: value });
               }}
               allowClear
             >
-              <Select.Option value='High School'>High School</Select.Option>
-              <Select.Option value='College'>College</Select.Option>
-              <Select.Option value='University'>University</Select.Option>
-              <Select.Option value='MBA'>MBA</Select.Option>
-              <Select.Option value='Other'>Other</Select.Option>
+              <Select.Option value="High School">High School</Select.Option>
+              <Select.Option value="College">College</Select.Option>
+              <Select.Option value="University">University</Select.Option>
+              <Select.Option value="MBA">MBA</Select.Option>
+              <Select.Option value="Other">Other</Select.Option>
             </Select>
           </Form.Item>
 
           <Form.Item
             name="certification"
-            label="Certification"            
+            label="Certification"
             key={profile.certification === '' ? 'certification' : profile.certification}
             initialValue={profile.certification}
           >
-            <Input 
-              size="large"  
-              allowClear
-            />
+            <Input size="large" allowClear />
           </Form.Item>
 
           <Form.Item
             name="language"
-            label="Language"          
+            label="Language"
             key={profile.language === '' ? 'language' : profile.language}
             initialValue={profile.language}
           >
             <TagInterests
               createInfo={language}
               setCreateInfo={setLanguage}
-              defaultTags={defaultTags.language}                            
+              defaultTags={defaultTags.language}
             />
           </Form.Item>
 
@@ -266,7 +276,7 @@ function AdvanceProfile({uid, role}) {
               setCreateInfo={setExtras}
               defaultTags={defaultTags.extras}
             />
-          </Form.Item>  
+          </Form.Item>
 
           <Form.Item
             name="experience"
@@ -275,7 +285,7 @@ function AdvanceProfile({uid, role}) {
             initialValue={profile.experience}
           >
             <div>
-              <SunEditor 
+              <SunEditor
                 ref={editorRef}
                 setContents={profile.experience}
                 lang="en"
@@ -283,64 +293,61 @@ function AdvanceProfile({uid, role}) {
                 showToolbar
                 enableToolbar
                 height="200"
-                width="100%" 
-                setDefaultStyle="font-family: arial; font-size: 13px;" 
+                width="100%"
+                setDefaultStyle="font-family: arial; font-size: 13px;"
                 setOptions={{
                   height: 200,
-                  //buttonList: buttonList.formatting,
+                  // buttonList: buttonList.formatting,
                   buttonList: [
                     [
                       'undo',
                       'redo',
-                      //'font',
+                      // 'font',
                       'fontSize',
-                      //'formatBlock',
-                      //'blockquote',
+                      // 'formatBlock',
+                      // 'blockquote',
                       'bold',
                       'underline',
                       'italic',
-                      //'strike',
-                      //'subscript',
-                      //'superscript',
-                      //'fontColor',
-                      //'hiliteColor',
-                      //'textStyle',
+                      // 'strike',
+                      // 'subscript',
+                      // 'superscript',
+                      // 'fontColor',
+                      // 'hiliteColor',
+                      // 'textStyle',
                       'removeFormat',
                       'outdent',
                       'indent',
                       'align',
-                      //'horizontalRule',
-                      //'list',
-                      //'lineHeight',
+                      // 'horizontalRule',
+                      // 'list',
+                      // 'lineHeight',
                       'link',
-                      //'image',
-                      //'video',
-                      //'showBlocks',
-                      //'codeView',
-                      //'preview',
-                      //'fullScreen',
+                      // 'image',
+                      // 'video',
+                      // 'showBlocks',
+                      // 'codeView',
+                      // 'preview',
+                      // 'fullScreen',
                     ],
                   ],
                 }}
                 onChange={value => {
-                  setExperience(value)
-                }}              
-              />              
+                  setExperience(value);
+                }}
+              />
             </div>
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
-            <Button 
-              size="medium" 
-              type="primary"
-              htmlType="submit"                
-            >
-              Update Advance Profile<RightOutlined/>
-            </Button>                          
-          </Form.Item>        
+            <Button size="medium" type="primary" htmlType="submit">
+              Update Advance Profile
+              <RightOutlined />
+            </Button>
+          </Form.Item>
         </FormWrapper>
       </Spin>
-      <NoticeModal visible={visible}  />
-    </div>  
+      <NoticeModal visible={visible} />
+    </div>
   );
 }
 

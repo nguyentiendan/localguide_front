@@ -37,12 +37,12 @@ const profilePageStyle = {
   cardHeader: {
     width: 'auto',
     textAlign: 'center',
-    //marginLeft: '20px',
-    //marginRight: '20px',
+    // marginLeft: '20px',
+    // marginRight: '20px',
     marginTop: '5px',
-    backgroundColor: "#fafafa",
-    //padding: '10px 0',
-    //marginBottom: '5px',
+    backgroundColor: '#fafafa',
+    // padding: '10px 0',
+    // marginBottom: '5px',
   },
   title: {
     ...title,

@@ -49,7 +49,7 @@ function ReviewSection() {
   const classes = useStyles();
 
   useEffect(() => {
-    /*const fetchAllTour = async () => {
+    /* const fetchAllTour = async () => {
       try {
         setLoading(true);
         const response = await API.getAllTours();
@@ -64,7 +64,7 @@ function ReviewSection() {
     const interval = setInterval(() => fetchAllTour(), 100000);
     return () => {
       clearInterval(interval);
-    };*/
+    }; */
   }, []);
 
   return (
