@@ -52,7 +52,7 @@ export default function Parallax(props) {
         transform,
       }}
     >
-      <FadeBg />
+    <FadeBg />
       {children}
     </div>
   );
