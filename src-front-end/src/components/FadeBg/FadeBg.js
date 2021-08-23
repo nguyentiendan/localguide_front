@@ -1,9 +1,6 @@
 import React from 'react';
 import Carousel from 'react-material-ui-carousel';
-import { Box, makeStyles, Paper } from '@material-ui/core';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import { makeStyles } from '@material-ui/core';
 
 /*
 class FadeBg extends Component {
@@ -35,58 +32,56 @@ class FadeBg extends Component {
   };
 */
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
+    height: '90vh',
+    // maxHeight: "1000px",
+    maxHeight: '765px',
+    overflow: 'hidden',
+    position: 'relative',
+    backgroundPosition: 'center center',
     backgroundSize: 'cover',
-    // height: '380',
-    // width: '100%',
-    // background: 'black',
-    // color: 'white',
-    // textAlign: 'center',
-    // lineHeight: '300px',
-    // fontSize: '5rem',
+    margin: '0',
+    padding: '0',
+    border: '0',
+    display: 'flex',
+    alignItems: 'center',
   },
-  // table: {
-  //   minWidth: 650,
-  // },
+  carousel: {
+    width: '100%',
+  },
 }));
 
 function FadeBg(props) {
-  const images = [
-    {require('../../assets/img/bg2.jpg')},
-    {require('../../assets/img/bg3.jpg')},
-    {require('../../assets/img/bg4.jpg')},
-    {require('../../assets/img/bg7.jpg')},
-  ];
-
   const { children } = props;
   const classes = useStyles();
   return (
     <>
-      <Carousel animation="slide" navButtonsAlwaysVisible="true">
-        {images.map((img,) => (
-          <Box 
-            component="div" 
-            className={classes.root}
-            style={{
-              backgroundImage: `url(${img.src})`
-            }}
-          >
-            {children}
-          </Box>
-        ))}
-        {/* <div className={classes.root}>
-          <img src={require('../../assets/img/bg3.jpg')} alt="" />
+      <Carousel className={classes.carousel} animation="slide">
+        <div
+          className={classes.root}
+          style={{ backgroundImage: `url(${require('../../assets/img/bg2.jpg')})` }}
+        >
           {children}
         </div>
-        <div className={classes.root}>
-          <img src={require('../../assets/img/bg4.jpg')} alt="" />
+        <div
+          className={classes.root}
+          style={{ backgroundImage: `url(${require('../../assets/img/bg3.jpg')})` }}
+        >
           {children}
         </div>
-        <div className={classes.root}>
-          <img src={require('../../assets/img/bg7.jpg')} alt="" />
+        <div
+          className={classes.root}
+          style={{ backgroundImage: `url(${require('../../assets/img/bg4.jpg')})` }}
+        >
           {children}
-        </div> */}
+        </div>
+        <div
+          className={classes.root}
+          style={{ backgroundImage: `url(${require('../../assets/img/bg7.jpg')})` }}
+        >
+          {children}
+        </div>
       </Carousel>
     </>
   );
