@@ -7,6 +7,9 @@ import { UserOutlined } from '@ant-design/icons';
 
 import colors from '../../assets/styles/colors';
 
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import ForumIcon from '@material-ui/icons/Forum';
+
 const Wrapper = styled.div`
   display: flex;
   //flex-direction: row;
@@ -20,6 +23,7 @@ const Wrapper = styled.div`
   background-color: #fff;
   box-shadow: 0 0 1px 2px #eee inset;
   border-radius: 10px;
+  margin: 0 auto;
   margin-bottom: 2em;
 `;
 
@@ -53,13 +57,29 @@ const Content = styled.div`
     min-height: 110px;
 `;
 
+const Bottom = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
+const ReviewIcons = styled.div`
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 15px;
+`;
+
+const Num = styled.div`
+    width: 2em;
+`;
+
 // fix moment constructor error. moment construction falls back to js Date()
 moment.createFromInputFallback = function(config) {
   // unreliable string magic, or
   config._d = new Date(config._i);
 };
 
-const ReviewListItem = ({ className, title, avatar, date, content }) => (
+const ReviewListItem = ({ className, title, avatar, date, content,  favorite, forum}) => (
   <Wrapper className={className}>
     {/* }<AvatarWrapper src={avatar} icon={<UserOutlined />} size="large" style={{width:90,height:35}} />{ */}
     <ContentWrapper>
@@ -67,7 +87,15 @@ const ReviewListItem = ({ className, title, avatar, date, content }) => (
       {/* }<SubTitle>{moment(date).fromNow()}</SubTitle>{ */}
       <Content>{content}</Content>
       {<Delimiter className="delimiter" />}
-      {date}
+      <Bottom>
+        {date}
+        <ReviewIcons>
+          <FavoriteBorderIcon />
+          <Num>{favorite}</Num>
+          <ForumIcon />
+          <Num>{forum}</Num>
+        </ReviewIcons>
+      </Bottom>
     </ContentWrapper>
   </Wrapper>
 );

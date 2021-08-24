@@ -88,6 +88,8 @@ function ReviewSection() {
                     user="User 1"
                     date="Dec 06, 18"
                     avatar={face1}
+                    favorite={72}
+                    forum={23}
                     className="comment"
                   />
                   <ReviewListItem
@@ -97,6 +99,8 @@ function ReviewSection() {
                     user="User 2"
                     date="Mar 08,18"
                     avatar={face2}
+                    favorite={72}
+                    forum={23}
                     className="comment"
                   />
                   <ReviewListItem
@@ -106,6 +110,8 @@ function ReviewSection() {
                     user="User 3"
                     date="Nov 11,18"
                     avatar={face3}
+                    favorite={72}
+                    forum={23}
                     className="comment"
                   />
                 </ListContainer>
