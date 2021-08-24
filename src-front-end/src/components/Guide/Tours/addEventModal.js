@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-import {
-  Modal,
-  Form,
-  Select,
-  DatePicker,   
-} from 'antd';
+import { Modal, Form, Select, DatePicker } from 'antd';
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -16,20 +11,19 @@ import {
 } from '@ant-design/icons';
 import { CompactPicker } from 'react-color';
 import moment from 'moment';
-//import _ from 'lodash';
+// import _ from 'lodash';
 import * as API from '../../../apis';
-
 
 const AddEventModal = ({ show, handleClose, uid, data }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [tours, setTours] = useState([{ data }]);
-  
+
   const { RangePicker } = DatePicker;
 
   const dateFormat = 'YYYY/MM/DD';
   const monthFormat = 'YYYY/MM';
-  
+
   /* useEffect(() => {
     async function fetchAllTour() {
       setLoading(true);      
@@ -39,9 +33,9 @@ const AddEventModal = ({ show, handleClose, uid, data }) => {
     }
     fetchAllTour();
   }, []); */
-  const onAddEvent = (values) => {
-    console.log(values)
-  }
+  const onAddEvent = values => {
+    console.log(values);
+  };
 
   return (
     <div>
@@ -63,17 +57,15 @@ const AddEventModal = ({ show, handleClose, uid, data }) => {
         }}
         style={{ width: 300 }}
       >
-       
         <Form form={form} name="event" scrollToFirstError>
-          <span>Select tour to add event</span><br/>
+          <span>Select tour to add event</span>
+          <br />
           <Form.Item name="tour">
             <Select
               placeholder="Select tour"
               // onChange={onSelectTour}
-              allowClear            
-              rules={[
-                { required: true, message: 'Please select tour!' },
-              ]}  
+              allowClear
+              rules={[{ required: true, message: 'Please select tour!' }]}
             >
               {data &&
                 data.map((d, index) => {
@@ -82,23 +74,19 @@ const AddEventModal = ({ show, handleClose, uid, data }) => {
                       {d.name} - {d.status === 1 ? 'Actived' : 'Not active'}
                     </Select.Option>
                   );
-              })}              
+                })}
             </Select>
           </Form.Item>
           <Form.Item>
-            <span>Select color for event</span><br/>
+            <span>Select color for event</span>
+            <br />
             <CompactPicker />
           </Form.Item>
-          <Form.Item
-            rules={[
-              { required: true, message: 'Please select start date, end date!' },
-            ]}  
-          >
-            <span>Select date of event</span><br/>
-            <RangePicker              
-              format={dateFormat}
-            />
-          </Form.Item>  
+          <Form.Item rules={[{ required: true, message: 'Please select start date, end date!' }]}>
+            <span>Select date of event</span>
+            <br />
+            <RangePicker format={dateFormat} />
+          </Form.Item>
         </Form>
       </Modal>
     </div>
