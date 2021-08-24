@@ -9,13 +9,18 @@ import colors from '../../assets/styles/colors';
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: row;
+  //flex-direction: row;
+  justify-content: space-between;
   align-items: flex-start;
   position: relative;
-  width: 100%;
-  padding: 25px;
+  width: calc((310/1000)*100%);
+  min-width: 223px;
+  //margin: 10px;
+  padding: 15px;
   background-color: #fff;
-  box-shadow: 0px 8px 16px -2px rgba(10, 10, 10, 0.1), 0px 0px 0px 1px rgba(10, 10, 10, 0.02);
+  box-shadow: 0 0 1px 2px #eee inset;
+  border-radius: 10px;
+  margin-bottom: 2em;
 `;
 
 const ContentWrapper = styled.div``;
@@ -23,6 +28,7 @@ const ContentWrapper = styled.div``;
 const Title = styled.h4`
   margin-bottom: 0.25rem;
   font-weight: 600;
+  line-height: 1.5em;
 `;
 
 const SubTitle = styled.h5`
@@ -42,7 +48,10 @@ const Delimiter = styled.div`
   border-bottom: 1px solid ${colors.grey[30]};
 `;
 
-const Content = styled.div``;
+const Content = styled.div`
+    padding-top: 1.5em;
+    min-height: 110px;
+`;
 
 // fix moment constructor error. moment construction falls back to js Date()
 moment.createFromInputFallback = function(config) {

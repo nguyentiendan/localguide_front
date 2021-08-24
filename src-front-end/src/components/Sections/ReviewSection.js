@@ -23,15 +23,20 @@ const useStyles = makeStyles(styles);
 
 const ListWrapper = styled.div`
   max-width: ${breakpoints.lg};
-  overflow: auto;
   .comment:last-child .delimiter {
-    display: none;
+    //display: none;
+  }
+  .comment:fast-child {
+    //padding-left: 0;
   }
 `;
 
 const ListContainer = styled.div`
-  display: inline-flex;
-  justify-content: center;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-left: -15px;
+  margin-right: -15px;
   //display: flex;
   //flex-direction: row;
   //overflow: hidden;
