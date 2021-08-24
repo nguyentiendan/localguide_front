@@ -81,10 +81,8 @@ moment.createFromInputFallback = function(config) {
 
 const ReviewListItem = ({ className, title, avatar, date, content,  favorite, forum}) => (
   <Wrapper className={className}>
-    {/* }<AvatarWrapper src={avatar} icon={<UserOutlined />} size="large" style={{width:90,height:35}} />{ */}
     <ContentWrapper>
       <Title>{title}</Title>
-      {/* }<SubTitle>{moment(date).fromNow()}</SubTitle>{ */}
       <Content>{content}</Content>
       {<Delimiter className="delimiter" />}
       <Bottom>

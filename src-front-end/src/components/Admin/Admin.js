@@ -1,15 +1,15 @@
-import React, { useState, } from 'react';
-import AdminLayout from '../../components/AdminLayout';
-import { getUserProfile, ISADMIN} from '../../utils/auth';
+import React, { useState } from 'react';
 import { navigate } from 'gatsby';
+import AdminLayout from '../AdminLayout';
+import { getUserProfile, ISADMIN } from '../../utils/auth';
 
 const IndexPage = () => {
-  const [userProfile] = useState(getUserProfile());  
-  if ( userProfile.role != ISADMIN ) {
+  const [userProfile] = useState(getUserProfile());
+  if (userProfile.role != ISADMIN) {
     navigate('/');
     return null;
   }
- 
+
   return (
     <AdminLayout>
       <div>

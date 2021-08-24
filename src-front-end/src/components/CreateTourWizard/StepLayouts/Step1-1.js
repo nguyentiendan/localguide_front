@@ -91,7 +91,7 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
     },
     [onUpdate, tourCreationInfo]
   );
-  
+
   const addTagOptions = useCallback(
     tagOption => {
       onUpdate({
@@ -156,8 +156,8 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
         <br />
         <br />
         <SubTitle>Tour short description</SubTitle>
-        <TextArea 
-          size="large" 
+        <TextArea
+          size="large"
           showCount
           maxLength={200}
           allowClear
@@ -166,13 +166,13 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
           placeholder="Please provide a short description about tour in 3 lines."
           style={{ maxWidth: 400 }}
         />
-        {/*<Input
+        {/* <Input
           placeholder="Short description about tour"
           value={tourShortDescription}
           onChange={e => updateTourShortDescription(e.target.value)}
           size="large"
           style={{ maxWidth: 400 }}
-        />*/}
+        /> */}
         <br />
         <br />
         <br />

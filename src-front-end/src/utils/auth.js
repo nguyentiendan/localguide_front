@@ -3,7 +3,7 @@ import { get } from './storage';
 
 export const ISADMIN = 3;
 export const ISGUIDE = 2;
-export const ISUSER  = 1;
+export const ISUSER = 1;
 
 export const AUTH_TOKEN_KEY = 'auth.token';
 

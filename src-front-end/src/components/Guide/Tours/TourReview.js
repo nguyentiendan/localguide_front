@@ -3,9 +3,23 @@ import React, { useState, useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
-import { FaSuitcase, FaMoneyCheckAlt, FaRegCalendarAlt, FaShare, FaTwitter, FaBookmark, FaLanguage, FaUsers,} from 'react-icons/fa';
-import { AppstoreAddOutlined,CommentOutlined, SendOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Drawer, Button, Spin, Modal, message} from 'antd';
+import {
+  FaSuitcase,
+  FaMoneyCheckAlt,
+  FaRegCalendarAlt,
+  FaShare,
+  FaTwitter,
+  FaBookmark,
+  FaLanguage,
+  FaUsers,
+} from 'react-icons/fa';
+import {
+  AppstoreAddOutlined,
+  CommentOutlined,
+  SendOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
+import { Drawer, Button, Spin, Modal, message } from 'antd';
 import _ from 'lodash';
 import { navigate } from 'gatsby';
 import { FormatQuote } from '@material-ui/icons';
@@ -24,7 +38,7 @@ import SectionHeader from '../../SectionHeader';
 import CommentListItem from '../../CommentListItem';
 import breakpoints from '../../../assets/styles/breakpoints';
 import NavItem from '../../Layout/NavItem';
-//import Button from '../../CustomButtons/Button';
+// import Button from '../../CustomButtons/Button';
 import { bigScreenCss, smallScreenCss } from '../../../assets/styles/responsive-css';
 import TourGuideListItem from '../../TourGuideListItem';
 import { safeFuncCall } from '../../../utils/commons';
@@ -34,7 +48,7 @@ import 'react-bnb-gallery/dist/style.css';
 import { getUserProfile } from '../../../utils/auth';
 import { Fab, Action } from 'react-tiny-fab';
 import 'react-tiny-fab/dist/styles.css';
-import ReviewCommentListItem from "../../CommentListItem/ReviewCommentListItem";
+import ReviewCommentListItem from '../../CommentListItem/ReviewCommentListItem';
 
 const Title = styled.h1`
   font-weight: bold;
@@ -383,7 +397,7 @@ function GuideTourReview({ uid, id }) {
   const [visible, setVisible] = useState(false);
   const [comments, setComments] = useState({});
   const [replyComment, setReplyComment] = useState([]);
-  
+
   const tourQuery = useMemo(() => {
     const query = {};
     query.uid = uid;
@@ -453,15 +467,15 @@ function GuideTourReview({ uid, id }) {
     fetchTourDetails();
   }, [tourQuery]);
 
-  const handleGetAllReply = async (commentId) => {    
+  const handleGetAllReply = async commentId => {
     setLoading(true);
     const res = await API.handleGetAllReply({ id: commentId });
     setReplyComment(res.data);
     setLoading(false);
   };
-  
-  const handleCreateReply = async (e, commentId,uid) => {    
-    if ( (e.target.value).trim() != "" ) {
+
+  const handleCreateReply = async (e, commentId, uid) => {
+    if (e.target.value.trim() != '') {
       const { data } = await API.handleCreateReply2({
         uid,
         commentId,
@@ -471,33 +485,33 @@ function GuideTourReview({ uid, id }) {
       setReplyComment([...replyComment, newReply]);
     }
   };
-  
-  const handleDeleteReply = async (replyId)  => {    
+
+  const handleDeleteReply = async replyId => {
     const newData = _.remove(replyComment, item => {
       return item.id !== replyId;
     });
     setReplyComment(newData);
-    let res = await API.handleDeleteReply2( replyId );    
-    if (res.status) { 
-      message.success("Delete success")
+    const res = await API.handleDeleteReply2(replyId);
+    if (res.status) {
+      message.success('Delete success');
     }
   };
 
   const showComment = () => {
     setVisible(true);
-    const fetchAllComment = async () => {      
-      setLoading(true);      
-      const res = await API.GetAllReviewComment({id, type:'tour',}); //id : account id
-      setComments(res.data)
+    const fetchAllComment = async () => {
+      setLoading(true);
+      const res = await API.GetAllReviewComment({ id, type: 'tour' }); // id : account id
+      setComments(res.data);
       setLoading(false);
-    }
-    fetchAllComment();    
+    };
+    fetchAllComment();
   };
-  
+
   const onClose = () => {
     setVisible(false);
   };
-  
+
   const confirmSendRequest = () => {
     Modal.confirm({
       title: 'Confirmation',
@@ -507,23 +521,22 @@ function GuideTourReview({ uid, id }) {
           <p>Are you sure</p>
         </div>
       ),
-      closable:true,
-      centered:true,
-      okText: 'OK',      
-      onOk() {           
+      closable: true,
+      centered: true,
+      okText: 'OK',
+      onOk() {
         handleSendRequest();
       },
-      onCancel() {        
-      },      
+      onCancel() {},
     });
-  }
+  };
 
   const handleSendRequest = async () => {
     setLoading(true);
-    const { status } = await API.handleSendRequest({ uid, id, status:2});
+    const { status } = await API.handleSendRequest({ uid, id, status: 2 });
     if (status === true) {
-      message.success("Send request approve success")
-      navigate("app/guideTourList/");
+      message.success('Send request approve success');
+      navigate('app/guideTourList/');
     }
     setLoading(false);
   };
@@ -533,32 +546,31 @@ function GuideTourReview({ uid, id }) {
       title: 'Confirmation',
       content: (
         <div>
-          <p>Are you sure delete this tour</p>          
+          <p>Are you sure delete this tour</p>
         </div>
       ),
-      closable:true,
-      centered:true,
-      okText: 'OK',      
-      onOk() {           
+      closable: true,
+      centered: true,
+      okText: 'OK',
+      onOk() {
         handleDeleteTour();
       },
-      onCancel() {        
-      },      
+      onCancel() {},
     });
-  }
+  };
 
   const handleDeleteTour = async () => {
     setLoading(true);
-    const { status } = await API.deleteTour({ uid, id});
+    const { status } = await API.deleteTour({ uid, id });
     if (status === true) {
-      message.success("Delete success")
-      navigate("app/guideTourList/");
+      message.success('Delete success');
+      navigate('app/guideTourList/');
     }
     setLoading(false);
   };
 
   return (
-    <Layout scrollHeight={10} textColor="black">      
+    <Layout scrollHeight={10} textColor="black">
       <div className={classNames(classes.main, classes.mainRaised)} style={{ paddingTop: '70px' }}>
         <div className={classes.container}>
           <Spin spinning={loading}>
@@ -807,8 +819,13 @@ function GuideTourReview({ uid, id }) {
                         isActive
                       />
                     </PriceMenuWrapper>
-                    <BookButton type="primary" loading={loading} disabled={loading} style={{height:50}}>
-                      <span style={{fontSize:20, fontWeight:500}}>Book now</span>
+                    <BookButton
+                      type="primary"
+                      loading={loading}
+                      disabled={loading}
+                      style={{ height: 50 }}
+                    >
+                      <span style={{ fontSize: 20, fontWeight: 500 }}>Book now</span>
                     </BookButton>
                   </PriceWrapper>
                 </div>
@@ -945,77 +962,70 @@ function GuideTourReview({ uid, id }) {
                   </div>
                 </GridItem>
               </GridContainer>
-            )}           
+            )}
           </Spin>
-          <Fab      
-            mainButtonStyles={{ backgroundColor: '#f12f60',}}
-            icon={<AppstoreAddOutlined />}          
-            alwaysShowTitle={true}          
+          <Fab
+            mainButtonStyles={{ backgroundColor: '#f12f60' }}
+            icon={<AppstoreAddOutlined />}
+            alwaysShowTitle
           >
-            {(tourDetails.status == 0 ||  tourDetails.status == 2) && (
+            {(tourDetails.status == 0 || tourDetails.status == 2) && (
               <Action
-                style={{backgroundColor: '#F897AF',}}
-                text="Delete"            
+                style={{ backgroundColor: '#F897AF' }}
+                text="Delete"
                 onClick={() => confirmDeleteTour()}
               >
                 <DeleteOutlined />
               </Action>
             )}
-            {(tourDetails.status == 0 ) && (
+            {tourDetails.status == 0 && (
               <Action
-                style={{backgroundColor: '#F897AF',}}
-                text="Send Request Approve"            
+                style={{ backgroundColor: '#F897AF' }}
+                text="Send Request Approve"
                 onClick={() => confirmSendRequest()}
               >
                 <SendOutlined />
               </Action>
             )}
-            <Action
-              style={{backgroundColor: '#F897AF',}}
-              text="Comment"            
-              onClick={showComment}
-            >
+            <Action style={{ backgroundColor: '#F897AF' }} text="Comment" onClick={showComment}>
               <CommentOutlined />
             </Action>
-            
           </Fab>
           <Drawer
             title="Comments"
             width={350}
             closable={false}
             onClose={onClose}
-            visible={visible}          
-            bodyStyle={{paddingBottom: 80 }}
+            visible={visible}
+            bodyStyle={{ paddingBottom: 80 }}
             footer={
               <div
                 style={{
                   textAlign: 'left',
-                  //height:150,
+                  // height:150,
                 }}
-              >                 
-                <Button 
-                  onClick={onClose} 
-                  style={{ marginTop: 5, marginRight: 8 }}>
+              >
+                <Button onClick={onClose} style={{ marginTop: 5, marginRight: 8 }}>
                   Cancel
-                </Button>                
+                </Button>
               </div>
             }
           >
             <div>
               {comments.length > 0 && (
-                <Spin spinning={loading}>          
-                    <ReviewCommentListItem
-                      comments={comments}
-                      replyComment={replyComment}
-                      handleGetAllReply={handleGetAllReply}
-                      handleCreateReply={handleCreateReply}
-                      //handleDeleteComment={}
-                      handleDeleteReply={handleDeleteReply}              
-                      uid={user.uid}   //uid of user logining 
-                      className="comment"
-                    />                    
+                <Spin spinning={loading}>
+                  <ReviewCommentListItem
+                    comments={comments}
+                    replyComment={replyComment}
+                    handleGetAllReply={handleGetAllReply}
+                    handleCreateReply={handleCreateReply}
+                    // handleDeleteComment={}
+                    handleDeleteReply={handleDeleteReply}
+                    uid={user.uid} // uid of user logining
+                    className="comment"
+                  />
                 </Spin>
-              )}      
+              )}
             </div>
           </Drawer>
         </div>

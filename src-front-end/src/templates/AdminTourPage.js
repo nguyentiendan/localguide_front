@@ -328,7 +328,7 @@ function AdminTourPage({ data, id, uid }) {
 
     return () => window.removeEventListener('resize', updateSize);
   }, [galleryWrapperComp, tourPhotos]);
-  
+
   const handleApproveTour = async () => {
     setLoading(true);
     await API.handleAdminApproveTour({ uid: tourDetails?.uid, id: tour?.rawID || id });
