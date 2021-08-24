@@ -1,9 +1,9 @@
-import React, { useState, } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import AdminLayout from '../../components/AdminLayout';
-import EditTourWizard from '../../components/CreateTourWizard';
-import { getUserProfile, ISGUIDE } from '../../utils/auth';
 import { navigate } from 'gatsby';
+import AdminLayout from '../AdminLayout';
+import EditTourWizard from '../CreateTourWizard';
+import { getUserProfile, ISGUIDE } from '../../utils/auth';
 
 const GuideEditTour = () => {
   const [userProfile] = useState(getUserProfile());
@@ -11,9 +11,9 @@ const GuideEditTour = () => {
     navigate('/app/admin');
     return null;
   }
-  
+
   return (
-    <AdminLayout>      
+    <AdminLayout>
       <EditTourWizard location={location} />
     </AdminLayout>
   );

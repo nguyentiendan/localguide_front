@@ -91,13 +91,13 @@ const TourCard = ({
         actions={
           status
             ? [
-              /*<MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,*/
+              /* <MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />, */
               <Link to={`/app/editTour?q=${id}`}>
                 <EditOutlined title="Edit Tour" />
               </Link>
             ]
             : [
-              /*<MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />,*/
+              /* <MessageOutlined title="View Admin Feedback" key="feedback" onClick={() => totalReview && setShowModal(true)} style={{ color: !totalReview && '#DDD' }} />, */
               <Link to={`/app/editTour?q=${id}`}>
                 <EditOutlined title="Edit Tour" />
               </Link>
@@ -115,7 +115,7 @@ const TourCard = ({
             ]
         }
       >
-        <a href={`/app/guideTourReview?uid=${uid}&id=${id}`} target="_blank">
+        <a href={`/app/guideTourReview?uid=${uid}&id=${id}`} target="_blank" rel="noreferrer">
           <Card.Meta
             title={<b>{title}</b>}
             description={

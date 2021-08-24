@@ -1,13 +1,22 @@
-import React, { useEffect, useState,} from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Form, Select, Button, Drawer, Avatar, Tag, Spin, Modal, Input,message } from 'antd';
-import { UserOutlined, CrownOutlined, AppstoreAddOutlined,CommentOutlined, SwitcherOutlined, DeleteOutlined } from '@ant-design/icons';
-import { FormatQuote,} from '@material-ui/icons';
+import { Form, Select, Button, Drawer, Avatar, Tag, Spin, Modal, Input, message } from 'antd';
+import {
+  UserOutlined,
+  CrownOutlined,
+  AppstoreAddOutlined,
+  CommentOutlined,
+  SwitcherOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
+import { FormatQuote } from '@material-ui/icons';
 import _ from 'lodash';
 import classNames from 'classnames';
 // @material-ui/core components
 import { makeStyles } from '@material-ui/core/styles';
 
+import { navigate } from 'gatsby';
+import { Fab, Action } from 'react-tiny-fab';
 import breakpoints from '../../../assets/styles/breakpoints';
 import Layout from '../../CustomLayout';
 
@@ -30,10 +39,8 @@ import iconSex from '../../../assets/img/icon-sex.svg';
 import styles from '../../../assets/styles/profilePage.js';
 import 'react-bnb-gallery/dist/style.css';
 import { getUserProfile, ISADMIN } from '../../../utils/auth';
-import { navigate } from 'gatsby';
-import { Fab, Action } from 'react-tiny-fab';
 import 'react-tiny-fab/dist/styles.css';
-import ReviewCommentListItem from "../../CommentListItem/ReviewCommentListItem";
+import ReviewCommentListItem from '../../CommentListItem/ReviewCommentListItem';
 
 const InfoAvatarAndBackgroundImg = styled.div`
   .info__guide {
@@ -137,19 +144,20 @@ const IconWrapper = styled.img`
 
 const Text = styled.div`
   color: #5e5c60;
-  padding-bottom : 20px;
+  padding-bottom: 20px;
 `;
 
 const useStyles = makeStyles(styles);
 const { TextArea } = Input;
 
-function AdminUserReview({ uid , id}) { //uid of user Review
+function AdminUserReview({ uid, id }) {
+  // uid of user Review
   const [userProfile] = useState(getUserProfile());
   if (userProfile.role != ISADMIN) {
     navigate('/');
     return null;
   }
-  
+
   const classes = useStyles();
   const [form] = Form.useForm();
   const [profile, setProfile] = useState({});
@@ -163,38 +171,38 @@ function AdminUserReview({ uid , id}) { //uid of user Review
   const [showText, setShowText] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {      
-      setLoading(true);      
+    const fetchData = async () => {
+      setLoading(true);
       const res = await API.getUserProfileReview(uid);
       setProfile(res.data);
       setLoading(false);
     };
     fetchData();
   }, [setProfile, uid]);
-  
-  const handleGetAllReply = async (commentId) => {    
+
+  const handleGetAllReply = async commentId => {
     setLoading(true);
     const res = await API.handleGetAllReply({ id: commentId });
     setReplyComment(res.data);
-    setLoading(false);    
+    setLoading(false);
   };
-  
-  const handleCreateComment = async (uid, id) => {    
-    if (content) {            
+
+  const handleCreateComment = async (uid, id) => {
+    if (content) {
       const { data } = await API.handleCreateComment({
-        uid, 
-        reviewId:parseInt(id), 
-        type:'user',
-        content
-      });      
-      const newComment = {...data[0] };
+        uid,
+        reviewId: parseInt(id),
+        type: 'user',
+        content,
+      });
+      const newComment = { ...data[0] };
       setComments([...comments, newComment]);
       setContent('');
     }
   };
 
-  const handleCreateReply = async (e, commentId,uid) => {    
-    if ( (e.target.value).trim() != "" ) {
+  const handleCreateReply = async (e, commentId, uid) => {
+    if (e.target.value.trim() != '') {
       const { data } = await API.handleCreateReply2({
         uid,
         commentId,
@@ -204,26 +212,26 @@ function AdminUserReview({ uid , id}) { //uid of user Review
       setReplyComment([...replyComment, newReply]);
     }
   };
-  
-  const handleDeleteComment = async (id)  => {
+
+  const handleDeleteComment = async id => {
     const newData = _.remove(comments, item => {
       return item.id !== id;
     });
-    setComments(newData);    
-    let res = await API.handleDeleteComment(id);
-    if (res.status) { 
-      message.success("Delete success")
+    setComments(newData);
+    const res = await API.handleDeleteComment(id);
+    if (res.status) {
+      message.success('Delete success');
     }
   };
 
-  const handleDeleteReply = async (replyId)  => {    
+  const handleDeleteReply = async replyId => {
     const newData = _.remove(replyComment, item => {
       return item.id !== replyId;
     });
     setReplyComment(newData);
-    let res = await API.handleDeleteReply2( replyId );    
-    if (res.status) { 
-      message.success("Delete success")
+    const res = await API.handleDeleteReply2(replyId);
+    if (res.status) {
+      message.success('Delete success');
     }
   };
 
@@ -233,7 +241,7 @@ function AdminUserReview({ uid , id}) { //uid of user Review
       const newData = _.keyBy(data, item => item.code);
       setRootCountry(newData);
     })();
-  }, []);  
+  }, []);
 
   const confirmModal = () => {
     Modal.confirm({
@@ -244,56 +252,55 @@ function AdminUserReview({ uid , id}) { //uid of user Review
           <p>Are you sure</p>
         </div>
       ),
-      closable:true,
-      centered:true,
-      okText: 'OK',      
-      onOk() {           
+      closable: true,
+      centered: true,
+      okText: 'OK',
+      onOk() {
         approveUser();
       },
-      onCancel() {        
-      },      
+      onCancel() {},
     });
-  }
-  
-  const approveUser = async() => {    
-    const res = await API.approveUser({uid, id});    
-    if(res.status) {
+  };
+
+  const approveUser = async () => {
+    const res = await API.approveUser({ uid, id });
+    if (res.status) {
       Modal.info({
         title: 'Approve success',
         content: (
           <div>
-            <p>Thank you. User was approve become a Guide</p>            
+            <p>Thank you. User was approve become a Guide</p>
           </div>
-        ), 
-        closable:false,
-        keyboard:false,      
-        centered:true,
-        okText: 'Close',      
-        onOk() {           
-          navigate("/app/adminGuideList/")
+        ),
+        closable: false,
+        keyboard: false,
+        centered: true,
+        okText: 'Close',
+        onOk() {
+          navigate('/app/adminGuideList/');
         },
       });
-    }    
+    }
   };
-  
+
   const showComment = () => {
     setVisible(true);
-    const fetchAllComment = async () => {      
-      setLoading(true);              
-      const res = await API.GetAllReviewComment({id, type:'user',}); //id : account id
-      setComments(res.data)      
-      setLoading(false);      
-    }
+    const fetchAllComment = async () => {
+      setLoading(true);
+      const res = await API.GetAllReviewComment({ id, type: 'user' }); // id : account id
+      setComments(res.data);
+      setLoading(false);
+    };
     fetchAllComment();
   };
-  
+
   const onClose = () => {
     setVisible(false);
   };
 
   const handleCancel = () => {
     setShowModal(false);
-  }
+  };
 
   const handleLevelGuide = level => {
     switch (level) {
@@ -307,36 +314,36 @@ function AdminUserReview({ uid , id}) { //uid of user Review
         return null;
     }
   };
-  
-  const onReasonChange = (value) => {
-    if(value == 'other') {
+
+  const onReasonChange = value => {
+    if (value == 'other') {
       setShowText(true);
     } else {
       setShowText(false);
-    }        
+    }
   };
 
-  const onReject = async(values) => {    
+  const onReject = async values => {
     try {
-      setLoading(true);      
-      const { status } = await API.reject(uid, id, values.reason);     
+      setLoading(true);
+      const { status } = await API.reject(uid, id, values.reason);
 
-      if (status === true) {        
-        message.success("Reject success")
+      if (status === true) {
+        message.success('Reject success');
         setLoading(false);
-        setShowModal(false)
+        setShowModal(false);
       } else {
-        message.error("Have error, please check");
+        message.error('Have error, please check');
         setLoading(false);
       }
-    } catch (err) {      
+    } catch (err) {
       console.log(err);
       setLoading(false);
     }
   };
 
   return (
-    <Layout scrollHeight={300}>     
+    <Layout scrollHeight={300}>
       <Parallax small filter image={require('../../../assets/img/home-banner.jpg')} />
       <div className={classNames(classes.main, classes.mainRaised)}>
         <Spin spinning={loading}>
@@ -371,8 +378,8 @@ function AdminUserReview({ uid , id}) { //uid of user Review
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <InfoIntroduction>
-                    <div className="general__information">                      
-                      {/*<div className="list__icon">
+                    <div className="general__information">
+                      {/* <div className="list__icon">
                         <div className="flex-center" style={{ flexDirection: 'column' }}>
                           <IconWrapper src={iconTour} alt="Tours" />
                           <p style={{ color: '#525F6B' }}>20 Tours</p>
@@ -389,8 +396,8 @@ function AdminUserReview({ uid , id}) { //uid of user Review
                           <IconWrapper src={iconCustomer} alt="Customers" />
                           <p style={{ color: '#525F6B' }}>365 Customers</p>
                         </div>
-                      </div>*/}
-                    </div>                
+                      </div> */}
+                    </div>
                     {profile.user?.intro !== '' && (
                       <div
                         className={classes.description}
@@ -433,9 +440,7 @@ function AdminUserReview({ uid , id}) { //uid of user Review
                       {profile.interest && (
                         <InterestsOrExtras data={profile.interest} title="Interests" />
                       )}
-                      {profile.extras && (
-                        <InterestsOrExtras data={profile.extras} title="Extras" />
-                      )}
+                      {profile.extras && <InterestsOrExtras data={profile.extras} title="Extras" />}
                     </div>
                     {profile.education && (
                       <div className="education__information">
@@ -453,141 +458,131 @@ function AdminUserReview({ uid , id}) { //uid of user Review
                 </div>
               </GridItem>
             </GridContainer>
-          </div> 
+          </div>
         </Spin>
         <Footer />
 
-        <Fab      
-          mainButtonStyles={{ backgroundColor: '#f12f60',}}
-          icon={<AppstoreAddOutlined />}          
-          alwaysShowTitle={true}          
+        <Fab
+          mainButtonStyles={{ backgroundColor: '#f12f60' }}
+          icon={<AppstoreAddOutlined />}
+          alwaysShowTitle
         >
           <Action
-            style={{backgroundColor: '#F897AF',}}
+            style={{ backgroundColor: '#F897AF' }}
             text="Reject"
-            onClick={() => setShowModal(true)} 
+            onClick={() => setShowModal(true)}
           >
             <DeleteOutlined />
-          </Action>  
+          </Action>
           <Action
-            style={{backgroundColor: '#F897AF',}}
+            style={{ backgroundColor: '#F897AF' }}
             text="Approve"
-            onClick={() => confirmModal()} 
+            onClick={() => confirmModal()}
           >
             <SwitcherOutlined />
-          </Action>  
-          <Action
-            style={{backgroundColor: '#F897AF',}}
-            text="Comment"            
-            onClick={showComment}
-          >
+          </Action>
+          <Action style={{ backgroundColor: '#F897AF' }} text="Comment" onClick={showComment}>
             <CommentOutlined />
           </Action>
         </Fab>
-        
+
         <Drawer
           title="Comments"
           width={350}
           closable={false}
           onClose={onClose}
-          visible={visible}          
-          bodyStyle={{paddingBottom: 80 }}
+          visible={visible}
+          bodyStyle={{ paddingBottom: 80 }}
           footer={
             <div
               style={{
                 textAlign: 'left',
-                //height:150,
+                // height:150,
               }}
-            > 
+            >
               <TextArea
                 rows={4}
                 showCount
                 maxLength={300}
-                placeholder="Please input comment"                
+                placeholder="Please input comment"
                 value={content || ''}
-                onChange={e => setContent((e.target.value).slice(0,300))}
+                onChange={e => setContent(e.target.value.slice(0, 300))}
                 style={{ marginTop: 5 }}
               />
-              <Button 
-                onClick={onClose} 
-                style={{ marginTop: 5, marginRight: 8 }}>
+              <Button onClick={onClose} style={{ marginTop: 5, marginRight: 8 }}>
                 Cancel
               </Button>
-              <Button 
+              <Button
                 type="primary"
                 onClick={() => {
-                  //setIsFeedback(true);
+                  // setIsFeedback(true);
                   handleCreateComment(userProfile.uid, id);
-                }}                
+                }}
               >
                 Comment
               </Button>
             </div>
           }
         >
-          
           <div>
             {comments.length > 0 && (
-              <Spin spinning={loading}>          
-                  <ReviewCommentListItem
-                    comments={comments}
-                    replyComment={replyComment}
-                    handleGetAllReply={handleGetAllReply}
-                    handleCreateReply={handleCreateReply}
-                    handleDeleteComment={handleDeleteComment}
-                    handleDeleteReply={handleDeleteReply}              
-                    uid={userProfile.uid}   //uid of user logining 
-                    className="comment"
-                  />                    
+              <Spin spinning={loading}>
+                <ReviewCommentListItem
+                  comments={comments}
+                  replyComment={replyComment}
+                  handleGetAllReply={handleGetAllReply}
+                  handleCreateReply={handleCreateReply}
+                  handleDeleteComment={handleDeleteComment}
+                  handleDeleteReply={handleDeleteReply}
+                  uid={userProfile.uid} // uid of user logining
+                  className="comment"
+                />
               </Spin>
-            )}      
+            )}
           </div>
         </Drawer>
-        
-        <Modal 
-          title="Guide Reject Confirm" 
+
+        <Modal
+          title="Guide Reject Confirm"
           visible={showModal}
-          okText="Reject"  
+          okText="Reject"
           onCancel={handleCancel}
           onOk={() => {
             form
               .validateFields()
               .then(values => {
-                //form.resetFields();
+                // form.resetFields();
                 onReject(values);
               })
               .catch(info => {
-                //console.log('Validate Failed:', info);
+                // console.log('Validate Failed:', info);
               });
-          }}        
-        > 
+          }}
+        >
           <Text>Please select the reason for the reject</Text>
-          <Form form={form}  name="reject" scrollToFirstError>                        
-            <Form.Item 
-              name="reason" 
-              rules={[
-                { required: true, message: 'Please select reason!' },
-              ]}  
-            >
-              <Select
-                placeholder="Select a reason for reject"
-                onChange={onReasonChange}
-                allowClear
-              >
-                <Select.Option value="Not suitable to become a local guide yet">Not suitable to become a local guide yet</Select.Option>
-                <Select.Option value="Language ability need further improvement">Language ability need further improvement</Select.Option>
-                <Select.Option value="Need a unique interest/ speciality">Need a unique interest/ speciality</Select.Option>
+          <Form form={form} name="reject" scrollToFirstError>
+            <Form.Item name="reason" rules={[{ required: true, message: 'Please select reason!' }]}>
+              <Select placeholder="Select a reason for reject" onChange={onReasonChange} allowClear>
+                <Select.Option value="Not suitable to become a local guide yet">
+                  Not suitable to become a local guide yet
+                </Select.Option>
+                <Select.Option value="Language ability need further improvement">
+                  Language ability need further improvement
+                </Select.Option>
+                <Select.Option value="Need a unique interest/ speciality">
+                  Need a unique interest/ speciality
+                </Select.Option>
                 <Select.Option value="other">Other reason</Select.Option>
               </Select>
             </Form.Item>
-            {showText &&
+            {showText && (
               <Form.Item name="otherReason">
-                <Input.TextArea size="large" placeholder="Other reason"/>
+                <Input.TextArea size="large" placeholder="Other reason" />
               </Form.Item>
-            }  
+            )}
           </Form>
         </Modal>
-      </div>      
+      </div>
     </Layout>
   );
 }

@@ -20,11 +20,11 @@ export function logout(uid) {
 }
 
 // Create new account
-export function register(fullname, email, password, reqActive) {    
+export function register(fullname, email, password, reqActive) {
   return request({
     url: '/account/new',
     method: 'POST',
-    data: { fullname, email, password, reqActive},
+    data: { fullname, email, password, reqActive },
   });
 }
 

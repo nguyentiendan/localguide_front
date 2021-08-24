@@ -15,12 +15,12 @@ export async function request({
   let token = (rest && rest.token) || null;
   let submitData = data;
 
-  if (authRequired) {    
+  if (authRequired) {
     const user = getUserProfile();
-    
+
     if (!token) {
-      // eslint-disable-next-line prefer-destructuring 
-      token = user.token;      
+      // eslint-disable-next-line prefer-destructuring
+      token = user.token;
     }
 
     submitData = {

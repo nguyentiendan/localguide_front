@@ -335,7 +335,7 @@ const CreateTourWizard = ({ location }) => {
             onFirst={goFirst}
             onNext={goForward}
             onCancel={goCancel}
-            onConfirm={goConfirm}            
+            onConfirm={goConfirm}
             loading={loading}
             isFinished={currentStepNumber === TOTAL_STEPS}
             canSkipped={canSkipped}

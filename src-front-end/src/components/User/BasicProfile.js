@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
-import { Form, Input, Button, Select, InputNumber, Spin,message} from 'antd';
+import { Form, Input, Button, Select, InputNumber, Spin, message } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
-import UploadAvatar from "../Input/UploadAvatar"
+import UploadAvatar from '../Input/UploadAvatar';
 import * as API from '../../apis';
 import styles from '../../assets/styles/profilePage.js';
-import NoticeModal from "./Modal/NoticeModal"; 
+import NoticeModal from './Modal/NoticeModal';
 
 const useStyles = makeStyles(styles);
 
@@ -23,18 +23,22 @@ const FormWrapper = styled(Form)`
 
 const formItemLayout = {
   labelCol: {
-    xs: {  //mobile
+    xs: {
+      // mobile
       span: 24,
     },
-    sm: {  //pc
+    sm: {
+      // pc
       span: 6, // label size
     },
   },
   wrapperCol: {
-    xs: {  //mobile
+    xs: {
+      // mobile
       span: 24,
     },
-    sm: {  //pc
+    sm: {
+      // pc
       span: 12, // input box size
     },
   },
@@ -42,11 +46,13 @@ const formItemLayout = {
 
 const tailFormItemLayout = {
   wrapperCol: {
-    xs: { //mobile
+    xs: {
+      // mobile
       span: 24,
       offset: 5,
     },
-    sm: { //pc
+    sm: {
+      // pc
       span: 24,
       offset: 10,
     },
@@ -55,7 +61,7 @@ const tailFormItemLayout = {
 
 const { Option } = Select;
 
-function BasicProfile({uid,role}) { 
+function BasicProfile({ uid, role }) {
   const classes = useStyles();
   const [form] = Form.useForm();
   const { country } = form.getFieldsValue();
@@ -68,23 +74,21 @@ function BasicProfile({uid,role}) {
   const fetchUserProfile = useCallback(async () => {
     setLoading(true);
     const res = await API.getUserProfile(uid);
-    //show modal notice user become a guide
-    if(res.data.role != role) {
-      setVisible(true)
+    // show modal notice user become a guide
+    if (res.data.role != role) {
+      setVisible(true);
     }
 
     const resCountry = await API.getAllCountry();
     setRootCountry(resCountry.data);
     setProfile(res.data);
     setLoading(false);
-
   }, [API.getAllCountry, setLoading, setProfile, setRootCountry]);
 
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
-  
   useEffect(() => {
     const fetchCity = async () => {
       if (profile?.country) {
@@ -123,33 +127,40 @@ function BasicProfile({uid,role}) {
     try {
       const { status } = await API.updateBasic({
         ...values,
-        uid,                
-      });       
+        uid,
+      });
       if (status === true) {
-        message.success({ 
+        message.success({
           content: 'You have successfully updated your basic profile!',
-          key, duration: 2,
+          key,
+          duration: 2,
           className: 'custom-class',
           style: {
             marginTop: '20vh',
           },
-        });      
+        });
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
     setLoading(false);
   };
-  
+
   return (
     <div>
-      <Spin spinning={loading}>            
-        <FormWrapper form={form}  {...formItemLayout} name="basic" onFinish={onFinishBasic} scrollToFirstError>
-          <Form.Item style={{ justifyContent: 'center',  paddingTop: '20px',paddingBottom: '0px'  }}>
+      <Spin spinning={loading}>
+        <FormWrapper
+          form={form}
+          {...formItemLayout}
+          name="basic"
+          onFinish={onFinishBasic}
+          scrollToFirstError
+        >
+          <Form.Item style={{ justifyContent: 'center', paddingTop: '20px', paddingBottom: '0px' }}>
             <h2>{profile.fullname}'s Profile</h2>
           </Form.Item>
-          
-          <Form.Item name="avatar" style={{ justifyContent: 'center',}}>
+
+          <Form.Item name="avatar" style={{ justifyContent: 'center' }}>
             <UploadAvatar uid={uid} src={profile.avatar} title="" />
           </Form.Item>
 
@@ -169,12 +180,9 @@ function BasicProfile({uid,role}) {
             key={profile.fullname === '' ? 'fullname' : profile.fullname}
             initialValue={profile.fullname}
           >
-            <Input 
-              size="large" 
-              allowClear
-            />          
+            <Input size="large" allowClear />
           </Form.Item>
-          
+
           <Form.Item
             name="email"
             label="E-mail"
@@ -191,7 +199,7 @@ function BasicProfile({uid,role}) {
             key={profile.email === '' ? 'email' : profile.email}
             initialValue={profile.email}
           >
-            <Input size="large"  disabled={profile.email} />
+            <Input size="large" disabled={profile.email} />
           </Form.Item>
 
           <Form.Item
@@ -210,10 +218,7 @@ function BasicProfile({uid,role}) {
             key={profile.mobile === '' ? 'mobile' : profile.mobile}
             initialValue={profile.mobile}
           >
-            <Input 
-              size="large"
-              allowClear
-            />
+            <Input size="large" allowClear />
           </Form.Item>
 
           <Form.Item
@@ -228,43 +233,40 @@ function BasicProfile({uid,role}) {
             initialValue={profile.job}
             key={profile.job === '' ? 'job' : profile.job}
           >
-            <Input 
-              size="large" 
-              allowClear
-            />
+            <Input size="large" allowClear />
           </Form.Item>
-          
-          <Form.Item 
-            name="sex" 
+
+          <Form.Item
+            name="sex"
             label="Gender"
             key={profile.sex === '' ? 'sex' : profile.sex}
             initialValue={profile.sex}
             rules={[
-              { 
-                required: true, 
+              {
+                required: true,
                 message: 'Please select your gender!',
               },
             ]}
-          >          
+          >
             <Select
-              size="large" 
+              size="large"
               placeholder="Gender"
-              style={{ width: '200px' }}              
+              style={{ width: '200px' }}
               onChange={value => {
                 form.setFieldsValue({ sex: value });
               }}
             >
-              <Select.Option value='Male'>Male</Select.Option>
-              <Select.Option value='Female'>Female</Select.Option>
-              <Select.Option value='Other'>Other</Select.Option>
+              <Select.Option value="Male">Male</Select.Option>
+              <Select.Option value="Female">Female</Select.Option>
+              <Select.Option value="Other">Other</Select.Option>
             </Select>
           </Form.Item>
-            
+
           <Form.Item
             name="age"
             label="Age"
             key={profile.age === '' ? 'age' : profile.age}
-            initialValue={profile.age}          
+            initialValue={profile.age}
           >
             <InputNumber size="large" />
           </Form.Item>
@@ -282,7 +284,7 @@ function BasicProfile({uid,role}) {
             key={profile.country === '' ? 'country' : profile.country}
           >
             <Select
-              size="large" 
+              size="large"
               placeholder="Country"
               style={{ width: '200px' }}
               onChange={handleSelectCountryAndCity}
@@ -294,7 +296,7 @@ function BasicProfile({uid,role}) {
               ))}
             </Select>
           </Form.Item>
-              
+
           <Form.Item
             name="city"
             label="City"
@@ -308,7 +310,7 @@ function BasicProfile({uid,role}) {
             key={profile.city === '' ? 'city' : profile.city}
           >
             <Select
-              size="large" 
+              size="large"
               placeholder="City"
               style={{ width: '200px' }}
               onChange={value => {
@@ -323,19 +325,20 @@ function BasicProfile({uid,role}) {
             </Select>
           </Form.Item>
 
-          <Form.Item {...tailFormItemLayout}>            
-            <Button 
-              size="middle" 
+          <Form.Item {...tailFormItemLayout}>
+            <Button
+              size="middle"
               type="primary"
               htmlType="submit"
-              style={{alignContent:"center"}}           
+              style={{ alignContent: 'center' }}
             >
-              Update Basic Profile<RightOutlined/>
-            </Button>            
+              Update Basic Profile
+              <RightOutlined />
+            </Button>
           </Form.Item>
-        </FormWrapper>                  
+        </FormWrapper>
       </Spin>
-      <NoticeModal visible={visible}  />
+      <NoticeModal visible={visible} />
     </div>
   );
 }
