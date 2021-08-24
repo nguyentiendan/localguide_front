@@ -23,15 +23,20 @@ const useStyles = makeStyles(styles);
 
 const ListWrapper = styled.div`
   max-width: ${breakpoints.lg};
-  overflow: auto;
   .comment:last-child .delimiter {
-    display: none;
+    //display: none;
+  }
+  .comment:fast-child {
+    //padding-left: 0;
   }
 `;
 
 const ListContainer = styled.div`
-  display: inline-flex;
-  justify-content: center;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-left: -15px;
+  margin-right: -15px;
   //display: flex;
   //flex-direction: row;
   //overflow: hidden;
@@ -78,26 +83,35 @@ function ReviewSection() {
                 <ListContainer>
                   <ReviewListItem
                     key={1}
+                    title="International Activities Of The Frankfurt Book"
                     content="A solemn declaration usually made orally by a witness under oath in response to interrogation by a lawyer or authorized public official"
                     user="User 1"
-                    date="2021/04/01"
+                    date="Dec 06, 18"
                     avatar={face1}
+                    favorite={72}
+                    forum={23}
                     className="comment"
                   />
                   <ReviewListItem
                     key={2}
+                    title="Reading Has A Signficant Info Number Of Benefits"
                     content="The hobble decision has been coming up during testimony from some of the state's key witnesses, such as Arradondo"
                     user="User 2"
-                    date="2021/04/23"
+                    date="Mar 08,18"
                     avatar={face2}
+                    favorite={72}
+                    forum={23}
                     className="comment"
                   />
                   <ReviewListItem
                     key={3}
+                    title="The London Book Fair Is To Be Packed With Wxcinting"
                     content="Something that someone says especially in a court of law while formally promising to tell the truth"
                     user="User 3"
-                    date="2021/04/24"
+                    date="Nov 11,18"
                     avatar={face3}
+                    favorite={72}
+                    forum={23}
                     className="comment"
                   />
                 </ListContainer>
