@@ -33,8 +33,8 @@ function FadeBg(props) {
   return (
     <>
       <Carousel className={classes.carousel} animation="slide">
-        {images.map(img => (
-          <Paper>
+        {images.map((img, index) => (
+          <Paper key={index}>
             <div className={classes.root} style={{ backgroundImage: `url(${img})` }}>
               {children}
             </div>
