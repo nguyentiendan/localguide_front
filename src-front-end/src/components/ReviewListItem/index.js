@@ -6,6 +6,7 @@ import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
 import colors from '../../assets/styles/colors';
+import { bigScreenCss, smallScreenCss } from '../../assets/styles/responsive-css';
 
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import ForumIcon from '@material-ui/icons/Forum';
@@ -25,6 +26,10 @@ const Wrapper = styled.div`
   border-radius: 10px;
   margin: 0 auto;
   margin-bottom: 2em;
+
+  ${smallScreenCss(`
+    width: 90%;
+  `)};
 `;
 
 const ContentWrapper = styled.div``;
