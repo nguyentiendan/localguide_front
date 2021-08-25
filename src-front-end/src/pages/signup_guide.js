@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'gatsby';
+import { Link, navigate } from 'gatsby';
 import styled from 'styled-components';
 import { Modal, Form, Input, Button, Checkbox } from 'antd';
 import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
@@ -16,7 +16,6 @@ import CardHeader from '../components/Card/CardHeader.js';
 import CardFooter from '../components/Card/CardFooter.js';
 import Footer from '../components/Footer/Footer.js';
 import styles from '../assets/jss/material-kit-react/views/loginPage.js';
-import { navigate } from 'gatsby';
 
 const useStyles = makeStyles(styles);
 
@@ -39,7 +38,7 @@ const ErrorMessage = styled.div`
 
 const MainContent = styled.div`
   //min-height: 200px;
-  width:100%;
+  width: 100%;
   margin-top: 16px;
   //padding-top: 80px;
   //text-align: center;
@@ -51,21 +50,21 @@ const MainContent = styled.div`
   border-radius: 2px;
 `;
 
-const TermAndService = styled.div`  
-  width:100%;
+const TermAndService = styled.div`
+  width: 100%;
   margin-top: 25px;
-  color: #191970;  
+  color: #191970;
 `;
 
-const Brand = styled.div`  
+const Brand = styled.div`
   color: #f12f60;
-  font-weight : bold;
-  font-size : 25px;
+  font-weight: bold;
+  font-size: 25px;
 `;
 
 const Text = styled.div`
   color: #5e5c60;
-  padding-bottom : 10px;
+  padding-bottom: 10px;
 `;
 
 function SignUpGuide() {
@@ -85,42 +84,47 @@ function SignUpGuide() {
     if (loading) {
       return;
     }
-    
+
     try {
       setLoading(true);
-      let reqActive = 2;
-      const { message, status } = await API.register(values.fullname, values.email, values.password, reqActive);    
-      
-      if (status === true) {        
+      const reqActive = 2;
+      const { message, status } = await API.register(
+        values.fullname,
+        values.email,
+        values.password,
+        reqActive
+      );
+
+      if (status === true) {
         Modal.info({
           title: 'Thank you',
           content: (
             <div>
               <p>Your account was created successful</p>
-              <p>Please check your email to active your account</p>            
+              <p>Please check your email to active your account</p>
             </div>
-          ), 
-          closable:false,
-          keyboard:false,      
-          centered:true,
-          okText: 'Close',      
-          onOk() {           
-            navigate("/")
+          ),
+          closable: false,
+          keyboard: false,
+          centered: true,
+          okText: 'Close',
+          onOk() {
+            navigate('/');
           },
         });
-      } else {        
+      } else {
         setError(message);
         setLoading(false);
       }
-    } catch (err) {  
-      console.log(err)    
-      setError('System error has occurred.');      
+    } catch (err) {
+      console.log(err);
+      setError('System error has occurred.');
       setLoading(false);
-    }      
+    }
   };
-  
-  const checkEmail = async (email) => {
-    /*const data = await API.checkEmail(email);
+
+  const checkEmail = async email => {
+    /* const data = await API.checkEmail(email);
     console.log(data.status)
     if (data.status === true) {
       return true
@@ -128,15 +132,13 @@ function SignUpGuide() {
       return false
     }
     */
-   
-   /*if(email === "tiendanvn@gmail.com") {
+    /* if(email === "tiendanvn@gmail.com") {
      console.log("true")
      return true
    } else {
     console.log("false")
     return false
-   }*/
-    
+   } */
   };
 
   return (
@@ -144,25 +146,27 @@ function SignUpGuide() {
       <SEO title="Create Account" />
       <div className={classes.pageHeader}>
         <div className={classes.container}>
-          {/*<Brand>Localguidepal</Brand>*/}
+          {/* <Brand>Localguidepal</Brand> */}
           <MainContent>
-            <GridContainer>              
+            <GridContainer>
               <GridItem xs={12} sm={12} md={4}>
                 <Card>
                   <CardHeader className={classes.cardHeader}>
-                    <h2 style={{fontWeight:'bold', color:'#f12f60'}}><a href="/">LOCALGUIDEPAL</a></h2>
+                    <h2 style={{ fontWeight: 'bold', color: '#f12f60' }}>
+                      <a href="/">LOCALGUIDEPAL</a>
+                    </h2>
                   </CardHeader>
-                  
+
                   <CardBody>
                     <Text>Create guide account to share your tour</Text>
                     <ErrorMessage>{error}</ErrorMessage>
-                    <Form form={form}  name="signup" onFinish={onFinish} scrollToFirstError>
+                    <Form form={form} name="signup" onFinish={onFinish} scrollToFirstError>
                       <Form.Item
                         name="fullname"
                         rules={[
                           { required: true, message: 'Please input guide name!' },
-                          { min:5 },
-                          { max:20 }
+                          { min: 5 },
+                          { max: 20 },
                         ]}
                       >
                         <Input size="large" prefix={<UserOutlined />} placeholder="Guide name" />
@@ -173,35 +177,38 @@ function SignUpGuide() {
                         hasFeedback
                         rules={[
                           { required: true, message: 'Please input your Email!' },
-                          { type: 'email', message: 'Email is not valid!'},
-                          /*({  }) => ({
+                          { type: 'email', message: 'Email is not valid!' },
+                          /* ({  }) => ({
                             validator(_, value) {
                               if (!value || checkEmail(value) ) {         
                                 return Promise.reject(new Error('Your email already registed!'));  
                               }
                               return Promise.resolve(new Error('OKOK'));                              
                             },
-                          }),*/
-                        ]}                        
+                          }), */
+                        ]}
                       >
-                        <Input size="large" prefix={<MailOutlined />} placeholder="Your email address" 
-                          onChange={event => checkEmail(event.target.value)}                        
+                        <Input
+                          size="large"
+                          prefix={<MailOutlined />}
+                          placeholder="Your email address"
+                          onChange={event => checkEmail(event.target.value)}
                         />
                       </Form.Item>
-                      
+
                       <Form.Item
                         name="password"
                         rules={[
                           { required: true, message: 'Please input your Password!' },
-                          { min:8 },
-                          { max:20 }
+                          { min: 8 },
+                          { max: 20 },
                         ]}
                       >
-                        <Input.Password 
+                        <Input.Password
                           size="large"
                           placeholder="Password"
                           prefix={<LockOutlined />}
-                        />                      
+                        />
                       </Form.Item>
 
                       <Form.Item
@@ -218,27 +225,31 @@ function SignUpGuide() {
                               if (!value || getFieldValue('password') === value) {
                                 return Promise.resolve();
                               }
-                              return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                              return Promise.reject(
+                                new Error('The two passwords that you entered do not match!')
+                              );
                             },
                           }),
                         ]}
                       >
-                        <Input.Password 
+                        <Input.Password
                           size="large"
                           placeholder="Confirm password"
                           autoComplete="off"
                           prefix={<LockOutlined />}
                         />
                       </Form.Item>
-                                            
+
                       <Form.Item>
-                        <Form.Item 
+                        <Form.Item
                           name="agreement"
                           valuePropName="checked"
                           rules={[
                             {
                               validator: (_, value) =>
-                                value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
+                                value
+                                  ? Promise.resolve()
+                                  : Promise.reject(new Error('Should accept agreement')),
                             },
                           ]}
                           noStyle
@@ -246,55 +257,82 @@ function SignUpGuide() {
                           <Checkbox>
                             I have read the <a href="">agreement</a>
                           </Checkbox>
-                        </Form.Item>                      
+                        </Form.Item>
                       </Form.Item>
 
                       <Form.Item shouldUpdate>
                         {() => (
-                          <Button 
-                            size="large" 
+                          <Button
+                            size="large"
                             type="primary"
                             htmlType="submit"
-                            style={{width:"100%"}}
+                            style={{ width: '100%' }}
                             disabled={
                               !form.isFieldsTouched(true) ||
-                              !!form.getFieldsError().filter(({ errors }) => errors.length).length                                                     
+                              !!form.getFieldsError().filter(({ errors }) => errors.length).length
                             }
                           >
                             Create Guide
-                          </Button>                          
-                        )} 
+                          </Button>
+                        )}
                       </Form.Item>
                       <Form.Item>
                         Or <a href="/login">Have a account ?</a>
                       </Form.Item>
-                    </Form>  
+                    </Form>
                   </CardBody>
-                  {/*<CardFooter className={classes.cardFooter}>
+                  {/* <CardFooter className={classes.cardFooter}>
                     <TermLink to="#">Localguidepal Term and Service</TermLink>
-                  </CardFooter>*/}
+                  </CardFooter> */}
                 </Card>
               </GridItem>
-                    
+
               <GridItem xs={12} sm={12} md={8}>
-                <TermAndService>   
-                  <h2 style={{fontWeight:'bold', color:'#f12f60'}}>Guide Terms and Service</h2>
-                  <p>Before creating a guide account, please read carefully and agree to the following terms</p>
+                <TermAndService>
+                  <h2 style={{ fontWeight: 'bold', color: '#f12f60' }}>Guide Terms and Service</h2>
+                  <p>
+                    Before creating a guide account, please read carefully and agree to the
+                    following terms
+                  </p>
                   <ul>
-                    <li>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. </li>
-                    <li>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. </li>
-                    <li>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. </li>
-                    <li>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. </li>
-                    <li>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. </li>
-                    <li>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. </li>
+                    <li>
+                      In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+                      used to demonstrate the visual form of a document or a typeface without
+                      relying on meaningful content.{' '}
+                    </li>
+                    <li>
+                      In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+                      used to demonstrate the visual form of a document or a typeface without
+                      relying on meaningful content.{' '}
+                    </li>
+                    <li>
+                      In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+                      used to demonstrate the visual form of a document or a typeface without
+                      relying on meaningful content.{' '}
+                    </li>
+                    <li>
+                      In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+                      used to demonstrate the visual form of a document or a typeface without
+                      relying on meaningful content.{' '}
+                    </li>
+                    <li>
+                      In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+                      used to demonstrate the visual form of a document or a typeface without
+                      relying on meaningful content.{' '}
+                    </li>
+                    <li>
+                      In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+                      used to demonstrate the visual form of a document or a typeface without
+                      relying on meaningful content.{' '}
+                    </li>
                   </ul>
                 </TermAndService>
               </GridItem>
-            </GridContainer>  
-          </MainContent>          
-        </div>        
-        <Footer whiteFont style={{marginTop:100}}/>
-      </div>            
+            </GridContainer>
+          </MainContent>
+        </div>
+        <Footer whiteFont style={{ marginTop: 100 }} />
+      </div>
     </Layout>
   );
 }

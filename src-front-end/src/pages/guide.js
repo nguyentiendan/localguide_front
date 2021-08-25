@@ -1,6 +1,6 @@
 /* eslint-disable react/no-danger */
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useEffect, useState, useLayoutEffect, } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import styled from 'styled-components';
 import { Avatar, Tag, Spin } from 'antd';
 import { UserOutlined, CrownOutlined } from '@ant-design/icons';

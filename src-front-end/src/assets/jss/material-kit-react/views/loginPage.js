@@ -36,7 +36,7 @@ const signupPageStyle = {
       content: '""',
     },
     '& footer li a,& footer li a:hover,& footer li a:active': {
-      //color: '#FFFFFF',
+      // color: '#FFFFFF',
       color: '#f12f60',
     },
     '& footer': {
@@ -51,12 +51,12 @@ const signupPageStyle = {
   cardHeader: {
     width: 'auto',
     textAlign: 'center',
-    //marginLeft: '20px',
-    //marginRight: '20px',
+    // marginLeft: '20px',
+    // marginRight: '20px',
     marginTop: '5px',
-    backgroundColor: "#fafafa",
-    //padding: '10px 0',
-    //marginBottom: '5px',
+    backgroundColor: '#fafafa',
+    // padding: '10px 0',
+    // marginBottom: '5px',
   },
   socialIcons: {
     maxWidth: '24px',
@@ -87,7 +87,7 @@ const signupPageStyle = {
   },
   inputIconsColor: {
     color: '#495057',
-  },  
+  },
 };
 
 export default signupPageStyle;
