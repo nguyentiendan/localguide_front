@@ -366,6 +366,16 @@ const TourDescriptionItem = styled.li`
   }
 `;
 
+const PriceBox = styled.div`
+  width: 40%;
+  text-align: right;
+  margin-left: auto;
+
+  ${smallScreenCss(`
+      width: 100%;
+  `)}
+`;
+
 /** TODO
  * 1) Them icon Language (chi de 1 languagua, khi re vao thi ra tooltip)
  * 2) Them icon so nguoi - DONE
@@ -833,13 +843,15 @@ function TourDetail({ location }) {
                       )}
                     </ul>
                   </DescriptionWrapper>
-                    <div style={{ textAlign: 'left' }}>
-                      <p>Tour name<span></span></p>
-                      <p>price<span></span></p>
+                  <PriceBox>
+                    <div style={{ textAlign: 'left', marginLeft: 'auto' }}>
+                      <p>Tour name：<span>{tourDetails.tour[0]?.name}</span></p>
+                      <p>price：＄<span>{tourDetails.tour[0]?.total || 0}</span></p>
                       <BookButton color="rose" loading={loading} disabled={loading}>
                         Book now
                       </BookButton>
                     </div>
+                  </PriceBox>
                 </div>
               </GridItem>
             </GridContainer>
