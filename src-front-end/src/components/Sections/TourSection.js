@@ -77,7 +77,7 @@ function TourSection() {
           color: 'black',
           fontSize: '50px',
           lineHeight: '1.5715',
-          marginInline: '50px',
+          marginInline: '45px',
           top: '20%',
           zIndex: '100',
         }}
