@@ -7,6 +7,9 @@ import RatingStars from '../RatingStars';
 import colors from '../../assets/styles/colors';
 import defaultTourImage from '../../assets/img/mocks/tours/tour-1.jpg';
 
+import { smallScreenCss } from '../../assets/styles/responsive-css';
+import { bigScreenCss } from '../../assets/styles/responsive-css';
+console.log(smallScreenCss);
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -15,7 +18,12 @@ const Wrapper = styled.div`
   //width: 400px;
   //width: 310px;
   width: calc((310/334)*100%);
+  width: 190px;
   overflow: hidden;
+
+  ${smallScreenCss(`
+      width: 100%;
+  `)}
 `;
 
 const Title = styled.h3`
@@ -51,6 +59,41 @@ const Picture = styled.img`
   margin-bottom: 0.75rem;
 `;
 
+
+const settings = {
+  // dots: true,
+  autoplay: true,
+  infinite: true,
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  speed: 500,
+  // nextArrow: <SampleNextArrow />,
+  // prevArrow: <SamplePrevArrow />,
+    responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 5,
+        slidesToScroll: 1,
+      },
+    },
+    {
+      breakpoint: 798,
+      settings: {
+        slidesToShow: 4,
+        slidesToScroll: 1,
+      },
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 5,
+        slidesToScroll: 1,
+      },
+    },
+  ],
+};
+
 const TourListItem = ({ className, id, uid, name, description, country, city, day, cover }) => (
   <Wrapper className={className}>
     <Link to={`/tour?uid=${uid}&id=${id}`}>
@@ -58,7 +101,7 @@ const TourListItem = ({ className, id, uid, name, description, country, city, da
       <Title>{name}</Title>
       {/* <SubTitle>{`${country} - ${city}`}</SubTitle> */}
       <div
-        style={{ display: 'flex', width: '95%', color: '#635e69', justifyContent: 'space-between' }}
+        style={{ /*display: 'flex', color: '#635e69', justifyContent: 'flex-start'*/ }}
       >
         <span>
           {country}/{city}
