@@ -833,6 +833,13 @@ function TourDetail({ location }) {
                       )}
                     </ul>
                   </DescriptionWrapper>
+                    <div style={{ textAlign: 'left' }}>
+                      <p>Tour name<span></span></p>
+                      <p>price<span></span></p>
+                      <BookButton color="rose" loading={loading} disabled={loading}>
+                        Book now
+                      </BookButton>
+                    </div>
                 </div>
               </GridItem>
             </GridContainer>
