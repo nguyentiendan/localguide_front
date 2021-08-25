@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 // nodejs library that concatenates classes
 // @material-ui/core components
 import { makeStyles } from '@material-ui/core/styles';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 // @material-ui/icons
 import { Spin, Row, Col, Carousel } from 'antd';
@@ -53,73 +52,78 @@ function TourSection() {
         setLoading(true);
         const response = await API.getAllPopularTours();
         setTours(response.data);
-      } catch (error) {        
+      } catch (error) {
       } finally {
         setLoading(false);
       }
     };
     fetchAllTour();
-    /*const interval = setInterval(() => fetchAllTour(), 100000);
+    /* const interval = setInterval(() => fetchAllTour(), 100000);
     return () => {
       clearInterval(interval);
-    };*/
+    }; */
   }, []);
 
   const SampleNextArrow = props => {
     const { className, style, onClick } = props;
-    return (
-      <div
-        className={className}
-        style={{
-          // ...style,
-          color: 'black',
-          fontSize: '50px',
-          lineHeight: '1.5715',
-          marginInline: '50px',
-          top: '20%',
-          right: '-30px',
-        }}
-        onClick={onClick}
-      >
-        {/* <RightOutlined /> */}
-      </div>
-    );
-  };
-
-  const SamplePrevArrow = props => {
-    const { className, style, onClick } = props;
+    if (className.includes('slick-disabled')) {
+      style.display = 'none';
+    }
     return (
       <div
         className={className}
         style={{
           ...style,
           color: 'black',
-          fontSize: '15px',
+          fontSize: '50px',
           lineHeight: '1.5715',
-          // marginInline:'50px',
+          marginInline: '50px',
+          top: '20%',
+          zIndex: '100',
         }}
         onClick={onClick}
-      >
-        <LeftOutlined />
-      </div>
+      />
+    );
+  };
+
+  const SamplePrevArrow = props => {
+    const { className, style, onClick } = props;
+    if (className.includes('slick-disabled')) {
+      style.display = 'none';
+    }
+    return (
+      <div
+        className={className}
+        style={{
+          ...style,
+          color: 'black',
+          fontSize: '50px',
+          lineHeight: '1.5715',
+          marginInline: '30px',
+          top: '20%',
+          zIndex: '100',
+        }}
+        onClick={onClick}
+      />
     );
   };
 
   const settings = {
     // dots: true,
-    infinite: true,
+    infinite: false,
     slidesToShow: 3,
     slidesToScroll: 1,
     speed: 500,
+    arrow: false,
     nextArrow: <SampleNextArrow />,
-    // prevArrow: <SamplePrevArrow />,
+    prevArrow: <SamplePrevArrow />,
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-          infinite: true,
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          infinite: false,
         },
       },
       {
