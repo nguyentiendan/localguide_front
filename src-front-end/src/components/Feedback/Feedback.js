@@ -102,10 +102,10 @@ const Feedback = () => {
               { max: 100 },
             ]}
           >
-            <Input.TextArea size="large" allowClear autoSize={{ minRows: 2 }} />
+            <Input.TextArea size="large" allowClear autoSize={{ maxRows: 1}} />
           </Form.Item>
           <Form.Item name="comment" label={<p>your comment (optional)</p>} rules={[{ max: 200 }]}>
-            <Input.TextArea size="large" allowClear autoSize={{ minRows: 4 }} />
+            <Input.TextArea size="large" allowClear autoSize={{ maxRows: 5, minRows: 5 }} />
           </Form.Item>
           <Form.Item className={classes.form}>
             <Button key="back" onClick={handleCancel} className={classes.formButton}>
