@@ -9,7 +9,9 @@ import defaultTourImage from '../../assets/img/mocks/tours/tour-1.jpg';
 
 import { smallScreenCss } from '../../assets/styles/responsive-css';
 import { bigScreenCss } from '../../assets/styles/responsive-css';
+
 console.log(smallScreenCss);
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -17,12 +19,15 @@ const Wrapper = styled.div`
   position: relative;
   //width: 400px;
   //width: 310px;
-  width: calc((310/334)*100%);
+  //width: calc((310/334)*100%);
   width: 190px;
   overflow: hidden;
 
   ${smallScreenCss(`
-      width: 100%;
+      //width: 100%;
+      width: calc((190/350)*100%);
+
+      &img: 100%;
   `)}
 `;
 
@@ -52,7 +57,7 @@ const Picture = styled.img`
   //height: 200px;
   //width: 310px;
   width: 100%;
-  height: 175px;
+  //height: 175px;
   border-radius: 6px;
   object-fit: cover;
   object-position: center;
@@ -64,7 +69,7 @@ const settings = {
   // dots: true,
   autoplay: true,
   infinite: true,
-  slidesToShow: 3,
+  slidesToShow: 5,
   slidesToScroll: 1,
   speed: 500,
   // nextArrow: <SampleNextArrow />,
@@ -78,9 +83,9 @@ const settings = {
       },
     },
     {
-      breakpoint: 798,
+      breakpoint: 768,
       settings: {
-        slidesToShow: 4,
+        slidesToShow: 5,
         slidesToScroll: 1,
       },
     },
@@ -97,12 +102,10 @@ const settings = {
 const TourListItem = ({ className, id, uid, name, description, country, city, day, cover }) => (
   <Wrapper className={className}>
     <Link to={`/tour?uid=${uid}&id=${id}`}>
-      <Picture src={cover || defaultTourImage} />
+      {/*<Picture src={cover || defaultTourImage} />*/}
+      <Picture src={require('../../assets/img/test/190x190.jpeg')} />
       <Title>{name}</Title>
-      {/* <SubTitle>{`${country} - ${city}`}</SubTitle> */}
-      <div
-        style={{ /*display: 'flex', color: '#635e69', justifyContent: 'flex-start'*/ }}
-      >
+      <div style={{ display: 'flex', color: '#635e69', justifyContent: 'flex-start' }}>
         <span>
           {country}/{city}
         </span>
