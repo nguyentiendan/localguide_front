@@ -69,7 +69,7 @@ function IndexPage() {
   return (
     <Layout>
       <SEO title="Localguide Pal" />
-      <Parallax small filter image={require('../assets/img/home-banner.jpg')}>
+      <Parallax small filter>
         <div className={classes.container}>
           <GridContainer>
             <GridItem xs={12} sm={12} md={6}>

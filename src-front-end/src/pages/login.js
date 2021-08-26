@@ -9,14 +9,14 @@ import * as API from '../apis';
 import { useLocalStorage } from '../utils/storage';
 import { AUTH_TOKEN_KEY } from '../utils/auth';
 import Layout from '../components/CustomLayout';
-import GridContainer from '../components/Grid/GridContainer.js';
-import GridItem from '../components/Grid/GridItem.js';
-import Card from '../components/Card/Card.js';
-import CardBody from '../components/Card/CardBody.js';
-import CardHeader from '../components/Card/CardHeader.js';
-import CardFooter from '../components/Card/CardFooter.js';
-import Footer from '../components/Footer/Footer.js';
-import styles from '../assets/jss/material-kit-react/views/loginPage.js';
+import GridContainer from '../components/Grid/GridContainer';
+import GridItem from '../components/Grid/GridItem';
+import Card from '../components/Card/Card';
+import CardBody from '../components/Card/CardBody';
+import CardHeader from '../components/Card/CardHeader';
+import CardFooter from '../components/Card/CardFooter';
+import Footer from '../components/Footer/Footer';
+import styles from '../assets/jss/material-kit-react/views/loginPage';
 
 const useStyles = makeStyles(styles);
 

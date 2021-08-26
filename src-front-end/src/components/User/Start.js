@@ -5,11 +5,11 @@ import { Result, Button, Spin } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import { navigate } from 'gatsby';
 import Layout from '../CustomLayout';
-import Parallax from '../Parallax/Parallax.js';
-import Footer from '../Footer/Footer.js';
+import Parallax from '../Parallax/Parallax';
+import Footer from '../Footer/Footer';
 import * as API from '../../apis';
 import { getUserProfile, ISUSER } from '../../utils/auth';
-import styles from '../../assets/styles/profilePage.js';
+import styles from '../../assets/styles/profilePage';
 import NoticeModal from './Modal/NoticeModal';
 
 const useStyles = makeStyles(styles);
