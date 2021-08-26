@@ -42,6 +42,7 @@ import TourGuideListItem from '../components/TourGuideListItem';
 import { safeFuncCall } from '../utils/commons';
 import defaultImage from '../assets/img/noimage-600x400.jpg';
 import styles from '../assets/styles/tourPage.js';
+import PriceBox from '../components/PriceBox';
 import 'react-bnb-gallery/dist/style.css';
 
 const Title = styled.h1`
@@ -375,15 +376,6 @@ const TourDescriptionItem = styled.li`
   }
 `;
 
-const PriceBox = styled.div`
-  width: 40%;
-  text-align: right;
-  margin-left: auto;
-
-  ${smallScreenCss(`
-      width: 100%;
-  `)}
-`;
 
 /** TODO
  * 1) Them icon Language (chi de 1 languagua, khi re vao thi ra tooltip)
@@ -852,15 +844,6 @@ function TourDetail({ location }) {
                       )}
                     </ul>
                   </DescriptionWrapper>
-                  <PriceBox>
-                    <div style={{ textAlign: 'left', marginLeft: 'auto' }}>
-                      <p>Tour name：<span>{tourDetails.tour[0]?.name}</span></p>
-                      <p>price：＄<span>{tourDetails.tour[0]?.total || 0}</span></p>
-                      <BookButton color="rose" loading={loading} disabled={loading}>
-                        Book now
-                      </BookButton>
-                    </div>
-                  </PriceBox>
                 </div>
               </GridItem>
             </GridContainer>
@@ -895,6 +878,12 @@ function TourDetail({ location }) {
         </div>
       </div>
       <Footer />
+      <PriceBox
+        name={tourDetails.tour[0]?.name}
+        price={<>tourDetails.tour[0]?.total || 0)</>}
+        loading={loading}
+        disabled={loading}
+      />
     </Layout>
   );
 }
