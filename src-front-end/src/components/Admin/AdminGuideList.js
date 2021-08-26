@@ -1,8 +1,8 @@
-import React, { useState, } from 'react';
-import AdminLayout from '../../components/AdminLayout';
-import Guide from '../../components/Admin/Guides';
-import { getUserProfile, ISADMIN } from '../../utils/auth';
+import React, { useState } from 'react';
 import { navigate } from 'gatsby';
+import AdminLayout from '../AdminLayout';
+import Guide from './Guides';
+import { getUserProfile, ISADMIN } from '../../utils/auth';
 
 const GuideList = () => {
   const [userProfile] = useState(getUserProfile());
@@ -10,7 +10,7 @@ const GuideList = () => {
     navigate('/app/admin');
     return null;
   }
-  
+
   return (
     <AdminLayout>
       <h2>Guide List</h2>

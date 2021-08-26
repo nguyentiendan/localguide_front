@@ -1,9 +1,15 @@
 /* eslint-disable react/no-danger */
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useEffect, useState, useLayoutEffect,} from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import styled from 'styled-components';
-import { Button, Drawer, Avatar, Tag, Spin, Modal, Input,message } from 'antd';
-import { UserOutlined, CrownOutlined, AppstoreAddOutlined,CommentOutlined, SwitcherOutlined } from '@ant-design/icons';
+import { Button, Drawer, Avatar, Tag, Spin, Modal, Input, message } from 'antd';
+import {
+  UserOutlined,
+  CrownOutlined,
+  AppstoreAddOutlined,
+  CommentOutlined,
+  SwitcherOutlined,
+} from '@ant-design/icons';
 import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
 import _ from 'lodash';
 import qs from 'query-string';
@@ -11,6 +17,7 @@ import classNames from 'classnames';
 // @material-ui/core components
 import { makeStyles } from '@material-ui/core/styles';
 
+import { Fab, Action } from 'react-tiny-fab';
 import breakpoints from '../../assets/styles/breakpoints';
 import Layout from '../CustomLayout';
 
@@ -21,7 +28,7 @@ import Footer from '../Footer/Footer.js';
 import InterestsOrExtras from '../InterestsOrExtras';
 import SmallScreen from '../Responsive/SmallScreen';
 import BigScreen from '../Responsive/BigScreen';
-//import Button from '../CustomButtons/Button';
+// import Button from '../CustomButtons/Button';
 import { bigScreenCss, smallScreenCss } from '../../assets/styles/responsive-css';
 import * as API from '../../apis';
 import iconTour from '../../assets/img/icon-tour.svg';
@@ -35,10 +42,9 @@ import styles from '../../assets/styles/profilePage.js';
 import 'react-bnb-gallery/dist/style.css';
 import defaultImage from '../../assets/img/noimage-600x400.jpg';
 import { getUserProfile, ISUSER } from '../../utils/auth';
-import { Fab, Action } from 'react-tiny-fab';
 import 'react-tiny-fab/dist/styles.css';
-import ReviewCommentListItem from "../CommentListItem/ReviewCommentListItem";
-import NoticeModal from "./Modal/NoticeModal"; 
+import ReviewCommentListItem from '../CommentListItem/ReviewCommentListItem';
+import NoticeModal from './Modal/NoticeModal';
 
 const InfoAvatarAndBackgroundImg = styled.div`
   .info__guide {
@@ -143,15 +149,15 @@ const useStyles = makeStyles(styles);
 
 function UserReview({ location }) {
   const [userProfile] = useState(getUserProfile());
-  //if (userProfile.role != ISUSER) {
+  // if (userProfile.role != ISUSER) {
   //  navigate('/');
   //  return null;
-  //}
+  // }
   const classes = useStyles();
   const dataQueryParams = qs.parse(location.search);
-  const uid = dataQueryParams.uid
-  const id = dataQueryParams.id
-  
+  const { uid } = dataQueryParams;
+  const { id } = dataQueryParams;
+
   const [profile, setProfile] = useState({});
   const [rootCountry, setRootCountry] = useState({});
   const [loading, setLoading] = useState(false);
@@ -159,38 +165,38 @@ function UserReview({ location }) {
   const [comments, setComments] = useState({});
   const [replyComment, setReplyComment] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  
+
   useEffect(() => {
-    const fetchData = async () => {      
-      setLoading(true);      
-      const res = await API.getUserProfile(uid);             
-      //show modal notice user become a guide
-      if(res.data.role != userProfile.role) {        
-        setShowModal(true)
-      }     
+    const fetchData = async () => {
+      setLoading(true);
+      const res = await API.getUserProfile(uid);
+      // show modal notice user become a guide
+      if (res.data.role != userProfile.role) {
+        setShowModal(true);
+      }
       setProfile(res.data);
       setLoading(false);
     };
     fetchData();
   }, [setProfile, uid]);
-  
+
   useEffect(() => {
     (async () => {
       const { data } = await API.getAllCountry();
       const newData = _.keyBy(data, item => item.code);
       setRootCountry(newData);
     })();
-  }, []);  
-  
-  const handleGetAllReply = async (commentId) => {    
+  }, []);
+
+  const handleGetAllReply = async commentId => {
     setLoading(true);
     const res = await API.handleGetAllReply({ id: commentId });
     setReplyComment(res.data);
     setLoading(false);
   };
-  
-  const handleCreateReply = async (e, commentId,uid) => {    
-    if ( (e.target.value).trim() != "" ) {
+
+  const handleCreateReply = async (e, commentId, uid) => {
+    if (e.target.value.trim() != '') {
       const { data } = await API.handleCreateReply2({
         uid,
         commentId,
@@ -200,33 +206,33 @@ function UserReview({ location }) {
       setReplyComment([...replyComment, newReply]);
     }
   };
-  
-  const handleDeleteReply = async (replyId)  => {    
+
+  const handleDeleteReply = async replyId => {
     const newData = _.remove(replyComment, item => {
       return item.id !== replyId;
     });
     setReplyComment(newData);
-    let res = await API.handleDeleteReply2( replyId );    
-    if (res.status) { 
-      message.success("Delete success")
+    const res = await API.handleDeleteReply2(replyId);
+    if (res.status) {
+      message.success('Delete success');
     }
   };
 
-  const showComment = () => {    
+  const showComment = () => {
     setVisible(true);
-    const fetchAllComment = async () => {      
-      setLoading(true);        
-      const res = await API.GetAllReviewComment({id, type:'user'}); //id : account id
-      setComments(res.data)      
-      setLoading(false);      
-    }
+    const fetchAllComment = async () => {
+      setLoading(true);
+      const res = await API.GetAllReviewComment({ id, type: 'user' }); // id : account id
+      setComments(res.data);
+      setLoading(false);
+    };
     fetchAllComment();
-    //const interval = setInterval(() => fetchAllComment(), 50000);
-    //return () => {
+    // const interval = setInterval(() => fetchAllComment(), 50000);
+    // return () => {
     //  clearInterval(interval);
-    //};        
+    // };
   };
-  
+
   const onClose = () => {
     setVisible(false);
   };
@@ -243,47 +249,47 @@ function UserReview({ location }) {
         return null;
     }
   };
-  
+
   return (
-    <Layout scrollHeight={300}> 
-      {/*{((profile.reqActive == 0 || profile.reqActive == 1) && (profile.role == 1)) && (*/}
-        <>   
-      <Parallax small filter image={require('../../assets/img/home-banner.jpg')} />
-      <div className={classNames(classes.main, classes.mainRaised)}>
-        <Spin spinning={loading}>
-          <div className={classes.container}>
-            <GridContainer justify="center">
-              <GridItem xs={12} sm={12} md={12}>
-                <div className={classes.description}>
-                  <InfoAvatarAndBackgroundImg>
-                    <div className="info__guide">
-                      <Avatar size={128} icon={<UserOutlined />} src={profile.avatar} />
-                      <div className="info__guide__details">
-                        <h2 style={{ color: '#ffffff' }}>{profile.fullname}</h2>
-                        <Tag
-                          icon={<CrownOutlined />}
-                          color="#f12f60"
-                          className="guide__details__best"
-                        >
-                          {handleLevelGuide(profile.level)}
-                        </Tag>
-                        <p style={{ color: '#EE305F', margin: 0 }}>
-                          Possible to plan personalised tour
-                        </p>
+    <Layout scrollHeight={300}>
+      {/* {((profile.reqActive == 0 || profile.reqActive == 1) && (profile.role == 1)) && ( */}
+      <>
+        <Parallax small filter image={require('../../assets/img/home-banner.jpg')} />
+        <div className={classNames(classes.main, classes.mainRaised)}>
+          <Spin spinning={loading}>
+            <div className={classes.container}>
+              <GridContainer justify="center">
+                <GridItem xs={12} sm={12} md={12}>
+                  <div className={classes.description}>
+                    <InfoAvatarAndBackgroundImg>
+                      <div className="info__guide">
+                        <Avatar size={128} icon={<UserOutlined />} src={profile.avatar} />
+                        <div className="info__guide__details">
+                          <h2 style={{ color: '#ffffff' }}>{profile.fullname}</h2>
+                          <Tag
+                            icon={<CrownOutlined />}
+                            color="#f12f60"
+                            className="guide__details__best"
+                          >
+                            {handleLevelGuide(profile.level)}
+                          </Tag>
+                          <p style={{ color: '#EE305F', margin: 0 }}>
+                            Possible to plan personalised tour
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </InfoAvatarAndBackgroundImg>
-                </div>
-              </GridItem>
-            </GridContainer>
-          </div>
-          <div className={classes.container}>
-            <GridContainer justify="center">
-              <GridItem xs={12} sm={12} md={12}>
-                <div className={classes.description}>
-                  <InfoIntroduction>
-                    <div className="general__information">
-                      {/*<div className="list__icon">
+                    </InfoAvatarAndBackgroundImg>
+                  </div>
+                </GridItem>
+              </GridContainer>
+            </div>
+            <div className={classes.container}>
+              <GridContainer justify="center">
+                <GridItem xs={12} sm={12} md={12}>
+                  <div className={classes.description}>
+                    <InfoIntroduction>
+                      <div className="general__information">
+                        {/* <div className="list__icon">
                         <div className="flex-center" style={{ flexDirection: 'column' }}>
                           <IconWrapper src={iconTour} alt="Tours" />
                           <p style={{ color: '#525F6B' }}>20 Tours</p>
@@ -300,135 +306,126 @@ function UserReview({ location }) {
                           <IconWrapper src={iconCustomer} alt="Customers" />
                           <p style={{ color: '#525F6B' }}>365 Customers</p>
                         </div>
-                      </div>*/}
-                    </div>
-                    {profile.user?.intro !== '' && (
-                      <div
-                        className={classes.description}
-                        style={{ paddingTop: '0px', paddingBottom: '10px' }}
-                      >
-                        <FormatQuote style={{ color: '#e91e63' }} />
-                        <i>{profile.intro}</i>
-                        <FormatQuote style={{ color: '#e91e63' }} />
+                      </div> */}
                       </div>
-                    )}
-                    <h1>Biography</h1>
-                    <div dangerouslySetInnerHTML={{ __html: profile.experience }} />
+                      {profile.user?.intro !== '' && (
+                        <div
+                          className={classes.description}
+                          style={{ paddingTop: '0px', paddingBottom: '10px' }}
+                        >
+                          <FormatQuote style={{ color: '#e91e63' }} />
+                          <i>{profile.intro}</i>
+                          <FormatQuote style={{ color: '#e91e63' }} />
+                        </div>
+                      )}
+                      <h1>Biography</h1>
+                      <div dangerouslySetInnerHTML={{ __html: profile.experience }} />
 
-                    <div className="details__information mt-40">
-                      {profile.language && (
-                        <div className="details__information__item">
-                          <IconWrapper src={iconLanguage} alt="Customers" />
-                          <h4>{profile.language?.split(';').join(', ')}</h4>
-                        </div>
-                      )}
-                      {(profile.city || profile.country) && (
-                        <div className="details__information__item">
-                          <IconWrapper src={iconLocation} alt="Customers" />
-                          <h4>
-                            {profile.city}
-                            {profile.city && ','} {rootCountry[profile.country]?.name}
-                          </h4>
-                        </div>
-                      )}
-                      {profile.user?.sex && (
-                        <div className="details__information__item">
-                          <IconWrapper src={iconSex} alt="Customers" />
-                          <h4>
-                            {profile.sex === 0 ? 'Female' : 'Male'}, {profile.age} years old
-                          </h4>
-                        </div>
-                      )}
-                    </div>
-                    <div className="mt-40">
-                      {profile.interest && (
-                        <InterestsOrExtras data={profile.interest} title="Interests" />
-                      )}
-                      {profile.extras && (
-                        <InterestsOrExtras data={profile.extras} title="Extras" />
-                      )}
-                    </div>
-                    {profile.education && (
-                      <div className="education__information">
-                        <b>Education:</b>
-                        <p>{profile.education}</p>
+                      <div className="details__information mt-40">
+                        {profile.language && (
+                          <div className="details__information__item">
+                            <IconWrapper src={iconLanguage} alt="Customers" />
+                            <h4>{profile.language?.split(';').join(', ')}</h4>
+                          </div>
+                        )}
+                        {(profile.city || profile.country) && (
+                          <div className="details__information__item">
+                            <IconWrapper src={iconLocation} alt="Customers" />
+                            <h4>
+                              {profile.city}
+                              {profile.city && ','} {rootCountry[profile.country]?.name}
+                            </h4>
+                          </div>
+                        )}
+                        {profile.user?.sex && (
+                          <div className="details__information__item">
+                            <IconWrapper src={iconSex} alt="Customers" />
+                            <h4>
+                              {profile.sex === 0 ? 'Female' : 'Male'}, {profile.age} years old
+                            </h4>
+                          </div>
+                        )}
                       </div>
-                    )}
-                    {profile.certification && (
-                      <div className="education__information">
-                        <b>Certification:</b>
-                        <p>{profile.certification}</p>
+                      <div className="mt-40">
+                        {profile.interest && (
+                          <InterestsOrExtras data={profile.interest} title="Interests" />
+                        )}
+                        {profile.extras && (
+                          <InterestsOrExtras data={profile.extras} title="Extras" />
+                        )}
                       </div>
-                    )}
-                  </InfoIntroduction>
-                </div>
-              </GridItem>
-            </GridContainer>
-          </div> 
-                
-          {( (profile.reqActive === 1 || profile.reqActive === 2) && 
-          <Fab      
-            mainButtonStyles={{ backgroundColor: '#f12f60',}}
-            icon={<AppstoreAddOutlined />}          
-            alwaysShowTitle={true}          
-          >          
-            <Action
-              style={{backgroundColor: '#F897AF',}}
-              text="Comment"            
-              onClick={showComment}
-            >
-              <CommentOutlined />
-            </Action>
-          </Fab>
-          )}
-          <Drawer
-            title="Comments"
-            width={350}
-            closable={false}
-            onClose={onClose}
-            visible={visible}          
-            bodyStyle={{paddingBottom: 80 }}
-            footer={
-              <div
-                style={{
-                  textAlign: 'left',
-                  //height:150,
-                }}
-              >               
-                <Button 
-                  onClick={onClose} 
-                  type="primary"
-                  style={{ marginTop: 5, marginRight: 8 }}
-                >
-                  Cancel
-                </Button>              
-              </div>
-            }
-          >
-            
-            <div>
-              {comments.length > 0 && (
-                <Spin spinning={loading}>          
-                  <ReviewCommentListItem
-                    comments={comments}
-                    replyComment={replyComment}
-                    handleGetAllReply={handleGetAllReply}
-                    handleCreateReply={handleCreateReply}
-                    //handleDeleteComment={}
-                    handleDeleteReply={handleDeleteReply}              
-                    uid={userProfile.uid}   //uid of user logining 
-                    className="comment"
-                  />                    
-                </Spin>
-              )}      
+                      {profile.education && (
+                        <div className="education__information">
+                          <b>Education:</b>
+                          <p>{profile.education}</p>
+                        </div>
+                      )}
+                      {profile.certification && (
+                        <div className="education__information">
+                          <b>Certification:</b>
+                          <p>{profile.certification}</p>
+                        </div>
+                      )}
+                    </InfoIntroduction>
+                  </div>
+                </GridItem>
+              </GridContainer>
             </div>
-          </Drawer>
-        </Spin>
-        <NoticeModal visible={showModal}  />
-      </div>
-      <Footer />
+
+            {(profile.reqActive === 1 || profile.reqActive === 2) && (
+              <Fab
+                mainButtonStyles={{ backgroundColor: '#f12f60' }}
+                icon={<AppstoreAddOutlined />}
+                alwaysShowTitle
+              >
+                <Action style={{ backgroundColor: '#F897AF' }} text="Comment" onClick={showComment}>
+                  <CommentOutlined />
+                </Action>
+              </Fab>
+            )}
+            <Drawer
+              title="Comments"
+              width={350}
+              closable={false}
+              onClose={onClose}
+              visible={visible}
+              bodyStyle={{ paddingBottom: 80 }}
+              footer={
+                <div
+                  style={{
+                    textAlign: 'left',
+                    // height:150,
+                  }}
+                >
+                  <Button onClick={onClose} type="primary" style={{ marginTop: 5, marginRight: 8 }}>
+                    Cancel
+                  </Button>
+                </div>
+              }
+            >
+              <div>
+                {comments.length > 0 && (
+                  <Spin spinning={loading}>
+                    <ReviewCommentListItem
+                      comments={comments}
+                      replyComment={replyComment}
+                      handleGetAllReply={handleGetAllReply}
+                      handleCreateReply={handleCreateReply}
+                      // handleDeleteComment={}
+                      handleDeleteReply={handleDeleteReply}
+                      uid={userProfile.uid} // uid of user logining
+                      className="comment"
+                    />
+                  </Spin>
+                )}
+              </div>
+            </Drawer>
+          </Spin>
+          <NoticeModal visible={showModal} />
+        </div>
+        <Footer />
       </>
-    {/* )}  */}
+      {/* )}  */}
     </Layout>
   );
 }

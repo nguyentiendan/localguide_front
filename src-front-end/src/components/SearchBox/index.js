@@ -10,6 +10,12 @@ const Wrapper = styled.fieldset`
   margin: 0;
   padding: 0;
   border: none;
+  margin: 0 auto;
+  margin-top: -6em;
+  margin-bottom: 6em;
+  text-align: center;
+  width: calc((500/750)*100%);
+  max-width: 960px;
 `;
 
 const SearchInput = styled.input`
@@ -22,6 +28,8 @@ const SearchInput = styled.input`
   box-shadow: inset 0px 0px 0px 0px white;
   border: none;
   border-radius: 20px;
+  border-radius: 10px;
+  margin: 0 auto;
 
   &:focus {
     outline: 0;

@@ -1,22 +1,22 @@
-import React, { useState, } from 'react';
-import ChangePass from './User/ChangePass';
-import AdminLayout from '../../components/AdminLayout';
+import React, { useState } from 'react';
 import qs from 'query-string';
-import { getUserProfile, ISUSER } from '../../utils/auth';
 import { navigate } from 'gatsby';
+import ChangePass from './User/ChangePass';
+import AdminLayout from '../AdminLayout';
+import { getUserProfile, ISUSER } from '../../utils/auth';
 
-const AdminChangePass = () => {  
+const AdminChangePass = () => {
   const [userProfile] = useState(getUserProfile());
-  
-  if ( userProfile.role == ISUSER ) {
+
+  if (userProfile.role == ISUSER) {
     navigate('/app/admin');
     return null;
-  }  
+  }
 
-  return (    
+  return (
     <AdminLayout>
-      {/*<h2>Change Password</h2>*/}
-      <ChangePass uid={userProfile.uid} /> 
+      {/* <h2>Change Password</h2> */}
+      <ChangePass uid={userProfile.uid} />
     </AdminLayout>
   );
 };

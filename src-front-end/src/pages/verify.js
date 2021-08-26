@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import { Modal, Button } from 'antd';
+import { navigate } from 'gatsby';
 import * as API from '../apis';
 import breakpoints from '../assets/styles/breakpoints';
 import { ENTER } from '../constants/keys';
@@ -15,10 +16,9 @@ import CardHeader from '../components/Card/CardHeader.js';
 import CardFooter from '../components/Card/CardFooter.js';
 import Footer from '../components/Footer/Footer.js';
 import Input from '../components/Input';
-//import Button from '../components/Button';
+// import Button from '../components/Button';
 import styles from '../assets/jss/material-kit-react/views/loginPage.js';
 import image from '../assets/img/bg7.jpg';
-import { navigate } from 'gatsby';
 
 const useStyles = makeStyles(styles);
 
@@ -27,7 +27,7 @@ const MainContent = styled.div`
   background: rgb(245, 247, 250);
 `;
 
-/*const Card = styled.div`
+/* const Card = styled.div`
   max-width: 570px;
   margin: 0 auto;
   padding: 5rem 1rem;
@@ -35,7 +35,7 @@ const MainContent = styled.div`
   @media (max-width: ${breakpoints.sm}) {
     padding: 1.5rem 1rem;
   }
-`;*/
+`; */
 
 const Header = styled.header`
   padding: 2.5rem;
@@ -164,15 +164,15 @@ function VerifyPage() {
             title: 'Notice',
             content: (
               <div>
-                <p>Your account was verify successful</p>                
+                <p>Your account was verify successful</p>
               </div>
-            ), 
-            closable:false,
-            keyboard:false,      
-            centered:true,
-            okText: 'Close',      
-            onOk() {           
-              navigate("/login")
+            ),
+            closable: false,
+            keyboard: false,
+            centered: true,
+            okText: 'Close',
+            onOk() {
+              navigate('/login');
             },
           });
         } else {
@@ -248,12 +248,12 @@ function VerifyPage() {
                       disabled={loading}
                       onClick={handleOnSubmit}
                       type="primary"
-                      style={{width:500}}
+                      style={{ width: 500 }}
                     >
                       Verify your account
                     </Button>
                   </Actions>
-                </CardBody>                
+                </CardBody>
               </Card>
             </GridItem>
           </GridContainer>
