@@ -1,15 +1,15 @@
-import React, { useState, } from 'react';
-import AdminLayout from '../../components/AdminLayout';
-import Tour from '../../components/Admin/Tours';
-import { getUserProfile, ISADMIN } from '../../utils/auth';
+import React, { useState } from 'react';
 import { navigate } from 'gatsby';
+import AdminLayout from '../AdminLayout';
+import Tour from './Tours';
+import { getUserProfile, ISADMIN } from '../../utils/auth';
 
 const TourList = () => {
   const [userProfile] = useState(getUserProfile());
   if (userProfile.role != ISADMIN) {
     navigate('/app/admin');
     return null;
-  }  
+  }
 
   return (
     <AdminLayout>

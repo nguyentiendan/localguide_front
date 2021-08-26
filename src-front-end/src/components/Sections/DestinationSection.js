@@ -44,7 +44,7 @@ function DestinationSection() {
         setLoading(true);
         const response = await API.getRecommendTours();
         setTours(response.data);
-      } catch (error) {        
+      } catch (error) {
       } finally {
         setLoading(false);
       }
@@ -65,21 +65,20 @@ function DestinationSection() {
               <SectionHeader title="Destination" />
               <ListWrapper>
                 <ListContainer>
-                {tours &&
-                  tours.map((tour, index) => {
-                    return (
-                      <DestinationListItem
-                        key={index}
-                        name={tour.name}
-                        location={tour.city}
-                        picture={tour.cover}
-                        className="destination"
-                        id={tour.id}
-                        uid={tour.uid}
-                      />
-                    );
-                  })
-                }  
+                  {tours &&
+                    tours.map((tour, index) => {
+                      return (
+                        <DestinationListItem
+                          key={index}
+                          name={tour.name}
+                          location={tour.city}
+                          picture={tour.cover}
+                          className="destination"
+                          id={tour.id}
+                          uid={tour.uid}
+                        />
+                      );
+                    })}
                 </ListContainer>
               </ListWrapper>
             </div>

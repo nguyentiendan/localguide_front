@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {Tooltip, Popconfirm, Divider, Avatar,  Table,  Tag,  Space, Spin,message} from 'antd';
-import {  DeleteOutlined, UserOutlined } from '@ant-design/icons';
+import { Tooltip, Popconfirm, Divider, Avatar, Table, Tag, Space, Spin, message } from 'antd';
+import { DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -27,15 +27,15 @@ function Guides() {
   const [data, setData] = useState([]);
   const [dataFilter, setDataFilter] = useState(null);
   const [loadingAllGuide, setLoadingAllGuide] = useState(false);
-  const [loading, setLoading] = useState(false);  
+  const [loading, setLoading] = useState(false);
 
   const user = getUserProfile();
-  
+
   useEffect(() => {
     const getAllGuides = async () => {
       try {
-        setLoadingAllGuide(true);        
-        const res = await API.adminGetAllGuide({uid: user.uid, token: user.token });        
+        setLoadingAllGuide(true);
+        const res = await API.adminGetAllGuide({ uid: user.uid, token: user.token });
         setData(res.data);
       } catch (error) {
         console.error(error);
@@ -48,22 +48,22 @@ function Guides() {
 
   const handleDeleteUser = async (id, uid) => {
     try {
-      setLoading(true);      
+      setLoading(true);
       const { status } = await API.handleDeleteAcc(uid, id);
 
-      if (status === true) {        
+      if (status === true) {
         const newData = _.remove(data, item => {
           return item.id !== id;
         });
         setData(newData);
-  
-        message.success("Delete success")
-        setLoading(false);        
+
+        message.success('Delete success');
+        setLoading(false);
       } else {
-        message.error("Have error, please check");
+        message.error('Have error, please check');
         setLoading(false);
       }
-    } catch (err) {            
+    } catch (err) {
       setLoading(false);
     }
   };
@@ -76,10 +76,26 @@ function Guides() {
       render: (name, guide) => (
         <div>
           <GuideTitle>
-            <AvatarWrapper src={guide.avatar} icon={<UserOutlined />} size="small"  />
-            {((guide.role === 1 || guide.role === 3) && guide.reqActive === 0) && name}
-            {(guide.role === 1 && (guide.reqActive === 1 || guide.reqActive === 2)) && <a href={`/app/adminUserReview?uid=${guide.uid}&id=${guide.id}`} target="_blank">{name}</a> } 
-            {guide.role === 2 && <a href={`/app/adminGuideReview?uid=${guide.uid}&id=${guide.id}`} target="_blank">{name}</a> } 
+            <AvatarWrapper src={guide.avatar} icon={<UserOutlined />} size="small" />
+            {(guide.role === 1 || guide.role === 3) && guide.reqActive === 0 && name}
+            {guide.role === 1 && (guide.reqActive === 1 || guide.reqActive === 2) && (
+              <a
+                href={`/app/adminUserReview?uid=${guide.uid}&id=${guide.id}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {name}
+              </a>
+            )}
+            {guide.role === 2 && (
+              <a
+                href={`/app/adminGuideReview?uid=${guide.uid}&id=${guide.id}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {name}
+              </a>
+            )}
           </GuideTitle>
         </div>
       ),
@@ -92,12 +108,12 @@ function Guides() {
     {
       title: 'Country',
       dataIndex: 'country',
-      key: 'country',    
+      key: 'country',
     },
     {
       title: 'City',
       dataIndex: 'city',
-      key: 'city',    
+      key: 'city',
     },
     {
       title: 'Updated Date',
@@ -106,7 +122,7 @@ function Guides() {
         <Tooltip title={moment(guide.updatedAt).fromNow()}>
           {moment(guide.updatedAt).format('YYYY-MM-DD')}
         </Tooltip>
-      )
+      ),
     },
     {
       title: 'Role',
@@ -125,8 +141,10 @@ function Guides() {
       key: 'status',
       render: (status, guide) => (
         <Space size="middle">
-          {(guide.status === 1 && guide.reqActive == 0) && <Tag color="success">Active</Tag>}
-          {(guide.status === 1 && (guide.reqActive == 1 || guide.reqActive == 2)) && <Tag color="processing">Waiting</Tag>}
+          {guide.status === 1 && guide.reqActive == 0 && <Tag color="success">Active</Tag>}
+          {guide.status === 1 && (guide.reqActive == 1 || guide.reqActive == 2) && (
+            <Tag color="processing">Waiting</Tag>
+          )}
           {guide.status === 0 && <Tag color="error">Not active</Tag>}
         </Space>
       ),
@@ -135,23 +153,22 @@ function Guides() {
       title: '',
       key: 'control',
       render: (status, guide) => {
-        return (      
+        return (
           <Space size="middle">
-            {guide.status === 0 &&  (
-                <Popconfirm
-                  title="Are you sure to delete this User?"
-                  onConfirm={() => handleDeleteUser(guide.id, guide.uid)}
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <DeleteOutlined />
-                </Popconfirm>
-              )          
-            }
+            {guide.status === 0 && (
+              <Popconfirm
+                title="Are you sure to delete this User?"
+                onConfirm={() => handleDeleteUser(guide.id, guide.uid)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <DeleteOutlined />
+              </Popconfirm>
+            )}
           </Space>
         );
       },
-    }
+    },
   ];
 
   return (
@@ -165,8 +182,8 @@ function Guides() {
           rowKey="id"
           size="middle"
           bordered
-          //title={() => 'Header'}
-          //footer={() => 'Footer'}
+          // title={() => 'Header'}
+          // footer={() => 'Footer'}
           pagination={{ pageSize: 40 }}
         />
       </ListWrapper>

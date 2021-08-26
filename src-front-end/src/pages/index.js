@@ -68,7 +68,7 @@ function IndexPage() {
   return (
     <Layout>
       <SEO title="Localguide Pal" />
-      <Parallax small filter image={require('../assets/img/home-banner.jpg')}>
+      <Parallax small filter>
         <div className={classes.container}>
           <GridContainer>
             <GridItem xs={12} sm={12} md={6}>
@@ -91,9 +91,9 @@ function IndexPage() {
           <ReviewSection />
           {/* <WorkSection /> */}
 
-          {/*<ExploreTourWrapper>
+          {/* <ExploreTourWrapper>
             <Img fluid={exploreTourImg} style={{ position: 'initial' }} />
-          </ExploreTourWrapper>*/}
+          </ExploreTourWrapper> */}
 
           <JoinUsSection />
         </Spin>
@@ -103,7 +103,8 @@ function IndexPage() {
   );
 }
 
-{/*IndexPage.propTypes = {
+{
+  /* IndexPage.propTypes = {
   data: PropTypes.shape({
     exploreTourImg: PropTypes.shape({
       childImageSharp: PropTypes.shape({
@@ -111,6 +112,7 @@ function IndexPage() {
       }),
     }),
   }).isRequired,
-};*/}
+}; */
+}
 
 export default IndexPage;
