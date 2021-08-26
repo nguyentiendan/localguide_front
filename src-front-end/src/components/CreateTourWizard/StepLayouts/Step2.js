@@ -181,43 +181,43 @@ const StepLayout = ({ tourCreationInfo, onUpdate }) => {
         await API.createTourFee({
           tourId: tourCreationInfo.id,
           day: tourDayFee.day + 1,
-          transport: _.flow(tourDayFee.transportations)
-            .filter(
+          transport: flow(
+            filter(
               trans =>
                 trans.from &&
                 trans.to &&
                 trans.by &&
                 !_.isNil(trans.quantity) &&
                 !_.isNil(trans.unit)
-            )
-            .map(trans => ({
+            ),
+            map(trans => ({
               from: trans.from,
               to: trans.to,
               vehicle: trans.by,
               quantity: trans.quantity,
               unit: `${trans.unit}`,
             }))
-            .value(),
-          meal: _.flow(tourDayFee.meals)
-            .filter(
+          )([tourDayFee.transportations]),
+          meal: flow(
+            filter(
               meal =>
                 meal.description && meal.type && !_.isNil(meal.quantity) && !_.isNil(meal.unit)
-            )
-            .map(meal => ({
+            ),
+            map(meal => ({
               name: meal.description,
               time: meal.type,
               quantity: meal.quantity,
               unit: `${meal.unit}`,
             }))
-            .value(),
-          other: _.flow(tourDayFee.others)
-            .filter(other => other.description && !_.isNil(other.quantity) && !_.isNil(other.unit))
-            .map(other => ({
+          )([tourDayFee.meals]),
+          other: flow(
+            filter(other => other.description && !_.isNil(other.quantity) && !_.isNil(other.unit)),
+            map(other => ({
               name: other.description,
               quantity: other.quantity,
               unit: `${other.unit}`,
             }))
-            .value(),
+          )([tourDayFee.others]),
         });
         onUpdate({
           ...tourCreationInfo,
