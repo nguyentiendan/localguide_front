@@ -29,6 +29,8 @@ import SectionHeader from '../components/SectionHeader';
 
 import exploreTourImg from '../assets/img/explore-tour.jpg';
 
+import SearchBox from '../components/SearchBox';
+
 const ListContainer = styled.div`
   display: inline-flex;
   flex-direction: row;
@@ -81,6 +83,8 @@ function IndexPage() {
           </GridContainer>
         </div>
       </Parallax>
+
+      <SearchBox />
 
       <div className={classNames(classes.main, classes.mainRaised)}>
         <Spin spinning={loading}>
