@@ -1,13 +1,13 @@
-import React, { useState, } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import { Steps, Form, Button, Spin } from 'antd';
+import { navigate } from 'gatsby';
 import Layout from '../CustomLayout';
 import Parallax from '../Parallax/Parallax.js';
 import Footer from '../Footer/Footer.js';
 import { getUserProfile, ISUSER } from '../../utils/auth';
-import { navigate } from 'gatsby';
 import styles from '../../assets/styles/profilePage.js';
 import StepLayout from './StepLayouts';
 
@@ -15,7 +15,7 @@ const useStyles = makeStyles(styles);
 
 const StepContent = styled.div`
   //min-height: 200px;
-  width:100%;
+  width: 100%;
   margin-top: 16px;
   //padding-top: 80px;
   //text-align: center;
@@ -35,24 +35,24 @@ const { Step } = Steps;
 const BECOME_GUIDE_STEP = [
   {
     title: 'Basic Profile',
-    content: <StepLayout.Step1/>    
+    content: <StepLayout.Step1 />,
   },
   {
     title: 'Advance Profile',
-    content: <StepLayout.Step2/>
+    content: <StepLayout.Step2 />,
   },
   {
     title: 'Finish',
-    content: <StepLayout.Step3/>
+    content: <StepLayout.Step3 />,
   },
-]; 
+];
 
 function BecomeGuide() {
   const [profile] = useState(getUserProfile());
-  const uid = profile.uid;
+  const { uid } = profile;
   const classes = useStyles();
   const [current, setCurrent] = useState(0);
-  
+
   if (profile.role != ISUSER) {
     navigate('/');
     return null;
@@ -67,23 +67,21 @@ function BecomeGuide() {
   };
 
   const handleCancel = () => {
-    navigate("/app/profile");
+    navigate('/app/profile');
   };
-  
+
   return (
-    <Layout>      
+    <Layout>
       <Parallax small filter image={require('../../assets/img/home-banner.jpg')} />
       <div className={classNames(classes.main, classes.mainRaised)}>
-        <div className={classes.container} >              
-          <Steps current={current} style={{paddingTop:"50px"}} >
+        <div className={classes.container}>
+          <Steps current={current} style={{ paddingTop: '50px' }}>
             {BECOME_GUIDE_STEP.map(item => (
               <Step key={item.title} title={item.title} />
             ))}
-          </Steps>            
-          <StepContent>
-            {BECOME_GUIDE_STEP[current].content}  
-          </StepContent>  
-          <StepAction>                
+          </Steps>
+          <StepContent>{BECOME_GUIDE_STEP[current].content}</StepContent>
+          <StepAction>
             {current < BECOME_GUIDE_STEP.length - 1 && (
               <>
                 <Button style={{ margin: '0 8px' }} onClick={() => handleCancel()}>
@@ -95,20 +93,18 @@ function BecomeGuide() {
                 </Button>
               </>
             )}
-            {(current === BECOME_GUIDE_STEP.length - 1 && profile.reqActive != 2 ) && (                                                            
-              <Button  onClick={() => handleCancel()}>
-                Cancel
-              </Button>                      
+            {current === BECOME_GUIDE_STEP.length - 1 && profile.reqActive != 2 && (
+              <Button onClick={() => handleCancel()}>Cancel</Button>
             )}
-            
-            { (current > 0 ) && (                    
+
+            {current > 0 && (
               <Button type="primary" style={{ margin: '0 8px' }} onClick={() => handlePrev()}>
                 Previous
               </Button>
             )}
-          </StepAction>           
+          </StepAction>
         </div>
-        <Footer />        
+        <Footer />
       </div>
     </Layout>
   );
@@ -117,4 +113,3 @@ function BecomeGuide() {
 BecomeGuide.propTypes = {};
 
 export default BecomeGuide;
-

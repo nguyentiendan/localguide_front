@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {Divider, Avatar, Tooltip, Form, Table, Tag, Space, Badge, Select, Spin,} from 'antd';
+import { Divider, Avatar, Tooltip, Form, Table, Tag, Space, Badge, Select, Spin } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import _ from 'lodash';
@@ -36,7 +36,7 @@ const AvatarWrapper = styled(Avatar)`
 
 const STATUS = {
   APPROVED: 1,
-  WAITING_FOR_APPROVAL: 2,  
+  WAITING_FOR_APPROVAL: 2,
 };
 const statusFilter = [
   {
@@ -46,7 +46,7 @@ const statusFilter = [
   {
     name: 'Approved',
     code: 1,
-  },  
+  },
 ];
 
 const columns = [
@@ -57,7 +57,13 @@ const columns = [
     render: (name, tour) => (
       <div>
         <TourTitle>
-          <a href={`/app/adminTourReview?uid=${tour.uid}&id=${tour.id}`} target="_blank">{name}</a>          
+          <a
+            href={`/app/adminTourReview?uid=${tour.uid}&id=${tour.id}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {name}
+          </a>
         </TourTitle>
       </div>
     ),
@@ -69,7 +75,14 @@ const columns = [
     render: (fullName, tour) => (
       <div>
         <GuideTitle>
-          <AvatarWrapper src={tour.avatar} icon={<UserOutlined />} size="small"  /><a href={`/app/adminGuideReview?uid=${tour.uid}&id=${tour.id}`} target="_blank">{fullName}</a> 
+          <AvatarWrapper src={tour.avatar} icon={<UserOutlined />} size="small" />
+          <a
+            href={`/app/adminGuideReview?uid=${tour.uid}&id=${tour.id}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {fullName}
+          </a>
         </GuideTitle>
       </div>
     ),
@@ -92,7 +105,7 @@ const columns = [
   {
     title: 'Updated Date',
     key: 'updatedAt',
-    render: (updatedDate, tour) => ( 
+    render: (updatedDate, tour) => (
       <Tooltip title={moment(tour.updatedAt).fromNow()}>
         {moment(tour.updatedAt).format('YYYY-MM-DD')}
       </Tooltip>
@@ -104,12 +117,10 @@ const columns = [
     render: (status, tour) => (
       <Space size="middle">
         {tour.status === STATUS.APPROVED && <Tag color="success">Approved</Tag>}
-        {tour.status === STATUS.WAITING_FOR_APPROVAL && (
-          <Tag color="warning">Waiting approve</Tag>
-        )}        
+        {tour.status === STATUS.WAITING_FOR_APPROVAL && <Tag color="warning">Waiting approve</Tag>}
       </Space>
     ),
-  },  
+  },
 ];
 
 function AdminTourList() {
@@ -122,7 +133,7 @@ function AdminTourList() {
   const [rootCity, setRootCity] = useState([]);
 
   const user = getUserProfile();
-  
+
   useEffect(() => {
     const getAllTours = async () => {
       try {
@@ -138,7 +149,7 @@ function AdminTourList() {
     getAllTours();
   }, []);
 
-  console.log(data)
+  console.log(data);
   /*
   useEffect(() => {
     const fetchCountry = async () => {
@@ -180,7 +191,7 @@ function AdminTourList() {
 
   return (
     <Wrapper spinning={isloading}>
-      {/*<FilterWrapper onFinish={handleFinish} form={form}>
+      {/* <FilterWrapper onFinish={handleFinish} form={form}>
         <Divider orientation="left">Filter</Divider>
         <Row gutter={32}>
           <Col span={8}>
@@ -261,7 +272,7 @@ function AdminTourList() {
             </Form.Item>
           </Col>
         </Row>
-      </FilterWrapper>*/}
+      </FilterWrapper> */}
       <br />
       <ListWrapper>
         <Divider orientation="left">Tour List</Divider>
@@ -271,8 +282,8 @@ function AdminTourList() {
           loading={loadingAllTour}
           rowKey="id"
           bordered
-          //title={() => 'Header'}
-          //footer={() => 'Footer'}
+          // title={() => 'Header'}
+          // footer={() => 'Footer'}
           pagination={{ pageSize: 40 }}
         />
       </ListWrapper>

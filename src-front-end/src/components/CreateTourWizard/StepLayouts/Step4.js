@@ -86,7 +86,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     });
     setImage([]);
   });
-  
+
   // upload photo of Tour
   const handleUploadPhoto = useCallback(async info => {
     if (!tourCreationInfo.id) {

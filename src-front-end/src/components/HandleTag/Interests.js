@@ -39,7 +39,7 @@ const TagInterests = ({ createInfo, setCreateInfo, defaultTags }) => {
         tags: _.xor(selectedTags, [tagOption]),
       });
     },
-    [onUpdate, createInfo]    
+    [onUpdate, createInfo]
   );
 
   const addTagOptions = useCallback(

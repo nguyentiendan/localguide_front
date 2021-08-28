@@ -40,17 +40,17 @@ const Delimiter = styled.div`
 `;
 
 const Content = styled.div`
-  margin-bottom : 20px;
+  margin-bottom: 20px;
 `;
 
-const CommentListItem = ({ className, user, avatar, date, content }) => (  
-  <Wrapper className={className}>    
+const CommentListItem = ({ className, user, avatar, date, content }) => (
+  <Wrapper className={className}>
     <AvatarWrapper src={avatar} icon={<UserOutlined />} size="large" />
     <ContentWrapper>
       <Title>{user}</Title>
       <SubTitle>{moment(date).fromNow()}</SubTitle>
-      <Content>{content}</Content>      
-      {/*<Delimiter className="delimiter" />*/}      
+      <Content>{content}</Content>
+      {/* <Delimiter className="delimiter" /> */}
     </ContentWrapper>
   </Wrapper>
 );
