@@ -42,7 +42,7 @@ import TourGuideListItem from '../components/TourGuideListItem';
 import { safeFuncCall } from '../utils/commons';
 import defaultImage from '../assets/img/noimage-600x400.jpg';
 import styles from '../assets/styles/tourPage.js';
-import PriceBox from '../components/PriceBox';
+//import PriceBox from '../components/PriceBox';
 import 'react-bnb-gallery/dist/style.css';
 
 const Title = styled.h1`
@@ -326,6 +326,7 @@ const BookButton = styled(Button)`
 `;
 
 const DescriptionWrapper = styled.div`
+  position: relative;
   color: ${colors.grey[60]};
   padding-top: 10px;
 `;
@@ -376,6 +377,28 @@ const TourDescriptionItem = styled.li`
   }
 `;
 
+
+const PriceBox = styled.div`
+  position: fixed;
+  bottom: 60px;
+  right: 20px;
+  width: 300px;
+  font-size: 14px;
+  font-family: "Open Sans", Arial, sans-serif;
+  font-weight: 400;
+  text-align: right;
+  margin-left: auto;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 1px 2px #666 inset;
+  z-index: 10;
+
+  ${smallScreenCss(`
+      width: 100%;
+      right: 0;
+      bottom: 0;
+  `)}
+`;
 
 /** TODO
  * 1) Them icon Language (chi de 1 languagua, khi re vao thi ra tooltip)
@@ -480,6 +503,35 @@ function TourDetail({ location }) {
 
     fetchTourDetails();
   }, [tourQuery]);
+
+
+  var target = document.querySelector('#booknow'); // 対象のエレメント
+  console.log(target);
+
+  // optionは省略可能、初期値は以下のようになります。
+  var option = {
+      root: null,
+      rootMargin: "0px",
+      threshold: [0]
+  };
+  // 交差した際の処理を記載
+  var callback = function (entries, observer) {
+      entries.forEach(function (entry) {
+          // 交差している場合はtrue
+          if (entry.isIntersecting) {
+              // 処理実行
+              alert(entry.isIntersecting);
+              // 処理完了後、監視を止めたい場合
+              //observer.unobserve(entry.target);
+          } else {
+              alert(entry.isIntersecting);
+          }
+      });
+  };
+  var observer = new IntersectionObserver(callback, option); // callback, optionを設定
+  // Polyfillを使っている場合コメントアウトを外す
+  // observer.POLL_INTERVAL = 100;
+  //observer.observe(target); // 監視を開始
 
   return (
     <Layout scrollHeight={10} textColor="black">
@@ -735,7 +787,7 @@ function TourDetail({ location }) {
                         isActive
                       />
                     </PriceMenuWrapper>
-                    <BookButton color="rose" loading={loading} disabled={loading}>
+                    <BookButton color="rose" loading={loading} disabled={loading}　id="booknow">
                       Book now
                     </BookButton>
                   </PriceWrapper>
@@ -878,12 +930,15 @@ function TourDetail({ location }) {
         </div>
       </div>
       <Footer />
-      <PriceBox
-        name={tourDetails.tour[0]?.name}
-        price={<>tourDetails.tour[0]?.total || 0)</>}
-        loading={loading}
-        disabled={loading}
-      />
+      <PriceBox>
+        <div style={{ textAlign: 'left', marginLeft: 'auto' }}>
+            <p>Tour name：{tourDetails.tour[0]?.name || ''}</p>
+            <p>price：${tourDetails.tour[0]?.total || 0}</p>
+            <BookButton color="rose" loading={loading} disabled={loading}>
+                Book now
+            </BookButton>
+        </div>
+      </PriceBox>
     </Layout>
   );
 }

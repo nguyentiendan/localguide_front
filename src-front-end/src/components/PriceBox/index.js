@@ -19,22 +19,24 @@ function PriceBox(props) {
 
     const Styles = styled.div`
         position: fixed;
-        bottom: 0;
+        bottom: 200px;
         right: 0;
         width: 40%;
         text-align: right;
         margin-left: auto;
+        z-index: 10;
 
         ${smallScreenCss(`
             width: 100%;
+            bottom: 0;
         `)}
     `;
-console.log(props);
+
     return (
         <div style={Styles}>
             <div style={{ textAlign: 'left', marginLeft: 'auto' }}>
                 <p>Tour name：{props.name}</p>
-                <p>price：{props.price}</p>
+                <p>price：{props.ptice}</p>
                 <BookButton color="rose" loading={props.loading} disabled={props.loading}>
                     Book now
                 </BookButton>
