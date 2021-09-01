@@ -98,11 +98,31 @@ export async function getRecommendTours() {
   });
 }
 
+// Get all Tour for Guide Admin
 export async function getGuideAllTours({ uid }) {
   return request({
     url: `/guide/tour/${uid}?page=${1}`,
     method: 'GET',
     authRequired: true,
+  });
+}
+
+// Get all event of all tour
+export async function getGuideAllEvent({ uid }) {
+  return request({
+    url: `/guide/event/${uid}`,
+    method: 'GET',
+    authRequired: true,
+  });
+}
+
+// Guide delete event of tour 
+export async function deleteEvent({ uid, id }) {
+  return request({
+    url: `/guide/deleteEvent`,
+    method: 'DELETE',
+    authRequired: true,
+    data: { uid, id: Number(id) },
   });
 }
 
@@ -390,6 +410,16 @@ export async function createTourSchedule({ tourId, day, pickup, schedule }) {
     method: 'POST',
     authRequired: true,
     data: { tourId, day, pickup, schedule },
+  });
+}
+
+// Create tour Event
+export async function createTourEvent({ uid, tourId, color, start_date, end_date }) {  
+  return request({
+    url: `/tourEvent/create`,
+    method: 'POST',
+    authRequired: true,
+    data: { uid, tourId, color, start_date, end_date },
   });
 }
 

@@ -15,6 +15,8 @@ import * as API from '../../../apis';
 import { getUserProfile } from '../../../utils/auth';
 import colors from '../../../assets/styles/colors';
 import AddEvent from './addEventModal';
+import AllEvent from './allEventModal';
+import { set } from 'react-ga';
 
 const Wrapper = styled.div``;
 const FilterWrapper = styled.div`
@@ -36,6 +38,8 @@ function TourList() {
   const [dataFilter, setDataFilter] = useState(null);
   const [data, setData] = useState([]);
   const [show, setShow] = useState(false);
+  const [showAllEvent, setShowAllEvent] = useState(false);
+  const [event, setEvent] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -46,6 +50,14 @@ function TourList() {
     }
     fetchData();
   }, []);
+
+  const fetchAllEvent = async () => {
+    var uid = user.uid
+    setLoading(true);
+    const res = await API.getGuideAllEvent({ uid });      
+    setEvent(res.data);
+    setLoading(false);
+  };
 
   const handleDeleteTour = async (uid, id) => {
     setLoading(true);
@@ -60,12 +72,22 @@ function TourList() {
     setLoading(false);
   };
 
-  const showModal = () => {
+  const showModalCreateEvent = () => {
+    //Need get data here here, do not use useEffect above
     setShow(true);
   };
 
+  const showModalAllEvent = () => {
+    fetchAllEvent()
+    setShowAllEvent(true);
+  };
+  
   const hideModal = () => {
     setShow(false);
+  };
+
+  const hideAllEventModal = () => {
+    setShowAllEvent(false);
   };
 
   const STATUS = {
@@ -159,7 +181,7 @@ function TourList() {
               <EditOutlined title="Edit Tour" />
             </a>
             <a href="#">
-              <CalendarOutlined title="Setting schedule" onClick={showModal} />
+              <ScheduleOutlined title="View Event of this tour" />
             </a>
 
             {(tour.status === 0 || tour.status === 2) && (
@@ -194,9 +216,18 @@ function TourList() {
         icon={<ScheduleOutlined />}
         type="primary"
         size="large"
-        onClick={() => navigate('/app/createTour')}
+        onClick={showModalAllEvent} 
       >
-        Confirm Schedule
+        All Schedule
+      </Button>
+      &nbsp;&nbsp;&nbsp;
+      <Button
+        icon={<CalendarOutlined />}
+        type="primary"
+        size="large"
+        onClick={showModalCreateEvent} 
+      >
+        Create Event
       </Button>
       <br />
       <ListWrapper>
@@ -213,9 +244,10 @@ function TourList() {
         />
       </ListWrapper>
       <div>
-        <AddEvent show={show} handleClose={hideModal} uid={user.uid} data={data}>
-          Modal
-        </AddEvent>
+        <AddEvent show={show} handleCancel={hideModal} uid={user.uid} data={data}/>          
+      </div>
+      <div>
+        <AllEvent show={showAllEvent} handleCancel={hideAllEventModal} uid={user.uid} data={event}/>          
       </div>
     </Wrapper>
   );
