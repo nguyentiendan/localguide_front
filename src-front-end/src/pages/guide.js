@@ -1,6 +1,6 @@
 /* eslint-disable react/no-danger */
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useEffect, useState, useLayoutEffect, } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import styled from 'styled-components';
 import { Avatar, Tag, Spin } from 'antd';
 import { UserOutlined, CrownOutlined } from '@ant-design/icons';
@@ -19,10 +19,10 @@ import RatingStars from '../components/RatingStars';
 import TourRelatedListItem from '../components/TourRelated';
 import Layout from '../components/CustomLayout';
 import SEO from '../components/SEO';
-import Parallax from '../components/Parallax/Parallax.js';
-import GridContainer from '../components/Grid/GridContainer.js';
-import GridItem from '../components/Grid/GridItem.js';
-import Footer from '../components/Footer/Footer.js';
+import Parallax from '../components/Parallax/Parallax';
+import GridContainer from '../components/Grid/GridContainer';
+import GridItem from '../components/Grid/GridItem';
+import Footer from '../components/Footer/Footer';
 import InterestsOrExtras from '../components/InterestsOrExtras';
 import SmallScreen from '../components/Responsive/SmallScreen';
 import BigScreen from '../components/Responsive/BigScreen';
@@ -36,7 +36,7 @@ import iconCustomer from '../assets/img/icon-customer.svg';
 import iconLanguage from '../assets/img/icon-language.svg';
 import iconLocation from '../assets/img/icon-location.svg';
 import iconSex from '../assets/img/icon-sex.svg';
-import styles from '../assets/styles/profilePage.js';
+import styles from '../assets/styles/profilePage';
 import 'react-bnb-gallery/dist/style.css';
 import defaultImage from '../assets/img/noimage-600x400.jpg';
 

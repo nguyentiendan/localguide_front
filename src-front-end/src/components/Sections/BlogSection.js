@@ -43,7 +43,7 @@ function BlogSection() {
   const classes = useStyles();
 
   useEffect(() => {
-    /*const fetchAllTour = async () => {
+    /* const fetchAllTour = async () => {
       try {
         setLoading(true);
         const response = await API.getAllTours();
@@ -58,7 +58,7 @@ function BlogSection() {
     const interval = setInterval(() => fetchAllTour(), 100000);
     return () => {
       clearInterval(interval);
-    };*/
+    }; */
   }, []);
 
   return (

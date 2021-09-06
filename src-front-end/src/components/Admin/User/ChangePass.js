@@ -1,11 +1,11 @@
-import React,{useState,} from 'react';
-import { LockOutlined,} from '@ant-design/icons';
+import React, { useState } from 'react';
+import { LockOutlined } from '@ant-design/icons';
 import { Card, Form, Input, Button, Modal } from 'antd';
 import useAuth from '../../../utils/useAuth';
 import * as API from '../../../apis';
 
-const ChangePass = (uid) => {
-  const [form] = Form.useForm();  
+const ChangePass = uid => {
+  const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const { logout } = useAuth();
@@ -14,39 +14,39 @@ const ChangePass = (uid) => {
     if (loading) {
       return;
     }
-    
+
     try {
-      setLoading(true);          
-      const { status } = await API.changePass(uid.uid, values.password);          
-      if (status === true) {    
-        setVisible(true)           
-      } else {                
+      setLoading(true);
+      const { status } = await API.changePass(uid.uid, values.password);
+      if (status === true) {
+        setVisible(true);
+      } else {
         setLoading(false);
       }
-    } catch (err) {  
-      console.log(err)          
+    } catch (err) {
+      console.log(err);
       setLoading(false);
-    }      
+    }
   };
 
   return (
-    <div style={{justifyContent:'center' }}>
-      <Card title="Change Password" bordered={true} style={{textAlign:'center', width: 400 }}>
-        <Form form={form}  name="changepass" onFinish={onFinish} scrollToFirstError>         
+    <div style={{ justifyContent: 'center' }}>
+      <Card title="Change Password" bordered style={{ textAlign: 'center', width: 400 }}>
+        <Form form={form} name="changepass" onFinish={onFinish} scrollToFirstError>
           <Form.Item
             name="password"
             rules={[
               { required: true, message: 'Please input your Password!' },
-              { min:8 },
-              { max:20 }
-            ]}                        
+              { min: 8 },
+              { max: 20 },
+            ]}
           >
-            <Input.Password 
+            <Input.Password
               size="large"
               placeholder="New password"
               prefix={<LockOutlined />}
               allowClear
-            />                      
+            />
           </Form.Item>
 
           <Form.Item
@@ -63,12 +63,14 @@ const ChangePass = (uid) => {
                   if (!value || getFieldValue('password') === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                  return Promise.reject(
+                    new Error('The two passwords that you entered do not match!')
+                  );
                 },
               }),
-            ]}                        
+            ]}
           >
-            <Input.Password 
+            <Input.Password
               size="large"
               placeholder="Confirm password"
               autoComplete="off"
@@ -79,44 +81,40 @@ const ChangePass = (uid) => {
 
           <Form.Item shouldUpdate>
             {() => (
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 type="primary"
                 htmlType="submit"
-                style={{width:"100%"}}
+                style={{ width: '100%' }}
                 disabled={
                   !form.isFieldsTouched(true) ||
-                  !!form.getFieldsError().filter(({ errors }) => errors.length).length                                                     
+                  !!form.getFieldsError().filter(({ errors }) => errors.length).length
                 }
               >
                 Change Password
-              </Button>                          
-            )} 
+              </Button>
+            )}
           </Form.Item>
         </Form>
       </Card>
-      <>        
+      <>
         <Modal
           visible={visible}
           title="Change password success"
           closable="false"
-          keyboard="false"      
-          centered="true"          
-          footer={[     
-            <Button 
-              key="submit" 
-              type="primary"            
-              onClick={logout}
-            >
+          keyboard="false"
+          centered="true"
+          footer={[
+            <Button key="submit" type="primary" onClick={logout}>
               Logout
-            </Button>,                       
+            </Button>,
           ]}
-        > 
-          <p>You should be logout and login again to take effect</p>          
+        >
+          <p>You should be logout and login again to take effect</p>
         </Modal>
-		  </>
+      </>
     </div>
-  )
-}    
+  );
+};
 
 export default ChangePass;

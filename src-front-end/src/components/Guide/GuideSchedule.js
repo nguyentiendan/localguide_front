@@ -1,8 +1,8 @@
-import React, { useState, } from 'react';
-import AdminLayout from '../../components/AdminLayout';
-import Schedule from '../../components/Guide/Schedule';
-import { getUserProfile, ISGUIDE } from '../../utils/auth';
+import React, { useState } from 'react';
 import { navigate } from 'gatsby';
+import AdminLayout from '../AdminLayout';
+import Schedule from './Schedule';
+import { getUserProfile, ISGUIDE } from '../../utils/auth';
 
 const GuideSchedule = () => {
   const [userProfile] = useState(getUserProfile());

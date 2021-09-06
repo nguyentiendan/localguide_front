@@ -23,7 +23,7 @@ function TourList() {
   });
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
