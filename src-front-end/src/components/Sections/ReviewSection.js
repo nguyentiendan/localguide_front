@@ -4,13 +4,13 @@ import { makeStyles } from '@material-ui/core/styles';
 
 // @material-ui/icons
 // core components
-import styled from 'styled-components';
+
 import { Spin } from 'antd';
-import breakpoints from '../../assets/styles/breakpoints';
 import GridContainer from '../Grid/GridContainer.js';
 import GridItem from '../Grid/GridItem.js';
 import SectionHeader from '../SectionHeader';
 import ReviewListItem from '../ReviewListItem';
+import Carousel from './Carousel/Carousel';
 import * as API from '../../apis';
 
 import styles from '../../assets/styles/commonStyle.js';
@@ -20,32 +20,6 @@ import face2 from '../../assets/img/faces/kendall.jpg';
 import face3 from '../../assets/img/faces/marc.jpg';
 
 const useStyles = makeStyles(styles);
-
-const ListWrapper = styled.div`
-  max-width: ${breakpoints.lg};
-  .comment:last-child .delimiter {
-    //display: none;
-  }
-  .comment:fast-child {
-    //padding-left: 0;
-  }
-`;
-
-const ListContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-left: -15px;
-  margin-right: -15px;
-  //display: flex;
-  //flex-direction: row;
-  //overflow: hidden;
-
-  //& .destination + .destination,
-  //  & .tour + .tour {
-  //    margin-left: 2rem;
-  //  }
-`;
 
 function ReviewSection() {
   const [tours, setTours] = useState();
@@ -74,51 +48,47 @@ function ReviewSection() {
 
   return (
     <div className={classes.container}>
-      <Spin spinning={loading}>
-        <GridContainer justify="center">
-          <GridItem xs={12} sm={12} md={12}>
-            <div className={classes.description}>
-              <SectionHeader title="Review" />
-              <ListWrapper>
-                <ListContainer>
-                  <ReviewListItem
-                    key={1}
-                    title="International Activities Of The Frankfurt Book"
-                    content="A solemn declaration usually made orally by a witness under oath in response to interrogation by a lawyer or authorized public official"
-                    user="User 1"
-                    date="Dec 06, 18"
-                    avatar={face1}
-                    favorite={72}
-                    forum={23}
-                    className="comment"
-                  />
-                  <ReviewListItem
-                    key={2}
-                    title="Reading Has A Signficant Info Number Of Benefits"
-                    content="The hobble decision has been coming up during testimony from some of the state's key witnesses, such as Arradondo"
-                    user="User 2"
-                    date="Mar 08,18"
-                    avatar={face2}
-                    favorite={72}
-                    forum={23}
-                    className="comment"
-                  />
-                  <ReviewListItem
-                    key={3}
-                    title="The London Book Fair Is To Be Packed With Wxcinting"
-                    content="Something that someone says especially in a court of law while formally promising to tell the truth"
-                    user="User 3"
-                    date="Nov 11,18"
-                    avatar={face3}
-                    favorite={72}
-                    forum={23}
-                    className="comment"
-                  />
-                </ListContainer>
-              </ListWrapper>
-            </div>
-          </GridItem>
-        </GridContainer>
+      <Spin spinning={loading}>        
+        <GridItem xs={12} sm={12} md={12}>
+          <div className={classes.description}>
+            <SectionHeader title="Review" />
+              <Carousel>
+                <ReviewListItem
+                  key={1}
+                  title="International Activities Of The Frankfurt Book"
+                  content="A solemn declaration usually made orally by a witness under oath in response to interrogation by a lawyer or authorized public official"
+                  user="User 1"
+                  date="Dec 06, 18"
+                  avatar={face1}
+                  favorite={72}
+                  forum={23}
+                  className="comment"
+                />
+                <ReviewListItem
+                  key={2}
+                  title="Reading Has A Signficant Info Number Of Benefits"
+                  content="The hobble decision has been coming up during testimony from some of the state's key witnesses, such as Arradondo"
+                  user="User 2"
+                  date="Mar 08,18"
+                  avatar={face2}
+                  favorite={72}
+                  forum={23}
+                  className="comment"
+                />
+                <ReviewListItem
+                  key={3}
+                  title="The London Book Fair Is To Be Packed With Wxcinting"
+                  content="Something that someone says especially in a court of law while formally promising to tell the truth"
+                  user="User 3"
+                  date="Nov 11,18"
+                  avatar={face3}
+                  favorite={72}
+                  forum={23}
+                  className="comment"
+                />
+              </Carousel>
+          </div>
+        </GridItem>        
       </Spin>
     </div>
   );

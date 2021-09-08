@@ -47,33 +47,31 @@ function TourSection() {
 
   return (
     <div className={classes.container}>
-      <Spin spinning={loading}>
-        <GridContainer justify="center">
-          <GridItem xs={12} sm={12} md={12}>
-            <div className={classes.description}>
-              <SectionHeader title="Popular Tour" />
-              <Carousel>
-                {tours &&
-                  tours.map((tour, index) => {
-                    return (
-                      <TourListItem
-                        key={index}
-                        id={tour.id}
-                        uid={tour.uid}
-                        name={tour.name}
-                        description={tour.shortDesc}
-                        cover={tour.cover}
-                        country={tour.country}
-                        day={tour.day}
-                        city={tour.city}
-                        className="tour"
-                      />
-                    );
-                  })}
-              </Carousel>
-            </div>
-          </GridItem>
-        </GridContainer>
+      <Spin spinning={loading}>        
+        <GridItem xs={12} sm={12} md={12}>
+          <div className={classes.description}>
+            <SectionHeader title="Popular Tour" />
+            <Carousel>
+              {tours &&
+                tours.map((tour, index) => {
+                  return (
+                    <TourListItem
+                      key={index}
+                      id={tour.id}
+                      uid={tour.uid}
+                      name={tour.name}
+                      description={tour.shortDesc}
+                      cover={tour.cover}
+                      country={tour.country}
+                      day={tour.day}
+                      city={tour.city}
+                      className="tour"
+                    />
+                  );
+                })}
+            </Carousel>
+          </div>
+        </GridItem>        
       </Spin>
     </div>
   );
