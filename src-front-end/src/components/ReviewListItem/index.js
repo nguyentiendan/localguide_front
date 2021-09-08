@@ -5,11 +5,10 @@ import moment from 'moment';
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
-import colors from '../../assets/styles/colors';
-import { bigScreenCss, smallScreenCss } from '../../assets/styles/responsive-css';
-
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import ForumIcon from '@material-ui/icons/Forum';
+import colors from '../../assets/styles/colors';
+import { bigScreenCss, smallScreenCss } from '../../assets/styles/responsive-css';
 
 const Wrapper = styled.div`
   display: flex;
@@ -17,7 +16,7 @@ const Wrapper = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   position: relative;
-  width: calc((310/1000)*100%);
+  width: calc((310 / 1000) * 100%);
   min-width: 223px;
   //margin: 10px;
   padding: 15px;
@@ -58,24 +57,24 @@ const Delimiter = styled.div`
 `;
 
 const Content = styled.div`
-    padding-top: 1.5em;
-    min-height: 110px;
+  padding-top: 1.5em;
+  min-height: 110px;
 `;
 
 const Bottom = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 const ReviewIcons = styled.div`
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    font-size: 15px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 15px;
 `;
 
 const Num = styled.div`
-    width: 2em;
+  width: 2em;
 `;
 
 // fix moment constructor error. moment construction falls back to js Date()
@@ -84,12 +83,12 @@ moment.createFromInputFallback = function(config) {
   config._d = new Date(config._i);
 };
 
-const ReviewListItem = ({ className, title, avatar, date, content,  favorite, forum}) => (
+const ReviewListItem = ({ className, title, avatar, date, content, favorite, forum }) => (
   <Wrapper className={className}>
     <ContentWrapper>
       <Title>{title}</Title>
       <Content>{content}</Content>
-      {<Delimiter className="delimiter" />}
+      <Delimiter className="delimiter" />
       <Bottom>
         {date}
         <ReviewIcons>
