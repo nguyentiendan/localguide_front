@@ -3,34 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import { Spin } from 'antd';
-import breakpoints from '../../assets/styles/breakpoints';
 import GridContainer from '../Grid/GridContainer.js';
 import GridItem from '../Grid/GridItem.js';
 import SectionHeader from '../SectionHeader';
 import DestinationListItem from '../DestinationListItem';
 import styles from '../../assets/styles/commonStyle.js';
 import * as API from '../../apis';
+import Carousel from './Carousel/Carousel';
 
 const useStyles = makeStyles(styles);
 
-const ListWrapper = styled.div`
-  max-width: ${breakpoints.lg};
-  overflow: auto;
-  .comment:last-child .delimiter {
-    display: none;
-  }
-`;
-
-const ListContainer = styled.div`
-  display: inline-flex;
-  flex-direction: row;
-  overflow: hidden;
-
-  & .destination + .destination,
-  & .tour + .tour {
-    margin-left: 2rem;
-  }
-`;
 
 function DestinationSection() {
   const [tours, setTours] = useState();
@@ -56,6 +38,7 @@ function DestinationSection() {
     };
   }, []);
 
+
   return (
     <div className={classes.container}>
       <Spin spinning={loading}>
@@ -63,24 +46,22 @@ function DestinationSection() {
           <GridItem xs={12} sm={12} md={12}>
             <div className={classes.description}>
               <SectionHeader title="Destination" />
-              <ListWrapper>
-                <ListContainer>
-                  {tours &&
-                    tours.map((tour, index) => {
-                      return (
-                        <DestinationListItem
-                          key={index}
-                          name={tour.name}
-                          location={tour.city}
-                          picture={tour.cover}
-                          className="destination"
-                          id={tour.id}
-                          uid={tour.uid}
-                        />
-                      );
-                    })}
-                </ListContainer>
-              </ListWrapper>
+              <Carousel>
+                {tours &&
+                  tours.map((tour, index) => {
+                    return (
+                      <DestinationListItem
+                        key={index}
+                        name={tour.name}
+                        location={tour.city}
+                        picture={tour.cover}
+                        className="destination"
+                        id={tour.id}
+                        uid={tour.uid}
+                      />
+                    );
+                  })}
+              </Carousel>
             </div>
           </GridItem>
         </GridContainer>
