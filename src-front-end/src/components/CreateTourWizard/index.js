@@ -73,6 +73,7 @@ const TOTAL_STEPS = _.sumBy(CREATE_TOUR_STEPS, step => step.layouts.length);
 
 const transformTourData = tourCreationInfo => ({
   id: tourCreationInfo.id,
+  guideId: tourCreationInfo.guideId,
   name: tourCreationInfo.tourName,
   shortDesc: tourCreationInfo.tourShortDescription,
   recommend: tourCreationInfo.tourRecommend,
@@ -104,6 +105,7 @@ const CreateTourWizard = ({ location }) => {
   const { user } = useRequiredUser();
   const [loading, setLoading] = useState(false);
   const [tourCreationInfo, setTourCreationInfo] = useState({
+    guideId: user.id,
     duration: 1,
     minPax: 1,
     maxPax: 1,
@@ -207,7 +209,7 @@ const CreateTourWizard = ({ location }) => {
     if (loading) {
       return;
     }
-    await navigate('app/guideTourList/');
+    await navigate('/app/guideTourList');
   }, [loading]);
 
   const onUpdate = useCallback(
@@ -272,6 +274,7 @@ const CreateTourWizard = ({ location }) => {
           ...tourCreationInfo,
           uid: data[0].uid,
           id: data[0].id,
+          guideId: data[0].guideId,
           tourName: data[0].name,
           tourShortDescription: data[0].shortDesc,
           tourRecommend: data[0].recommend,
@@ -335,7 +338,7 @@ const CreateTourWizard = ({ location }) => {
             onFirst={goFirst}
             onNext={goForward}
             onCancel={goCancel}
-            onConfirm={goConfirm}            
+            onConfirm={goConfirm}
             loading={loading}
             isFinished={currentStepNumber === TOTAL_STEPS}
             canSkipped={canSkipped}

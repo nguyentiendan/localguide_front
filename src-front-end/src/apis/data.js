@@ -40,7 +40,7 @@ export async function getGuideProfile(uid) {
 }
 
 // Get GuideProfile
-export async function getGuideProfileOverview({ uid, guideId }) {  
+export async function getGuideProfileOverview({ uid, guideId }) {
   return request({
     url: `/account/guide/${uid}/${guideId}`,
     method: 'GET',
@@ -64,7 +64,7 @@ export async function getUserProfileReview(uid) {
   });
 }
 
-//Get Photo of Guide
+// Get Photo of Guide
 export async function getPhotosGuide({ uid }) {
   return request({
     url: `/guide/getAllPhoto/${uid}`,
@@ -73,7 +73,7 @@ export async function getPhotosGuide({ uid }) {
   });
 }
 
-//Create tour
+// Create tour
 export async function createTour(tour) {
   return request({
     url: `/tour/new`,
@@ -82,7 +82,7 @@ export async function createTour(tour) {
     data: tour,
   });
 }
-//Get all Popular tour
+// Get all Popular tour
 export async function getAllPopularTours() {
   return request({
     url: '/tour/getPopularTour',
@@ -90,7 +90,7 @@ export async function getAllPopularTours() {
   });
 }
 
-//Get all Recommend tour
+// Get all Recommend tour
 export async function getRecommendTours() {
   return request({
     url: '/tour/getRecommendTour',
@@ -98,7 +98,7 @@ export async function getRecommendTours() {
   });
 }
 
-export async function getGuideAllTours({uid}) {
+export async function getGuideAllTours({ uid }) {
   return request({
     url: `/guide/tour/${uid}?page=${1}`,
     method: 'GET',
@@ -225,7 +225,7 @@ export async function getCityOfCountry(countryCode) {
   });
 }
 
-//upload multi photo for Guide
+// upload multi photo for Guide
 export async function uploadMultiPhotoGuide({ uid, file }) {
   return request({
     url: `/guide/uploadPhoto`,
@@ -236,7 +236,7 @@ export async function uploadMultiPhotoGuide({ uid, file }) {
   });
 }
 
-//upload cover image for Tour
+// upload cover image for Tour
 export async function uploadCoverPhoto({ uid, tourId, file }) {
   return request({
     url: `/tour/uploadCover`,
@@ -257,7 +257,7 @@ export async function uploadPhoto({ uid, tourId, file }) {
   });
 }
 
-//upload multi photo for Tour
+// upload multi photo for Tour
 export async function uploadMultiPhoto({ uid, tourId, file }) {
   return request({
     url: `/tour/uploadMultiFile`,
@@ -279,7 +279,7 @@ export async function uploadAvatar({ uid, file }) {
   });
 }
 
-//Upload passpord or ID card
+// Upload passpord or ID card
 export async function uploadIdCard({ uid, file }) {
   return request({
     url: `/guide/uploadIdCard`,
@@ -346,7 +346,7 @@ export async function deleteTourPhoto({ nameImage, tourId, uid }) {
   });
 }
 
-//Guide delete a photo
+// Guide delete a photo
 export async function deletePhotoGuide({ name, uid }) {
   return request({
     url: `/guide/deletePhoto`,
@@ -357,7 +357,7 @@ export async function deletePhotoGuide({ name, uid }) {
   });
 }
 
-//Guide delete passport photo
+// Guide delete passport photo
 export async function deleteIdPhoto({ name, uid }) {
   return request({
     url: `/guide/delIdPhoto`,
@@ -431,7 +431,7 @@ export async function editProfile(data) {
   });
 }
 
-//Update Basic Profile
+// Update Basic Profile
 export async function updateBasic(data) {
   return request({
     url: '/account/updateBasic',
@@ -441,7 +441,7 @@ export async function updateBasic(data) {
   });
 }
 
-//Update Advance Profile
+// Update Advance Profile
 export async function updateAdvance(data) {
   return request({
     url: '/account/updateAdvance',
@@ -474,7 +474,7 @@ export async function getAllLang() {
 }
 
 // User request approve
-export async function sendRequestApprove({uid}) {
+export async function sendRequestApprove({ uid }) {
   return request({
     url: '/account/requestApprove',
     method: 'POST',
@@ -484,7 +484,7 @@ export async function sendRequestApprove({uid}) {
 }
 
 // Admin approve User become Guide
-export async function approveUser({uid, id}) {
+export async function approveUser({ uid, id }) {
   return request({
     url: '/admin/approveUser',
     method: 'POST',
@@ -578,7 +578,7 @@ export async function reject(uid, id, reason) {
     url: '/admin/reject',
     method: 'POST',
     authRequired: true,
-    data: { uid, id: Number(id), reason },    
+    data: { uid, id: Number(id), reason },
   });
 }
 
@@ -588,12 +588,12 @@ export async function changePass(uid, pass) {
     url: '/account/changePass',
     method: 'POST',
     authRequired: true,
-    data: { uid, password:pass },    
+    data: { uid, password: pass },
   });
 }
 
 // Admin Delete account not active
-export async function handleDeleteAcc(uid, id) {    
+export async function handleDeleteAcc(uid, id) {
   return request({
     url: '/admin/delAcc',
     method: 'DELETE',
@@ -603,7 +603,7 @@ export async function handleDeleteAcc(uid, id) {
 }
 
 // Get all Review comment
-export async function GetAllReviewComment({ id, type}) {
+export async function GetAllReviewComment({ id, type }) {
   return request({
     url: 'admin/reviewComment/getAll',
     method: 'GET',
@@ -643,7 +643,7 @@ export async function handleCreateReply2({ uid, commentId, content }) {
 }
 
 // Delete comment
-export async function handleDeleteComment(id) {    
+export async function handleDeleteComment(id) {
   return request({
     url: '/admin/reviewComment/delComment',
     method: 'DELETE',
@@ -653,7 +653,7 @@ export async function handleDeleteComment(id) {
 }
 
 // Delete reply
-export async function handleDeleteReply2(id) { 
+export async function handleDeleteReply2(id) {
   return request({
     url: '/admin/reviewComment/delReply',
     method: 'DELETE',
@@ -663,7 +663,7 @@ export async function handleDeleteReply2(id) {
 }
 
 // Create bank
-export function createBank(data) {    
+export function createBank(data) {
   return request({
     url: '/bank/new',
     method: 'POST',
@@ -681,7 +681,7 @@ export async function getBankInfo(uid) {
   });
 }
 
-//Update Bank Info
+// Update Bank Info
 export async function updateBank(data) {
   return request({
     url: '/bank/updateBank',

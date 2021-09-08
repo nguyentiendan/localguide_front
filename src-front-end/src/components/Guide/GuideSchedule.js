@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { navigate } from 'gatsby';
 import AdminLayout from '../AdminLayout';
-import EditTourWizard from '../CreateTourWizard';
+import Schedule from './Schedule';
 import { getUserProfile, ISGUIDE } from '../../utils/auth';
 
-const GuideEditTour = () => {
+const GuideSchedule = () => {
   const [userProfile] = useState(getUserProfile());
   if (userProfile.role != ISGUIDE) {
     navigate('/app/admin');
@@ -14,13 +13,10 @@ const GuideEditTour = () => {
 
   return (
     <AdminLayout>
-      <EditTourWizard location={location} />
+      <h2>Guide Schedule</h2>
+      <Schedule />
     </AdminLayout>
   );
 };
 
-GuideEditTour.propTypes = {
-  location: PropTypes.shape({}).isRequired,
-};
-
-export default GuideEditTour;
+export default GuideSchedule;

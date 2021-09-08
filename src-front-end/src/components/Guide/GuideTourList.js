@@ -1,8 +1,8 @@
-import React, { useState, } from 'react';
-import AdminLayout from '../../components/AdminLayout';
-import GuideTours from '../../components/Guide/Tours';
-import { getUserProfile, ISGUIDE } from '../../utils/auth';
+import React, { useState } from 'react';
 import { navigate } from 'gatsby';
+import AdminLayout from '../AdminLayout';
+import GuideTours from './Tours';
+import { getUserProfile, ISGUIDE } from '../../utils/auth';
 
 const GuideTourList = () => {
   const [userProfile] = useState(getUserProfile());

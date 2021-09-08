@@ -24,7 +24,7 @@ const NoImage = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   color: #fff;
-  font-weight:700px;
+  font-weight: 700px;
 `;
 
 const UploadCustom = styled.div`
@@ -88,17 +88,17 @@ const UploadAvatar = ({ uid, src, title }) => {
     },
     [uid]
   );
-  
+
   return (
     <Wrapper>
-      {/*<h2>{title} Profile</h2>*/}
+      {/* <h2>{title} Profile</h2> */}
       <label htmlFor="avatar">
         <Spin spinning={loading}>
           <UploadCustom>
-            {/*<EditOutlined />*/}
+            {/* <EditOutlined /> */}
             <CameraOutlined />
-            <Avatar size={128}  src={avatarBlob || src} />
-            {(src == '' && avatarBlob == '') && (<NoImage>No Image</NoImage>) }
+            <Avatar size={128} src={avatarBlob || src} />
+            {src == '' && avatarBlob == '' && <NoImage>No Image</NoImage>}
             <input
               id="avatar"
               type="file"

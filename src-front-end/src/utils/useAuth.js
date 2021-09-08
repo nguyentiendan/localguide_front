@@ -13,8 +13,8 @@ const AuthLogoutContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(getUserProfile());
 
-  const logout = () => {    
-    setUser(null); 
+  const logout = () => {
+    setUser(null);
     API.logout(user.uid); // call logout API
     remove(AUTH_TOKEN_KEY);
     navigate('/login');
@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     function check() {
       if (user && !isAuthenticated()) {
-        //logout(); //have error
+        // logout(); //have error
         navigate('/login');
       }
     }

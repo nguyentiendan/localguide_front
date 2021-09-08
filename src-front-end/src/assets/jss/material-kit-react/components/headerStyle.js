@@ -102,6 +102,7 @@ const headerStyle = {
     boxShadow: 'none',
     paddingTop: '25px',
     color: '#FFFFFF',
+    zIndex: 10,
   },
   dark: {
     color: '#FFFFFF',

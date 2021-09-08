@@ -1,9 +1,14 @@
 /* eslint-disable react/no-danger */
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useEffect, useState, useLayoutEffect,} from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import styled from 'styled-components';
 import { Avatar, Tag, Spin, Button, Drawer, Input, message } from 'antd';
-import { UserOutlined, CrownOutlined, AppstoreAddOutlined,CommentOutlined, } from '@ant-design/icons';
+import {
+  UserOutlined,
+  CrownOutlined,
+  AppstoreAddOutlined,
+  CommentOutlined,
+} from '@ant-design/icons';
 import { FormatQuote, Star, StarHalf } from '@material-ui/icons';
 import _ from 'lodash';
 import classNames from 'classnames';
@@ -11,6 +16,7 @@ import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ReactBnbGallery from 'react-bnb-gallery';
+import { Fab, Action } from 'react-tiny-fab';
 import SectionHeader from '../../SectionHeader';
 import breakpoints from '../../../assets/styles/breakpoints';
 import ReviewListItem from '../../CommentListItem';
@@ -25,7 +31,7 @@ import Footer from '../../Footer/Footer.js';
 import InterestsOrExtras from '../../InterestsOrExtras';
 import SmallScreen from '../../Responsive/SmallScreen';
 import BigScreen from '../../Responsive/BigScreen';
-//import Button from '../../CustomButtons/Button';
+// import Button from '../../CustomButtons/Button';
 import { bigScreenCss, smallScreenCss } from '../../../assets/styles/responsive-css';
 import * as API from '../../../apis';
 import iconTour from '../../../assets/img/icon-tour.svg';
@@ -39,10 +45,8 @@ import styles from '../../../assets/styles/profilePage.js';
 import 'react-bnb-gallery/dist/style.css';
 import defaultImage from '../../../assets/img/noimage-600x400.jpg';
 import { getUserProfile, ISADMIN } from '../../../utils/auth';
-import { Fab, Action } from 'react-tiny-fab';
 import 'react-tiny-fab/dist/styles.css';
-import ReviewCommentListItem from "../../CommentListItem/ReviewCommentListItem";
-
+import ReviewCommentListItem from '../../CommentListItem/ReviewCommentListItem';
 
 const InfoAvatarAndBackgroundImg = styled.div`
   .info__guide {
@@ -329,9 +333,9 @@ function Profile({ uid, id }) {
   const [content, setContent] = useState();
 
   useEffect(() => {
-    const fetchData = async () => {      
+    const fetchData = async () => {
       setLoading(true);
-      const res = await API.getGuideProfileOverview({uid,guideId:id});
+      const res = await API.getGuideProfileOverview({ uid, guideId: id });
       setProfile({
         guide: res.guide,
         reviews: {
@@ -383,15 +387,15 @@ function Profile({ uid, id }) {
     fetchPhotos();
   }, []);
 
-  const handleGetAllReply = async (commentId) => {    
+  const handleGetAllReply = async commentId => {
     setLoading(true);
     const res = await API.handleGetAllReply({ id: commentId });
     setReplyComment(res.data);
     setLoading(false);
   };
-  
-  const handleCreateReply = async (e, commentId,uid) => {    
-    if ( (e.target.value).trim() != "" ) {
+
+  const handleCreateReply = async (e, commentId, uid) => {
+    if (e.target.value.trim() != '') {
       const { data } = await API.handleCreateReply2({
         uid,
         commentId,
@@ -401,30 +405,30 @@ function Profile({ uid, id }) {
       setReplyComment([...replyComment, newReply]);
     }
   };
-  
-  const handleDeleteReply = async (replyId)  => {    
+
+  const handleDeleteReply = async replyId => {
     const newData = _.remove(replyComment, item => {
       return item.id !== replyId;
     });
     setReplyComment(newData);
-    let res = await API.handleDeleteReply2( replyId );    
-    if (res.status) { 
-      message.success("Delete success")
+    const res = await API.handleDeleteReply2(replyId);
+    if (res.status) {
+      message.success('Delete success');
     }
   };
 
-	//show all comment
+  // show all comment
   const showComment = () => {
     setVisible(true);
-		const fetchAllComment = async () => {      
-      setLoading(true);        
-      const res = await API.GetAllReviewComment({id, type:'user'}); //id : account id
-      setComments(res.data)      
+    const fetchAllComment = async () => {
+      setLoading(true);
+      const res = await API.GetAllReviewComment({ id, type: 'user' }); // id : account id
+      setComments(res.data);
       setLoading(false);
-    }
+    };
     fetchAllComment();
   };
- 
+
   const onClose = () => {
     setVisible(false);
   };
@@ -441,9 +445,9 @@ function Profile({ uid, id }) {
         return null;
     }
   };
- 
+
   return (
-    <Layout scrollHeight={300}>      
+    <Layout scrollHeight={300}>
       <Parallax small filter image={require('../../../assets/img/home-banner.jpg')} />
       <div className={classNames(classes.main, classes.mainRaised)}>
         <Spin spinning={loading}>
@@ -611,7 +615,7 @@ function Profile({ uid, id }) {
                         {photos.length > 1 && (
                           <Button
                             className="buttonOnImage"
-                            //color="rose"
+                            // color="rose"
                             type="primary"
                             size="sm"
                             onClick={() => setIsOpen(true)}
@@ -679,7 +683,7 @@ function Profile({ uid, id }) {
                               {photos.length > 5 && (
                                 <Button
                                   className="buttonOnImage"
-                                  //color="rose"
+                                  // color="rose"
                                   type="primary"
                                   size="sm"
                                   onClick={() => setIsOpen(true)}
@@ -735,16 +739,12 @@ function Profile({ uid, id }) {
             </div>
           )}
         </Spin>
-        <Fab      
-          mainButtonStyles={{ backgroundColor: '#f12f60',}}
-          icon={<AppstoreAddOutlined />}          
-          alwaysShowTitle={true}          
-        >          
-          <Action
-            style={{backgroundColor: '#F897AF',}}
-            text="Comment"            
-            onClick={showComment}
-          >
+        <Fab
+          mainButtonStyles={{ backgroundColor: '#f12f60' }}
+          icon={<AppstoreAddOutlined />}
+          alwaysShowTitle
+        >
+          <Action style={{ backgroundColor: '#F897AF' }} text="Comment" onClick={showComment}>
             <CommentOutlined />
           </Action>
         </Fab>
@@ -754,39 +754,36 @@ function Profile({ uid, id }) {
           width={350}
           closable={false}
           onClose={onClose}
-          visible={visible}          
-          bodyStyle={{paddingBottom: 80 }}
+          visible={visible}
+          bodyStyle={{ paddingBottom: 80 }}
           footer={
             <div
               style={{
                 textAlign: 'left',
-                //height:150,
+                // height:150,
               }}
-            > 
-              <Button 
-                onClick={onClose}
-                type="primary"
-                style={{ marginTop: 5, marginRight: 8 }}>
+            >
+              <Button onClick={onClose} type="primary" style={{ marginTop: 5, marginRight: 8 }}>
                 Cancel
-              </Button>              
+              </Button>
             </div>
           }
         >
           <div>
             {comments.length > 0 && (
-              <Spin spinning={loading}>          
+              <Spin spinning={loading}>
                 <ReviewCommentListItem
                   comments={comments}
                   replyComment={replyComment}
                   handleGetAllReply={handleGetAllReply}
                   handleCreateReply={handleCreateReply}
-                  //handleDeleteComment={handleDeleteComment}
-                  handleDeleteReply={handleDeleteReply}              
-                  uid={userProfile.uid}   //uid of user logining 
+                  // handleDeleteComment={handleDeleteComment}
+                  handleDeleteReply={handleDeleteReply}
+                  uid={userProfile.uid} // uid of user logining
                   className="comment"
-                />                    
+                />
               </Spin>
-            )}      
+            )}
           </div>
         </Drawer>
       </div>
