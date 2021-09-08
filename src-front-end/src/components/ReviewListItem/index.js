@@ -3,32 +3,19 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import moment from 'moment';
 import { Avatar } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
-
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import ForumIcon from '@material-ui/icons/Forum';
 import colors from '../../assets/styles/colors';
-import { bigScreenCss, smallScreenCss } from '../../assets/styles/responsive-css';
+
 
 const Wrapper = styled.div`
   display: flex;
-  //flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: flex-start;
   position: relative;
-  width: calc((310 / 1000) * 100%);
-  min-width: 223px;
-  //margin: 10px;
-  padding: 15px;
-  background-color: #fff;
-  box-shadow: 0 0 1px 2px #eee inset;
-  border-radius: 10px;
-  margin: 0 auto;
-  margin-bottom: 2em;
-
-  ${smallScreenCss(`
-    width: 90%;
-  `)};
+  //width: 400px;
+  width: 310px;
+  overflow: hidden;
 `;
 
 const ContentWrapper = styled.div``;

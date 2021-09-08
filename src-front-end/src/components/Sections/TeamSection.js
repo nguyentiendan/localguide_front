@@ -82,33 +82,31 @@ function TeamSection() {
   return (
     <div className={classes.container}>
       {data > 0 && (
-        <Spin spinning={loading}>
-          <GridContainer justify="center">
-            <GridItem xs={12} sm={12} md={12}>
-              <div className={classes.description}>
-                <SectionHeader title="Tour Guide" />
-                <ListWrapper>
-                  <ListContainer>
-                    {tourGuides &&
-                      tourGuides.map((guide, index) => {
-                        return (
-                          <GuideListItem
-                            key={index}
-                            id={guide.id}
-                            uid={guide.uid}
-                            name={guide.fullname}
-                            level={guide.level}
-                            intro={guide.intro}
-                            avatar={guide.avatar}
-                            className="tour-guide"
-                          />
-                        );
-                      })}
-                  </ListContainer>
-                </ListWrapper>
-              </div>
-            </GridItem>
-          </GridContainer>
+        <Spin spinning={loading}>          
+          <GridItem xs={12} sm={12} md={12}>
+            <div className={classes.description}>
+              <SectionHeader title="Tour Guide" />
+              <ListWrapper>
+                <ListContainer>
+                  {tourGuides &&
+                    tourGuides.map((guide, index) => {
+                      return (
+                        <GuideListItem
+                          key={index}
+                          id={guide.id}
+                          uid={guide.uid}
+                          name={guide.fullname}
+                          level={guide.level}
+                          intro={guide.intro}
+                          avatar={guide.avatar}
+                          className="tour-guide"
+                        />
+                      );
+                    })}
+                </ListContainer>
+              </ListWrapper>
+            </div>
+          </GridItem>        
         </Spin>
       )}
     </div>
