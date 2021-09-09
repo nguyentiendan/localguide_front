@@ -52,7 +52,7 @@ function ReviewSection() {
         <GridItem xs={12} sm={12} md={12}>
           <div className={classes.description}>
             <SectionHeader title="Review" />
-              <Carousel>
+              <Carousel topSize="30%">
                 <ReviewListItem
                   key={1}
                   title="International Activities Of The Frankfurt Book"
