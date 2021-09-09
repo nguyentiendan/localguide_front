@@ -49,7 +49,7 @@ function BlogSection() {
           <GridItem xs={12} sm={12} md={12}>
             <div className={classes.description}>
               <SectionHeader title="Tour Blog" />
-              <Carousel>
+              <Carousel topSize="30%">
                 <BlogListItem
                   key={1}
                   name="Greate Tour in Tokyo"

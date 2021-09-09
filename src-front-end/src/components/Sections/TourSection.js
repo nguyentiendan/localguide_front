@@ -50,7 +50,7 @@ function TourSection() {
           <GridItem xs={12} sm={12} md={12}>
             <div className={classes.description}>
               <SectionHeader title="Popular Tour" />
-              <Carousel>
+              <Carousel topSize="30%">
                 {tours &&
                   tours.map((tour, index) => {
                     return (
