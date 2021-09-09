@@ -26,6 +26,8 @@ import styles from '../assets/styles/landingPage.js';
 import CommentListItem from '../components/CommentListItem';
 import JoinUsSection from '../components/JoinUsSection';
 import SectionHeader from '../components/SectionHeader';
+import Feedback from '../components/Feedback/Feedback';
+
 import exploreTourImg from '../assets/img/explore-tour.jpg';
 
 import SearchBox from '../components/SearchBox';
@@ -99,6 +101,7 @@ function IndexPage() {
           </ExploreTourWrapper> */}
 
           <JoinUsSection />
+          <Feedback />
         </Spin>
       </div>
       <Footer />

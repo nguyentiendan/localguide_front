@@ -93,32 +93,30 @@ function TeamSection() {
     <div className={classes.container}>
       {data > 0 && (
         <Spin spinning={loading}>
-          <GridContainer justify="center">
-            <GridItem xs={12} sm={12} md={12}>
-              <div className={classes.description}>
-                <SectionHeader title="Tour Guide" />
-                <SliderWrapper>
-                  <Carousel topSize="25%">
-                    {tourGuides &&
-                      tourGuides.map((guide, index) => {
-                        return (
-                          <GuideListItem
-                            key={index}
-                            id={guide.id}
-                            uid={guide.uid}
-                            name={guide.fullname}
-                            level={guide.level}
-                            intro={guide.intro}
-                            avatar={guide.avatar}
-                            className="tour-guide"
-                          />
-                        );
-                      })}
-                  </Carousel>
-                </SliderWrapper>
-              </div>
-            </GridItem>
-          </GridContainer>
+          <GridItem xs={12} sm={12} md={12}>
+            <div className={classes.description}>
+              <SectionHeader title="Tour Guide" />
+              <SliderWrapper>
+                <Carousel topSize="25%">
+                  {tourGuides &&
+                    tourGuides.map((guide, index) => {
+                      return (
+                        <GuideListItem
+                          key={index}
+                          id={guide.id}
+                          uid={guide.uid}
+                          name={guide.fullname}
+                          level={guide.level}
+                          intro={guide.intro}
+                          avatar={guide.avatar}
+                          className="tour-guide"
+                        />
+                      );
+                    })}
+                </Carousel>
+              </SliderWrapper>
+            </div>
+          </GridItem>
         </Spin>
       )}
     </div>

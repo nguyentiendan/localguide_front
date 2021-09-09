@@ -41,29 +41,27 @@ function DestinationSection() {
   return (
     <div className={classes.container}>
       <Spin spinning={loading}>
-        <GridContainer justify="center">
-          <GridItem xs={12} sm={12} md={12}>
-            <div className={classes.description}>
-              <SectionHeader title="Destination" />
-              <Carousel topSize="30%">
-                {tours &&
-                  tours.map((tour, index) => {
-                    return (
-                      <DestinationListItem
-                        key={index}
-                        name={tour.name}
-                        location={tour.city}
-                        picture={tour.cover}
-                        className="destination"
-                        id={tour.id}
-                        uid={tour.uid}
-                      />
-                    );
-                  })}
-              </Carousel>
-            </div>
-          </GridItem>
-        </GridContainer>
+        <GridItem xs={12} sm={12} md={12}>
+          <div className={classes.description}>
+            <SectionHeader title="Destination" />
+            <Carousel topSize="30%">
+              {tours &&
+                tours.map((tour, index) => {
+                  return (
+                    <DestinationListItem
+                      key={index}
+                      name={tour.name}
+                      location={tour.city}
+                      picture={tour.cover}
+                      className="destination"
+                      id={tour.id}
+                      uid={tour.uid}
+                    />
+                  );
+                })}
+            </Carousel>
+          </div>
+        </GridItem>        
       </Spin>
     </div>
   );

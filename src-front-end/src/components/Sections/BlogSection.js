@@ -44,40 +44,38 @@ function BlogSection() {
 
   return (
     <div className={classes.container}>
-      <Spin spinning={loading}>
-        <GridContainer justify="center">
-          <GridItem xs={12} sm={12} md={12}>
-            <div className={classes.description}>
-              <SectionHeader title="Tour Blog" />
-              <Carousel topSize="30%">
-                <BlogListItem
-                  key={1}
-                  name="Greate Tour in Tokyo"
-                  description="Hanoi: Hanoi, a city of lakes, shaded boulevards and public parks, is the capital
-                  of Vietnam. It is a very attractive city with French-style architecture"
-                  picture={backpackers}
-                  className="blog"
-                />
-                <BlogListItem
-                  key={2}
-                  name="Greate Tour in Tokyo"
-                  description="Hanoi: Hanoi, a city of lakes, shaded boulevards and public parks, is the capital
-                  of Vietnam. It is a very attractive city with French-style architecture"
-                  picture={backpackers}
-                  className="blog"
-                />
-                <BlogListItem
-                  key={3}
-                  name="Greate Tour in Tokyo"
-                  description="Hanoi: Hanoi, a city of lakes, shaded boulevards and public parks, is the capital
-                  of Vietnam. It is a very attractive city with French-style architecture"
-                  picture={backpackers}
-                  className="blog"
-                />
-              </Carousel>
-            </div>
-          </GridItem>
-        </GridContainer>
+      <Spin spinning={loading}>        
+        <GridItem xs={12} sm={12} md={12}>
+          <div className={classes.description}>
+            <SectionHeader title="Tour Blog" />
+            <Carousel topSize="30%">
+              <BlogListItem
+                key={1}
+                name="Greate Tour in Tokyo"
+                description="Hanoi: Hanoi, a city of lakes, shaded boulevards and public parks, is the capital
+                of Vietnam. It is a very attractive city with French-style architecture"
+                picture={backpackers}
+                className="blog"
+              />
+              <BlogListItem
+                key={2}
+                name="Greate Tour in Tokyo"
+                description="Hanoi: Hanoi, a city of lakes, shaded boulevards and public parks, is the capital
+                of Vietnam. It is a very attractive city with French-style architecture"
+                picture={backpackers}
+                className="blog"
+              />
+              <BlogListItem
+                key={3}
+                name="Greate Tour in Tokyo"
+                description="Hanoi: Hanoi, a city of lakes, shaded boulevards and public parks, is the capital
+                of Vietnam. It is a very attractive city with French-style architecture"
+                picture={backpackers}
+                className="blog"
+              />
+            </Carousel>
+          </div>
+        </GridItem>        
       </Spin>
     </div>
   );
