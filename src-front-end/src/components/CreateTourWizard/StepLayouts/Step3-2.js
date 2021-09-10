@@ -6,6 +6,9 @@ import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { Button, Col, Input, Row, Spin, Tabs, TimePicker } from 'antd';
 import moment from 'moment';
+import flow from 'lodash/fp/flow';
+import filter from 'lodash/fp/filter';
+import map from 'lodash/fp/map';
 
 import { createTourSchedule } from '../../../apis';
 
@@ -40,14 +43,14 @@ const transformTourSchedule = ({ day, pickUpAt, finishAt, schedule }) => {
         finishLocation: finishAt.place,
       },
     ],
-    schedule: _.flow(schedule)
-      .filter(({ time, place }) => time && time[0] && time[1] && place)
-      .map(({ time, place }) => ({
+    schedule: flow(
+      filter(({ time, place }) => time && time[0] && time[1] && place),
+      map(({ time, place }) => ({
         from: time && time[0] && moment(time[0]).format('HH:mm'),
         to: time && time[1] && moment(time[1]).format('HH:mm'),
         location: place,
       }))
-      .value(),
+    )([schedule]),
   };
 };
 
