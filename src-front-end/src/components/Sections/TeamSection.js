@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 // nodejs library that concatenates classes
-import classNames from 'classnames';
 // @material-ui/core components
 import { makeStyles } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import { Spin } from 'antd';
 import breakpoints from '../../assets/styles/breakpoints';
-import { smallScreenCss } from '../../assets/styles/responsive-css';
 
 // @material-ui/icons
 // core components
@@ -17,31 +15,43 @@ import SectionHeader from '../SectionHeader';
 import * as API from '../../apis';
 
 import styles from '../../assets/styles/commonStyle.js';
+import Carousel from './Carousel/Carousel';
 
-const ListWrapper = styled.div`
+const SliderWrapper = styled.div`
   max-width: ${breakpoints.lg};
-  overflow: auto;
-
-  .comment:last-child .delimiter {
-    display: none;
-  }
-`;
-
-const ListContainer = styled.div`
-  display: inline-flex;
-  flex-direction: row;
-  overflow: hidden;
-
-  & .tour-guide + .tour-guide {
-    margin-left: 3rem;
-  }
-
-  ${smallScreenCss(`
-    & .tour-guide + .tour-guide {
-      margin-left: 1.5rem;
+  .slick-next {
+    @media (min-width: 1201px) {
+      left: 91%;
     }
-  `)}
-`;
+    @media (min-width: 992px) and (max-width: 1200px) {
+      left: 95%;
+    }
+    @media (min-width: 768px) and (max-width: 991px) {
+      left: 85%;
+    }
+    @media (min-width: 501px) and (max-width: 767px) {
+      left: 90%;
+    }
+    @media (min-width: 447px) and (max-width: 500px) {
+      left: 85%;
+    }
+    @media (min-width: 350px) and (max-width: 446px) {
+      left: 240px;
+    }
+    @media (max-width: 349px) {
+      left: 235px;
+    }
+  }
+  .slick-prev:before {
+    color: black;
+    font-size: 40px;
+    margin-inline: 48px;
+  }
+  .slick-next:before {
+    color: black;
+    font-size: 40px;
+  }
+`
 
 const useStyles = makeStyles(styles);
 
@@ -82,12 +92,12 @@ function TeamSection() {
   return (
     <div className={classes.container}>
       {data > 0 && (
-        <Spin spinning={loading}>          
+        <Spin spinning={loading}>
           <GridItem xs={12} sm={12} md={12}>
             <div className={classes.description}>
               <SectionHeader title="Tour Guide" />
-              <ListWrapper>
-                <ListContainer>
+              <SliderWrapper>
+                <Carousel topSize="25%">
                   {tourGuides &&
                     tourGuides.map((guide, index) => {
                       return (
@@ -103,10 +113,10 @@ function TeamSection() {
                         />
                       );
                     })}
-                </ListContainer>
-              </ListWrapper>
+                </Carousel>
+              </SliderWrapper>
             </div>
-          </GridItem>        
+          </GridItem>
         </Spin>
       )}
     </div>

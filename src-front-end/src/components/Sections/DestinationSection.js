@@ -13,7 +13,6 @@ import Carousel from './Carousel/Carousel';
 
 const useStyles = makeStyles(styles);
 
-
 function DestinationSection() {
   const [tours, setTours] = useState();
   const [loading, setLoading] = useState(false);
@@ -41,11 +40,11 @@ function DestinationSection() {
 
   return (
     <div className={classes.container}>
-      <Spin spinning={loading}>        
+      <Spin spinning={loading}>
         <GridItem xs={12} sm={12} md={12}>
           <div className={classes.description}>
             <SectionHeader title="Destination" />
-            <Carousel>
+            <Carousel topSize="30%">
               {tours &&
                 tours.map((tour, index) => {
                   return (

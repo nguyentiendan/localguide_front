@@ -32,8 +32,10 @@ const Avatar = styled.img`
   border-radius: 50%;
   object-fit: cover;
   object-position: center;
-  margin-bottom: 0.25rem;
+  margin: 0 auto;
+  margin-bottom: 2rem;
   //align-items: center;
+  text-align: center;
 `;
 
 const Description = styled.div`
@@ -44,6 +46,7 @@ const Description = styled.div`
   font-size: 14px;
   text-align: left;
 `;
+
 const GuideListItem = ({ className, name, level, intro, avatar, uid, id }) => (
   <Wrapper className={className}>
     <Link to={`/guide?uid=${uid}&id=${id}`}>

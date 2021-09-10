@@ -8,22 +8,22 @@ import breakpoints from '../../../assets/styles/breakpoints';
 const SliderWrapper = styled.div`
   max-width: ${breakpoints.lg};
   .slick-next {
-    @media (min-width: 1200px) {
+    @media (min-width: 1201px) {
       left: 93%;
     }
-    @media (min-width: 993px) and (max-width: 1200px) {
+    @media (min-width: 992px) and (max-width: 1200px) {
       left: 95%;
     }
-    @media (min-width: 768px) and (max-width: 992px) {
+    @media (min-width: 768px) and (max-width: 991px) {
       left: 88%;
     }
     @media (min-width: 489px) and (max-width: 767px) {
       left: 90%;
     }
-    @media (min-width: 417px) and (max-width: 488px) {
+    @media (min-width: 447px) and (max-width: 488px) {
       left: 90%;
     }
-    @media (min-width: 350px) and (max-width: 416px) {
+    @media (min-width: 350px) and (max-width: 446px) {
       left: 265px;
     }
     @media (max-width: 349px) {
@@ -41,7 +41,7 @@ const SliderWrapper = styled.div`
   }
 `
 
-function Carousel({children}) {
+function Carousel({ children, topSize }) {
   const SampleNextArrow = props => {
     const { className, style, onClick } = props;
     if (className.includes('slick-disabled')) {
@@ -52,7 +52,8 @@ function Carousel({children}) {
         className={className}
         style={{
           ...style,
-          top: '30%',
+          // top: '30%',
+          top: topSize,
           zIndex: '100',
         }}
         onClick={onClick}
@@ -70,7 +71,8 @@ function Carousel({children}) {
         className={className}
         style={{
           ...style,
-          top: '30%',
+          // top: '30%',
+          top: topSize,
           zIndex: '100',
         }}
         onClick={onClick}
@@ -95,14 +97,14 @@ function Carousel({children}) {
         },
       },
       {
-        breakpoint: 992,
+        breakpoint: 991,
         settings: {
           slidesToShow: 2,
           slidesToScroll: 2,
         },
       },
       {
-        breakpoint: 768,
+        breakpoint: 767,
         settings: {
           slidesToShow: 1.5,
           slidesToScroll: 1,
@@ -116,7 +118,7 @@ function Carousel({children}) {
         },
       },
       {
-        breakpoint: 416,
+        breakpoint: 446,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
