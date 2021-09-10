@@ -32,10 +32,10 @@ const SliderWrapper = styled.div`
     @media (min-width: 501px) and (max-width: 767px) {
       left: 90%;
     }
-    @media (min-width: 417px) and (max-width: 500px) {
+    @media (min-width: 447px) and (max-width: 500px) {
       left: 85%;
     }
-    @media (min-width: 350px) and (max-width: 416px) {
+    @media (min-width: 350px) and (max-width: 446px) {
       left: 240px;
     }
     @media (max-width: 349px) {

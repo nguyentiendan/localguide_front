@@ -20,10 +20,10 @@ const SliderWrapper = styled.div`
     @media (min-width: 489px) and (max-width: 767px) {
       left: 90%;
     }
-    @media (min-width: 417px) and (max-width: 488px) {
+    @media (min-width: 447px) and (max-width: 488px) {
       left: 90%;
     }
-    @media (min-width: 350px) and (max-width: 416px) {
+    @media (min-width: 350px) and (max-width: 446px) {
       left: 265px;
     }
     @media (max-width: 349px) {
@@ -118,7 +118,7 @@ function Carousel({ children, topSize }) {
         },
       },
       {
-        breakpoint: 416,
+        breakpoint: 446,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
