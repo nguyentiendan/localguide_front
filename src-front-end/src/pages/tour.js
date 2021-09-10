@@ -25,9 +25,9 @@ import NumberFormat from 'react-number-format';
 import * as API from '../apis';
 import Layout from '../components/CustomLayout';
 import SEO from '../components/SEO';
-import Footer from '../components/Footer/Footer.js';
-import GridContainer from '../components/Grid/GridContainer.js';
-import GridItem from '../components/Grid/GridItem.js';
+import Footer from '../components/Footer/Footer';
+import GridContainer from '../components/Grid/GridContainer';
+import GridItem from '../components/Grid/GridItem';
 import SmallScreen from '../components/Responsive/SmallScreen';
 import BigScreen from '../components/Responsive/BigScreen';
 import RatingStars from '../components/RatingStars';
@@ -41,8 +41,8 @@ import { bigScreenCss, smallScreenCss } from '../assets/styles/responsive-css';
 import TourGuideListItem from '../components/TourGuideListItem';
 import { safeFuncCall } from '../utils/commons';
 import defaultImage from '../assets/img/noimage-600x400.jpg';
-import styles from '../assets/styles/tourPage.js';
-//import PriceBox from '../components/PriceBox';
+import styles from '../assets/styles/tourPage';
+import PriceBox from '../components/PriceBox';
 import 'react-bnb-gallery/dist/style.css';
 
 const Title = styled.h1`
@@ -378,28 +378,6 @@ const TourDescriptionItem = styled.li`
 `;
 
 
-const PriceBox = styled.div`
-  position: fixed;
-  bottom: 60px;
-  right: 20px;
-  width: 300px;
-  font-size: 14px;
-  font-family: "Open Sans", Arial, sans-serif;
-  font-weight: 400;
-  text-align: right;
-  margin-left: auto;
-  background-color: #fff;
-  padding: 20px;
-  box-shadow: 0 0 1px 2px #666 inset;
-  z-index: 10;
-
-  ${smallScreenCss(`
-      width: 100%;
-      right: 0;
-      bottom: 0;
-  `)}
-`;
-
 /** TODO
  * 1) Them icon Language (chi de 1 languagua, khi re vao thi ra tooltip)
  * 2) Them icon so nguoi - DONE
@@ -409,6 +387,7 @@ const useStyles = makeStyles(styles);
 
 function TourDetail({ location }) {
   const classes = useStyles();
+  const [show, setShow] = useState(false);
 
   const dataQueryParams = qs.parse(location.search);
   const { uid } = dataQueryParams;
@@ -504,9 +483,38 @@ function TourDetail({ location }) {
     fetchTourDetails();
   }, [tourQuery]);
 
+  useEffect(() => window.addEventListener('resize', bookButtonHeight));
+  
+  const bookButtonHeight = () => {
+    const windowsScrollTop = window.pageYOffset;
+    const bookHeight = document.getElementById('booknow').getBoundingClientRect().top;
+    return windowsScrollTop + bookHeight - 70;
+  }
 
-  var target = document.querySelector('#booknow'); // 対象のエレメント
-  console.log(target);
+  useEffect(() => {
+    if (bookButtonHeight()) {
+      window.addEventListener('scroll', showPriceBox);
+    }
+    return function cleanup() {
+      if (bookButtonHeight()) {
+        window.removeEventListener('scroll', showPriceBox);
+      }
+    };
+  });
+
+  const showPriceBox = () => {
+    const windowsScrollTop = window.pageYOffset;
+    const windowHeight = document.documentElement.clientHeight;
+    const windowWidth = document.documentElement.clientWidth;
+    const pageHeight = document.documentElement.scrollHeight;
+
+    if (windowsScrollTop < bookButtonHeight() ||
+        (windowWidth < 750 && windowsScrollTop + windowHeight === pageHeight)) {
+      setShow(false);
+    } else {
+      setShow(true);
+    }
+  }
 
   // optionは省略可能、初期値は以下のようになります。
   var option = {
@@ -540,7 +548,7 @@ function TourDetail({ location }) {
       <div className={classNames(classes.main, classes.mainRaised)} style={{ paddingTop: '70px' }}>
         <div className={classes.container}>
           <Spin spinning={loading}>
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <SmallScreen>
@@ -615,7 +623,7 @@ function TourDetail({ location }) {
             </GridContainer>
 
             {tourPhotos.length > 0 && (
-              <GridContainer justify="center">
+              <GridContainer justifyContent="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     <SmallScreen>
@@ -715,7 +723,7 @@ function TourDetail({ location }) {
               <ReactBnbGallery show={isOpen} photos={tourPhotos} onClose={() => setIsOpen(false)} />
             </div>
 
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description} style={{ paddingTop: '0px' }}>
                   <FormatQuote style={{ color: '#e91e63' }} />
@@ -725,7 +733,7 @@ function TourDetail({ location }) {
               </GridItem>
             </GridContainer>
 
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description} style={{ paddingTop: '0px' }}>
                   <HeaderWrapper>
@@ -757,7 +765,7 @@ function TourDetail({ location }) {
               </GridItem>
             </GridContainer>
 
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description} style={{ textAlign: 'left' }}>
                   <PriceWrapper>
@@ -795,7 +803,7 @@ function TourDetail({ location }) {
               </GridItem>
             </GridContainer>
 
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <h2 style={{ textAlign: 'left' }}>Tour description</h2>
@@ -901,7 +909,7 @@ function TourDetail({ location }) {
             </GridContainer>
 
             {tourDetails.reviews?.totalReview > 0 && (
-              <GridContainer justify="center">
+              <GridContainer justifyContent="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     <SectionHeader
@@ -930,15 +938,12 @@ function TourDetail({ location }) {
         </div>
       </div>
       <Footer />
-      <PriceBox>
-        <div style={{ textAlign: 'left', marginLeft: 'auto' }}>
-            <p>Tour name：{tourDetails.tour[0]?.name || ''}</p>
-            <p>price：${tourDetails.tour[0]?.total || 0}</p>
-            <BookButton color="rose" loading={loading} disabled={loading}>
-                Book now
-            </BookButton>
-        </div>
-      </PriceBox>
+      <PriceBox
+        name = {tourDetails.tour[0]?.name || ''}
+        price = {tourDetails.tour[0]?.total || 0}
+        loading={loading}
+        show={show}
+      />
     </Layout>
   );
 }
