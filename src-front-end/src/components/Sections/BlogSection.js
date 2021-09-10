@@ -64,7 +64,7 @@ function BlogSection() {
   return (
     <div className={classes.container}>
       <Spin spinning={loading}>
-        <GridContainer justify="center">
+        <GridContainer justifyContent="center">
           <GridItem xs={12} sm={12} md={12}>
             <div className={classes.description}>
               <SectionHeader title="Tour Blog" />

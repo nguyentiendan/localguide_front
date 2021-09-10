@@ -403,7 +403,7 @@ function GuideDetail({ location }) {
       <div className={classNames(classes.main, classes.mainRaised)}>
         <Spin spinning={loading}>
           <div className={classes.container}>
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <InfoAvatarAndBackgroundImg>
@@ -429,7 +429,7 @@ function GuideDetail({ location }) {
             </GridContainer>
           </div>
           <div className={classes.container}>
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <InfoIntroduction>
@@ -520,7 +520,7 @@ function GuideDetail({ location }) {
 
           {tour.related?.tours.length > 0 && (
             <div className={classes.container}>
-              <GridContainer justify="center">
+              <GridContainer justifyContent="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     {tour.related?.allTour > 3 && (
@@ -552,7 +552,7 @@ function GuideDetail({ location }) {
           <br />
           {photos.length > 0 && (
             <div className={classes.container}>
-              <GridContainer justify="center">
+              <GridContainer justifyContent="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     <SectionHeader title={<>Photos ({photos.length})</>} />
@@ -656,7 +656,7 @@ function GuideDetail({ location }) {
           <br />
           {profile.reviews?.totalReview > 0 && (
             <div className={classes.container}>
-              <GridContainer justify="center">
+              <GridContainer justifyContent="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     {profile.reviews?.listReviews?.length > 0 && (

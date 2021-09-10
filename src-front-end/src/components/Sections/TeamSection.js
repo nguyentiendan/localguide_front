@@ -83,7 +83,7 @@ function TeamSection() {
     <div className={classes.container}>
       {data > 0 && (
         <Spin spinning={loading}>
-          <GridContainer justify="center">
+          <GridContainer justifyContent="center">
             <GridItem xs={12} sm={12} md={12}>
               <div className={classes.description}>
                 <SectionHeader title="Tour Guide" />
