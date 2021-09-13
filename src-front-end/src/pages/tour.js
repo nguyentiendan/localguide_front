@@ -509,7 +509,7 @@ function TourDetail({ location }) {
     const pageHeight = document.documentElement.scrollHeight;
 
     if (windowsScrollTop < bookButtonHeight() ||
-        (windowWidth < 750 && windowsScrollTop + windowHeight === pageHeight)) {
+        (windowWidth < 751 && windowsScrollTop + windowHeight === pageHeight)) {
       setShow(false);
     } else {
       setShow(true);
