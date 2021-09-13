@@ -19,7 +19,7 @@ import {
   SendOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
-import { Drawer, Button, Spin, Modal, message } from 'antd';
+import { Drawer, Spin, Modal, message } from 'antd';
 import _ from 'lodash';
 import { navigate } from 'gatsby';
 import { FormatQuote } from '@material-ui/icons';
@@ -38,7 +38,7 @@ import SectionHeader from '../../SectionHeader';
 import CommentListItem from '../../CommentListItem';
 import breakpoints from '../../../assets/styles/breakpoints';
 import NavItem from '../../Layout/NavItem';
-// import Button from '../../CustomButtons/Button';
+import Button from '../../CustomButtons/Button';
 import { bigScreenCss, smallScreenCss } from '../../../assets/styles/responsive-css';
 import TourGuideListItem from '../../TourGuideListItem';
 import { safeFuncCall } from '../../../utils/commons';
@@ -536,7 +536,7 @@ function GuideTourReview({ uid, id }) {
     const { status } = await API.handleSendRequest({ uid, id, status: 2 });
     if (status === true) {
       message.success('Send request approve success');
-      navigate('app/guideTourList/');
+      navigate('/app/guideTourList/');
     }
     setLoading(false);
   };
@@ -564,7 +564,7 @@ function GuideTourReview({ uid, id }) {
     const { status } = await API.deleteTour({ uid, id });
     if (status === true) {
       message.success('Delete success');
-      navigate('app/guideTourList/');
+      navigate('/app/guideTourList/');
     }
     setLoading(false);
   };
@@ -574,7 +574,7 @@ function GuideTourReview({ uid, id }) {
       <div className={classNames(classes.main, classes.mainRaised)} style={{ paddingTop: '70px' }}>
         <div className={classes.container}>
           <Spin spinning={loading}>
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <SmallScreen>
@@ -649,7 +649,7 @@ function GuideTourReview({ uid, id }) {
             </GridContainer>
 
             {tourPhotos.length > 0 && (
-              <GridContainer justify="center">
+              <GridContainer justifyContent="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     <SmallScreen>
@@ -749,7 +749,7 @@ function GuideTourReview({ uid, id }) {
               <ReactBnbGallery show={isOpen} photos={tourPhotos} onClose={() => setIsOpen(false)} />
             </div>
 
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description} style={{ paddingTop: '0px' }}>
                   <FormatQuote style={{ color: '#e91e63' }} />
@@ -759,7 +759,7 @@ function GuideTourReview({ uid, id }) {
               </GridItem>
             </GridContainer>
 
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description} style={{ paddingTop: '0px' }}>
                   <HeaderWrapper>
@@ -789,7 +789,7 @@ function GuideTourReview({ uid, id }) {
               </GridItem>
             </GridContainer>
 
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description} style={{ textAlign: 'left' }}>
                   <PriceWrapper>
@@ -821,6 +821,7 @@ function GuideTourReview({ uid, id }) {
                     </PriceMenuWrapper>
                     <BookButton
                       type="primary"
+                      color="rose"
                       loading={loading}
                       disabled={loading}
                       style={{ height: 50 }}
@@ -832,7 +833,7 @@ function GuideTourReview({ uid, id }) {
               </GridItem>
             </GridContainer>
 
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <h2 style={{ textAlign: 'left' }}>Tour description</h2>
@@ -938,7 +939,7 @@ function GuideTourReview({ uid, id }) {
             </GridContainer>
 
             {tourDetails.reviews?.totalReview > 0 && (
-              <GridContainer justify="center">
+              <GridContainer justifyContent="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     <SectionHeader

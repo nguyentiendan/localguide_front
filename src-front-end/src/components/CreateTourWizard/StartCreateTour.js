@@ -49,7 +49,7 @@ const StartCreateTour = ({ onStart, location }) => {
         <Button onClick={onStart}>
           {location.pathname === '/app/editTour' ? 'Edit Tour' : 'Start'}
         </Button>
-        <Button style={{ marginLeft: 20 }} onClick={() => navigate('app/guideTourList/')}>
+        <Button style={{ marginLeft: 20 }} onClick={() => navigate('/app/guideTourList/')}>
           Cancel
         </Button>
       </div>
