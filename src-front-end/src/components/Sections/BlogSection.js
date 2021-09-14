@@ -8,7 +8,7 @@ import { Spin } from 'antd';
 // core components
 import SectionHeader from '../SectionHeader';
 import BlogListItem from '../BlogListItem';
-import GridContainer from '../Grid/GridContainer.js';
+// import GridContainer from '../Grid/GridContainer.js';
 import GridItem from '../Grid/GridItem.js';
 import * as API from '../../apis';
 import styles from '../../assets/styles/commonStyle.js';

@@ -9,7 +9,7 @@ import breakpoints from '../../assets/styles/breakpoints';
 // @material-ui/icons
 // core components
 import GuideListItem from '../GuideListItem';
-import GridContainer from '../Grid/GridContainer.js';
+// import GridContainer from '../Grid/GridContainer.js';
 import GridItem from '../Grid/GridItem.js';
 import SectionHeader from '../SectionHeader';
 import * as API from '../../apis';

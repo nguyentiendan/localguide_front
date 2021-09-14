@@ -10,7 +10,7 @@ import { Spin } from 'antd';
 // import styled from 'styled-components';
 import SectionHeader from '../SectionHeader';
 import TourListItem from '../TourListItem';
-import GridContainer from '../Grid/GridContainer.js';
+// import GridContainer from '../Grid/GridContainer.js';
 import GridItem from '../Grid/GridItem.js';
 import * as API from '../../apis';
 import styles from '../../assets/styles/commonStyle.js';

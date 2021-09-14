@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import { Spin } from 'antd';
-import GridContainer from '../Grid/GridContainer.js';
+// import GridContainer from '../Grid/GridContainer.js';
 import GridItem from '../Grid/GridItem.js';
 import SectionHeader from '../SectionHeader';
 import DestinationListItem from '../DestinationListItem';
@@ -61,7 +61,7 @@ function DestinationSection() {
                 })}
             </Carousel>
           </div>
-        </GridItem>        
+        </GridItem>
       </Spin>
     </div>
   );

@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 // core components
 
 import { Spin } from 'antd';
-import GridContainer from '../Grid/GridContainer.js';
+// import GridContainer from '../Grid/GridContainer.js';
 import GridItem from '../Grid/GridItem.js';
 import SectionHeader from '../SectionHeader';
 import ReviewListItem from '../ReviewListItem';
@@ -48,7 +48,7 @@ function ReviewSection() {
 
   return (
     <div className={classes.container}>
-      <Spin spinning={loading}>        
+      <Spin spinning={loading}>
         <GridItem xs={12} sm={12} md={12}>
           <div className={classes.description}>
             <SectionHeader title="Review" />
@@ -88,7 +88,7 @@ function ReviewSection() {
                 />
               </Carousel>
           </div>
-        </GridItem>        
+        </GridItem>
       </Spin>
     </div>
   );
