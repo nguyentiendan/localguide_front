@@ -11,6 +11,7 @@ import filter from 'lodash/fp/filter';
 import map from 'lodash/fp/map';
 
 import { createTourSchedule } from '../../../apis';
+import { flatMap } from 'lodash/fp';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -43,14 +44,27 @@ const transformTourSchedule = ({ day, pickUpAt, finishAt, schedule }) => {
         finishLocation: finishAt.place,
       },
     ],
-    schedule: flow(
-      filter(({ time, place }) => time && time[0] && time[1] && place),
-      map(({ time, place }) => ({
-        from: time && time[0] && moment(time[0]).format('HH:mm'),
-        to: time && time[1] && moment(time[1]).format('HH:mm'),
-        location: place,
-      }))
-    )([schedule]),
+    schedule: flatMap(
+      s =>
+        s.time
+          ? flow(
+              filter(({ time, place }) => time && time[0] && time[1] && place),
+              map(({ time, place }) => ({
+                from: time && time[0] && moment(time[0]).format('HH:mm'),
+                to: time && time[1] && moment(time[1]).format('HH:mm'),
+                location: place,
+              }))
+            )([s])
+          : flow(
+              filter(s => s.from && s.to && s.place),
+              map(s => ({
+                from: s.from,
+                to: s.to,
+                place: s.place,
+              }))
+            )([s]),
+      schedule
+    )
   };
 };
 
@@ -305,17 +319,17 @@ StepLayout.propTypes = {
         day: PropTypes.number,
         pickUpAt: PropTypes.shape({
           place: PropTypes.string,
-          time: PropTypes.string,
+          // time: PropTypes.string,
         }),
         finishAt: PropTypes.shape({
           place: PropTypes.string,
-          time: PropTypes.string,
+          // time: PropTypes.string,
         }),
         schedule: PropTypes.arrayOf(
           PropTypes.shape({
             $uuid: PropTypes.string,
             place: PropTypes.string,
-            time: PropTypes.string,
+            // time: PropTypes.arrayOf(),
           })
         ),
       })
