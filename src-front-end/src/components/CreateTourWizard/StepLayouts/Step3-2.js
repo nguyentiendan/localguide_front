@@ -6,12 +6,9 @@ import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { Button, Col, Input, Row, Spin, Tabs, TimePicker } from 'antd';
 import moment from 'moment';
-import flow from 'lodash/fp/flow';
-import filter from 'lodash/fp/filter';
-import map from 'lodash/fp/map';
+import { flatMap, flow, filter, map } from 'lodash/fp';
 
 import { createTourSchedule } from '../../../apis';
-import { flatMap } from 'lodash/fp';
 
 const Wrapper = styled.div`
   height: 100%;
