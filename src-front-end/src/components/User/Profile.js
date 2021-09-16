@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
 import { Form, Input, Button, Select, InputNumber, Spin, message, Modal } from 'antd';
 import { navigate } from 'gatsby';
+import _ from 'lodash';
 import Layout from '../CustomLayout';
 import Parallax from '../Parallax/Parallax.js';
 import SEO from '../SEO';
@@ -38,13 +39,23 @@ function Profile() {
 
   const classes = useStyles();
   const [form] = Form.useForm();
-  const { country } = form.getFieldsValue();
+  // const { country } = form.getFieldsValue();
   const [profile, setProfile] = useState({});
   const [rootCity, setRootCity] = useState([]);
   const [rootCountry, setRootCountry] = useState([]);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [selectedCountryCode, setSelectedCountryCode] = useState('');
+
+  const country = useMemo(() => profile.country, [profile]);
+  const countryCode = useMemo(() => {
+    if (!rootCountry || !country) {
+      return undefined;
+    }
+    const selectedCountry = _.find(rootCountry, c => c.name === country);
+    return selectedCountry && selectedCountry.code;
+  }, [country, rootCountry]);
 
   const handleOk = () => {
     navigate('/app/becomeGuide');
@@ -85,6 +96,7 @@ function Profile() {
     try {
       const { status } = await API.updateBasic({
         ...values,
+        country: values.country.label || country,
         uid,
       });
       if (status === true) {
@@ -107,19 +119,20 @@ function Profile() {
   useEffect(() => {
     const fetchCity = async () => {
       if (profile?.country) {
-        const resCity = await API.getCityOfCountry(profile?.country);
+        const countryDefault = _.find(rootCountry, { name: profile.country });
+        const resCity = await API.getCityOfCountry(selectedCountryCode || countryDefault.code);
         setRootCity(resCity.data);
       }
     };
     fetchCity();
   }, [API.getCityOfCountry, profile?.country, setRootCity]);
 
-  const handleSelectCountryAndCity = value => {
-    form.setFieldsValue({ country: value });
+  const handleSelectCountryAndCity = selectedCountry => {
+    // form.setFieldsValue({ country: value });
     const fetchCity = async () => {
-      if (profile.country || country || value) {
+      if (profile.country || selectedCountry.value) {
         setLoading(true);
-        const resCity = await API.getCityOfCountry(value || profile.country);
+        const resCity = await API.getCityOfCountry(selectedCountry.value);
         setRootCity(resCity.data);
         setProfile({
           ...profile,
@@ -298,10 +311,11 @@ function Profile() {
                   <Form.Item
                     name="country"
                     label="Country"
-                    initialValue={profile.country}
+                    initialValue={countryCode && { value: countryCode }}
                     key={profile.country === '' ? 'country' : profile.country}
                   >
                     <Select
+                      labelInValue
                       size="large"
                       placeholder="Country"
                       style={{ width: '200px' }}

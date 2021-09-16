@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { Form, Input, Button, Select, InputNumber, Spin, message } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
+import _ from 'lodash';
 import UploadAvatar from '../../Input/UploadAvatar';
 import { getUserProfile } from '../../../utils/auth';
 import * as API from '../../../apis';
@@ -60,10 +61,19 @@ const { Option } = Select;
 function GuideBasicProfile({ uid }) {
   const [profile, setProfile] = useState({});
   const [form] = Form.useForm();
-  const { country } = form.getFieldsValue();
   const [rootCity, setRootCity] = useState([]);
   const [rootCountry, setRootCountry] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedCountryCode, setSelectedCountryCode] = useState('');
+
+  const country = useMemo(() => profile.country, [profile]);
+  const countryCode = useMemo(() => {
+    if (!rootCountry || !country) {
+      return undefined;
+    }
+    const selectedCountry = _.find(rootCountry, c => c.name === country);
+    return selectedCountry && selectedCountry.code;
+  }, [country, rootCountry]);
 
   const fetchGuideProfile = useCallback(async () => {
     setLoading(true);
@@ -82,19 +92,20 @@ function GuideBasicProfile({ uid }) {
   useEffect(() => {
     const fetchCity = async () => {
       if (profile?.country) {
-        const resCity = await API.getCityOfCountry(profile?.country);
+        const countryDefault = _.find(rootCountry, { name: profile.country });
+        const resCity = await API.getCityOfCountry(selectedCountryCode || countryDefault.code);
         setRootCity(resCity.data);
       }
     };
     fetchCity();
   }, [API.getCityOfCountry, profile?.country, setRootCity]);
 
-  const handleSelectCountryAndCity = value => {
-    form.setFieldsValue({ country: value });
+  const handleSelectCountryAndCity = selectedCountry => {
+    setSelectedCountryCode(selectedCountry.label);
     const fetchCity = async () => {
-      if (profile.country || country || value) {
+      if (profile.country || selectedCountry.value) {
         setLoading(true);
-        const resCity = await API.getCityOfCountry(value || profile.country);
+        const resCity = await API.getCityOfCountry(selectedCountry.value);
         setRootCity(resCity.data);
         setProfile({
           ...profile,
@@ -117,6 +128,7 @@ function GuideBasicProfile({ uid }) {
     try {
       const { status } = await API.updateBasic({
         ...values,
+        country: values.country.label || country,
         uid,
       });
       if (status === true) {
@@ -270,10 +282,11 @@ function GuideBasicProfile({ uid }) {
                 message: 'Please select your country!',
               },
             ]}
-            initialValue={profile.country}
+            initialValue={countryCode && { value: countryCode }}
             key={profile.country === '' ? 'country' : profile.country}
           >
             <Select
+              labelInValue
               size="large"
               placeholder="Country"
               style={{ width: '200px' }}
