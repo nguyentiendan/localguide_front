@@ -1,33 +1,58 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import classNames from 'classnames';
-import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
 import { Form, Input, Button, Select, InputNumber, Spin, message, Modal } from 'antd';
 import { navigate } from 'gatsby';
 import _ from 'lodash';
 import Layout from '../CustomLayout';
-import Parallax from '../Parallax/Parallax.js';
+import Parallax from '../Parallax/Parallax';
 import SEO from '../SEO';
-import Footer from '../Footer/Footer.js';
+import Footer from '../Footer/Footer';
 import UploadAvatar from '../Input/UploadAvatar';
 import * as API from '../../apis';
-import styles from '../../assets/styles/profilePage.js';
+import styles from '../../assets/styles/profilePage';
 import { getUserProfile, ISUSER } from '../../utils/auth';
 import NoticeModal from './Modal/NoticeModal';
 
 const useStyles = makeStyles(styles);
 
-const FormWrapper = styled(Form)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+const formItemLayout = {
+  labelCol: {
+    xs: {
+      // mobile
+      span: 24,
+    },
+    sm: {
+      // pc
+      span: 6, // label size
+    },
+  },
+  wrapperCol: {
+    xs: {
+      // mobile
+      span: 24,
+    },
+    sm: {
+      // pc
+      span: 12, // input box size
+    },
+  },
+};
 
-  && {
-    .ant-form-item {
-      width: 100%;
-    }
-  }
-`;
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      // mobile
+      span: 24,
+      offset: 5,
+    },
+    sm: {
+      // pc
+      span: 24,
+      offset: 10,
+    },
+  },
+};
 
 function Profile() {
   const [userProfile] = useState(getUserProfile());
@@ -39,7 +64,6 @@ function Profile() {
 
   const classes = useStyles();
   const [form] = Form.useForm();
-  // const { country } = form.getFieldsValue();
   const [profile, setProfile] = useState({});
   const [rootCity, setRootCity] = useState([]);
   const [rootCountry, setRootCountry] = useState([]);
@@ -128,7 +152,7 @@ function Profile() {
   }, [API.getCityOfCountry, profile?.country, setRootCity]);
 
   const handleSelectCountryAndCity = selectedCountry => {
-    // form.setFieldsValue({ country: value });
+    setSelectedCountryCode(selectedCountry.label);
     const fetchCity = async () => {
       if (profile.country || selectedCountry.value) {
         setLoading(true);
@@ -143,44 +167,6 @@ function Profile() {
       }
     };
     fetchCity();
-  };
-
-  const formItemLayout = {
-    labelCol: {
-      xs: {
-        // mobile
-        span: 24,
-      },
-      sm: {
-        // pc
-        span: 6, // label size
-      },
-    },
-    wrapperCol: {
-      xs: {
-        // mobile
-        span: 24,
-      },
-      sm: {
-        // pc
-        span: 12, // input box size
-      },
-    },
-  };
-
-  const tailFormItemLayout = {
-    wrapperCol: {
-      xs: {
-        // mobile
-        span: 24,
-        offset: 5,
-      },
-      sm: {
-        // pc
-        span: 24,
-        offset: 10,
-      },
-    },
   };
 
   return (

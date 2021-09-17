@@ -1,15 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import { makeStyles } from '@material-ui/core/styles';
 import { Form, Input, Button, Select, InputNumber, Spin, message } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 import UploadAvatar from '../Input/UploadAvatar';
 import * as API from '../../apis';
-import styles from '../../assets/styles/profilePage.js';
 import NoticeModal from './Modal/NoticeModal';
-
-const useStyles = makeStyles(styles);
 
 const FormWrapper = styled(Form)`
   display: flex;
@@ -60,12 +56,8 @@ const tailFormItemLayout = {
   },
 };
 
-const { Option } = Select;
-
 function BasicProfile({ uid, role }) {
-  const classes = useStyles();
   const [form] = Form.useForm();
-  // const { country } = form.getFieldsValue();
   const [profile, setProfile] = useState({});
   const [rootCity, setRootCity] = useState([]);
   const [rootCountry, setRootCountry] = useState([]);
@@ -103,7 +95,6 @@ function BasicProfile({ uid, role }) {
   useEffect(() => {
     const fetchCity = async () => {
       if (profile?.country) {
-        // const resCity = await API.getCityOfCountry(profile?.country);
         const countryDefault = _.find(rootCountry, { name: profile.country });
         const resCity = await API.getCityOfCountry(selectedCountryCode || countryDefault.code);
         setRootCity(resCity.data);
@@ -113,7 +104,7 @@ function BasicProfile({ uid, role }) {
   }, [API.getCityOfCountry, profile?.country, setRootCity]);
 
   const handleSelectCountryAndCity = selectedCountry => {
-    // form.setFieldsValue({ country: value });
+    setSelectedCountryCode(selectedCountry.label);
     const fetchCity = async () => {
       if (profile.country || selectedCountry.value) {
         setLoading(true);

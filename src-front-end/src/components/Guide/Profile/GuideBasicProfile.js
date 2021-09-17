@@ -56,8 +56,6 @@ const tailFormItemLayout = {
   },
 };
 
-const { Option } = Select;
-
 function GuideBasicProfile({ uid }) {
   const [profile, setProfile] = useState({});
   const [form] = Form.useForm();
