@@ -65,7 +65,7 @@ function LoginPage() {
         setErrorMessage(message);
       }
     } catch (err) {
-      setError('System error has occurred.');
+      setErrorMessage('System error has occurred.');
       setLoading(false);
     }
   };
@@ -75,7 +75,7 @@ function LoginPage() {
       <div className={classes.pageHeader}>
         <div className={classes.container}>
           {/* <MainContent> */}
-          <GridContainer justify="center">
+          <GridContainer justifyContent="center">
             <GridItem xs={12} sm={12} md={4}>
               <Card>
                 <CardHeader className={classes.cardHeader}>
