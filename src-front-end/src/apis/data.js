@@ -69,7 +69,7 @@ export async function getPhotosGuide({ uid }) {
   return request({
     url: `/guide/getAllPhoto/${uid}`,
     method: 'GET',
-    authRequired: true,
+    // authRequired: true,
   });
 }
 
