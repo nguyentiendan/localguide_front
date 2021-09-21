@@ -451,10 +451,30 @@ export async function updateAdvance(data) {
   });
 }
 
+//Create Interest
+export async function createInterest(data) {  
+  return request({
+    url: `/interest/new`,
+    method: 'POST',
+    authRequired: true,
+    data,
+  });
+}
+//Get All Interest
 export async function getAllInterest() {
   return request({
     url: '/interest/getAllInterest',
     method: 'GET',
+  });
+}
+
+//Delete interest
+export async function handleDeleteInterest(uid, id) {
+  return request({
+    url: '/interest/delInterest',
+    method: 'DELETE',
+    data: { uid, id },
+    authRequired: true,
   });
 }
 

@@ -8,6 +8,7 @@ import AdminGuideList from '../components/Admin/AdminGuideList';
 import AdminGuideReview from '../components/Admin/AdminGuideReview';
 import AdminUserReview from '../components/Admin/AdminUserReview';
 import AdminChangePass from '../components/Admin/AdminChangePass';
+import AdminSetInterest from '../components/Admin/AdminSetInterest';
 
 // Guide
 import GuideAdmin from '../components/Guide/GuideAdmin';
@@ -43,6 +44,7 @@ const App = () => (
     <PrivateRoute path="/adminGuideReview" component={AdminGuideReview} />
     <PrivateRoute path="/adminUserReview" component={AdminUserReview} />
     <PrivateRoute path="/adminChangePass" component={AdminChangePass} />
+    <PrivateRoute path="/adminSetInterest" component={AdminSetInterest} />
 
     {/* Guide */}
     <PrivateRoute path="/guideAdmin" component={GuideAdmin} />
