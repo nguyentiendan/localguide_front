@@ -6,10 +6,13 @@ import {
   DashboardOutlined,
   RocketOutlined,
   FundViewOutlined,
+  SettingOutlined
 } from '@ant-design/icons';
 import { Link } from 'gatsby';
 import { Popconfirm, Menu } from 'antd';
 import useAuth from '../../utils/useAuth';
+
+const { SubMenu } = Menu;
 
 const SlideNav = () => {
   const { user, logout } = useAuth();
@@ -28,14 +31,14 @@ const SlideNav = () => {
           <DashboardOutlined />
           {user.role === 3 && (
             <span>
-              <a href="/app/admin/" style={{ color: '#fff' }}>
+              <a href="/app/admin/" style={{ color: '#ccc' }}>
                 Dashboard
               </a>
             </span>
           )}
           {user.role === 2 && (
             <span>
-              <Link to="/app/guideAdmin/" style={{ color: '#fff' }}>
+              <Link to="/app/guideAdmin/" style={{ color: '#ccc' }}>
                 Dashboard
               </Link>
             </span>
@@ -43,16 +46,16 @@ const SlideNav = () => {
         </Menu.Item>
         <Menu.Item key="2">
           <RocketOutlined />
-          {user.role === 3 && (
-            <span>
-              <Link to="/app/adminTourList/" style={{ color: '#fff' }}>
+          {user.role === 3 && (            
+            <span >
+              <Link to="/app/adminTourList/"  style={{ color: '#ccc' }}>
                 Tour List
               </Link>
             </span>
           )}
           {user.role === 2 && (
             <span>
-              <Link to="/app/guideTourList/" style={{ color: '#fff' }}>
+              <Link to="/app/guideTourList/" style={{ color: '#ccc' }}>
                 Tour List
               </Link>
             </span>
@@ -63,8 +66,8 @@ const SlideNav = () => {
           <Menu.Item key="3">
             <UserOutlined />
             <span>
-              <Link to="/app/adminGuideList/" style={{ color: '#fff' }}>
-                Guide List
+              <Link to="/app/adminGuideList/" style={{ color: '#ccc' }}>
+                User List
               </Link>
             </span>
           </Menu.Item>
@@ -74,7 +77,7 @@ const SlideNav = () => {
             <Menu.Item key="4">
               <ProfileOutlined />
               <span>
-                <Link to="/app/guideProfile" style={{ color: '#fff' }}>
+                <Link to="/app/guideProfile" style={{ color: '#ccc' }}>
                   Profile
                 </Link>
               </span>
@@ -83,7 +86,7 @@ const SlideNav = () => {
             <Menu.Item key="5">
               <FundViewOutlined />
               <span>
-                <a href="/app/reviewProfile" target="_blank" style={{ color: '#fff' }}>
+                <a href="/app/reviewProfile" target="_blank" style={{ color: '#ccc' }}>
                   Review Profile
                 </a>
               </span>
@@ -96,11 +99,22 @@ const SlideNav = () => {
             </Menu.Item> */}
           </>
         )}
+        {user.role === 3 && (
+          <SubMenu key="sub1" icon={<SettingOutlined />} title="Setting master">
+            <Menu.Item key="6_1">
+              <Link to="/app/adminSetInterest">Interest master</Link>
+            </Menu.Item>
+            <Menu.Item key="6_2">Extras master</Menu.Item>
+            <Menu.Item key="6_3">Tag master</Menu.Item>
+            <Menu.Item key="6_4">Language master</Menu.Item>
+          </SubMenu>
+        )}
+
         <Menu.Item key="7">
           <ProfileOutlined />
           {(user.role === 3 || user.role === 2) && (
             <span>
-              <Link to="/app/adminChangePass" style={{ color: '#fff' }}>
+              <Link to="/app/adminChangePass" style={{ color: '#ccc' }}>
                 Change Password
               </Link>
             </span>
