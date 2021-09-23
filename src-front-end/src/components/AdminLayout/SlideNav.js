@@ -104,9 +104,15 @@ const SlideNav = () => {
             <Menu.Item key="6_1">
               <Link to="/app/adminSetInterest">Interest master</Link>
             </Menu.Item>
-            <Menu.Item key="6_2">Extras master</Menu.Item>
-            <Menu.Item key="6_3">Tag master</Menu.Item>
-            <Menu.Item key="6_4">Language master</Menu.Item>
+            <Menu.Item key="6_2">
+            <Link to="/app/adminSetExtra">Extras master</Link>
+            </Menu.Item>
+            <Menu.Item key="6_3">
+            <Link to="/app/adminSetTag">Tag master</Link>
+            </Menu.Item>
+            <Menu.Item key="6_4">
+            <Link to="/app/adminSetLanguage">Language master</Link>
+            </Menu.Item>
           </SubMenu>
         )}
 

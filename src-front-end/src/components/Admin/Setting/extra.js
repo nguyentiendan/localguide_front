@@ -6,14 +6,11 @@ import moment from 'moment';
 import _ from 'lodash';
 
 import * as API from '../../../apis';
-import { getUserProfile } from '../../../utils/auth';
 
 const Wrapper = styled(Spin)``;
 const ListWrapper = styled.div``;
 
-
-
-function AdminInterestList() {
+function AdminExtraList() {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);    
   const [loading, setLoading] = useState(false);
@@ -24,10 +21,10 @@ function AdminInterestList() {
     // To disable submit button at the beginning.
     forceUpdate({});
 
-    const getAllInterest = async () => {
+    const getAllExtra = async () => {
       try {
         setLoading(true);
-        const res = await API.getAllInterest();
+        const res = await API.getAllExtra();
         setData(res.data);
       } catch (error) {
         
@@ -35,7 +32,7 @@ function AdminInterestList() {
         setLoading(false);
       }
     };
-    getAllInterest(); 
+    getAllExtra(); 
     
   }, []);
   
@@ -46,15 +43,15 @@ function AdminInterestList() {
     if (loading) {
       return;
     }
-    
+    console.log(value.extra)
     try {
-      const { status, message:mess, interest } = await API.createInterest(value);
+      const { status, message:mess, extra } = await API.createExtra(value);
       if (status === true) {                
-        const newInterest = { ...interest[0] };
-        setData([...data, newInterest]);
+        const newExtra = { ...extra[0] };
+        setData([...data, newExtra]);
         form.resetFields();               
         message.success({
-          content: 'Create interest successfully!',
+          content: 'Create extra successfully!',
           key,
           duration: 2,
           className: 'custom-class',
@@ -62,8 +59,8 @@ function AdminInterestList() {
             marginTop: '20vh',
           },
         });
-      } else if (status === false) {        
-        setError(value.interest + mess)
+      } else if (status === false) { 
+        setError(value.extra + mess)
         form.resetFields();
       }
     } catch (e) {
@@ -72,10 +69,10 @@ function AdminInterestList() {
     setLoading(false);
   };
 
-  const handleDeleteInterest = async (id, uid) => {    
+  const handleDeleteExtra = async (id, uid) => {    
     try {
       setLoading(true); 
-      const { status } = await API.deleteInterest(uid, id);
+      const { status } = await API.deleteExtra(uid, id);
       if (status === true) {
         const newData = _.remove(data, item => {
           return item.id !== id;
@@ -95,33 +92,33 @@ function AdminInterestList() {
 
   const columns = [  
     {
-      title: 'Interest',
-      dataIndex: 'interest',
-      key: 'interest',
-      render: (interest) => (
+      title: 'Extra',
+      dataIndex: 'extra',
+      key: 'extra',
+      render: (extra) => (
         <Tag color="#f12f60" style={{color:'#fff'}}>
-          {interest}
+          {extra}
         </Tag>
       ),
     },
     {
       title: 'Create Date',
       key: 'createdAt',
-      render: (interest) => (
-        <Tooltip title={moment(interest.createdAt).fromNow()}>
-          {moment(interest.createdAt).format('YYYY-MM-DD')}
+      render: (extra) => (
+        <Tooltip title={moment(extra.createdAt).fromNow()}>
+          {moment(extra.createdAt).format('YYYY-MM-DD')}
         </Tooltip>
       ),
     },
     {
       title: '',
       key: 'control',
-      render: (status, interest) => {
+      render: (extra) => {
         return (
           <Space size="middle">
             <Popconfirm
               title="Are you sure to delete ?"
-              onConfirm={() => handleDeleteInterest(interest.id, interest.uid)}
+              onConfirm={() => handleDeleteExtra(extra.id, extra.uid)}
               okText="Yes"
               cancelText="No"
             >
@@ -138,11 +135,11 @@ function AdminInterestList() {
       <ListWrapper>
         <Form form={form} name="add" layout="inline" onFinish={onFinish}> 
           <Form.Item
-            name="interest"            
+            name="extra"            
             rules={[
               {
                 required: true,
-                message: 'Please input your Interest!',
+                message: 'Please input your Extra!',
               },
               {
                 max: 15,
@@ -153,9 +150,9 @@ function AdminInterestList() {
                 message: 'Value should be longer than 4 character',
               },
             ]}
-            key="interest"            
+            key="extra"            
           >
-            <Input maxLength="15" placeholder="Input Interest"/>
+            <Input maxLength="15" placeholder="Input Extra"/>
           </Form.Item>
           <Form.Item shouldUpdate>
             {() => (
@@ -180,7 +177,7 @@ function AdminInterestList() {
           columns={columns}
           dataSource={data}
           loading={loading}
-          rowKey="interest"
+          rowKey="extra"
           size="middle"
           bordered
           //title={() => 'Header'}
@@ -192,4 +189,4 @@ function AdminInterestList() {
   );
 }
 
-export default AdminInterestList;
+export default AdminExtraList;

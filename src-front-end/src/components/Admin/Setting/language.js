@@ -4,16 +4,12 @@ import { Form, Input, Button, Tooltip, Table, Tag, Space,  Spin, Popconfirm, mes
 import { DeleteOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import _ from 'lodash';
-
 import * as API from '../../../apis';
-import { getUserProfile } from '../../../utils/auth';
 
 const Wrapper = styled(Spin)``;
 const ListWrapper = styled.div``;
 
-
-
-function AdminInterestList() {
+function AdminLanguageList() {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);    
   const [loading, setLoading] = useState(false);
@@ -24,10 +20,10 @@ function AdminInterestList() {
     // To disable submit button at the beginning.
     forceUpdate({});
 
-    const getAllInterest = async () => {
+    const getAllLanguage = async () => {
       try {
         setLoading(true);
-        const res = await API.getAllInterest();
+        const res = await API.getAllLang();
         setData(res.data);
       } catch (error) {
         
@@ -35,7 +31,7 @@ function AdminInterestList() {
         setLoading(false);
       }
     };
-    getAllInterest(); 
+    getAllLanguage(); 
     
   }, []);
   
@@ -48,13 +44,13 @@ function AdminInterestList() {
     }
     
     try {
-      const { status, message:mess, interest } = await API.createInterest(value);
+      const { status, message:mess, language } = await API.createLang(value);
       if (status === true) {                
-        const newInterest = { ...interest[0] };
-        setData([...data, newInterest]);
+        const newLang = { ...language[0] };
+        setData([...data, newLang]);
         form.resetFields();               
         message.success({
-          content: 'Create interest successfully!',
+          content: 'Create language successfully!',
           key,
           duration: 2,
           className: 'custom-class',
@@ -63,7 +59,7 @@ function AdminInterestList() {
           },
         });
       } else if (status === false) {        
-        setError(value.interest + mess)
+        setError(value.language + mess)
         form.resetFields();
       }
     } catch (e) {
@@ -72,10 +68,10 @@ function AdminInterestList() {
     setLoading(false);
   };
 
-  const handleDeleteInterest = async (id, uid) => {    
+  const handleDeleteLang = async (id, uid) => {    
     try {
       setLoading(true); 
-      const { status } = await API.deleteInterest(uid, id);
+      const { status } = await API.deleteLanguage(uid, id);
       if (status === true) {
         const newData = _.remove(data, item => {
           return item.id !== id;
@@ -95,33 +91,33 @@ function AdminInterestList() {
 
   const columns = [  
     {
-      title: 'Interest',
-      dataIndex: 'interest',
-      key: 'interest',
-      render: (interest) => (
+      title: 'Language',
+      dataIndex: 'language',
+      key: 'language',
+      render: (language) => (
         <Tag color="#f12f60" style={{color:'#fff'}}>
-          {interest}
+          {language}
         </Tag>
       ),
     },
     {
       title: 'Create Date',
       key: 'createdAt',
-      render: (interest) => (
-        <Tooltip title={moment(interest.createdAt).fromNow()}>
-          {moment(interest.createdAt).format('YYYY-MM-DD')}
+      render: (language) => (
+        <Tooltip title={moment(language.createdAt).fromNow()}>
+          {moment(language.createdAt).format('YYYY-MM-DD')}
         </Tooltip>
       ),
     },
     {
       title: '',
       key: 'control',
-      render: (status, interest) => {
+      render: (language) => {
         return (
           <Space size="middle">
             <Popconfirm
               title="Are you sure to delete ?"
-              onConfirm={() => handleDeleteInterest(interest.id, interest.uid)}
+              onConfirm={() => handleDeleteLang(language.id, language.uid)}
               okText="Yes"
               cancelText="No"
             >
@@ -138,11 +134,11 @@ function AdminInterestList() {
       <ListWrapper>
         <Form form={form} name="add" layout="inline" onFinish={onFinish}> 
           <Form.Item
-            name="interest"            
+            name="language"            
             rules={[
               {
                 required: true,
-                message: 'Please input your Interest!',
+                message: 'Please input your Language!',
               },
               {
                 max: 15,
@@ -153,9 +149,9 @@ function AdminInterestList() {
                 message: 'Value should be longer than 4 character',
               },
             ]}
-            key="interest"            
+            key="language"            
           >
-            <Input maxLength="15" placeholder="Input Interest"/>
+            <Input maxLength="15" placeholder="Input Language"/>
           </Form.Item>
           <Form.Item shouldUpdate>
             {() => (
@@ -180,7 +176,7 @@ function AdminInterestList() {
           columns={columns}
           dataSource={data}
           loading={loading}
-          rowKey="interest"
+          rowKey="language"
           size="middle"
           bordered
           //title={() => 'Header'}
@@ -192,4 +188,4 @@ function AdminInterestList() {
   );
 }
 
-export default AdminInterestList;
+export default AdminLanguageList;

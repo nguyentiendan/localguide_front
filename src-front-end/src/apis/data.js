@@ -368,13 +368,6 @@ export async function deleteIdPhoto({ name, uid }) {
   });
 }
 
-export async function getAllTags() {
-  return request({
-    url: `/tag/getAllTag`,
-    method: 'GET',
-  });
-}
-
 export async function createTourFee({ tourId, day, transport, meal, other }) {
   return request({
     url: `/tourFee/create`,
@@ -469,7 +462,7 @@ export async function getAllInterest() {
 }
 
 //Delete interest
-export async function handleDeleteInterest(uid, id) {
+export async function deleteInterest(uid, id) {
   return request({
     url: '/interest/delInterest',
     method: 'DELETE',
@@ -478,6 +471,17 @@ export async function handleDeleteInterest(uid, id) {
   });
 }
 
+//Create Extra
+export async function createExtra(data) {  
+  return request({
+    url: `/extra/new`,
+    method: 'POST',
+    authRequired: true,
+    data,
+  });
+}
+
+//Get All Extra
 export async function getAllExtra() {
   return request({
     url: '/extra/getAllExtra',
@@ -486,10 +490,69 @@ export async function getAllExtra() {
   });
 }
 
+//Delete Extra
+export async function deleteExtra(uid, id) {
+  return request({
+    url: '/extra/delExtra',
+    method: 'DELETE',
+    data: { uid, id },
+    authRequired: true,
+  });
+}
+
+//Create Language
+export async function createLang(data) {  
+  return request({
+    url: `/lang/new`,
+    method: 'POST',
+    authRequired: true,
+    data,
+  });
+}
+
+//Get All Language
 export async function getAllLang() {
   return request({
     url: '/lang/getAllLang',
     method: 'GET',
+  });
+}
+
+//Delete Language
+export async function deleteLanguage(uid, id) {
+  return request({
+    url: '/lang/delLang',
+    method: 'DELETE',
+    data: { uid, id },
+    authRequired: true,
+  });
+}
+
+//Create Tag
+export async function createTag(data) {  
+  return request({
+    url: `/tag/new`,
+    method: 'POST',
+    authRequired: true,
+    data,
+  });
+}
+
+//Get All Tag
+export async function getAllTags() {
+  return request({
+    url: `/tag/getAllTag`,
+    method: 'GET',
+  });
+}
+
+//Delete Tag
+export async function deleteTag(uid, id) {
+  return request({
+    url: '/tag/delTag',
+    method: 'DELETE',
+    data: { uid, id },
+    authRequired: true,
   });
 }
 

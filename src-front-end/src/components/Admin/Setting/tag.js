@@ -4,16 +4,12 @@ import { Form, Input, Button, Tooltip, Table, Tag, Space,  Spin, Popconfirm, mes
 import { DeleteOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import _ from 'lodash';
-
 import * as API from '../../../apis';
-import { getUserProfile } from '../../../utils/auth';
 
 const Wrapper = styled(Spin)``;
 const ListWrapper = styled.div``;
 
-
-
-function AdminInterestList() {
+function AdminTagList() {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);    
   const [loading, setLoading] = useState(false);
@@ -24,10 +20,10 @@ function AdminInterestList() {
     // To disable submit button at the beginning.
     forceUpdate({});
 
-    const getAllInterest = async () => {
+    const getAllTag = async () => {
       try {
         setLoading(true);
-        const res = await API.getAllInterest();
+        const res = await API.getAllTags();
         setData(res.data);
       } catch (error) {
         
@@ -35,7 +31,7 @@ function AdminInterestList() {
         setLoading(false);
       }
     };
-    getAllInterest(); 
+    getAllTag(); 
     
   }, []);
   
@@ -48,13 +44,13 @@ function AdminInterestList() {
     }
     
     try {
-      const { status, message:mess, interest } = await API.createInterest(value);
+      const { status, message:mess, tag } = await API.createTag(value);
       if (status === true) {                
-        const newInterest = { ...interest[0] };
-        setData([...data, newInterest]);
+        const newTag = { ...tag[0] };
+        setData([...data, newTag]);
         form.resetFields();               
         message.success({
-          content: 'Create interest successfully!',
+          content: 'Create tag successfully!',
           key,
           duration: 2,
           className: 'custom-class',
@@ -63,7 +59,7 @@ function AdminInterestList() {
           },
         });
       } else if (status === false) {        
-        setError(value.interest + mess)
+        setError(value.tag + mess)
         form.resetFields();
       }
     } catch (e) {
@@ -72,10 +68,10 @@ function AdminInterestList() {
     setLoading(false);
   };
 
-  const handleDeleteInterest = async (id, uid) => {    
+  const handleDeleteTag = async (id, uid) => {    
     try {
       setLoading(true); 
-      const { status } = await API.deleteInterest(uid, id);
+      const { status } = await API.deleteTag(uid, id);
       if (status === true) {
         const newData = _.remove(data, item => {
           return item.id !== id;
@@ -95,33 +91,33 @@ function AdminInterestList() {
 
   const columns = [  
     {
-      title: 'Interest',
-      dataIndex: 'interest',
-      key: 'interest',
-      render: (interest) => (
+      title: 'Tag',
+      dataIndex: 'tag',
+      key: 'tag',
+      render: (tag) => (
         <Tag color="#f12f60" style={{color:'#fff'}}>
-          {interest}
+          {tag}
         </Tag>
       ),
     },
     {
       title: 'Create Date',
       key: 'createdAt',
-      render: (interest) => (
-        <Tooltip title={moment(interest.createdAt).fromNow()}>
-          {moment(interest.createdAt).format('YYYY-MM-DD')}
+      render: (tag) => (
+        <Tooltip title={moment(tag.createdAt).fromNow()}>
+          {moment(tag.createdAt).format('YYYY-MM-DD')}
         </Tooltip>
       ),
     },
     {
       title: '',
       key: 'control',
-      render: (status, interest) => {
+      render: (tag) => {
         return (
           <Space size="middle">
             <Popconfirm
               title="Are you sure to delete ?"
-              onConfirm={() => handleDeleteInterest(interest.id, interest.uid)}
+              onConfirm={() => handleDeleteTag(tag.id, tag.uid)}
               okText="Yes"
               cancelText="No"
             >
@@ -138,11 +134,11 @@ function AdminInterestList() {
       <ListWrapper>
         <Form form={form} name="add" layout="inline" onFinish={onFinish}> 
           <Form.Item
-            name="interest"            
+            name="tag"            
             rules={[
               {
                 required: true,
-                message: 'Please input your Interest!',
+                message: 'Please input your Tag!',
               },
               {
                 max: 15,
@@ -153,9 +149,9 @@ function AdminInterestList() {
                 message: 'Value should be longer than 4 character',
               },
             ]}
-            key="interest"            
+            key="tag"
           >
-            <Input maxLength="15" placeholder="Input Interest"/>
+            <Input maxLength="15" placeholder="Input Tag"/>
           </Form.Item>
           <Form.Item shouldUpdate>
             {() => (
@@ -180,7 +176,7 @@ function AdminInterestList() {
           columns={columns}
           dataSource={data}
           loading={loading}
-          rowKey="interest"
+          rowKey="tag"
           size="middle"
           bordered
           //title={() => 'Header'}
@@ -192,4 +188,4 @@ function AdminInterestList() {
   );
 }
 
-export default AdminInterestList;
+export default AdminTagList;
