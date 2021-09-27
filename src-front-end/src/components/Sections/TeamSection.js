@@ -51,7 +51,7 @@ const SliderWrapper = styled.div`
     color: black;
     font-size: 40px;
   }
-`
+`;
 
 const useStyles = makeStyles(styles);
 
@@ -88,6 +88,8 @@ function TeamSection() {
       clearInterval(interval);
     };
   }, []);
+
+  console.log(tourGuides);
 
   return (
     <div className={classes.container}>

@@ -68,6 +68,8 @@ function IndexPage() {
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
 
+  const onClickSearch = () => {};
+
   return (
     <Layout>
       <SEO title="Localguide Pal" />
@@ -85,7 +87,7 @@ function IndexPage() {
         </div>
       </Parallax>
 
-      <SearchBox />
+      <SearchBox onClick={onClickSearch} />
 
       <div className={classNames(classes.main, classes.mainRaised)}>
         <Spin spinning={loading}>
