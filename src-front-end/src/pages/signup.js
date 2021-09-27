@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, navigate } from 'gatsby';
-import classNames from 'classnames';
+import { navigate } from 'gatsby';
 import styled from 'styled-components';
 import { Modal, Form, Input, Button, Checkbox } from 'antd';
 import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 
 import { makeStyles } from '@material-ui/core/styles';
 import * as API from '../apis';
-import breakpoints from '../assets/styles/breakpoints';
 import SEO from '../components/SEO';
 import Layout from '../components/CustomLayout';
 import GridContainer from '../components/Grid/GridContainer';
@@ -15,22 +13,10 @@ import GridItem from '../components/Grid/GridItem';
 import Card from '../components/Card/Card';
 import CardBody from '../components/Card/CardBody';
 import CardHeader from '../components/Card/CardHeader';
-import CardFooter from '../components/Card/CardFooter';
 import Footer from '../components/Footer/Footer';
 import styles from '../assets/jss/material-kit-react/views/loginPage';
 
-import { set } from '../utils/storage';
-
 const useStyles = makeStyles(styles);
-
-const TermLink = styled(Link)`
-  color: #7e7e7e;
-
-  @media (max-width: ${breakpoints.sm}) {
-    display: inline-block;
-    transform: translateY(-100%);
-  }
-`;
 
 const ErrorMessage = styled.div`
   padding-top: 15px;
@@ -60,12 +46,6 @@ const TermAndService = styled.div`
   color: #191970;
 `;
 
-const Brand = styled.div`
-  color: #f12f60;
-  font-weight: bold;
-  font-size: 25px;
-`;
-
 const Text = styled.div`
   color: #5e5c60;
   padding-bottom: 10px;
@@ -77,7 +57,6 @@ function SignUpPage() {
   const [, forceUpdate] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [email, setEmail] = useState({});
 
   // To disable submit button at the beginning.
   useEffect(() => {
@@ -126,32 +105,23 @@ function SignUpPage() {
     }
   };
 
-  const checkEmail = async email => {
-    /* const data = await API.checkEmail(email);
+  /* const checkEmail = async email => {    
+    const data = await API.checkEmail(email);
     console.log(data.status)
     if (data.status === true) {
       return true
     } else {
       return false
     }
-    */
-    /* if(email === "tiendanvn@gmail.com") {
-     console.log("true")
-     return true
-   } else {
-    console.log("false")
-    return false
-   } */
-  };
+  }; */
 
   return (
     <Layout noLogin>
       <SEO title="Create Account" />
       <div className={classes.pageHeader}>
         <div className={classes.container}>
-          {/* <Brand>Localguidepal</Brand> */}
           <MainContent>
-            <GridContainer>
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={4}>
                 <Card>
                   <CardHeader className={classes.cardHeader}>
@@ -195,7 +165,7 @@ function SignUpPage() {
                           size="large"
                           prefix={<MailOutlined />}
                           placeholder="Your email address"
-                          onChange={event => checkEmail(event.target.value)}
+                          // onChange={event => checkEmail(event.target.value)}
                         />
                       </Form.Item>
 
