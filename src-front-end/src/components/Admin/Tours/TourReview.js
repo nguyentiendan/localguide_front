@@ -19,7 +19,6 @@ import _ from 'lodash';
 import { FormatQuote } from '@material-ui/icons';
 import ReactBnbGallery from 'react-bnb-gallery';
 import NumberFormat from 'react-number-format';
-import Layout from '../../CustomLayout';
 import Footer from '../../Footer/Footer';
 import GridContainer from '../../Grid/GridContainer';
 import GridItem from '../../Grid/GridItem';
@@ -41,6 +40,7 @@ import 'react-bnb-gallery/dist/style.css';
 import { getUserProfile } from '../../../utils/auth';
 import { Fab, Action } from 'react-tiny-fab';
 import 'react-tiny-fab/dist/styles.css';
+import Layout from '../../CustomLayout';
 import ReviewCommentListItem from '../../CommentListItem/ReviewCommentListItem';
 import { navigate } from 'gatsby';
 import * as API from '../../../apis';
@@ -346,10 +346,6 @@ const Space = styled.div`
   width: 20px;
 `;
 
-const TourIncludingListItem = styled.li`
-  margin-bottom: 0;
-  color: ${colors.grey[60]};
-`;
 
 const TourDescriptionDay = styled.div`
   font-weight: bold;
@@ -487,7 +483,7 @@ function AdminTourReview({ uid, id }) {
   };
 
   const handleCreateReply = async (e, commentId, uid) => {
-    if (e.target.value.trim() != '') {
+    if (e.target.value.trim() !== '') {
       const { data } = await API.handleCreateReply2({
         uid,
         commentId,
@@ -965,7 +961,7 @@ function AdminTourReview({ uid, id }) {
             icon={<AppstoreAddOutlined />}
             alwaysShowTitle
           >
-            {tourDetails.status == 2 && (
+            {tourDetails.status === 2 && (
               <Action
                 style={{ backgroundColor: '#F897AF' }}
                 text="Approve"
