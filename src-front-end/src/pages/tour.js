@@ -25,9 +25,9 @@ import NumberFormat from 'react-number-format';
 import * as API from '../apis';
 import Layout from '../components/CustomLayout';
 import SEO from '../components/SEO';
-import Footer from '../components/Footer/Footer.js';
-import GridContainer from '../components/Grid/GridContainer.js';
-import GridItem from '../components/Grid/GridItem.js';
+import Footer from '../components/Footer/Footer';
+import GridContainer from '../components/Grid/GridContainer';
+import GridItem from '../components/Grid/GridItem';
 import SmallScreen from '../components/Responsive/SmallScreen';
 import BigScreen from '../components/Responsive/BigScreen';
 import RatingStars from '../components/RatingStars';
@@ -41,7 +41,8 @@ import { bigScreenCss, smallScreenCss } from '../assets/styles/responsive-css';
 import TourGuideListItem from '../components/TourGuideListItem';
 import { safeFuncCall } from '../utils/commons';
 import defaultImage from '../assets/img/noimage-600x400.jpg';
-import styles from '../assets/styles/tourPage.js';
+import styles from '../assets/styles/tourPage';
+import PriceBox from '../components/PriceBox';
 import 'react-bnb-gallery/dist/style.css';
 
 const Title = styled.h1`
@@ -325,6 +326,7 @@ const BookButton = styled(Button)`
 `;
 
 const DescriptionWrapper = styled.div`
+  position: relative;
   color: ${colors.grey[60]};
   padding-top: 10px;
 `;
@@ -375,6 +377,7 @@ const TourDescriptionItem = styled.li`
   }
 `;
 
+
 /** TODO
  * 1) Them icon Language (chi de 1 languagua, khi re vao thi ra tooltip)
  * 2) Them icon so nguoi - DONE
@@ -384,6 +387,7 @@ const useStyles = makeStyles(styles);
 
 function TourDetail({ location }) {
   const classes = useStyles();
+  const [show, setShow] = useState(false);
 
   const dataQueryParams = qs.parse(location.search);
   const { uid } = dataQueryParams;
@@ -479,6 +483,64 @@ function TourDetail({ location }) {
     fetchTourDetails();
   }, [tourQuery]);
 
+  useEffect(() => window.addEventListener('resize', bookButtonHeight));
+  
+  const bookButtonHeight = () => {
+    const windowsScrollTop = window.pageYOffset;
+    const bookHeight = document.getElementById('booknow').getBoundingClientRect().top;
+    return windowsScrollTop + bookHeight - 70;
+  }
+
+  useEffect(() => {
+    if (bookButtonHeight()) {
+      window.addEventListener('scroll', showPriceBox);
+    }
+    return function cleanup() {
+      if (bookButtonHeight()) {
+        window.removeEventListener('scroll', showPriceBox);
+      }
+    };
+  });
+
+  const showPriceBox = () => {
+    const windowsScrollTop = window.pageYOffset;
+    const windowHeight = document.documentElement.clientHeight;
+    const windowWidth = document.documentElement.clientWidth;
+    const pageHeight = document.documentElement.scrollHeight;
+
+    if (windowsScrollTop < bookButtonHeight() ||
+        (windowWidth < 751 && windowsScrollTop + windowHeight === pageHeight)) {
+      setShow(false);
+    } else {
+      setShow(true);
+    }
+  }
+
+  // optionは省略可能、初期値は以下のようになります。
+  var option = {
+      root: null,
+      rootMargin: "0px",
+      threshold: [0]
+  };
+  // 交差した際の処理を記載
+  var callback = function (entries, observer) {
+      entries.forEach(function (entry) {
+          // 交差している場合はtrue
+          if (entry.isIntersecting) {
+              // 処理実行
+              alert(entry.isIntersecting);
+              // 処理完了後、監視を止めたい場合
+              //observer.unobserve(entry.target);
+          } else {
+              alert(entry.isIntersecting);
+          }
+      });
+  };
+  var observer = new IntersectionObserver(callback, option); // callback, optionを設定
+  // Polyfillを使っている場合コメントアウトを外す
+  // observer.POLL_INTERVAL = 100;
+  //observer.observe(target); // 監視を開始
+
   return (
     <Layout scrollHeight={10} textColor="black">
       <SEO title={tourDetails.tour[0]?.name || ''} />
@@ -486,7 +548,7 @@ function TourDetail({ location }) {
       <div className={classNames(classes.main, classes.mainRaised)} style={{ paddingTop: '70px' }}>
         <div className={classes.container}>
           <Spin spinning={loading}>
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <SmallScreen>
@@ -561,7 +623,7 @@ function TourDetail({ location }) {
             </GridContainer>
 
             {tourPhotos.length > 0 && (
-              <GridContainer justify="center">
+              <GridContainer justifyContent="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     <SmallScreen>
@@ -661,7 +723,7 @@ function TourDetail({ location }) {
               <ReactBnbGallery show={isOpen} photos={tourPhotos} onClose={() => setIsOpen(false)} />
             </div>
 
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description} style={{ paddingTop: '0px' }}>
                   <FormatQuote style={{ color: '#e91e63' }} />
@@ -671,7 +733,7 @@ function TourDetail({ location }) {
               </GridItem>
             </GridContainer>
 
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description} style={{ paddingTop: '0px' }}>
                   <HeaderWrapper>
@@ -703,7 +765,7 @@ function TourDetail({ location }) {
               </GridItem>
             </GridContainer>
 
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description} style={{ textAlign: 'left' }}>
                   <PriceWrapper>
@@ -733,7 +795,7 @@ function TourDetail({ location }) {
                         isActive
                       />
                     </PriceMenuWrapper>
-                    <BookButton color="rose" loading={loading} disabled={loading}>
+                    <BookButton color="rose" loading={loading} disabled={loading}　id="booknow">
                       Book now
                     </BookButton>
                   </PriceWrapper>
@@ -741,7 +803,7 @@ function TourDetail({ location }) {
               </GridItem>
             </GridContainer>
 
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <h2 style={{ textAlign: 'left' }}>Tour description</h2>
@@ -847,7 +909,7 @@ function TourDetail({ location }) {
             </GridContainer>
 
             {tourDetails.reviews?.totalReview > 0 && (
-              <GridContainer justify="center">
+              <GridContainer justifyContent="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     <SectionHeader
@@ -876,6 +938,12 @@ function TourDetail({ location }) {
         </div>
       </div>
       <Footer />
+      <PriceBox
+        name = {tourDetails.tour[0]?.name || ''}
+        price = {tourDetails.tour[0]?.total || 0}
+        loading={loading}
+        show={show}
+      />
     </Layout>
   );
 }

@@ -8,6 +8,10 @@ import AdminGuideList from '../components/Admin/AdminGuideList';
 import AdminGuideReview from '../components/Admin/AdminGuideReview';
 import AdminUserReview from '../components/Admin/AdminUserReview';
 import AdminChangePass from '../components/Admin/AdminChangePass';
+import AdminSetInterest from '../components/Admin/AdminSetInterest';
+import AdminSetExtra from '../components/Admin/AdminSetExtra';
+import AdminSetTag from '../components/Admin/AdminSetTag';
+import AdminSetLanguage from '../components/Admin/AdminSetLanguage';
 
 // Guide
 import GuideAdmin from '../components/Guide/GuideAdmin';
@@ -43,6 +47,10 @@ const App = () => (
     <PrivateRoute path="/adminGuideReview" component={AdminGuideReview} />
     <PrivateRoute path="/adminUserReview" component={AdminUserReview} />
     <PrivateRoute path="/adminChangePass" component={AdminChangePass} />
+    <PrivateRoute path="/adminSetInterest" component={AdminSetInterest} />
+    <PrivateRoute path="/adminSetExtra" component={AdminSetExtra} />
+    <PrivateRoute path="/adminSetTag" component={AdminSetTag} />
+    <PrivateRoute path="/adminSetLanguage" component={AdminSetLanguage} />
 
     {/* Guide */}
     <PrivateRoute path="/guideAdmin" component={GuideAdmin} />

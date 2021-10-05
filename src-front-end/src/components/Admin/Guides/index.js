@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Tooltip, Popconfirm, Divider, Avatar, Table, Tag, Space, Spin, message } from 'antd';
+import { Tooltip, Popconfirm, Avatar, Table, Tag, Space, Spin, message } from 'antd';
 import { DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import _ from 'lodash';
@@ -25,7 +25,6 @@ const AvatarWrapper = styled(Avatar)`
 
 function Guides() {
   const [data, setData] = useState([]);
-  const [dataFilter, setDataFilter] = useState(null);
   const [loadingAllGuide, setLoadingAllGuide] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -173,11 +172,10 @@ function Guides() {
 
   return (
     <Wrapper spinning={loading}>
-      <ListWrapper>
-        <Divider orientation="left">Guide List</Divider>
+      <ListWrapper>        
         <Table
           columns={columns}
-          dataSource={dataFilter || data}
+          dataSource={data}
           loading={loadingAllGuide}
           rowKey="id"
           size="middle"

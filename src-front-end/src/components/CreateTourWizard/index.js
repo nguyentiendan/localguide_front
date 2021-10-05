@@ -179,14 +179,14 @@ const CreateTourWizard = ({ location }) => {
     if (loading) {
       return;
     }
-    await navigate('app/guideTourList/');
+    await navigate('/app/guideTourList/');
   }, [loading]);
 
   const goConfirm = useCallback(async () => {
     if (loading) {
       return;
     }
-    await navigate('app/guideTourList/');
+    await navigate('/app/guideTourList/');
   }, [loading]);
 
   const goForward = async () => {

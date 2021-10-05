@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { Button, Col, Input, Row, Spin, Tabs, TimePicker } from 'antd';
 import moment from 'moment';
+import { flatMap, flow, filter, map } from 'lodash/fp';
 
 import { createTourSchedule } from '../../../apis';
 
@@ -40,14 +41,27 @@ const transformTourSchedule = ({ day, pickUpAt, finishAt, schedule }) => {
         finishLocation: finishAt.place,
       },
     ],
-    schedule: _.flow(schedule)
-      .filter(({ time, place }) => time && time[0] && time[1] && place)
-      .map(({ time, place }) => ({
-        from: time && time[0] && moment(time[0]).format('HH:mm'),
-        to: time && time[1] && moment(time[1]).format('HH:mm'),
-        location: place,
-      }))
-      .value(),
+    schedule: flatMap(
+      s =>
+        s.time
+          ? flow(
+              filter(({ time, place }) => time && time[0] && time[1] && place),
+              map(({ time, place }) => ({
+                from: time && time[0] && moment(time[0]).format('HH:mm'),
+                to: time && time[1] && moment(time[1]).format('HH:mm'),
+                location: place,
+              }))
+            )([s])
+          : flow(
+              filter(s => s.from && s.to && s.place),
+              map(s => ({
+                from: s.from,
+                to: s.to,
+                place: s.place,
+              }))
+            )([s]),
+      schedule
+    )
   };
 };
 
@@ -302,17 +316,17 @@ StepLayout.propTypes = {
         day: PropTypes.number,
         pickUpAt: PropTypes.shape({
           place: PropTypes.string,
-          time: PropTypes.string,
+          // time: PropTypes.string,
         }),
         finishAt: PropTypes.shape({
           place: PropTypes.string,
-          time: PropTypes.string,
+          // time: PropTypes.string,
         }),
         schedule: PropTypes.arrayOf(
           PropTypes.shape({
             $uuid: PropTypes.string,
             place: PropTypes.string,
-            time: PropTypes.string,
+            // time: PropTypes.arrayOf(),
           })
         ),
       })
