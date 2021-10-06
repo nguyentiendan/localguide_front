@@ -116,7 +116,7 @@ export async function getGuideAllEvent({ uid }) {
   });
 }
 
-// Guide delete event of tour 
+// Guide delete event of tour
 export async function deleteEvent({ uid, id }) {
   return request({
     url: `/guide/deleteEvent`,
@@ -407,7 +407,7 @@ export async function createTourSchedule({ tourId, day, pickup, schedule }) {
 }
 
 // Create tour Event
-export async function createTourEvent({ uid, tourId, color, start_date, end_date }) {  
+export async function createTourEvent({ uid, tourId, color, start_date, end_date }) {
   return request({
     url: `/tourEvent/create`,
     method: 'POST',
@@ -474,8 +474,8 @@ export async function updateAdvance(data) {
   });
 }
 
-//Create Interest
-export async function createInterest(data) {  
+// Create Interest
+export async function createInterest(data) {
   return request({
     url: `/interest/new`,
     method: 'POST',
@@ -483,7 +483,7 @@ export async function createInterest(data) {
     data,
   });
 }
-//Get All Interest
+// Get All Interest
 export async function getAllInterest() {
   return request({
     url: '/interest/getAllInterest',
@@ -491,7 +491,7 @@ export async function getAllInterest() {
   });
 }
 
-//Delete interest
+// Delete interest
 export async function deleteInterest(uid, id) {
   return request({
     url: '/interest/delInterest',
@@ -501,8 +501,8 @@ export async function deleteInterest(uid, id) {
   });
 }
 
-//Create Extra
-export async function createExtra(data) {  
+// Create Extra
+export async function createExtra(data) {
   return request({
     url: `/extra/new`,
     method: 'POST',
@@ -511,7 +511,7 @@ export async function createExtra(data) {
   });
 }
 
-//Get All Extra
+// Get All Extra
 export async function getAllExtra() {
   return request({
     url: '/extra/getAllExtra',
@@ -520,7 +520,7 @@ export async function getAllExtra() {
   });
 }
 
-//Delete Extra
+// Delete Extra
 export async function deleteExtra(uid, id) {
   return request({
     url: '/extra/delExtra',
@@ -530,8 +530,8 @@ export async function deleteExtra(uid, id) {
   });
 }
 
-//Create Language
-export async function createLang(data) {  
+// Create Language
+export async function createLang(data) {
   return request({
     url: `/lang/new`,
     method: 'POST',
@@ -540,7 +540,7 @@ export async function createLang(data) {
   });
 }
 
-//Get All Language
+// Get All Language
 export async function getAllLang() {
   return request({
     url: '/lang/getAllLang',
@@ -548,7 +548,7 @@ export async function getAllLang() {
   });
 }
 
-//Delete Language
+// Delete Language
 export async function deleteLanguage(uid, id) {
   return request({
     url: '/lang/delLang',
@@ -558,8 +558,8 @@ export async function deleteLanguage(uid, id) {
   });
 }
 
-//Create Tag
-export async function createTag(data) {  
+// Create Tag
+export async function createTag(data) {
   return request({
     url: `/tag/new`,
     method: 'POST',
@@ -568,7 +568,7 @@ export async function createTag(data) {
   });
 }
 
-//Get All Tag
+// Get All Tag
 export async function getAllTags() {
   return request({
     url: `/tag/getAllTag`,
@@ -576,7 +576,7 @@ export async function getAllTags() {
   });
 }
 
-//Delete Tag
+// Delete Tag
 export async function deleteTag(uid, id) {
   return request({
     url: '/tag/delTag',

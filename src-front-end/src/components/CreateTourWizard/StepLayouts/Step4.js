@@ -87,14 +87,12 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     setImage([]);
   });
 
-  
-  const handleUploadPhoto = (info) => {
-    console.log(info)   
+  const handleUploadPhoto = info => {
+    console.log(info);
   };
 
-
   // upload photo of Tour
-  /*const handleUploadPhoto = useCallback(async info => {
+  /* const handleUploadPhoto = useCallback(async info => {
     if (!tourCreationInfo.id) {
       return;
     }
@@ -121,7 +119,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
       console.log(e)
     }
     setLoading(false);
-  });*/
+  }); */
 
   /* const updateCaption = useCallback(
     async (caption, name) => {
@@ -171,7 +169,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     name: 'file',
     multiple: true,
     action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    
+
     onChange(info) {
       const { status } = info.file;
       if (status !== 'uploading') {
@@ -189,7 +187,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   };
 
   const onChange = ({ file }) => {
-    console.log(file)
+    console.log(file);
   };
 
   return (
@@ -253,8 +251,8 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
           <br />
           <br />
           <Col span={12}>
-            <Dragger 
-              //{...props}
+            <Dragger
+              // {...props}
               name="file"
               listType="picture-card"
               multiple
