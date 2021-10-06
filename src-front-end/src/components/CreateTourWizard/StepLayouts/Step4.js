@@ -5,8 +5,8 @@ import _ from 'lodash';
 import { DeleteOutlined, InboxOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Col, Row, Spin, Upload, Image, Popconfirm } from 'antd';
 import colors from '../../../assets/styles/colors';
-import * as API from '../../../apis';
 import UploadCover from '../../Input/UploadCover';
+import * as API from '../../../apis';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -91,22 +91,25 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const handleUploadPhoto = useCallback(async info => {
     if (!tourCreationInfo.id) {
       return;
-    }
+    }    
     setLoading(true);
     try {
-      let fileList = [...info.fileList];
+      const fileList = [...info.fileList];
+      console.log(fileList)
       for (let i = 0; i < fileList.length; i++) {
+        console.log(fileList[i].status)
         if (fileList[i].status === 'done') {
           fileList = fileList.slice(-5);
           removeImage.current.fileList = fileList;
           fileList = fileList.map(file => {
             return file.originFileObj;
-          });
+          });          
           const uploadedRes = await API.uploadMultiPhoto({
             uid,
             tourId: tourCreationInfo.id,
             file: fileList,
           });
+          console.log(uploadedRes)
           setImage(uploadedRes.data);
         }
       }
