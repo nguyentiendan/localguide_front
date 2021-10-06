@@ -87,37 +87,41 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     setImage([]);
   });
 
+  
+  const handleUpload = (e) => {
+    console.log(e)   
+  };
+
+
   // upload photo of Tour
-  const handleUploadPhoto = useCallback(async info => {
+  /*const handleUploadPhoto = useCallback(async info => {
     if (!tourCreationInfo.id) {
       return;
-    }    
+    }
     setLoading(true);
     try {
-      const fileList = [...info.fileList];
-      console.log(fileList)
-      for (let i = 0; i < fileList.length; i++) {
-        console.log(fileList[i].status)
+      const fileList = [...info.fileList];      
+      for (let i = 0; i < fileList.length; i++) {        
         if (fileList[i].status === 'done') {
           fileList = fileList.slice(-5);
           removeImage.current.fileList = fileList;
           fileList = fileList.map(file => {
             return file.originFileObj;
-          });          
+          });
           const uploadedRes = await API.uploadMultiPhoto({
             uid,
             tourId: tourCreationInfo.id,
             file: fileList,
-          });
-          console.log(uploadedRes)
+          });          
           setImage(uploadedRes.data);
         }
       }
     } catch (e) {
       // ignored
+      console.log(e)
     }
     setLoading(false);
-  });
+  });*/
 
   /* const updateCaption = useCallback(
     async (caption, name) => {
@@ -162,6 +166,31 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     }
     setLoading(false);
   });
+
+  const props = {
+    name: 'file',
+    multiple: true,
+    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+    
+    onChange(info) {
+      const { status } = info.file;
+      if (status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+    onDrop(e) {
+      console.log('Dropped files', e.dataTransfer.files);
+    },
+  };
+
+  const onChange = ({ file }) => {
+    console.log(file)
+  };
 
   return (
     <Spin spinning={loading}>
@@ -224,12 +253,13 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
           <br />
           <br />
           <Col span={12}>
-            <Dragger
+            <Dragger 
+              //{...props}
               name="file"
               listType="picture-card"
               multiple
               ref={removeImage}
-              onChange={handleUploadPhoto}
+              onChange={onChange}
             >
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />

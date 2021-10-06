@@ -53,7 +53,7 @@ const UploadCover = ({ uid, id, cover }) => {
   const handleUploadCover = useCallback(async file => {
     try {
       setLoading(true);
-      if (cover != '') {
+      if (cover !== '') {
         const nameImage = cover.split('/')[6];
         await API.deleteCover({ nameImage, tourId: id, uid });
       }
