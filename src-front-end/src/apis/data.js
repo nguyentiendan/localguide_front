@@ -279,16 +279,13 @@ export async function uploadPhoto({ uid, tourId, file }) {
 
 // upload multi photo for Tour
 export async function uploadMultiPhoto({ uid, tourId, file }) {
-  console.log(uid)
-  console.log(tourId)
-  console.log(file)
-  /*return request({
+  return request({
     url: `/tour/uploadMultiFile`,
     method: 'POST',
     authRequired: true,
     data: { uid, id: tourId, uploadFiles: file },
     isFormData: true,
-  });*/
+  });
 }
 
 // upload avatar

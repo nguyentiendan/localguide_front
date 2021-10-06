@@ -88,8 +88,8 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   });
 
   
-  const handleUpload = (e) => {
-    console.log(e)   
+  const handleUploadPhoto = (info) => {
+    console.log(info)   
   };
 
 
@@ -259,7 +259,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
               listType="picture-card"
               multiple
               ref={removeImage}
-              onChange={onChange}
+              onChange={handleUploadPhoto}
             >
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />
