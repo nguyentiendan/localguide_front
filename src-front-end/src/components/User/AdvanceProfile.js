@@ -113,9 +113,16 @@ function AdvanceProfile({ uid, role }) {
         const { data: extraDefault } = await API.getAllExtra();
         const { data: languageDefault } = await API.getAllLang();
         const { data: interestsDefaults } = await API.getAllInterest();
-        const defaultInterests = _.map(interestsDefaults, d => d.interest);
-        const defaultLanguage = _.map(languageDefault, d => d.language);
-        const defaultExtras = _.map(extraDefault, d => d.extra);
+        
+        const defaultInterests = interestsDefaults.map(d => { 
+          return d.interest;
+        });        
+        const defaultLanguage = languageDefault.map(d => {
+          return d.language;
+        });
+        const defaultExtras = extraDefault.map(d => {
+          return d.extra;
+        });
 
         setDefaultTags({
           ...defaultTags,
