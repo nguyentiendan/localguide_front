@@ -19,7 +19,7 @@ const styleWrapper = {
 
 const useStyles = makeStyles(styleWrapper);
 
-const AllEventModal = ({ show, handleCancel, uid, data}) => {  
+const EventModal = ({ show, handleCancel, data}) => {  
   const [loading, setLoading] = useState(false);
   const calendarRef = React.createRef();
   const [currentEvents, setCurrentEvents] = useState([]);
@@ -64,7 +64,7 @@ const AllEventModal = ({ show, handleCancel, uid, data}) => {
   return (
     <div>
       <Modal
-        title="All Event of all Tour"
+        title="All Event of Tour"
         visible={show}
         centered="true"
         onCancel={handleCancel}                       
@@ -93,4 +93,4 @@ const AllEventModal = ({ show, handleCancel, uid, data}) => {
   );
 };
 
-export default AllEventModal;
+export default EventModal;

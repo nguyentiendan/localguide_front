@@ -116,6 +116,15 @@ export async function getGuideAllEvent({ uid }) {
   });
 }
 
+// Get all event of one Tour
+export async function getGuideEvent({ uid, id }) {
+  return request({
+    url: `/guide/eventTour/${uid}/${id}`,
+    method: 'GET',
+    authRequired: true,
+  });
+}
+
 // Guide delete event of tour
 export async function deleteEvent({ uid, id }) {
   return request({
