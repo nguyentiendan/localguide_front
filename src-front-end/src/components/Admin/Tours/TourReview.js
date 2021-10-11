@@ -19,11 +19,9 @@ import _ from 'lodash';
 import { FormatQuote } from '@material-ui/icons';
 import ReactBnbGallery from 'react-bnb-gallery';
 import NumberFormat from 'react-number-format';
-import * as API from '../../../apis';
-import Layout from '../../CustomLayout';
-import Footer from '../../Footer/Footer.js';
-import GridContainer from '../../Grid/GridContainer.js';
-import GridItem from '../../Grid/GridItem.js';
+import Footer from '../../Footer/Footer';
+import GridContainer from '../../Grid/GridContainer';
+import GridItem from '../../Grid/GridItem';
 import SmallScreen from '../../Responsive/SmallScreen';
 import BigScreen from '../../Responsive/BigScreen';
 import RatingStars from '../../RatingStars';
@@ -37,13 +35,15 @@ import { bigScreenCss, smallScreenCss } from '../../../assets/styles/responsive-
 import TourGuideListItem from '../../TourGuideListItem';
 import { safeFuncCall } from '../../../utils/commons';
 import defaultImage from '../../../assets/img/noimage-600x400.jpg';
-import styles from '../../../assets/styles/tourPage.js';
+import styles from '../../../assets/styles/tourPage';
 import 'react-bnb-gallery/dist/style.css';
 import { getUserProfile } from '../../../utils/auth';
 import { Fab, Action } from 'react-tiny-fab';
 import 'react-tiny-fab/dist/styles.css';
+import Layout from '../../CustomLayout';
 import ReviewCommentListItem from '../../CommentListItem/ReviewCommentListItem';
 import { navigate } from 'gatsby';
+import * as API from '../../../apis';
 
 const Title = styled.h1`
   font-weight: bold;
@@ -346,10 +346,6 @@ const Space = styled.div`
   width: 20px;
 `;
 
-const TourIncludingListItem = styled.li`
-  margin-bottom: 0;
-  color: ${colors.grey[60]};
-`;
 
 const TourDescriptionDay = styled.div`
   font-weight: bold;
@@ -487,7 +483,7 @@ function AdminTourReview({ uid, id }) {
   };
 
   const handleCreateReply = async (e, commentId, uid) => {
-    if (e.target.value.trim() != '') {
+    if (e.target.value.trim() !== '') {
       const { data } = await API.handleCreateReply2({
         uid,
         commentId,
@@ -559,7 +555,7 @@ function AdminTourReview({ uid, id }) {
     const { status } = await API.handleAdminApproveTour({ uid, id, status: 1 });
     if (status === true) {
       message.success('Actived success');
-      navigate('app/adminTourList/');
+      navigate('/app/adminTourList/');
     }
     // setIsApprove(true);
     setLoading(false);
@@ -965,7 +961,7 @@ function AdminTourReview({ uid, id }) {
             icon={<AppstoreAddOutlined />}
             alwaysShowTitle
           >
-            {tourDetails.status == 2 && (
+            {tourDetails.status === 2 && (
               <Action
                 style={{ backgroundColor: '#F897AF' }}
                 text="Approve"
