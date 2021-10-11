@@ -46,10 +46,9 @@ const SearchIcon = styled(FiSearch)`
 `;
 
 function SearchBox({ className, ...inputProps }) {
-  console.log(inputProps);
   return (
     <Wrapper className={className}>
-      <SearchInput {...inputProps} />
+      <SearchInput onChange={inputProps.onChange} onKeyDown={inputProps.onKeyDown} />
       <SearchIcon onClick={inputProps.onClick} />
     </Wrapper>
   );

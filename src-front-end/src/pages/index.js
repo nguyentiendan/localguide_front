@@ -1,9 +1,11 @@
 /* eslint-disable react/no-danger */
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Avatar, Tag, Spin } from 'antd';
 import _ from 'lodash';
+import { navigate } from 'gatsby';
 
 import classNames from 'classnames';
 // @material-ui/core components
@@ -31,6 +33,7 @@ import Feedback from '../components/Feedback/Feedback';
 import exploreTourImg from '../assets/img/explore-tour.jpg';
 
 import SearchBox from '../components/SearchBox';
+import { ENTER } from '../constants/keys';
 
 const ListContainer = styled.div`
   display: inline-flex;
@@ -65,10 +68,24 @@ const ExploreTourWrapper = styled.div`
 const useStyles = makeStyles(styles);
 
 function IndexPage() {
+  // const history = useHistory();
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState('');
   const classes = useStyles();
 
-  const onClickSearch = () => {};
+  const onChangeSearch = e => {
+    setSearch(() => e.target.value);
+  };
+
+  const onClickSearch = () => {
+    navigate(`/search?q=${search}`);
+  };
+
+  const onKeyDown = e => {
+    if (e.keyCode === ENTER) {
+      navigate(`/search?q=${e.target.value}`);
+    }
+  }
 
   return (
     <Layout>
@@ -87,7 +104,7 @@ function IndexPage() {
         </div>
       </Parallax>
 
-      <SearchBox onClick={onClickSearch} />
+      <SearchBox onClick={onClickSearch} onChange={onChangeSearch} onKeyDown={onKeyDown} />
 
       <div className={classNames(classes.main, classes.mainRaised)}>
         <Spin spinning={loading}>

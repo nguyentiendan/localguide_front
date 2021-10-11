@@ -1,27 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import PropTypes from 'prop-types';
 // nodejs library that concatenates classes
 // @material-ui/core components
 import { makeStyles } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
+import ReactPaginate from 'react-paginate';
 
 // @material-ui/icons
-import { Col, Divider, Row, Spin } from 'antd';
+import { Col, Divider, Row, Select, Spin } from 'antd';
 import { MdStar } from 'react-icons/md';
-import RatingStars from '../RatingStars';
 import Card from '../Card/Card';
 import Button from '../CustomButtons/Button';
 
 // core components
-// import styled from 'styled-components';
 import SectionHeader from '../SectionHeader';
-import * as API from '../../apis';
-import styles from '../../assets/styles/commonStyle';
+import styles from '../../assets/styles/searchPage'
 import colors from '../../assets/styles/colors';
 import defaultTourImage from '../../assets/img/mocks/tours/tour-1.jpg';
 import defaultAvatar from '../../assets/img/avatar-default.jpg';
+import { PERPAGE } from '../../constants/keys';
 
 const useStyles = makeStyles(styles);
+const { Option } = Select;
 
 const FullStar = styled(MdStar)`
   color: ${colors.magenta[50]};
@@ -33,6 +34,9 @@ const GuideTitle = styled.p`
   font-size: 14px;
   font-weight: 400;
   margin-bottom: 0;
+  @media (max-width: 340px) {
+    font-size: 12px;
+  }
 `;
 
 const Title = styled.h3`
@@ -41,8 +45,10 @@ const Title = styled.h3`
 `;
 
 const SubTitle = styled.h5`
-  color: ${colors.grey[60]};
-  font-weight: bold;
+  color: ${colors.grey[40]};
+  display: flex;
+  font-weight: normal;
+  margin-bottom: 12px;
 `;
 
 const Description = styled.div`
@@ -63,6 +69,9 @@ const Picture = styled.img`
   object-fit: cover;
   object-position: center;
   margin-bottom: 0.75rem;
+  @media (max-width: 767px) {
+    width: 100vh;
+  }
 `;
 
 const Text = styled.p`
@@ -78,6 +87,9 @@ const PriceText = styled.p`
   line-height: 30px;
   margin-bottom: 0;
   margin-top: 10px;
+  @media (max-width: 400px) {
+    font-size: 16px;
+  }
 `;
 
 const Avatar = styled.img`
@@ -87,8 +99,6 @@ const Avatar = styled.img`
   object-fit: cover;
   object-position: center;
   margin: 0 auto;
-  /* margin-bottom: 2rem; */
-  //align-items: center;
   text-align: center;
 `;
 
@@ -97,46 +107,182 @@ const BookButton = styled(Button)`
   height: 25px;
 `;
 
-function TourResultSection({ data }) {
-  const [tours, setTours] = useState();
+const StarWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  @media (max-width: 355px) {
+    flex-direction: column;
+  }
+`;
+
+const PaginateWrapper = styled.div`
+  @media (max-width: 767px) {
+    text-align: center!important;
+  }
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    float: right;
+    & > li {
+      margin: 0 12px;
+      & > a {
+        position: relative;
+        color: #f12f60;
+        font-size: 1rem;
+        width: 24px;
+        height: 24px;
+        outline: none;
+        z-index: 100;
+        cursor: pointer;
+        &::before {
+          content: "";
+          display: block;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          transform: translate(-53%, -45%);
+          z-index: -100;
+        }
+        &:hover {
+          color: white;
+          &::before {
+            background-color: #f12f60;
+            opacity: 0.5;
+          }
+        }
+      }
+      &.active {
+        & > a {
+          color: white;
+        }
+        & > a::before {
+          background-color: #f12f60;
+        }
+      }
+    }
+    &_previous_link,
+    &_next_link {
+      & > a {
+        font-size: 0.7rem;
+      }
+    }
+    &_disabled {
+      display: none;
+    }
+  },
+`;
+
+function TourResultSection({ tourData, dataLength }) {
+  const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [start, setStart] = useState(0);
   const classes = useStyles();
 
+  const handleSortByAscend = key => {
+    const line = tours.sort((a, b) => {
+      if (a[key] < b[key]) return -1;
+      if (a[key] > b[key]) return 1;
+      return 0;
+    });
+    setTours([...line]);
+  }
+
+  const handleSortByDescend = key => {
+    const line = tours.sort((a, b) => {
+      if (a[key] < b[key]) return 1;
+      if (a[key] > b[key]) return -1;
+      return 0;
+    });
+    setTours([...line]);
+  }
+
+  const handleChange = useCallback(
+    value => {
+      if (value === 'popularity') {
+        handleSortByDescend('review'); // book機能実装後'book'を参照すること
+      } else if (value === 'descendprice') {
+        handleSortByDescend('total');
+      } else if (value === 'ascendprice') {
+        handleSortByAscend('total');
+      } else if (value === 'descendrating') {
+        handleSortByDescend('rating');
+      }
+    },
+    [tours, setTours]
+  );
+
+  const pageChange = page => {
+    const pageNumber = page.selected;
+    setStart(pageNumber * PERPAGE);
+  }
+
   useEffect(() => {
-    const fetchAllTour = async () => {
-      try {
+    const fetchTour = () => {
+      try{
         setLoading(true);
-        const response = await API.getAllPopularTours();
-        setTours(response.data);
+        setTours([...tourData]);
       } catch (error) {
+        console.error(error);
       } finally {
         setLoading(false);
       }
-    };
-    fetchAllTour();
-    console.log(tours);
-  }, []);
+    }
+    fetchTour();
+  }, [tourData]);
 
   return (
-    <div className={classes.container}>
+    <div>
       <Spin spinning={loading}>
         <div className={classes.description}>
-          <SectionHeader title="Popular Tour" subTitleHref={false} subTitle="115 results found" />
+          <Row justify="space-between" align="middle">
+            <Col lg={16} md={14}>
+              <Row align="bottom">
+                <Col>
+                  <SectionHeader className={classes.title} title="Popular Tour" />
+                </Col>
+                <Col>
+                  <SubTitle>{`${dataLength} results found`}</SubTitle>
+                </Col>
+              </Row>
+            </Col>
+            <Col lg={8} md={10}>
+              <Select 
+                defaultValue="popularity" 
+                onChange={handleChange} 
+                style={{ minWidth: '170px', margin: '3px 0', float: 'right' }}
+              >
+                <Option value="popularity">Popularity</Option>
+                <Option value="descendprice">Tour Price(Descending)</Option>
+                <Option value="ascendprice">Tour Price(ascending)</Option>
+                <Option value="descendrating">Tour Rating(High to low)</Option>
+              </Select>
+            </Col>
+          </Row>
+          {!dataLength && (
+            <div style={{ marginLeft: '10px' }}>
+              <h4 style={{ size: '20px', color: '#2e2e2e' }}>Not found results.</h4>
+            </div>
+          )}
           {tours &&
-            tours.map((tour, index) => {
+            tours.slice(start, start + PERPAGE).map(tour => {
               return (
-                <>
-                  <Link to={`/tour?uid=${tour.uid}&id=${tour.id}`} key={index}>
+                <div key={tour.id}>
+                  <Link to={`/tour?uid=${tour.uid}&id=${tour.id}`}>
                     <Row justify="space-between" gutter={12}>
-                      <Col span={8}>
+                      <Col md={8}>
                         <Picture src={tour.cover || defaultTourImage} />
                       </Col>
-                      <Col span={16}>
-                        <Row justify="space-between">
-                          <Col span={16}>
+                      <Col md={16}>
+                        <Row justify="space-between" align="middle">
+                          <Col lg={10} sm={14}>
                             <Title>{tour.name}</Title>
                           </Col>
-                          <Col span={4}>
+                          <Col lg={6} sm={6}>
                             <p>(32booked)</p>
                           </Col>
                         </Row>
@@ -146,20 +292,17 @@ function TourResultSection({ data }) {
                             <Text>
                               {tour.country}/{tour.city}
                             </Text>
-                            <Text>Tour in {tour.day} day</Text>
-                            <div
-                              style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                              }}
-                            >
-                              <FullStar />
-                              <span>4.7 (321 reviews)</span>
-                            </div>
+                            <Text>{`Tour in ${tour.day} day`}</Text>
+                            <StarWrapper>
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <FullStar />
+                                <span>{tour.rating || 'No rating'}</span>
+                              </div>
+                              <span>{`(${tour.review} reviews)`}</span>
+                            </StarWrapper>
                           </Col>
                           <Col span={6} style={{ textAlign: 'center' }}>
-                            <PriceText>1.000 $</PriceText>
+                            <PriceText>{`${tour.total} $`}</PriceText>
                             <BookButton
                               color="rose"
                               loading={loading}
@@ -170,27 +313,59 @@ function TourResultSection({ data }) {
                             </BookButton>
                           </Col>
                           <Col span={6} style={{ textAlign: 'center' }}>
-                            <Link to="/guide?uid=&id=">
-                              <Card plain style={{ margin: 0 }}>
-                                <div>
-                                  <Avatar src={defaultAvatar} />
-                                </div>
-                                <GuideTitle>testGuide1</GuideTitle>
-                              </Card>
-                            </Link>
+                            <Card plain style={{ margin: 0 }}>
+                              <div>
+                                <Avatar src={tour.avatar || defaultAvatar} />
+                              </div>
+                              <GuideTitle>{tour.fullName}</GuideTitle>
+                            </Card>
                           </Col>
                         </Row>
                       </Col>
                     </Row>
                   </Link>
                   <Divider />
-                </>
+                </div>
               );
             })}
         </div>
+        {dataLength > 0 && (
+          <PaginateWrapper>
+            <ReactPaginate
+              pageCount={Math.ceil(dataLength / PERPAGE)}
+              marginPagesDisplayed={1}
+              pageRangeDisplayed={3}
+              onPageChange={pageChange}
+              containerClassName="pagination"
+              pageClassName="page-item"
+              pageLinkClassName="page-link"
+              activeClassName="active"
+              previousLabel="<"
+              nextLabel=">"
+              previousClassName="pagination_previous"
+              nextClassName="pagination_next"
+              previousLinkClassName="pagination_previous_link"
+              nextLinkClassName="pagination_next_link"
+              disabledClassName="pagination_disabled"
+              breakLabel="..."
+              breakClassName="page-item"
+              breakLinkClassName="page-link"
+            />
+          </PaginateWrapper>
+        )}
       </Spin>
     </div>
   );
+}
+
+TourResultSection.propTypes = {
+  tourData: PropTypes.arrayOf(PropTypes.shape({})),
+  dataLength: PropTypes.number,
+}
+
+TourResultSection.defaultProps = {
+  tourData: {},
+  dataLength: '',
 }
 
 export default TourResultSection;

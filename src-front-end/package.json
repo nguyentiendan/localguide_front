@@ -68,6 +68,7 @@
     "react-markdown": "^4.1.0",
     "react-material-ui-carousel": "^2.3.1",
     "react-number-format": "^4.4.4",
+    "react-paginate": "^7.1.3",
     "react-placeholder": "^3.0.2",
     "react-router-dom": "^5.2.0",
     "react-select": "^3.2.0",
@@ -93,6 +94,7 @@
     "eslint-plugin-react-hooks": "^1.6.1",
     "husky": "^3.0.0",
     "lint-staged": "^9.1.0",
-    "prettier": "^1.18.2"
+    "prettier": "^1.18.2",
+    "yarnlock-dedupe-check": "^2.1.1"
   }
 }

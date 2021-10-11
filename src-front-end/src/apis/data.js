@@ -556,6 +556,14 @@ export async function deleteTag(uid, id) {
   });
 }
 
+// Search Guides and Tours
+export async function Search(keyword) {
+  return request({
+    url: `/index/search?q=${keyword}`,
+    method: 'GET',
+  });
+}
+
 // User request approve
 export async function sendRequestApprove({ uid }) {
   return request({

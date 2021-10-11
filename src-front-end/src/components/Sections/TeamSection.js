@@ -89,8 +89,6 @@ function TeamSection() {
     };
   }, []);
 
-  console.log(tourGuides);
-
   return (
     <div className={classes.container}>
       {data > 0 && (

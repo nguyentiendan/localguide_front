@@ -1,18 +1,32 @@
-import { container, title } from '../jss/material-kit-react';
 import imagesStyle from './imagesStyles';
 
 const searchPageStyle = {
   container: {
     zIndex: '12',
     color: '#FFFFFF',
-    ...container,
+    '@media (min-width: 576px)': {
+      maxWidth: '570px',
+    },
+    '@media (min-width: 768px)': {
+      maxWidth: '760px',
+    },
+    '@media (min-width: 992px)': {
+      maxWidth: '960px',
+    },
+    '@media (min-width: 1200px)': {
+      maxWidth: '1140px',
+    },
+    paddingRight: '15px',
+    paddingLeft: '15px',
+    marginRight: 'auto',
+    marginLeft: 'auto',
+    width: '100%',
   },
 
   description: {
     margin: '1.071rem auto 0',
     maxWidth: '996px',
     color: '#494848',
-    // textAlign: "center !important"
   },
   name: {
     marginTop: '-100px',
@@ -24,21 +38,8 @@ const searchPageStyle = {
     position: 'relative',
     zIndex: '3',
   },
-  mainRaised: {
-    // margin: "-60px 30px 0px",
-    // borderRadius: "6px",
-    // boxShadow:
-    //  "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)"
-  },
   title: {
-    ...title,
-    color: '#FFFFFF',
-    display: 'inline-block',
-    position: 'relative',
-    marginTop: '45px',
-    minHeight: '5px',
-    marginLeft: '50px',
-    textDecoration: 'none',
+    marginRight: '10px',
   },
   sub_title: {
     color: '#FFFFFF',
