@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
-import { Form, Col, Row, Popconfirm, Spin, Image, Upload } from 'antd';
+import { Form, Col, Row, Popconfirm, Spin, Image, Upload, message } from 'antd';
 import { DeleteOutlined, InboxOutlined, ReloadOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 import * as API from '../../../apis';
@@ -104,8 +104,7 @@ const { Dragger } = Upload;
 
 function GuidePhoto({ uid }) {
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const [profile, setProfile] = useState(getUserProfile());
+  const [loading, setLoading] = useState(false);  
   const [image, setImage] = useState([]);
   const removeImage = useRef(null);
   const [photos, setPhotos] = useState([]);
@@ -120,14 +119,44 @@ function GuidePhoto({ uid }) {
     fetchPhotos();
   }, [setPhotos, API.getPhotosGuide, setLoading]);
 
+  const customRequest = ({ file, onSuccess }) => {
+    setTimeout(() => {
+      onSuccess("ok");
+    }, 0);
+  };
+
   // re-sync photos
   const updatePhoto = useCallback(async () => {
     const resPhotos = await API.getPhotosGuide({ uid });
     setPhotos(resPhotos.data);
     setImage([]);
   });
+
   // upload photo for Guide Profile
-  const handleUploadPhoto = useCallback(async file => {
+  const handleUploadPhoto = useCallback(async info => {    
+    setLoading(true);
+    const { status } = info.file;
+    let fileList = [...info.fileList];   
+    try {
+      if (status === 'done') {
+        fileList = fileList.map(file => {
+          return file.originFileObj;
+        });
+        const uploadedRes = await API.uploadMultiPhotoGuide({
+          uid,          
+          file: fileList,
+        });          
+        setImage(uploadedRes.data);
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    }
+    catch (e) {}
+    setLoading(false);
+  });
+
+  /*const handleUploadPhoto = useCallback(async file => {
     setLoading(true);
     try {
       let fileList = [...file.fileList];
@@ -149,7 +178,7 @@ function GuidePhoto({ uid }) {
       // ignored
     }
     setLoading(false);
-  });
+  });*/
 
   // delete photo
   const handleDeletePhoto = useCallback(async name => {
@@ -235,10 +264,11 @@ function GuidePhoto({ uid }) {
           </Form.Item>
 
           <Dragger
+            customRequest={customRequest}
             style={{ width: 350 }}
             listType="picture-card"
             multiple
-            ref={removeImage}
+            //ref={removeImage}
             onChange={handleUploadPhoto}
           >
             <p className="ant-upload-drag-icon">

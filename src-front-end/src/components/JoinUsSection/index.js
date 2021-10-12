@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Button from '../Button';
+import { Link, navigate } from 'gatsby';
 import breakpoints from '../../assets/styles/breakpoints';
 
 const Wrapper = styled.div`
@@ -24,7 +25,11 @@ const JoinUsButton = styled(Button)`
 const JoinUsSection = ({ className }) => (
   <Wrapper className={className}>
     <Title>Want to be a tour guide?</Title>
-    <JoinUsButton>Join with us now</JoinUsButton>
+    <Link to="/signup_guide">
+      <JoinUsButton>      
+        Join with us now      
+      </JoinUsButton>
+    </Link>
   </Wrapper>
 );
 

@@ -1,12 +1,12 @@
-import React, { useMemo, useState, useRef, useCallback } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { DeleteOutlined, InboxOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Col, Row, Spin, Upload, Image, Popconfirm } from 'antd';
+import { DeleteOutlined, InboxOutlined, ReloadOutlined, } from '@ant-design/icons';
+import { Col, Row, Spin, Upload, Image, Popconfirm, message } from 'antd';
 import colors from '../../../assets/styles/colors';
-import * as API from '../../../apis';
 import UploadCover from '../../Input/UploadCover';
+import * as API from '../../../apis';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -66,7 +66,6 @@ const { Dragger } = Upload;
 const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState([]);
-  const removeImage = useRef(null);
 
   const tourId = useMemo(() => {
     return tourCreationInfo && tourCreationInfo.id;
@@ -77,6 +76,12 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
   }, [user]);
 
   const { coverPhoto, photos = [] } = tourCreationInfo;
+
+  const customRequest = ({ file, onSuccess }) => {
+    setTimeout(() => {
+      onSuccess("ok");
+    }, 0);
+  };
 
   // re-sync photos
   const updatePhoto = useCallback(async () => {
@@ -93,29 +98,28 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
       return;
     }
     setLoading(true);
+    const { status } = info.file;
+    let fileList = [...info.fileList];   
     try {
-      let fileList = [...info.fileList];
-      for (let i = 0; i < fileList.length; i++) {
-        if (fileList[i].status === 'done') {
-          fileList = fileList.slice(-5);
-          removeImage.current.fileList = fileList;
-          fileList = fileList.map(file => {
-            return file.originFileObj;
-          });
-          const uploadedRes = await API.uploadMultiPhoto({
-            uid,
-            tourId: tourCreationInfo.id,
-            file: fileList,
-          });
-          setImage(uploadedRes.data);
-        }
+      if (status === 'done') {
+        fileList = fileList.map(file => {
+          return file.originFileObj;
+        });
+        const uploadedRes = await API.uploadMultiPhoto({
+          uid,
+          tourId: tourCreationInfo.id,
+          file: fileList,
+        });          
+        setImage(uploadedRes.data);
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
       }
-    } catch (e) {
-      // ignored
     }
+    catch (e) {}
     setLoading(false);
   });
-
+  
   /* const updateCaption = useCallback(
     async (caption, name) => {
       setLoading(true);
@@ -159,7 +163,7 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
     }
     setLoading(false);
   });
-
+  
   return (
     <Spin spinning={loading}>
       <Wrapper>
@@ -221,12 +225,12 @@ const StepLayout = ({ user, tourCreationInfo, onUpdate }) => {
           <br />
           <br />
           <Col span={12}>
-            <Dragger
+            <Dragger              
+              customRequest={customRequest}
               name="file"
               listType="picture-card"
-              multiple
-              ref={removeImage}
-              onChange={handleUploadPhoto}
+              multiple              
+              onChange={handleUploadPhoto}              
             >
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />

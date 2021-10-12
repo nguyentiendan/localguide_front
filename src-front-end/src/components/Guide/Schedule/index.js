@@ -20,9 +20,13 @@ const Schedule = uid => {
   const [tour, setTour] = useState();
   const [calendarEvents, setCalendarEvents] = useState([
     {
+      id:17,
       title: 'Atlanta Monster',
-      start: new Date('2021-08-10').toISOString().replace(/T.*$/, ''),
-      color: 'green',
+      //start: new Date('2021-08-10').toISOString().replace(/T.*$/, ''),
+      //end: new Date('2021-08-12').toISOString().replace(/T.*$/, ''),
+      start: '2021/08/10',
+      end: '2021/08/12',
+      color: '#cccccc',
       uid: '99999998',
     },
     {

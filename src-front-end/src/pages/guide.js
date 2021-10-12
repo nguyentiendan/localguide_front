@@ -524,7 +524,8 @@ function GuideDetail({ location }) {
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     {tour.related?.allTour > 3 && (
-                      <SectionHeader title="Related Tour" subTitle="View all" />
+                      /*<SectionHeader title="Related Tour" subTitle="View all" />*/
+                      <SectionHeader title="Related Tour"/>
                     )}
                     {tour.related?.tours.length > 0 && tour.related?.allTour <= 3 && (
                       <SectionHeader title="Related Tour" />
