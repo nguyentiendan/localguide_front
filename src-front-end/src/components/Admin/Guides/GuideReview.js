@@ -476,7 +476,7 @@ function AdminGuideReview({ uid, id }) {
       <div className={classNames(classes.main, classes.mainRaised)}>
         <Spin spinning={loading}>
           <div className={classes.container}>
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <InfoAvatarAndBackgroundImg>
@@ -502,7 +502,7 @@ function AdminGuideReview({ uid, id }) {
             </GridContainer>
           </div>
           <div className={classes.container}>
-            <GridContainer justify="center">
+            <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
                 <div className={classes.description}>
                   <InfoIntroduction>
@@ -593,7 +593,7 @@ function AdminGuideReview({ uid, id }) {
 
           {tour.related?.tours.length > 0 && (
             <div className={classes.container}>
-              <GridContainer justify="center">
+              <GridContainer justifyContent="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     {tour.related?.allTour > 3 && (
@@ -625,7 +625,7 @@ function AdminGuideReview({ uid, id }) {
           <br />
           {photos.length > 0 && (
             <div className={classes.container}>
-              <GridContainer justify="center">
+              <GridContainer justifyContent="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     <SectionHeader title={<>Photos ({photos.length})</>} />
@@ -731,7 +731,7 @@ function AdminGuideReview({ uid, id }) {
           <br />
           {profile.reviews?.totalReview > 0 && (
             <div className={classes.container}>
-              <GridContainer justify="center">
+              <GridContainer justifyContent="center">
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     {profile.reviews?.listReviews?.length > 0 && (
