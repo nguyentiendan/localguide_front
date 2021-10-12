@@ -564,6 +564,37 @@ export async function Search(keyword) {
   });
 }
 
+// get interest
+export async function getInterest() {
+  return request({
+    url: '/interest/getInterest',
+    method: 'GET',
+  });
+}
+
+// get extra
+export async function getExtra() {
+  return request({
+    url: '/extra/getExtra',
+    method: 'GET',
+  });
+}
+
+// get language
+export async function getLang() {
+  return request({
+    url: '/lang/getLang',
+    method: 'GET',
+  });
+}
+// get extra
+export async function getTag() {
+  return request({
+    url: '/tag/getTag',
+    method: 'GET',
+  });
+}
+
 // User request approve
 export async function sendRequestApprove({ uid }) {
   return request({

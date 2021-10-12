@@ -65,28 +65,28 @@ function GuideSearchPanel(props) {
   };
 
   const fetchInterests = useCallback(async () => {
-    const response = await API.getAllInterest();
+    const response = await API.getInterest();
     const data = [];
     _.forEach(response.data, value => {
-      data.push({ value: value.interest, label: value.interest });
+      data.push({ value, label: value });
     })
     setInterest(data);
   });
 
   const fetchExtras = useCallback(async () => {
-    const response = await API.getAllExtra();
+    const response = await API.getExtra();
     const data = [];
     _.forEach(response.data, value => {
-      data.push({ value: value.extra, label: value.extra });
+      data.push({ value, label: value });
     })
     setExtras(data);
   });
 
   const fetchLanguage = useCallback(async () => {
-    const response = await API.getAllLang();
+    const response = await API.getLang();
     const data = [];
     _.forEach(response.data, value => {
-      data.push({ value: value.language, label: value.language });
+      data.push({ value, label: value });
     })
     setLanguage(data);
   });

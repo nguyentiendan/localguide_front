@@ -73,10 +73,10 @@ function TourSearchPanel(props) {
   };
 
   const fetchTags = useCallback(async () => {
-    const response = await API.getAllTags();
+    const response = await API.getTag();
     const data = [];
     _.forEach(response.data, value => {
-      data.push({ value: value.tag, label: value.tag });
+      data.push({ value, label: value });
     })
     setTags(data);
   });

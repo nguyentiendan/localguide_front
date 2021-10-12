@@ -82,7 +82,7 @@ function IndexPage() {
   };
 
   const onKeyDown = e => {
-    if (e.keyCode === ENTER) {
+    if (e.target.value && e.keyCode === ENTER) {
       navigate(`/search?q=${e.target.value}`);
     }
   }
