@@ -5,10 +5,9 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import { Link } from 'gatsby';
-import ReactPaginate from 'react-paginate';
 
 // @material-ui/icons
-import { Col, Divider, Row, Select, Spin } from 'antd';
+import { Col, Divider, Row, Select, Spin, Pagination } from 'antd';
 import { MdStar } from 'react-icons/md';
 import Card from '../Card/Card';
 import Button from '../CustomButtons/Button';
@@ -116,71 +115,15 @@ const StarWrapper = styled.div`
   }
 `;
 
-const PaginateWrapper = styled.div`
-  @media (max-width: 767px) {
-    text-align: center!important;
-  }
-  .pagination {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 auto;
-    float: right;
-    & > li {
-      margin: 0 12px;
-      & > a {
-        position: relative;
-        color: #f12f60;
-        font-size: 1rem;
-        width: 24px;
-        height: 24px;
-        outline: none;
-        z-index: 100;
-        cursor: pointer;
-        &::before {
-          content: "";
-          display: block;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          transform: translate(-53%, -45%);
-          z-index: -100;
-        }
-        &:hover {
-          color: white;
-          &::before {
-            background-color: #f12f60;
-            opacity: 0.5;
-          }
-        }
-      }
-      &.active {
-        & > a {
-          color: white;
-        }
-        & > a::before {
-          background-color: #f12f60;
-        }
-      }
-    }
-    &_previous_link,
-    &_next_link {
-      & > a {
-        font-size: 0.7rem;
-      }
-    }
-    &_disabled {
-      display: none;
-    }
-  },
+const PaginationWrapper = styled.div`
+  float: right;
 `;
 
 function TourResultSection({ tourData, dataLength }) {
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(false);
   const [start, setStart] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const classes = useStyles();
 
   const handleSortByAscend = key => {
@@ -217,22 +160,29 @@ function TourResultSection({ tourData, dataLength }) {
   );
 
   const pageChange = page => {
-    const pageNumber = page.selected;
-    setStart(pageNumber * PERPAGE);
+    setStart((page - 1) * PERPAGE);
+    setCurrentPage(page);
   }
 
-  useEffect(() => {
-    const fetchTour = () => {
-      try{
-        setLoading(true);
-        setTours([...tourData]);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
+  const fetchTour = useCallback(() => {
+    try{
+      setLoading(true);
+      setTours([...tourData]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
+  }, [tourData]);
+
+  useEffect(() => {
     fetchTour();
+    setStart(0);
+    setCurrentPage(1);
+    const interval = setInterval(() => fetchTour(), 1000);
+    return () => {
+      clearInterval(interval);
+    };
   }, [tourData]);
 
   return (
@@ -330,28 +280,16 @@ function TourResultSection({ tourData, dataLength }) {
             })}
         </div>
         {dataLength > 0 && (
-          <PaginateWrapper>
-            <ReactPaginate
-              pageCount={Math.ceil(dataLength / PERPAGE)}
-              marginPagesDisplayed={1}
-              pageRangeDisplayed={3}
-              onPageChange={pageChange}
-              containerClassName="pagination"
-              pageClassName="page-item"
-              pageLinkClassName="page-link"
-              activeClassName="active"
-              previousLabel="<"
-              nextLabel=">"
-              previousClassName="pagination_previous"
-              nextClassName="pagination_next"
-              previousLinkClassName="pagination_previous_link"
-              nextLinkClassName="pagination_next_link"
-              disabledClassName="pagination_disabled"
-              breakLabel="..."
-              breakClassName="page-item"
-              breakLinkClassName="page-link"
+          <PaginationWrapper>
+            <Pagination
+              defaultCurrent={1}
+              current={currentPage}
+              total={dataLength}
+              onChange={pageChange}
+              defaultPageSize={PERPAGE}
+              responsive
             />
-          </PaginateWrapper>
+          </PaginationWrapper>
         )}
       </Spin>
     </div>

@@ -372,6 +372,7 @@ function IndexPage({ location }) {
           setTourLength(response.tourResult);
           setTourNodes(response.tour);
           setRootTourNodes(response.tour);
+          console.log(response.tour);
         }
       } catch (error) {
         console.error(error);
@@ -384,7 +385,7 @@ function IndexPage({ location }) {
 
   return (
     <>
-      <Layout>
+      <Layout scrollHeight={300}>
         <SEO title="Search" />
         <Parallax small filter />
         <div className={classNames(classes.main, classes.mainRaised)}>
