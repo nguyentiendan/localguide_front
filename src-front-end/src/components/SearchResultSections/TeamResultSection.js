@@ -120,7 +120,7 @@ const SliderWrapper = styled.div`
 
 const useStyles = makeStyles(styles);
 
-function TeamResultSection({ tourGuideData, dataLength }) {
+const TeamResultSection = React.memo(({ tourGuideData, dataLength }) => {
   const [tourGuides, setTourGuides] = useState();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState();
@@ -257,10 +257,6 @@ function TeamResultSection({ tourGuideData, dataLength }) {
     };
 
     fetchTourGuides();
-    const interval = setInterval(() => fetchTourGuides(), 100000);
-    return () => {
-      clearInterval(interval);
-    };
   }, [tourGuideData, dataLength]);
 
   return (
@@ -308,7 +304,7 @@ function TeamResultSection({ tourGuideData, dataLength }) {
       </Spin>
     </div>
   );
-}
+});
 
 TeamResultSection.propTypes = {
   tourGuideData: PropTypes.arrayOf(PropTypes.shape({})),

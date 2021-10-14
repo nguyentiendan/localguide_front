@@ -119,71 +119,87 @@ const PaginationWrapper = styled.div`
   float: right;
 `;
 
-function TourResultSection({ tourData, dataLength }) {
+const TourResultSection = React.memo(({ tourData, dataLength }) => {
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(false);
   const [start, setStart] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [data, setData] = useState();
+  const [selectSort, setSelectSort] = useState([]);
   const classes = useStyles();
 
-  const handleSortByAscend = key => {
-    const line = tours.sort((a, b) => {
-      if (a[key] < b[key]) return -1;
-      if (a[key] > b[key]) return 1;
-      return 0;
-    });
-    setTours([...line]);
-  }
+  const handleSort = useCallback((key, type, sortData = tours) => {
+    if (type === 'ascend') {
+      const line = sortData.sort((a, b) => {
+        if (a[key] < b[key]) return -1;
+        if (a[key] > b[key]) return 1;
+        return 0;
+      });
+      setTours([...line]);
+    } else if (type === 'descend') {
+      const line = sortData.sort((a, b) => {
+        if (a[key] < b[key]) return 1;
+        if (a[key] > b[key]) return -1;
+        return 0;
+      });
+      setTours([...line]);
+    }
+  });
 
-  const handleSortByDescend = key => {
-    const line = tours.sort((a, b) => {
-      if (a[key] < b[key]) return 1;
-      if (a[key] > b[key]) return -1;
-      return 0;
-    });
-    setTours([...line]);
-  }
+  // const handleSortByDescend = useCallback((key, sortData = tours) => {
+  //   const line = sortData.sort((a, b) => {
+  //     if (a[key] < b[key]) return 1;
+  //     if (a[key] > b[key]) return -1;
+  //     return 0;
+  //   });
+  //   setTours([...line]);
+  // });
 
-  const handleChange = useCallback(
-    value => {
-      if (value === 'popularity') {
-        handleSortByDescend('review'); // book機能実装後'book'を参照すること
-      } else if (value === 'descendprice') {
-        handleSortByDescend('total');
-      } else if (value === 'ascendprice') {
-        handleSortByAscend('total');
-      } else if (value === 'descendrating') {
-        handleSortByDescend('rating');
-      }
-    },
-    [tours, setTours]
-  );
+  const handleChange = useCallback(value => {
+    if (value === 'popularity') {
+      handleSort('review', 'ascend'); // book機能実装後'book'を参照すること
+      setSelectSort(['popularity', 'review', 'ascend']);
+    } else if (value === 'descendprice') {
+      handleSort('total', 'descend');
+      setSelectSort(['descendprice', 'total', 'descend']);
+    } else if (value === 'ascendprice') {
+      handleSort('total', 'ascend');
+      setSelectSort(['ascendprice', 'total', 'ascend']);
+    } else if (value === 'descendrating') {
+      handleSort('rating', 'descend');
+      setSelectSort(['descendrating', 'rating', 'descend']);
+    }
+  });
 
-  const pageChange = page => {
+  const pageChange = useCallback(page => {
     setStart((page - 1) * PERPAGE);
     setCurrentPage(page);
-  }
-
-  const fetchTour = useCallback(() => {
-    try{
-      setLoading(true);
-      setTours([...tourData]);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [tourData]);
+  });
 
   useEffect(() => {
+    const fetchTour = async () => {
+      try{
+        setLoading(true);
+        if (dataLength == 0) {
+          setData(0);
+        } else {
+          setData(dataLength);
+          if (selectSort) {
+            handleSort(selectSort[1], selectSort[2], tourData);
+          } else {
+            setTours([...tourData]);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchTour();
     setStart(0);
     setCurrentPage(1);
-    const interval = setInterval(() => fetchTour(), 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [tourData]);
+  }, [tourData, dataLength]);
 
   return (
     <div>
@@ -202,7 +218,8 @@ function TourResultSection({ tourData, dataLength }) {
             </Col>
             <Col lg={8} md={10}>
               <Select 
-                defaultValue="popularity" 
+                defaultValue="popularity"
+                value={selectSort[0] || 'popularity'}
                 onChange={handleChange} 
                 style={{ minWidth: '170px', margin: '3px 0', float: 'right' }}
               >
@@ -213,12 +230,13 @@ function TourResultSection({ tourData, dataLength }) {
               </Select>
             </Col>
           </Row>
-          {!dataLength && (
+          {!data && (
             <div style={{ marginLeft: '10px' }}>
               <h4 style={{ size: '20px', color: '#2e2e2e' }}>Not found results.</h4>
             </div>
           )}
-          {tours &&
+          {data > 0 &&
+            tours &&
             tours.slice(start, start + PERPAGE).map(tour => {
               return (
                 <div key={tour.id}>
@@ -294,7 +312,7 @@ function TourResultSection({ tourData, dataLength }) {
       </Spin>
     </div>
   );
-}
+});
 
 TourResultSection.propTypes = {
   tourData: PropTypes.arrayOf(PropTypes.shape({})),

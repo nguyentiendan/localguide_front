@@ -123,7 +123,7 @@ function IndexPage({ location }) {
   const classes = useStyles();
   const { q } = queryString.parse(location.search);
 
-  const filterGuideData = (item, keyword) => {
+  const filterGuideData = useCallback((item, keyword) => {
     const interestKeyword =
       (item === 'interest' && _.map(keyword, key => key.value.toString().toLowerCase())) ||
       (selectInterest &&
@@ -188,9 +188,9 @@ function IndexPage({ location }) {
     const newGuide = _.intersection(interestResult, extraResult, languageResult);
     setTourGuideNodes([...newGuide]);
     setTourGuideLength(newGuide.length);
-  }
+  });
 
-  const filterTourData = (item, keyword) => {
+  const filterTourData = useCallback((item, keyword) => {
     const tagKeyword =
       (item === 'tag' && _.map(keyword, key => key.value.toString().toLowerCase())) ||
       (selectTag && _.map(selectTag, tag => tag.value.toString().toLowerCase()));
@@ -238,58 +238,58 @@ function IndexPage({ location }) {
     const newTour = _.intersection(tagResult, countryResult, cityResult, lengthResult, priceResult);
     setTourNodes([...newTour]);
     setTourLength(newTour.length);
-  }
+  });
 
   const fetchCountry = useCallback(async () => {
     const resCountry = await API.getAllCountry();
     setRootCountry(resCountry.data);
   }, [API.getAllCountry, setRootCountry]);
 
-  const onChangeInterest = searchValue => {
+  const onChangeInterest = useCallback(searchValue => {
     if (searchValue) {
       setSelectInterest(searchValue);
     } else {
       setSelectInterest([]);
     }
     filterGuideData('interest', searchValue);
-  }
+  });
   
-  const onChangeExtras = searchValue => {
+  const onChangeExtras = useCallback(searchValue => {
     if (searchValue) {
       setSelectExtras(searchValue);
     } else {
       setSelectExtras([]);
     }
     filterGuideData('extra', searchValue);
-  }
+  });
   
-  const onChangeLanguage = searchValue => {
+  const onChangeLanguage = useCallback(searchValue => {
     if (searchValue) {
       setSelectLanguage(searchValue);
     } else {
       setSelectLanguage([]);
     }
     filterGuideData('language', searchValue);
-  }
+  });
   
-  const onChangeTag = searchValue => {
+  const onChangeTag = useCallback(searchValue => {
     if (searchValue) {
       setSelectTag(searchValue);
     } else {
       setSelectTag([]);
     }
     filterTourData('tag', searchValue);
-  }
+  });
 
-  const fetchCity = async value => {
+  const fetchCity = useCallback(async value => {
     if (value) {
       const resCity = await API.getCityOfCountry(value.value);
       setRootCity(resCity.data);
       setSelectCity(null);
     }
-  };
+  });
 
-  const onChangeCountry = value => {
+  const onChangeCountry = useCallback(value => {
     if (value) {
       setSelectCountry({ value: value.value, label: value.label });
     } else {
@@ -297,42 +297,42 @@ function IndexPage({ location }) {
     }
     fetchCity(value);
     filterTourData('country', value);
-  };
+  });
 
-  const onChangeCity = searchValue => {
+  const onChangeCity = useCallback(searchValue => {
     setSelectCity(searchValue);
     filterTourData('city', searchValue);
-  }
+  });
 
-  const onChangeLength = searchValue => {
+  const onChangeLength = useCallback(searchValue => {
     setSelectLength(searchValue);
     filterTourData('length', searchValue);
-  }
+  });
 
-  const onChangePrice = searchValue => {
+  const onChangePrice = useCallback(searchValue => {
     setSelectPriceValue([searchValue[0], searchValue[1]]);
     filterTourData('price', searchValue);
-  }
+  });
 
-  const onChangeMin = value => {
+  const onChangeMin = useCallback(value => {
     if (value <= selectPriceValue[1]) {
       setSelectPriceValue([value, selectPriceValue[1]]);
       filterTourData('price', [value, selectPriceValue[1]]);
     } else {
       filterTourData('price', selectPriceValue);
     }
-  }
+  });
 
-  const onChangeMax = value => {
+  const onChangeMax = useCallback(value => {
     if (value >= selectPriceValue[0]) {
       setSelectPriceValue([selectPriceValue[0], value]);
       filterTourData('price', [selectPriceValue[0], value]);
     } else {
       filterTourData('price', selectPriceValue);
     }
-  }
+  });
 
-  const onChangeReset = () => {
+  const onChangeReset = useCallback(() => {
     setSelectPriceValue(DEFAULTPRICEVALUE);
     setSelectTag([]);
     setSelectCountry(null);
@@ -340,9 +340,9 @@ function IndexPage({ location }) {
     setSelectLength(null);
     setTourNodes([...rootTourNodes]);
     setTourLength(rootTourNodes.length);
-  }
+  });
 
-  const onChangeAllReset = () => {
+  const onChangeAllReset = useCallback(() => {
     setSelectInterest([]);
     setSelectExtras([]);
     setSelectLanguage([]);
@@ -355,7 +355,7 @@ function IndexPage({ location }) {
     setTourGuideLength(rootTourGuideNodes.length);
     setTourNodes([...rootTourNodes]);
     setTourLength(rootTourNodes.length);
-  }
+  });
 
   useEffect(() => {
     fetchCountry();
@@ -372,7 +372,6 @@ function IndexPage({ location }) {
           setTourLength(response.tourResult);
           setTourNodes(response.tour);
           setRootTourNodes(response.tour);
-          console.log(response.tour);
         }
       } catch (error) {
         console.error(error);
@@ -447,14 +446,17 @@ function IndexPage({ location }) {
                 <Spin spinning={loading}>
                   <div className={classes.container}>
                     <TeamResultSection
-                      tourGuideData={tourGuideNodes || { result: 'not found data' }}
+                      tourGuideData={tourGuideNodes || { result: 'not found results.' }}
                       dataLength={tourGuideLength}
                     />
                   </div>
                 </Spin>
                 <Spin spinning={loading}>
                   <div className={classes.container}>
-                    <TourResultSection tourData={tourNodes} dataLength={tourLength} />
+                    <TourResultSection
+                      tourData={tourNodes || { result: 'not found results.' }}
+                      dataLength={tourLength}
+                    />
                   </div>
                 </Spin>
               </Col>
