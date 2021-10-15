@@ -183,39 +183,35 @@ const ImgMainWrapper = styled.div`
 
   @media (min-width: 751px) {
     width: 50%;
-    height: 200px;
-    flex: 3;
+    height: 180px;
     .imgstyle {
       width: 98%;
-      height: 70%;
+      height: 100%;
       box-shadow: lavender;
       box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
       border-radius: 5px 5px 5px 5px;
-      margin: auto 0;
     }
   }
 
   @media (min-width: 768px) {
     width: 50%;
-    height: 300px;
+    height: 250px;
     .imgstyle {
       width: 98%;
-      height: 75%;
-      //padding-right:8px;
-      box-shadow: lavender;
-      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
-      border-radius: 5px 5px 5px 5px;
-      margin: auto 0;
+      height: 100%;
     }
   }
   @media (min-width: 992px) {
     width: 50%;
-    height: 350px;
+    height: 300px;
     flex: 1;
     .imgstyle {
       width: 98%;
-      height: 90%;
+      height: 100%;
     }
+  }
+  @media (min-width: 1200px) {
+    height: 350px;
   }
 `;
 const ImgSecondWrapper = styled.div`
@@ -225,15 +221,16 @@ const ImgSecondWrapper = styled.div`
   height: 400px;
   flex: 1;
   @media (min-width: 751px) {
-    height: 200px;
-    flex: 4;
+    height: 180px;
   }
   @media (min-width: 768px) {
-    height: 300px;
+    height: 250px;
   }
   @media (min-width: 992px) {
+    height: 300px;
+  }
+  @media (min-width: 1200px) {
     height: 350px;
-    flex: 1;
   }
 `;
 
