@@ -14,7 +14,7 @@ const Wrapper = styled.fieldset`
   margin-top: -6em;
   margin-bottom: 6em;
   text-align: center;
-  width: calc((500/750)*100%);
+  width: calc((500 / 750) * 100%);
   max-width: 960px;
 `;
 
@@ -48,7 +48,7 @@ const SearchIcon = styled(FiSearch)`
 function SearchBox({ className, ...inputProps }) {
   return (
     <Wrapper className={className}>
-      <SearchInput {...inputProps} />
+      <SearchInput onChange={inputProps.onChange} onKeyDown={inputProps.onKeyDown} />
       <SearchIcon onClick={inputProps.onClick} />
     </Wrapper>
   );
