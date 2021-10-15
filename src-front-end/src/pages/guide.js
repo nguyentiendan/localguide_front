@@ -92,7 +92,6 @@ const ImgMainWrapper = styled.div`
   .imgstyle {
     width: 98%;
     height: 100%;
-    //padding-right:8px;
     box-shadow: lavender;
     box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
     border-radius: 5px 5px 5px 5px;
@@ -109,31 +108,36 @@ const ImgMainWrapper = styled.div`
     transform: translate(-50%, -50%);
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 751px) {
     width: 50%;
-    height: 400px;
+    height: 180px;
     .imgstyle {
       width: 98%;
       height: 100%;
-      //padding-right:8px;
       box-shadow: lavender;
       box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
       border-radius: 5px 5px 5px 5px;
-      margin-bottom: 6px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    width: 50%;
+    height: 250px;
+    .imgstyle {
+      width: 98%;
+      height: 100%;
     }
   }
   @media (min-width: 992px) {
     width: 50%;
-    height: 400px;
+    height: 300px;
     .imgstyle {
       width: 98%;
       height: 100%;
-      //padding-right:8px;
-      box-shadow: lavender;
-      box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.38);
-      border-radius: 5px 5px 5px 5px;
-      margin-bottom: 6px;
     }
+  }
+  @media (min-width: 1200px) {
+    height: 350px;
   }
 `;
 const ImgSecondWrapper = styled.div`
@@ -142,6 +146,18 @@ const ImgSecondWrapper = styled.div`
   width: 50%;
   height: 400px;
   flex: 1;
+  @media (min-width: 751px) {
+    height: 180px;
+  }
+  @media (min-width: 768px) {
+    height: 250px;
+  }
+  @media (min-width: 992px) {
+    height: 300px;
+  }
+  @media (min-width: 1200px) {
+    height: 350px;
+  }
 `;
 
 const RowWrapper = styled.div`
@@ -524,7 +540,8 @@ function GuideDetail({ location }) {
                 <GridItem xs={12} sm={12} md={12}>
                   <div className={classes.description}>
                     {tour.related?.allTour > 3 && (
-                      <SectionHeader title="Related Tour" subTitle="View all" />
+                      /*<SectionHeader title="Related Tour" subTitle="View all" />*/
+                      <SectionHeader title="Related Tour"/>
                     )}
                     {tour.related?.tours.length > 0 && tour.related?.allTour <= 3 && (
                       <SectionHeader title="Related Tour" />

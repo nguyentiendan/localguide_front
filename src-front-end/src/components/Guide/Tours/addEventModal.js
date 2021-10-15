@@ -1,85 +1,122 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { navigate } from 'gatsby';
-import {
-  Modal,
-  Form,
-  Select,
-  Tooltip,
-  Divider,
-  Table,
-  Space,
-  Tag,
-  Button,
-  message,
-  Popconfirm,
-} from 'antd';
-import {
-  PlusOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  CalendarOutlined,
-  ScheduleOutlined,
-} from '@ant-design/icons';
-import _ from 'lodash';
-import moment from 'moment';
+import React, { useState, } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { Modal, Form, Select, DatePicker, Button, Divider,} from 'antd';
+import { CompactPicker } from 'react-color';
 import * as API from '../../../apis';
+import { StarHalfTwoTone } from '@material-ui/icons';
 
-const AddEventModal = ({ show, handleClose, uid, data }) => {
+const styleWrapper = {    
+  form: {
+    textAlign: 'right',
+  },
+  formButton: {
+    marginRight: '8px',
+  },     
+};
+
+const useStyles = makeStyles(styleWrapper);
+
+const AddEventModal = ({ show, handleCancel, uid, data }) => {
   const [form] = Form.useForm();
+  const classes = useStyles();
   const [loading, setLoading] = useState(false);
-  const [tours, setTours] = useState([{ data }]);
-  const names = [
-    {
-      id: '1',
-      name: 'ABBC',
-    },
-    {
-      id: '2',
-      name: 'CDE',
-    },
-  ];
+  const [background, setBackground] = useState('#0062B1');
+  const [tourDate, setTourDate] = useState([]);
 
-  console.log(data);
-  /* useEffect(() => {
-    async function fetchAllTour() {
-      setLoading(true);      
-      const res = await API.getGuideAllTours({uid});
-      setTours(res.data)
+  const { RangePicker } = DatePicker;
+  const dateFormat = 'YYYY/MM/DD';
+  
+  const handleChangeColor = (color) => {    
+    setBackground(color.hex);
+  };
+  
+  const handleChangeDate = (date, dateString) => {
+    setTourDate(dateString);
+  }
+
+  const onFinish = async values => {        
+    if (loading) {
+      return;
+    }
+    const tourId = values.tourId
+    //set color
+    if (values.color === undefined) {
+      var color = background
+    } else {
+      var color = values.color.hex
+    }
+    
+    //set date
+    if (values.eventDate === undefined) {
+      let today = new Date();
+      let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+      var start_date = date
+      var end_date = date
+    } else {      
+      let start = new Date(tourDate[0])
+      let end = new Date(tourDate[1])
+      var start_date = start.getFullYear() +'-'+ ("0" + (start.getMonth() + 1)).slice(-2) +'-'+ ("0" + start.getDate()).slice(-2);
+      var end_date = end.getFullYear() +'-'+ ("0" + (end.getMonth() + 1)).slice(-2) +'-'+ ("0" + end.getDate()).slice(-2);
+    }
+    
+    try {
+      setLoading(true);
+      const { message, status } = await API.createTourEvent({uid, tourId, color, start_date, end_date});      
+      //var status = true
+      if (status === true) {        
+        Modal.info({
+          title: 'Thank you',
+          content: (
+            <div>
+              <p>Tour Event have create successful</p>              
+            </div>
+          ),
+          closable: false,
+          keyboard: false,
+          centered: true,
+          okText: 'Close',
+          onOk() {
+            handleCancel()
+          },
+        });
+      } else {        
+        setLoading(false);
+      }
+      setLoading(false);
+  
+    } catch (error) {
+      console.log(error)
       setLoading(false);
     }
-    fetchAllTour();
-  }, []); */
+  };
 
   return (
     <div>
       <Modal
-        title="Add Event"
+        title="Create Event"
         visible={show}
-        okText="Add"
-        onCancel={handleClose}
-        // onOk={onAddEvent}
-        onOk={() => {
-          form
-            .validateFields()
-            .then(values => {
-              // onAddEvent(values);
-            })
-            .catch(info => {
-              // console.log('Validate Failed:', info);
-            });
-        }}
-        style={{ width: 300 }}
+        centered="true"
+        onCancel={handleCancel}       
+        style={{ width: '100%' }}
+        footer={null}        
       >
-        {uid}
-        <br />
-
-        <Form form={form} scrollToFirstError>
-          <Form.Item>
+        <Form 
+          form={form} 
+          name="event" 
+          scrollToFirstError
+          layout="vertical"
+          onFinish={onFinish}          
+          requiredMark={false}
+        >
+          <span>Select tour to add event</span>
+          <br />
+          <Form.Item name="tourId"
+            rules={[{ required: true, message: 'Please select tour!'  }]}
+          >
             <Select
-              placeholder="Select tour"
-              // onChange={onSelectTour}
-              allowClear
+              placeholder="Select tour"              
+              allowClear 
+              style={{ width: '400px' }}              
             >
               {data &&
                 data.map((d, index) => {
@@ -89,11 +126,37 @@ const AddEventModal = ({ show, handleClose, uid, data }) => {
                     </Select.Option>
                   );
                 })}
-              {/* <Select.Option value="Tour 1">Tour 1</Select.Option>
-                <Select.Option value="Tour 2">Tour 2</Select.Option>
-                <Select.Option value="Tour 3">Tour 3</Select.Option>
-              <Select.Option value="Tour 4">Tour 4</Select.Option> */}
             </Select>
+          </Form.Item>
+          
+          <Form.Item >
+            <span>Select color for event</span>            
+            <Form.Item name="color">
+              <CompactPicker
+                color={ background }
+                onChangeComplete={handleChangeColor}
+              />
+            </Form.Item>
+          </Form.Item>
+          
+          <Form.Item>
+            <span>Select date of event</span>            
+            <Form.Item name="eventDate">
+              <RangePicker 
+                format={dateFormat}
+                onChange={handleChangeDate}
+              />
+            </Form.Item>
+          </Form.Item>
+         
+          <Divider />
+          <Form.Item className={classes.form}>
+            <Button key="cancel" onClick={handleCancel} className={classes.formButton}>
+              Cancel
+            </Button>
+            <Button key="submit" type="primary" htmlType="submit">
+              Add event
+            </Button>
           </Form.Item>
         </Form>
       </Modal>

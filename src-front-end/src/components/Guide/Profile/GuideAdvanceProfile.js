@@ -77,8 +77,8 @@ function GuideAdvanceProfile({ uid }) {
   const fetchGuideProfile = useCallback(async () => {
     setLoading(true);
     const res = await API.getUserProfile(uid);
-
-    setInterest({ ...interest, tags: res.data?.interest ? res.data?.interest?.split(';') : [] });
+    
+    setInterest({ ...interest, tags: res.data?.interest ? res.data?.interest?.split(';') : [], });    
     setExtras({ ...extras, tags: res.data?.extras ? res.data?.extras?.split(';') : [] });
     setLanguage({ ...language, tags: res.data?.language ? res.data?.language?.split(';') : [] });
 
@@ -98,9 +98,16 @@ function GuideAdvanceProfile({ uid }) {
         const { data: extraDefault } = await API.getAllExtra();
         const { data: languageDefault } = await API.getAllLang();
         const { data: interestsDefaults } = await API.getAllInterest();
-        const defaultInterests = _.map(interestsDefaults, d => d.interest);
-        const defaultLanguage = _.map(languageDefault, d => d.language);
-        const defaultExtras = _.map(extraDefault, d => d.extra);
+        
+        const defaultInterests = interestsDefaults.map(d => {
+          return d.interest;
+        });
+        const defaultLanguage = languageDefault.map(d => {
+          return d.language;
+        });
+        const defaultExtras = extraDefault.map(d => {
+          return d.extra;
+        });
 
         setDefaultTags({
           ...defaultTags,
@@ -111,6 +118,7 @@ function GuideAdvanceProfile({ uid }) {
       } catch (e) {
         // ignore
       }
+      
     })();
     setLoading(false);
   }, [API.getAllInterest, API.getAllExtra, API.getAllLang, setDefaultTags]);

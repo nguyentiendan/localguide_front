@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { navigate } from 'gatsby';
-import { Tooltip, Divider, Table, Space, Tag, Button, message, Popconfirm } from 'antd';
+import { Tooltip, Divider, Table, Space, Tag, Button, message, Popconfirm, Modal } from 'antd';
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -15,6 +15,9 @@ import * as API from '../../../apis';
 import { getUserProfile } from '../../../utils/auth';
 import colors from '../../../assets/styles/colors';
 import AddEvent from './addEventModal';
+import AllEvent from './allEventModal';
+import EventModal from './eventModal';
+import { set } from 'react-ga';
 
 const Wrapper = styled.div``;
 const FilterWrapper = styled.div`
@@ -36,6 +39,9 @@ function TourList() {
   const [dataFilter, setDataFilter] = useState(null);
   const [data, setData] = useState([]);
   const [show, setShow] = useState(false);
+  const [showAllEvent, setShowAllEvent] = useState(false);
+  const [showEvent, setShowEvent] = useState(false);
+  const [event, setEvent] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -46,6 +52,42 @@ function TourList() {
     }
     fetchData();
   }, []);
+
+  //Fetch Event of All Tour
+  const fetchAllEvent = async () => {
+    var uid = user.uid
+    setLoading(true);
+    const res = await API.getGuideAllEvent({ uid });      
+    setEvent(res.data);
+    setLoading(false);
+  };
+  
+  //Fetch Event of one Tour
+  const fetchEventOfTour = async (uid, id) => {    
+    setLoading(true);
+    const res = await API.getGuideEvent({ uid, id }); 
+    if (res.data.length === 0) {
+      Modal.confirm({
+        title: 'Info',
+        content: (
+          <div>
+            <p>You are not setting calendar for tour</p>
+            <p>Please setting schedule for tour</p>
+          </div>
+        ),
+        closable: true,
+        centered: true,
+        /*okText: 'OK',
+        onOk() {                  
+        },*/
+        onCancel() {},
+      });
+    } else {
+      setEvent(res.data);
+      setShowEvent(true);
+    }    
+    setLoading(false);
+  };
 
   const handleDeleteTour = async (uid, id) => {
     setLoading(true);
@@ -60,12 +102,33 @@ function TourList() {
     setLoading(false);
   };
 
-  const showModal = () => {
+  //show modal Create event
+  const showModalCreateEvent = () => {    
     setShow(true);
   };
-
+ 
+  //show modal event of All Tour
+  const showModalAllEvent = () => {
+    fetchAllEvent()
+    setShowAllEvent(true);
+  };
+  
+  //show modal event of Tour
+  const showModalEvent = (uid, id) => {    
+    fetchEventOfTour(uid, id)    
+    
+  };
+  
   const hideModal = () => {
     setShow(false);
+  };
+
+  const hideAllEventModal = () => {
+    setShowAllEvent(false);
+  };
+
+  const hideEventModal = () => {
+    setShowEvent(false);
   };
 
   const STATUS = {
@@ -159,9 +222,8 @@ function TourList() {
               <EditOutlined title="Edit Tour" />
             </a>
             <a href="#">
-              <CalendarOutlined title="Setting schedule" onClick={showModal} />
+              <ScheduleOutlined onClick={() => showModalEvent(tour.uid, tour.id)}  title="View Event of this tour" />              
             </a>
-
             {(tour.status === 0 || tour.status === 2) && (
               <Popconfirm
                 title="Are you sure to delete this Tour?"
@@ -194,9 +256,18 @@ function TourList() {
         icon={<ScheduleOutlined />}
         type="primary"
         size="large"
-        onClick={() => navigate('/app/createTour')}
+        onClick={showModalAllEvent} 
       >
-        Confirm Schedule
+        All Schedule
+      </Button>
+      &nbsp;&nbsp;&nbsp;
+      <Button
+        icon={<CalendarOutlined />}
+        type="primary"
+        size="large"
+        onClick={showModalCreateEvent} 
+      >
+        Create Event
       </Button>
       <br />
       <ListWrapper>
@@ -213,9 +284,13 @@ function TourList() {
         />
       </ListWrapper>
       <div>
-        <AddEvent show={show} handleClose={hideModal} uid={user.uid} data={data}>
-          Modal
-        </AddEvent>
+        <AddEvent show={show} handleCancel={hideModal} uid={user.uid} data={data}/>          
+      </div>
+      <div>
+        <AllEvent show={showAllEvent} handleCancel={hideAllEventModal} uid={user.uid} data={event}/>          
+      </div>
+      <div>
+        <EventModal show={showEvent} handleCancel={hideEventModal} data={event}/>          
       </div>
     </Wrapper>
   );
