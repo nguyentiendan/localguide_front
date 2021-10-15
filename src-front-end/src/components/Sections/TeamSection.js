@@ -10,11 +10,11 @@ import breakpoints from '../../assets/styles/breakpoints';
 // core components
 import GuideListItem from '../GuideListItem';
 // import GridContainer from '../Grid/GridContainer.js';
-import GridItem from '../Grid/GridItem.js';
+import GridItem from '../Grid/GridItem';
 import SectionHeader from '../SectionHeader';
 import * as API from '../../apis';
 
-import styles from '../../assets/styles/commonStyle.js';
+import styles from '../../assets/styles/commonStyle';
 import Carousel from './Carousel/Carousel';
 
 const SliderWrapper = styled.div`
@@ -50,6 +50,43 @@ const SliderWrapper = styled.div`
   .slick-next:before {
     color: black;
     font-size: 40px;
+  }
+  .next-frame {
+    position: absolute;
+    top: 83.5px;
+    left: 91.2%;
+    width: 36.5px;
+    height: 36.5px;
+    border: 1px solid #f4f5f7;
+    border-radius: 50%;
+    @media (max-width: 1200px) {
+      left: 95.2%;
+    }
+    @media (max-width: 991px) {
+      left: 85.3%;
+    }
+    @media (max-width: 767px) {
+      left: 90.4%;
+    }
+    @media (max-width: 500px) {
+      left: 85.5%;
+    }
+    @media (max-width: 446px) {
+      left: 241.5px;
+    }
+    @media (max-width: 349px) {
+      left: 236.5px;
+    }
+  }
+  .prev-frame {
+    position: absolute;
+    top: 83.5px;
+    left: 24.5px;
+    width: 36.5px;
+    height: 36.5px;
+    border: 1px solid #f4f5f7;
+    border-radius: 50%;
+    z-index: 100;
   }
 `
 
