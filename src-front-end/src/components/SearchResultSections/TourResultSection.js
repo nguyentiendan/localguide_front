@@ -146,15 +146,6 @@ const TourResultSection = React.memo(({ tourData, dataLength }) => {
     }
   });
 
-  // const handleSortByDescend = useCallback((key, sortData = tours) => {
-  //   const line = sortData.sort((a, b) => {
-  //     if (a[key] < b[key]) return 1;
-  //     if (a[key] > b[key]) return -1;
-  //     return 0;
-  //   });
-  //   setTours([...line]);
-  // });
-
   const handleChange = useCallback(value => {
     if (value === 'popularity') {
       handleSort('review', 'ascend'); // book機能実装後'book'を参照すること
@@ -184,10 +175,9 @@ const TourResultSection = React.memo(({ tourData, dataLength }) => {
           setData(0);
         } else {
           setData(dataLength);
-          if (selectSort) {
+          setTours([...tourData]);
+          if (selectSort.length > 0) {
             handleSort(selectSort[1], selectSort[2], tourData);
-          } else {
-            setTours([...tourData]);
           }
         }
       } catch (error) {
