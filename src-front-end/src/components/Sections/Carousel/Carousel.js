@@ -39,7 +39,41 @@ const SliderWrapper = styled.div`
     color: black;
     font-size: 40px;
   }
-`
+  .next-frame {
+    position: absolute;
+    top: 74px;
+    left: 93.1%;
+    width: 36.5px;
+    height: 36.5px;
+    border: 1px solid #f4f5f7;
+    border-radius: 50%;
+    @media (max-width: 1200px) {
+      left: 95.2%;
+    }
+    @media (max-width: 991px) {
+      left: 88.3%;
+    }
+    @media (max-width: 767px) {
+      left: 90.4%;
+    }
+    @media (max-width: 446px) {
+      left: 267px;
+    }
+    @media (max-width: 349px) {
+      left: 85.6%;
+    }
+  }
+  .prev-frame {
+    position: absolute;
+    top: 74px;
+    left: 6.5px;
+    width: 36.5px;
+    height: 36.5px;
+    border: 1px solid #f4f5f7;
+    border-radius: 50%;
+    z-index: 100;
+  }
+`;
 
 function Carousel({ children, topSize }) {
   const SampleNextArrow = props => {
@@ -48,16 +82,23 @@ function Carousel({ children, topSize }) {
       style.display = 'none';
     }
     return (
-      <div
-        className={className}
-        style={{
-          ...style,
-          // top: '30%',
-          top: topSize,
-          zIndex: '100',
-        }}
-        onClick={onClick}
-      />
+      <>
+        <div
+          className="next-frame"
+          style={{
+            ...style,
+          }}
+        />
+        <div
+          className={className}
+          style={{
+            ...style,
+            top: topSize,
+            zIndex: '100',
+          }}
+          onClick={onClick}
+        />
+      </>
     );
   };
 
@@ -67,16 +108,23 @@ function Carousel({ children, topSize }) {
       style.display = 'none';
     }
     return (
-      <div
-        className={className}
-        style={{
-          ...style,
-          // top: '30%',
-          top: topSize,
-          zIndex: '100',
-        }}
-        onClick={onClick}
-      />
+      <>
+        <div
+          className="prev-frame"
+          style={{
+            ...style,
+          }}
+        />
+        <div
+          className={className}
+          style={{
+            ...style,
+            top: topSize,
+            zIndex: '100',
+          }}
+          onClick={onClick}
+        />
+      </>
     );
   };
 

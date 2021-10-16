@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 // core components
 
 import { Spin } from 'antd';
+import styled from 'styled-components';
 // import GridContainer from '../Grid/GridContainer.js';
 import GridItem from '../Grid/GridItem.js';
 import SectionHeader from '../SectionHeader';
@@ -13,13 +14,50 @@ import ReviewListItem from '../ReviewListItem';
 import Carousel from './Carousel/Carousel';
 import * as API from '../../apis';
 
-import styles from '../../assets/styles/commonStyle.js';
+import styles from '../../assets/styles/commonStyle';
 import backpackers from '../../assets/img/mocks/blogs/backpackers.png';
 import face1 from '../../assets/img/faces/christian.jpg';
 import face2 from '../../assets/img/faces/kendall.jpg';
 import face3 from '../../assets/img/faces/marc.jpg';
 
 const useStyles = makeStyles(styles);
+
+const SliderWrapper = styled.div`
+  .next-frame {
+    position: absolute;
+    top: 56px;
+    left: 93.1%;
+    width: 36.5px;
+    height: 36.5px;
+    border: 1px solid #f4f5f7;
+    border-radius: 50%;
+    @media (max-width: 1200px) {
+      left: 95.2%;
+    }
+    @media (max-width: 991px) {
+      left: 88.3%;
+    }
+    @media (max-width: 767px) {
+      left: 90.4%;
+    }
+    @media (max-width: 446px) {
+      left: 267px;
+    }
+    @media (max-width: 349px) {
+      left: 85.6%;
+    }
+  }
+  .prev-frame {
+    position: absolute;
+    top: 56px;
+    left: 6.5px;
+    width: 36.5px;
+    height: 36.5px;
+    border: 1px solid #f4f5f7;
+    border-radius: 50%;
+    z-index: 100;
+  }
+`;
 
 function ReviewSection() {
   const [tours, setTours] = useState();
@@ -52,6 +90,7 @@ function ReviewSection() {
         <GridItem xs={12} sm={12} md={12}>
           <div className={classes.description}>
             <SectionHeader title="Review" />
+            <SliderWrapper>
               <Carousel topSize="30%">
                 <ReviewListItem
                   key={1}
@@ -87,6 +126,7 @@ function ReviewSection() {
                   className="comment"
                 />
               </Carousel>
+            </SliderWrapper>
           </div>
         </GridItem>
       </Spin>
