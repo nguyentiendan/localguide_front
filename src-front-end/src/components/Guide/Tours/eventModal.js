@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import { Modal, message } from 'antd';
-import FullCalendar from '@fullcalendar/react';
+import FullCalendar,  { formatDate } from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import PropTypes from 'prop-types';
 import * as API from '../../../apis';
 
 const EventModal = ({ show, handleCancel, data }) => {
@@ -26,7 +26,7 @@ const EventModal = ({ show, handleCancel, data }) => {
             Tour name:<b>{info.event.title} </b>
           </p>
           <p>
-            Date : {info.event.startStr}~{info.event.endStr}
+            Date : {formatDate(info.event.startStr,{year: 'numeric', month: 'numeric', day: 'numeric'})} ~ {formatDate(info.event.endStr,{year: 'numeric', month: 'numeric', day: 'numeric'})}
           </p>
         </div>
       ),
@@ -52,7 +52,15 @@ const EventModal = ({ show, handleCancel, data }) => {
     message.success('Delete success');
     setLoading(false);
   };
-
+  
+  const renderEventContent = (eventInfo) => {
+    return (
+      <div style={{paddingLeft:10}}>
+        <b>{eventInfo.event.title}</b>
+      </div>
+    );
+  }
+  
   return (
     <div>
       <Modal
@@ -69,19 +77,41 @@ const EventModal = ({ show, handleCancel, data }) => {
           headerToolbar={{
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay',
-          }}
+            right: 'dayGridMonth,timeGridWeek,timeGridDay',            
+          }}          
+          nowIndicator={true}          
           initialView="dayGridMonth"
-          selectMirror
-          dayMaxEvents
+          selectMirror={true}
+          dayMaxEvents={true}
           weekends
           events={data}
+          eventContent={renderEventContent} // custom render function
           eventClick={confirmDeleteEvent}
           eventsSet={handleEvents} // called after events are initialized/added/changed/removed
         />
       </Modal>
     </div>
   );
+};
+
+EventModal.propTypes = {
+  show: PropTypes.bool,
+  handleCancel: PropTypes.func,
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      uid: PropTypes.string,
+      color: PropTypes.string,
+      start: PropTypes.string,
+      end: PropTypes.string,
+      title: PropTypes.string,
+      tourId: PropTypes.number,
+    })
+  ),  
+};
+
+EventModal.defaultProps = {  
+  handleCancel: () => {}, 
 };
 
 export default EventModal;

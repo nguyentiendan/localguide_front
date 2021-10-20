@@ -17,7 +17,6 @@ import colors from '../../../assets/styles/colors';
 import AddEvent from './addEventModal';
 import AllEvent from './allEventModal';
 import EventModal from './eventModal';
-import { set } from 'react-ga';
 
 const Wrapper = styled.div``;
 const FilterWrapper = styled.div`
@@ -46,26 +45,26 @@ function TourList() {
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      const res = await API.getGuideAllTours({ uid: user.uid });
+      const res = await API.getGuideAllTours({ uid: user.uid });      
       setData(res.data);
       setLoading(false);
     }
     fetchData();
   }, []);
 
-  //Fetch Event of All Tour
+  // Fetch Event of All Tour
   const fetchAllEvent = async () => {
-    var uid = user.uid
+    const { uid } = user;
     setLoading(true);
-    const res = await API.getGuideAllEvent({ uid });      
+    const res = await API.getGuideAllEvent({ uid });
     setEvent(res.data);
     setLoading(false);
   };
-  
-  //Fetch Event of one Tour
-  const fetchEventOfTour = async (uid, id) => {    
+
+  // Fetch Event of one Tour
+  const fetchEventOfTour = async (uid, id) => {
     setLoading(true);
-    const res = await API.getGuideEvent({ uid, id }); 
+    const res = await API.getGuideEvent({ uid, id });    
     if (res.data.length === 0) {
       Modal.confirm({
         title: 'Info',
@@ -77,15 +76,15 @@ function TourList() {
         ),
         closable: true,
         centered: true,
-        /*okText: 'OK',
+        /* okText: 'OK',
         onOk() {                  
-        },*/
+        }, */
         onCancel() {},
       });
     } else {
       setEvent(res.data);
       setShowEvent(true);
-    }    
+    }
     setLoading(false);
   };
 
@@ -102,23 +101,22 @@ function TourList() {
     setLoading(false);
   };
 
-  //show modal Create event
-  const showModalCreateEvent = () => {    
+  // show modal Create event
+  const showModalCreateEvent = () => {
     setShow(true);
   };
- 
-  //show modal event of All Tour
+
+  // show modal event of All Tour
   const showModalAllEvent = () => {
-    fetchAllEvent()
+    fetchAllEvent();
     setShowAllEvent(true);
   };
-  
-  //show modal event of Tour
-  const showModalEvent = (uid, id) => {    
-    fetchEventOfTour(uid, id)    
-    
+
+  // show modal event of Tour
+  const showModalEvent = (uid, id) => {
+    fetchEventOfTour(uid, id);
   };
-  
+
   const hideModal = () => {
     setShow(false);
   };
@@ -222,7 +220,10 @@ function TourList() {
               <EditOutlined title="Edit Tour" />
             </a>
             <a href="#">
-              <ScheduleOutlined onClick={() => showModalEvent(tour.uid, tour.id)}  title="View Event of this tour" />              
+              <ScheduleOutlined
+                onClick={() => showModalEvent(tour.uid, tour.id)}
+                title="View Event of this tour"
+              />
             </a>
             {(tour.status === 0 || tour.status === 2) && (
               <Popconfirm
@@ -252,12 +253,7 @@ function TourList() {
         Create New Tour
       </Button>
       &nbsp;&nbsp;&nbsp;
-      <Button
-        icon={<ScheduleOutlined />}
-        type="primary"
-        size="large"
-        onClick={showModalAllEvent} 
-      >
+      <Button icon={<ScheduleOutlined />} type="primary" size="large" onClick={showModalAllEvent}>
         All Schedule
       </Button>
       &nbsp;&nbsp;&nbsp;
@@ -265,7 +261,7 @@ function TourList() {
         icon={<CalendarOutlined />}
         type="primary"
         size="large"
-        onClick={showModalCreateEvent} 
+        onClick={showModalCreateEvent}
       >
         Create Event
       </Button>
@@ -284,13 +280,18 @@ function TourList() {
         />
       </ListWrapper>
       <div>
-        <AddEvent show={show} handleCancel={hideModal} uid={user.uid} data={data}/>          
+        <AddEvent show={show} handleCancel={hideModal} uid={user.uid} data={data} />
       </div>
       <div>
-        <AllEvent show={showAllEvent} handleCancel={hideAllEventModal} uid={user.uid} data={event}/>          
+        <AllEvent
+          show={showAllEvent}
+          handleCancel={hideAllEventModal}
+          //uid={user.uid}
+          data={event}
+        />
       </div>
       <div>
-        <EventModal show={showEvent} handleCancel={hideEventModal} data={event}/>          
+        <EventModal show={showEvent} handleCancel={hideEventModal} data={event} />
       </div>
     </Wrapper>
   );

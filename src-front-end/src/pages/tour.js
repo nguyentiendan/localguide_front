@@ -3,7 +3,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
-import { AiOutlineSchedule } from 'react-icons/ai';
 import {
   FaSuitcase,
   FaMoneyCheckAlt,
@@ -14,8 +13,7 @@ import {
   FaLanguage,
   FaUsers,
 } from 'react-icons/fa';
-import { MdGTranslate } from 'react-icons/md';
-import { Avatar, Spin } from 'antd';
+import { Spin, Modal } from 'antd';
 import _ from 'lodash';
 import qs from 'query-string';
 
@@ -44,6 +42,7 @@ import defaultImage from '../assets/img/noimage-600x400.jpg';
 import styles from '../assets/styles/tourPage';
 import PriceBox from '../components/PriceBox';
 import 'react-bnb-gallery/dist/style.css';
+import CalendarModal from '../components/Calendar/calendarModal';
 
 const Title = styled.h1`
   font-weight: bold;
@@ -395,11 +394,8 @@ const TourDescriptionItem = styled.li`
   }
 `;
 
-
 /** TODO
  * 1) Them icon Language (chi de 1 languagua, khi re vao thi ra tooltip)
- * 2) Them icon so nguoi - DONE
- * 3) Cho gia tien Tour len tren - DONE
  */
 const useStyles = makeStyles(styles);
 
@@ -419,6 +415,8 @@ function TourDetail({ location }) {
   const [tourDescriptionDays, setTourDescriptionDays] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [event, setEvent] = useState([]);
 
   const tourQuery = useMemo(() => {
     const query = {};
@@ -429,7 +427,7 @@ function TourDetail({ location }) {
 
   useEffect(() => {
     setLoading(true);
-    const fetchData = async () => {
+    const fetchPhoto = async () => {
       const res = await API.getTourPhotos(tourQuery);
       if (res.status === false) {
         const data = [{ photo: defaultImage, subcaption: 'no image' }];
@@ -439,15 +437,15 @@ function TourDetail({ location }) {
       }
       setLoading(false);
     };
-    fetchData();
-    const interval = setInterval(() => fetchData(), 200000);
+    fetchPhoto();
+    const interval = setInterval(() => fetchPhoto(), 200000);
     return () => {
       clearInterval(interval);
     };
   }, [tourQuery]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchTourDetail = async () => {
       const res = await API.getTourDetail(tourQuery);
       setTourDetails({
         tour: res.tour,
@@ -457,8 +455,41 @@ function TourDetail({ location }) {
         },
       });
     };
-    fetchData();
+    fetchTourDetail();
   }, [tourQuery]);
+
+  // Fetch Event of one Tour
+  const fetchEventOfTour = async (uid, id) => {
+    setLoading(true);
+    const res = await API.getCalendar({ uid, id });
+    if (res.data.length === 0) {
+      Modal.info({
+        title: 'Info',
+        content: (
+          <div>
+            <p>Calendar is updating now</p>
+            <p>Please wait.....</p>
+          </div>
+        ),
+        closable: true,
+        centered: true,
+        onOk() {},
+      });
+    } else {
+      setEvent(res.data);
+      setShowModal(true);
+    }
+    setLoading(false);
+  };
+
+  // show modal event of Tour
+  const handleShowModal = (uid, id) => {
+    fetchEventOfTour(uid, id);
+  };
+
+  const hideModal = () => {
+    setShowModal(false);
+  };
 
   useEffect(() => {
     const fetchTourDetails = async () => {
@@ -502,12 +533,12 @@ function TourDetail({ location }) {
   }, [tourQuery]);
 
   useEffect(() => window.addEventListener('resize', bookButtonHeight));
-  
+
   const bookButtonHeight = () => {
     const windowsScrollTop = window.pageYOffset;
     const bookHeight = document.getElementById('booknow').getBoundingClientRect().top;
     return windowsScrollTop + bookHeight - 70;
-  }
+  };
 
   useEffect(() => {
     if (bookButtonHeight()) {
@@ -526,38 +557,40 @@ function TourDetail({ location }) {
     const windowWidth = document.documentElement.clientWidth;
     const pageHeight = document.documentElement.scrollHeight;
 
-    if (windowsScrollTop < bookButtonHeight() ||
-        (windowWidth < 751 && windowsScrollTop + windowHeight === pageHeight)) {
+    if (
+      windowsScrollTop < bookButtonHeight() ||
+      (windowWidth < 751 && windowsScrollTop + windowHeight === pageHeight)
+    ) {
       setShow(false);
     } else {
       setShow(true);
     }
-  }
+  };
 
   // optionは省略可能、初期値は以下のようになります。
-  var option = {
-      root: null,
-      rootMargin: "0px",
-      threshold: [0]
+  const option = {
+    root: null,
+    rootMargin: '0px',
+    threshold: [0],
   };
   // 交差した際の処理を記載
-  var callback = function (entries, observer) {
-      entries.forEach(function (entry) {
-          // 交差している場合はtrue
-          if (entry.isIntersecting) {
-              // 処理実行
-              alert(entry.isIntersecting);
-              // 処理完了後、監視を止めたい場合
-              //observer.unobserve(entry.target);
-          } else {
-              alert(entry.isIntersecting);
-          }
-      });
+  const callback = function(entries, observer) {
+    entries.forEach(function(entry) {
+      // 交差している場合はtrue
+      if (entry.isIntersecting) {
+        // 処理実行
+        alert(entry.isIntersecting);
+        // 処理完了後、監視を止めたい場合
+        // observer.unobserve(entry.target);
+      } else {
+        alert(entry.isIntersecting);
+      }
+    });
   };
-  var observer = new IntersectionObserver(callback, option); // callback, optionを設定
+  const observer = new IntersectionObserver(callback, option); // callback, optionを設定
   // Polyfillを使っている場合コメントアウトを外す
   // observer.POLL_INTERVAL = 100;
-  //observer.observe(target); // 監視を開始
+  // observer.observe(target); // 監視を開始
 
   return (
     <Layout scrollHeight={10} textColor="black">
@@ -813,10 +846,27 @@ function TourDetail({ location }) {
                         isActive
                       />
                     </PriceMenuWrapper>
-                    <BookButton color="rose" loading={loading} disabled={loading}　id="booknow">
+                    <BookButton color="rose" loading={loading} disabled={loading} id="booknow">
                       Book now
                     </BookButton>
                   </PriceWrapper>
+                </div>
+              </GridItem>
+            </GridContainer>
+
+            <GridContainer justifyContent="center">
+              <GridItem xs={12} sm={12} md={12}>
+                <div>
+                  <Button
+                    color="rose"
+                    simple
+                    size="sm"
+                    loading={loading}
+                    round
+                    onClick={() => handleShowModal(uid, id)}
+                  >
+                    Check calendar
+                  </Button>
                 </div>
               </GridItem>
             </GridContainer>
@@ -957,11 +1007,19 @@ function TourDetail({ location }) {
       </div>
       <Footer />
       <PriceBox
-        name = {tourDetails.tour[0]?.name || ''}
-        price = {tourDetails.tour[0]?.total || 0}
+        name={tourDetails.tour[0]?.name || ''}
+        price={tourDetails.tour[0]?.total || 0}
         loading={loading}
         show={show}
       />
+      <div>
+        <CalendarModal
+          show={showModal}
+          handleCancel={hideModal}
+          data={event}
+          name={tourDetails.tour[0]?.name}
+        />
+      </div>
     </Layout>
   );
 }

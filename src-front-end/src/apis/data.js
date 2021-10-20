@@ -107,6 +107,16 @@ export async function getGuideAllTours({ uid }) {
   });
 }
 
+// Create tour Event
+export async function createTourEvent({ uid, tourId, color, startDate, endDate }) {
+  return request({
+    url: `/tourEvent/create`,
+    method: 'POST',
+    authRequired: true,
+    data: { uid, tourId, color, startDate, endDate },
+  });
+}
+
 // Get all event of all tour
 export async function getGuideAllEvent({ uid }) {
   return request({
@@ -122,6 +132,14 @@ export async function getGuideEvent({ uid, id }) {
     url: `/guide/eventTour/${uid}/${id}`,
     method: 'GET',
     authRequired: true,
+  });
+}
+
+// Get calendar of Tour
+export async function getCalendar({ uid, id }) {
+  return request({
+    url: `/tour/calendar/${uid}/${id}`,
+    method: 'GET',
   });
 }
 
@@ -412,16 +430,6 @@ export async function createTourSchedule({ tourId, day, pickup, schedule }) {
     method: 'POST',
     authRequired: true,
     data: { tourId, day, pickup, schedule },
-  });
-}
-
-// Create tour Event
-export async function createTourEvent({ uid, tourId, color, start_date, end_date }) {
-  return request({
-    url: `/tourEvent/create`,
-    method: 'POST',
-    authRequired: true,
-    data: { uid, tourId, color, start_date, end_date },
   });
 }
 
