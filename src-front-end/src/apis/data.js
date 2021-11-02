@@ -107,6 +107,16 @@ export async function getGuideAllTours({ uid }) {
   });
 }
 
+// Create contact to guide
+export async function createContact({ userId, uid, tourId, content }) {
+  return request({
+    url: `/contact/new`,
+    method: 'POST',
+    authRequired: true,
+    data: { userId, uid, tourId, content },
+  });
+}
+
 // Create tour Event
 export async function createTourEvent({ uid, tourId, color, startDate, endDate }) {
   return request({

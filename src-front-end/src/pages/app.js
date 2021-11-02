@@ -28,6 +28,7 @@ import ProfileReview from '../components/User/UserReview';
 import BecomeGuide from '../components/User/BecomeGuide';
 import StartProfile from '../components/User/Start';
 import ChangePass from '../components/User/ChangePass';
+import ChatPanel from '../components/ChatPanel';
 import Page404 from '../components/NotFound';
 
 const NotFound = () => (
@@ -66,6 +67,7 @@ const App = () => (
     <PrivateRoute path="/profileReview" component={ProfileReview} />
     <PrivateRoute path="/start" component={StartProfile} />
     <PrivateRoute path="/changePass" component={ChangePass} />
+    <PrivateRoute path="/user/chat" component={ChatPanel} />
 
     <NotFound default />
   </Router>

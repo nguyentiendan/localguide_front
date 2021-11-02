@@ -45,7 +45,7 @@ function TourList() {
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      const res = await API.getGuideAllTours({ uid: user.uid });      
+      const res = await API.getGuideAllTours({ uid: user.uid });
       setData(res.data);
       setLoading(false);
     }
@@ -64,21 +64,23 @@ function TourList() {
   // Fetch Event of one Tour
   const fetchEventOfTour = async (uid, id) => {
     setLoading(true);
-    const res = await API.getGuideEvent({ uid, id });    
+    const res = await API.getGuideEvent({ uid, id });
     if (res.data.length === 0) {
       Modal.confirm({
         title: 'Info',
         content: (
           <div>
-            <p>You are not setting calendar for tour</p>
-            <p>Please setting schedule for tour</p>
+            <p>You are not setting calendar for this tour</p>
+            <p>Click OK to create calendar</p>
           </div>
         ),
         closable: true,
         centered: true,
-        /* okText: 'OK',
-        onOk() {                  
-        }, */
+        okText: 'OK',
+        onOk() {
+          // Create event
+          setShow(true);
+        },
         onCancel() {},
       });
     } else {
@@ -286,7 +288,7 @@ function TourList() {
         <AllEvent
           show={showAllEvent}
           handleCancel={hideAllEventModal}
-          //uid={user.uid}
+          // uid={user.uid}
           data={event}
         />
       </div>

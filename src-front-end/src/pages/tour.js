@@ -21,6 +21,8 @@ import { FormatQuote } from '@material-ui/icons';
 import ReactBnbGallery from 'react-bnb-gallery';
 import NumberFormat from 'react-number-format';
 import * as API from '../apis';
+import { useLocalStorage } from '../utils/storage';
+import { AUTH_TOKEN_KEY } from '../utils/auth';
 import Layout from '../components/CustomLayout';
 import SEO from '../components/SEO';
 import Footer from '../components/Footer/Footer';
@@ -43,6 +45,8 @@ import styles from '../assets/styles/tourPage';
 import PriceBox from '../components/PriceBox';
 import 'react-bnb-gallery/dist/style.css';
 import CalendarModal from '../components/Calendar/calendarModal';
+import ContactGuide from '../components/ContactGuide';
+import { navigate } from 'gatsby';
 
 const Title = styled.h1`
   font-weight: bold;
@@ -402,7 +406,7 @@ const useStyles = makeStyles(styles);
 function TourDetail({ location }) {
   const classes = useStyles();
   const [show, setShow] = useState(false);
-
+  const [authToken, setAuthToken] = useLocalStorage(AUTH_TOKEN_KEY);
   const dataQueryParams = qs.parse(location.search);
   const { uid } = dataQueryParams;
   const { id } = dataQueryParams;
@@ -416,6 +420,7 @@ function TourDetail({ location }) {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showContact, setShowContact] = useState(false);
   const [event, setEvent] = useState([]);
 
   const tourQuery = useMemo(() => {
@@ -480,6 +485,37 @@ function TourDetail({ location }) {
       setShowModal(true);
     }
     setLoading(false);
+  };
+
+  const handleContactGuide = () => {
+    if (!authToken) {
+      Modal.confirm({
+        title: 'Confirm',
+        // icon: <FaUsers />,
+        content: (
+          <div>
+            <p>You are not Login</p>
+          </div>
+        ),
+        closable: true,
+        centered: true,
+        okText: 'Login',
+        cancelText: 'Cancel',
+        onOk() {
+          // Navigate to login page
+          navigate('/login?uid=3508d1f7-5f70-42d2-a88a-0d1d0a5efadb&id=13');
+        },
+        onCancel() {},
+      });
+    } else {
+      setShowContact(true);
+    }
+  };
+  const handleNavi = () => {
+    navigate('/app/user/chat');
+  };
+  const hideContact = () => {
+    setShowContact(false);
   };
 
   // show modal event of Tour
@@ -856,7 +892,7 @@ function TourDetail({ location }) {
 
             <GridContainer justifyContent="center">
               <GridItem xs={12} sm={12} md={12}>
-                <div>
+                <div style={{ marginLeft: 45 }}>
                   <Button
                     color="rose"
                     simple
@@ -866,6 +902,26 @@ function TourDetail({ location }) {
                     onClick={() => handleShowModal(uid, id)}
                   >
                     Check calendar
+                  </Button>
+                  <Button
+                    color="rose"
+                    simple
+                    size="sm"
+                    loading={loading}
+                    round
+                    onClick={() => handleContactGuide()}
+                  >
+                    Contact guide
+                  </Button>
+                  <Button
+                    color="rose"
+                    simple
+                    size="sm"
+                    loading={loading}
+                    round
+                    onClick={() => handleNavi()}
+                  >
+                    Chat
                   </Button>
                 </div>
               </GridItem>
@@ -1018,6 +1074,16 @@ function TourDetail({ location }) {
           handleCancel={hideModal}
           data={event}
           name={tourDetails.tour[0]?.name}
+        />
+      </div>
+      <div>
+        <ContactGuide
+          show={showContact}
+          handleCancel={hideContact}
+          guideName={tourDetails.tour[0]?.fullName}
+          tourName={tourDetails.tour[0]?.name}
+          uid={uid}
+          tourId={parseInt(id, 10)}
         />
       </div>
     </Layout>

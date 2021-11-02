@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { makeStyles } from '@material-ui/core/styles';
+import qs from 'query-string';
 import * as API from '../apis';
 import { useLocalStorage } from '../utils/storage';
 import { AUTH_TOKEN_KEY } from '../utils/auth';
@@ -37,6 +38,7 @@ function LoginPage() {
   const [authToken, setAuthToken] = useLocalStorage(AUTH_TOKEN_KEY);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const queryStr = qs.parse(location.search);
 
   if (authToken) {
     navigate('/');
@@ -60,6 +62,9 @@ function LoginPage() {
         setLoading(false);
         setErrorMessage('');
         setAuthToken(jwt.sign({ ...profile, role: Role, token: Token }, 'tour-guide-pal'));
+        if (queryStr.uid.length > 0) {
+          navigate(`/tour?uid=${queryStr.uid}&id=${queryStr.id}`);
+        }
       } else {
         setLoading(false);
         setErrorMessage(message);
