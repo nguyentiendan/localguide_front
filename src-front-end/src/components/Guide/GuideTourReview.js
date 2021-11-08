@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import qs from 'query-string';
 import { navigate } from 'gatsby';
 import TourReview from './Tours/TourReview';
-import { getUserProfile, ISGUIDE } from '../../utils/auth';
+import { getUserProfile, ISADMIN } from '../../utils/auth';
 
 const GuideTourReview = ({ location }) => {
   const dataQueryParams = qs.parse(location.search);
@@ -10,7 +10,7 @@ const GuideTourReview = ({ location }) => {
   const { id } = dataQueryParams;
 
   const [userProfile] = useState(getUserProfile());
-  if (userProfile.role != ISGUIDE) {
+  if (userProfile.role == ISADMIN) {
     navigate('/app/admin');
     return null;
   }

@@ -734,7 +734,7 @@ export async function checkEmail(email) {
 }
 
 // Reject user become a guide
-export async function reject(uid, id, reason) {
+export async function rejectBecomeGuide(uid, id, reason) {
   return request({
     url: '/admin/reject',
     method: 'POST',

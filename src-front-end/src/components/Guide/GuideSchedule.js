@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { navigate } from 'gatsby';
 import AdminLayout from '../AdminLayout';
 import Schedule from './Schedule';
-import { getUserProfile, ISGUIDE } from '../../utils/auth';
+import { getUserProfile, ISADMIN } from '../../utils/auth';
 
 const GuideSchedule = () => {
   const [userProfile] = useState(getUserProfile());
-  if (userProfile.role != ISGUIDE) {
+  if (userProfile.role == ISADMIN) {
     navigate('/app/admin');
     return null;
   }

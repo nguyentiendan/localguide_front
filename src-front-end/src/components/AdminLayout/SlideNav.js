@@ -24,7 +24,7 @@ const SlideNav = () => {
   return (
     <div>
       <div style={{ height: '32px', margin: '16px' }}>
-        <h2 style={{ color: '#fff' }}>Admin</h2>
+        <h2 style={{ color: '#fff' }}>{user.fullname}</h2>
       </div>
       <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
         <Menu.Item key="1">
@@ -36,7 +36,7 @@ const SlideNav = () => {
               </a>
             </span>
           )}
-          {user.role === 2 && (
+          {(user.role === 2 || user.role === 4) && (
             <span>
               <Link to="/app/guideAdmin/" style={{ color: '#ccc' }}>
                 Dashboard
@@ -44,23 +44,28 @@ const SlideNav = () => {
             </span>
           )}
         </Menu.Item>
-        <Menu.Item key="2">
-          <RocketOutlined />
-          {user.role === 3 && (            
-            <span >
-              <Link to="/app/adminTourList/"  style={{ color: '#ccc' }}>
-                Tour List
-              </Link>
-            </span>
-          )}
-          {user.role === 2 && (
-            <span>
-              <Link to="/app/guideTourList/" style={{ color: '#ccc' }}>
-                Tour List
-              </Link>
-            </span>
-          )}
-        </Menu.Item>
+       
+        {user.role === 3 && (            
+          <Menu.Item key="2">
+            <RocketOutlined />
+              <span >
+                <Link to="/app/adminTourList/"  style={{ color: '#ccc' }}>
+                  Tour List
+                </Link>
+              </span>
+          </Menu.Item>  
+        )}
+
+        {(user.role === 2) && (
+          <Menu.Item key="2">
+            <RocketOutlined />
+              <span>
+                <Link to="/app/guideTourList/" style={{ color: '#ccc' }}>
+                  Tour List
+                </Link>
+              </span>
+          </Menu.Item>  
+        )}
 
         {user.role === 3 && (
           <Menu.Item key="3">
@@ -72,7 +77,7 @@ const SlideNav = () => {
             </span>
           </Menu.Item>
         )}
-        {user.role === 2 && (
+        {(user.role === 2 || user.role === 4) && (
           <>
             <Menu.Item key="4">
               <ProfileOutlined />
@@ -118,7 +123,7 @@ const SlideNav = () => {
 
         <Menu.Item key="7">
           <ProfileOutlined />
-          {(user.role === 3 || user.role === 2) && (
+          {(user.role === 3 || user.role === 2 || user.role === 4) && (
             <span>
               <Link to="/app/adminChangePass" style={{ color: '#ccc' }}>
                 Change Password

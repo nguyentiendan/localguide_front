@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import qs from 'query-string';
 import { navigate } from 'gatsby';
 import Profile from './Profile/Profile';
-import { getUserProfile, ISGUIDE } from '../../utils/auth';
+import { getUserProfile, ISADMIN } from '../../utils/auth';
 
 const ReviewProfile = () => {
   const [userProfile] = useState(getUserProfile());
-  if (userProfile.role != ISGUIDE) {
+  if (userProfile.role == ISADMIN) {
     navigate('/app/admin');
     return null;
   }
