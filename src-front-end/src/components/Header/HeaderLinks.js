@@ -57,10 +57,10 @@ export default function HeaderLinks() {
                 target="_blank"
                 className={classes.dropdownLink}
               >
-                Admin Setting
+                Admin Dashboard
               </a>  
             ),       
-            user.role === 2 && (    
+            (user.role === 2) && (    
               <a 
                 href="/app/guideAdmin"
                 target="_blank"
@@ -69,7 +69,16 @@ export default function HeaderLinks() {
                 Guide Admin
               </a>
             ),
-            (user.role === 1 && (user.reqActive === 0 || user.reqActive === 1)) && (
+            (user.role === 4) && (    
+              <a 
+                href="/app/guideProfile"
+                target="_blank"
+                className={classes.dropdownLink}
+              >
+                Your Profile
+              </a>
+            ),            
+            (user.role === 1) && (
               <a 
                 href="/app/profile"
                 target="_blank"

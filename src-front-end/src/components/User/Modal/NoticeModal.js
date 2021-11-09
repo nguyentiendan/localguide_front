@@ -19,8 +19,11 @@ const NoticeModal = show => {
           </Button>,
         ]}
       >
-        <p>Your account was approve become a guide.</p>
-        <p>Please click logout and login again .</p>
+        <div>
+          <p>Your account is waiting approve become guide</p>
+          <p>Admin will check your profile</p>
+          <p>You should be logout and login again to take effect.</p>
+        </div>
       </Modal>
     </>
   );

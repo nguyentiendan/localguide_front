@@ -1,69 +1,47 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
-import { Steps, Form, Button, Spin } from 'antd';
+import { Typography, Button, Spin, message, Modal } from 'antd';
 import { navigate } from 'gatsby';
+import _ from 'lodash';
 import Layout from '../CustomLayout';
-import Parallax from '../Parallax/Parallax.js';
-import Footer from '../Footer/Footer.js';
+import Parallax from '../Parallax/Parallax';
+import SEO from '../SEO';
+import Footer from '../Footer/Footer';
+import * as API from '../../apis';
+import styles from '../../assets/styles/profilePage';
 import { getUserProfile, ISUSER } from '../../utils/auth';
-import styles from '../../assets/styles/profilePage.js';
-import StepLayout from './StepLayouts';
+import NoticeModal from './Modal/NoticeModal';
+
 
 const useStyles = makeStyles(styles);
+const { Title, Paragraph, Text, Link } = Typography;
 
-const StepContent = styled.div`
-  //min-height: 200px;
-  width: 100%;
-  margin-top: 16px;
-  //padding-top: 80px;
-  //text-align: center;
-  background-color: #fafafa;
-  border: 1px dashed #e9e9e9;
-  border-radius: 2px;
-`;
-
-const StepAction = styled.div`
-  margin-top: 15px;
-  margin-bottom: 20px;
-  text-align: center;
-`;
-
-const { Step } = Steps;
-
-const BECOME_GUIDE_STEP = [
-  {
-    title: 'Basic Profile',
-    content: <StepLayout.Step1 />,
-  },
-  {
-    title: 'Advance Profile',
-    content: <StepLayout.Step2 />,
-  },
-  {
-    title: 'Finish',
-    content: <StepLayout.Step3 />,
-  },
-];
-
-function BecomeGuide() {
-  const [profile] = useState(getUserProfile());
-  const { uid } = profile;
+const BecomeGuide = () => {
   const classes = useStyles();
-  const [current, setCurrent] = useState(0);
-
-  if (profile.role != ISUSER) {
+  const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [userProfile] = useState(getUserProfile());
+  const { uid } = userProfile;
+  if (userProfile.role != ISUSER) {    
     navigate('/');
     return null;
   }
 
-  const handleNext = () => {
-    setCurrent(current + 1);
-  };
-
-  const handlePrev = () => {
-    setCurrent(current - 1);
+  const handleAgree = async () => {
+    setLoading(true);
+    try {
+      const result = await API.sendRequestApprove({ uid });
+      if (result.status == true) {
+        setVisible(true);       
+      } else {
+        message.error(result.message);
+      }
+    }
+    catch (e) {
+      message.error(e);
+    }
+    setLoading(false);
   };
 
   const handleCancel = () => {
@@ -72,40 +50,79 @@ function BecomeGuide() {
 
   return (
     <Layout>
+      <SEO title="User Profile" />
       <Parallax small filter image={require('../../assets/img/home-banner.jpg')} />
-      <div className={classNames(classes.main, classes.mainRaised)}>
-        <div className={classes.container}>
-          <Steps current={current} style={{ paddingTop: '50px' }}>
-            {BECOME_GUIDE_STEP.map(item => (
-              <Step key={item.title} title={item.title} />
-            ))}
-          </Steps>
-          <StepContent>{BECOME_GUIDE_STEP[current].content}</StepContent>
-          <StepAction>
-            {current < BECOME_GUIDE_STEP.length - 1 && (
-              <>
-                <Button style={{ margin: '0 8px' }} onClick={() => handleCancel()}>
+        <div className={classNames(classes.main)}>          
+          <div
+            className={classes.description}
+            style={{
+              backgroundColor: '#fafafa',
+              border: '1px dashed #e9e9e9',
+              borderRadius: '2px',
+              paddingLeft: '15px',
+              paddingRight: '15px'
+            }}
+          >
+            <Spin spinning={loading}>
+            <Typography>
+              <Title>Guide Terms and Service</Title>
+              <Title level={3}>
+                Please read carefully and agree to the following terms  
+              </Title>
+              <Paragraph>
+                <ul>
+                  <li>
+                    <p>In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+                    used to demonstrate the visual form of a document or a typeface without
+                    relying on meaningful content.{' '}</p>
+                  </li>
+                  <li>
+                    <p>In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+                    used to demonstrate the visual form of a document or a typeface without
+                    relying on meaningful content.{' '}</p>
+                  </li>
+                  <li>
+                    <p>In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+                    used to demonstrate the visual form of a document or a typeface without
+                    relying on meaningful content.{' '}</p>
+                  </li>
+                  <li>
+                    <p>In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+                    used to demonstrate the visual form of a document or a typeface without
+                    relying on meaningful content.{' '}</p>
+                  </li>
+                  <li>
+                    <p>In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+                    used to demonstrate the visual form of a document or a typeface without
+                    relying on meaningful content.{' '}</p>
+                  </li>
+                  <li>
+                    <p>In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+                    used to demonstrate the visual form of a document or a typeface without
+                    relying on meaningful content.{' '}</p>
+                  </li>
+                </ul>
+              </Paragraph>
+              <div style={{  
+                  display: 'flex',                
+                  justifyContent: 'center',
+                  paddingTop: '30px', 
+                  paddingBottom: '30px' 
+                }}>
+                <Button key="back" onClick={handleCancel}>
                   Cancel
                 </Button>
-
-                <Button type="primary" onClick={() => handleNext()}>
-                  Next
+                &nbsp;&nbsp;&nbsp;
+                <Button key="submit" type="primary" loading={loading} onClick={handleAgree}>
+                  Agree this terms
                 </Button>
-              </>
-            )}
-            {current === BECOME_GUIDE_STEP.length - 1 && profile.reqActive != 2 && (
-              <Button onClick={() => handleCancel()}>Cancel</Button>
-            )}
-
-            {current > 0 && (
-              <Button type="primary" style={{ margin: '0 8px' }} onClick={() => handlePrev()}>
-                Previous
-              </Button>
-            )}
-          </StepAction>
+              </div>  
+            </Typography>  
+            </Spin>
+          </div>
+          <Footer />
+          <NoticeModal visible={visible} />
         </div>
-        <Footer />
-      </div>
     </Layout>
   );
 }

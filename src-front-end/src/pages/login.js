@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { makeStyles } from '@material-ui/core/styles';
+import qs from 'query-string';
 import * as API from '../apis';
 import { useLocalStorage } from '../utils/storage';
 import { AUTH_TOKEN_KEY } from '../utils/auth';
@@ -17,6 +18,7 @@ import CardHeader from '../components/Card/CardHeader';
 import CardFooter from '../components/Card/CardFooter';
 import Footer from '../components/Footer/Footer';
 import styles from '../assets/jss/material-kit-react/views/loginPage';
+import { remove } from '../utils/storage';
 
 const useStyles = makeStyles(styles);
 
@@ -37,8 +39,12 @@ function LoginPage() {
   const [authToken, setAuthToken] = useLocalStorage(AUTH_TOKEN_KEY);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
-  if (authToken) {
+  const queryStr = qs.parse(location.search);
+  
+  //Process after Approve or Reject. Must login again to effect
+  if ((queryStr.isBecomeGuide || queryStr.isReject) && authToken) {        
+    remove(AUTH_TOKEN_KEY);           
+  }  else if (authToken) {    
     navigate('/');
   }
 
@@ -60,6 +66,7 @@ function LoginPage() {
         setLoading(false);
         setErrorMessage('');
         setAuthToken(jwt.sign({ ...profile, role: Role, token: Token }, 'tour-guide-pal'));
+        navigate('/');
       } else {
         setLoading(false);
         setErrorMessage(message);

@@ -76,8 +76,8 @@ function Guides() {
         <div>
           <GuideTitle>
             <AvatarWrapper src={guide.avatar} icon={<UserOutlined />} size="small" />
-            {(guide.role === 1 || guide.role === 3) && guide.reqActive === 0 && name}
-            {guide.role === 1 && (guide.reqActive === 1 || guide.reqActive === 2) && (
+            {(guide.role === 1 || guide.role === 3) && name}
+            {(guide.role === 4) && (
               <a
                 href={`/app/adminUserReview?uid=${guide.uid}&id=${guide.id}`}
                 target="_blank"
@@ -86,7 +86,7 @@ function Guides() {
                 {name}
               </a>
             )}
-            {guide.role === 2 && (
+            {(guide.role === 2 ) && (
               <a
                 href={`/app/adminGuideReview?uid=${guide.uid}&id=${guide.id}`}
                 target="_blank"
@@ -131,6 +131,7 @@ function Guides() {
         <Space size="middle">
           {guide.role === 1 && 'User'}
           {guide.role === 2 && 'Guide'}
+          {guide.role === 4 && 'User->Guide'}
           {guide.role === 3 && 'Admin'}
         </Space>
       ),
@@ -140,9 +141,9 @@ function Guides() {
       key: 'status',
       render: (status, guide) => (
         <Space size="middle">
-          {guide.status === 1 && guide.reqActive == 0 && <Tag color="success">Active</Tag>}
-          {guide.status === 1 && (guide.reqActive == 1 || guide.reqActive == 2) && (
-            <Tag color="processing">Waiting</Tag>
+          {guide.status === 1 && <Tag color="success">Active</Tag>}
+          {guide.status === 1 && (guide.role === 4) && (
+            <Tag color="processing">Waiting approve</Tag>
           )}
           {guide.status === 0 && <Tag color="error">Not active</Tag>}
         </Space>

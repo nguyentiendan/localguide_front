@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import { Steps, Button } from 'antd';
 import { navigate } from 'gatsby';
 import AdminLayout from '../AdminLayout';
-import { getUserProfile, ISGUIDE } from '../../utils/auth';
+import * as API from '../../apis';
+import { getUserProfile, ISADMIN, ISUSER } from '../../utils/auth';
 import StepLayout from './Profile/StepLayouts';
 
 const StepContent = styled.div`
@@ -45,9 +46,9 @@ const GUIDE_STEP = [
 ];
 
 const GuideProfile = () => {
-  const [userProfile] = useState(getUserProfile());
+  const [userProfile] = useState(getUserProfile());  
   const [current, setCurrent] = useState(0);
-  if (userProfile.role != ISGUIDE) {
+  if (userProfile.role == ISADMIN || userProfile.role == ISUSER) {
     navigate('/');
     return null;
   }
@@ -66,7 +67,14 @@ const GuideProfile = () => {
 
   return (
     <AdminLayout>
-      <h2>Guide Profile</h2>
+      {userProfile.role == 2 && <h2>Guide Profile</h2>}
+      {userProfile.role == 4 && 
+        <>
+          <h2>User Profile</h2>
+          <p>You are waiting admin approve to become a guide</p>
+          <p>Please update your profile in detail</p>
+        </>
+      }
       <div>
         <Steps current={current} style={{ paddingTop: '50px' }}>
           {GUIDE_STEP.map(item => (
