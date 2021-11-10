@@ -508,7 +508,9 @@ function TourDetail({ location }) {
         onCancel() {},
       });
     } else {
+      //If this is a first time contact guide (of this tour) -> show modal Contact guide
       setShowContact(true);
+      //If this is a second time contact guide (of this tour) -> show chat pannel
     }
   };
   const handleNavi = () => {
@@ -911,7 +913,7 @@ function TourDetail({ location }) {
                     round
                     onClick={() => handleContactGuide()}
                   >
-                    Contact guide
+                    Contact guide                    
                   </Button>
                   <Button
                     color="rose"

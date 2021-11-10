@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { Modal, Form, Input, Button, message } from 'antd';
 import SendIcon from '@material-ui/icons/Send';
 import { makeStyles } from '@material-ui/core/styles';
-import { getUserProfile } from '../../utils/auth';
+import { getUserProfile, AUTH_TOKEN_KEY } from '../../utils/auth';
+import { useLocalStorage } from '../../utils/storage';
 import * as API from '../../apis';
 
 const styleWrapper = {
@@ -28,9 +29,12 @@ const ConactGuide = ({ show, handleCancel, guideName, tourName, uid, tourId }) =
   const [form] = Form.useForm();
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
+  const [authToken, setAuthToken] = useLocalStorage(AUTH_TOKEN_KEY);
   const [userProfile] = useState(getUserProfile());
-  const userId = userProfile.id;
-
+  if (authToken) {    
+    const userId = userProfile.id;
+  }
+  
   const onFinish = async values => {
     const key = 'updatable';
     if (loading) {
