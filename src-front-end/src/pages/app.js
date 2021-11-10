@@ -24,11 +24,14 @@ import ReviewProfile from '../components/Guide/ReviewProfile';
 
 // User
 import UserProfile from '../components/User/Profile';
-import ProfileReview from '../components/User/UserReview';
-import BecomeGuide from '../components/User/BecomeGuide';
-import StartProfile from '../components/User/Start';
 import ChangePass from '../components/User/ChangePass';
 import ChatPanel from '../components/ChatPanel';
+import BecomeGuide from '../components/User/BecomeGuide';
+
+//import BecomeGuide1 from '../components/User/BecomeGuide1';
+//import StartProfile from '../components/User/Start';
+//import ProfileReview from '../components/User/UserReview';
+
 import Page404 from '../components/NotFound';
 
 const NotFound = () => (
@@ -63,11 +66,13 @@ const App = () => (
 
     {/* User */}
     <PrivateRoute path="/profile" component={UserProfile} />
-    <PrivateRoute path="/becomeGuide" component={BecomeGuide} />
-    <PrivateRoute path="/profileReview" component={ProfileReview} />
-    <PrivateRoute path="/start" component={StartProfile} />
     <PrivateRoute path="/changePass" component={ChangePass} />
+    <PrivateRoute path="/becomeGuide" component={BecomeGuide} />
     <PrivateRoute path="/user/chat" component={ChatPanel} />
+
+    {/*<PrivateRoute path="/becomeGuide" component={BecomeGuide1} />
+    <PrivateRoute path="/profileReview" component={ProfileReview} />
+    <PrivateRoute path="/start" component={StartProfile} />*/}  
 
     <NotFound default />
   </Router>

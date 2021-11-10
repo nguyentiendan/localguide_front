@@ -326,7 +326,7 @@ function AdminUserReview({ uid, id }) {
   const onReject = async values => {
     try {
       setLoading(true);
-      const { status } = await API.reject(uid, id, values.reason);
+      const { status } = await API.rejectBecomeGuide(uid, id, values.reason);
 
       if (status === true) {
         message.success('Reject success');
@@ -543,7 +543,7 @@ function AdminUserReview({ uid, id }) {
         </Drawer>
 
         <Modal
-          title="Guide Reject Confirm"
+          title="User Reject Confirm"
           visible={showModal}
           okText="Reject"
           onCancel={handleCancel}

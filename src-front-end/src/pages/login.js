@@ -18,6 +18,7 @@ import CardHeader from '../components/Card/CardHeader';
 import CardFooter from '../components/Card/CardFooter';
 import Footer from '../components/Footer/Footer';
 import styles from '../assets/jss/material-kit-react/views/loginPage';
+import { remove } from '../utils/storage';
 
 const useStyles = makeStyles(styles);
 
@@ -39,8 +40,11 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const queryStr = qs.parse(location.search);
-
-  if (authToken) {
+  
+  //Process after Approve or Reject. Must login again to effect
+  if ((queryStr.isBecomeGuide || queryStr.isReject) && authToken) {        
+    remove(AUTH_TOKEN_KEY);           
+  }  else if (authToken) {    
     navigate('/');
   }
 
@@ -65,6 +69,7 @@ function LoginPage() {
         if (queryStr.uid.length > 0) {
           navigate(`/tour?uid=${queryStr.uid}&id=${queryStr.id}`);
         }
+        navigate('/');
       } else {
         setLoading(false);
         setErrorMessage(message);

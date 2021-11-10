@@ -3,6 +3,7 @@ import { get } from './storage';
 
 export const ISADMIN = 3;
 export const ISGUIDE = 2;
+export const ISBECOMEGUIDE = 4; // user is waiting become a guide
 export const ISUSER = 1;
 
 export const AUTH_TOKEN_KEY = 'auth.token';
@@ -33,7 +34,7 @@ export function isAuthenticated() {
   return true;
 }
 
-export function getUserProfile() {
+export function getUserProfile() { 
   const payload = decodeToken();
 
   if (!payload) {

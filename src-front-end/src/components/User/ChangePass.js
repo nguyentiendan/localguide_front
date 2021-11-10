@@ -81,7 +81,7 @@ const ChangePass = () => {
       <Spin spinning={loading}>
         <div className={classNames(classes.main, classes.mainRaised)}>
           <div
-            className={classes.container}
+            className={classes.description}
             style={{
               backgroundColor: '#fafafa',
               border: '1px dashed #e9e9e9',
