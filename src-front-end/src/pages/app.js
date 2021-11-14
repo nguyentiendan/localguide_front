@@ -33,6 +33,7 @@ import BecomeGuide from '../components/User/BecomeGuide';
 //import ProfileReview from '../components/User/UserReview';
 
 import Page404 from '../components/NotFound';
+import SessionTimeout from '../components/SessionTimeout';
 
 const NotFound = () => (
   <>
@@ -76,6 +77,7 @@ const App = () => (
     
 
     <NotFound default />
+    <SessionTimeout />
   </Router>
 );
 
