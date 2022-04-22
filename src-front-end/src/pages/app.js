@@ -21,11 +21,11 @@ import GuideTourList from '../components/Guide/GuideTourList';
 import GuideProfile from '../components/Guide/GuideProfile';
 import GuideTourReview from '../components/Guide/GuideTourReview';
 import ReviewProfile from '../components/Guide/ReviewProfile';
-import GuideSchedule from '../components/Guide/GuideSchedule';
 
 // User
 import UserProfile from '../components/User/Profile';
 import ChangePass from '../components/User/ChangePass';
+import ChatPanel from '../components/ChatPanel';
 import BecomeGuide from '../components/User/BecomeGuide';
 
 //import BecomeGuide1 from '../components/User/BecomeGuide1';
@@ -63,17 +63,16 @@ const App = () => (
     <PrivateRoute path="/guideProfile" component={GuideProfile} />
     <PrivateRoute path="/reviewProfile" component={ReviewProfile} />
     <PrivateRoute path="/guideTourReview" component={GuideTourReview} />
-    <PrivateRoute path="/guideSchedule" component={GuideSchedule} />
 
     {/* User */}
     <PrivateRoute path="/profile" component={UserProfile} />
     <PrivateRoute path="/changePass" component={ChangePass} />
     <PrivateRoute path="/becomeGuide" component={BecomeGuide} />
+    <PrivateRoute path="/user/chat" component={ChatPanel} />
 
     {/*<PrivateRoute path="/becomeGuide" component={BecomeGuide1} />
     <PrivateRoute path="/profileReview" component={ProfileReview} />
-    <PrivateRoute path="/start" component={StartProfile} />*/}
-    
+    <PrivateRoute path="/start" component={StartProfile} />*/}  
 
     <NotFound default />
   </Router>

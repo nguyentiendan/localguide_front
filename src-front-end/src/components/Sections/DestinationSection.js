@@ -74,13 +74,12 @@ function DestinationSection() {
     };
   }, []);
 
-
   return (
     <div className={classes.container}>
       <Spin spinning={loading}>
         <GridItem xs={12} sm={12} md={12}>
           <div className={classes.description}>
-            <SectionHeader title="Destination" />
+            <SectionHeader title="Recommend tour" />
             <SliderWrapper>
               <Carousel topSize="30%">
                 {tours &&

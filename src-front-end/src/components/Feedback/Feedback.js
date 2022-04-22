@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Button, Form, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 import SendIcon from '@material-ui/icons/Send';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Slide } from '@material-ui/core';

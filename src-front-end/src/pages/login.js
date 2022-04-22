@@ -65,6 +65,12 @@ function LoginPage() {
         const { data: profile } = await API.getUserProfile({ token: token, uid: uid });
         setLoading(false);
         setErrorMessage('');
+
+        //setAuthToken(jwt.sign({ ...profile, role: Role, token: Token }, 'tour-guide-pal'));
+        //if (queryStr.uid.length > 0) {
+        //  navigate(`/tour?uid=${queryStr.uid}&id=${queryStr.id}`);
+        //}
+
         setAuthToken(jwt.sign({ ...profile, role: role, token: token }, 'tour-guide-pal'));
         navigate('/');
       } else {
