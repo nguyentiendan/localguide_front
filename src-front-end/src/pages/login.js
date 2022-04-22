@@ -56,19 +56,22 @@ function LoginPage() {
     try {
       setLoading(true);
       const {
-        data: { Token, UID, Role },
+        data: { token, uid, role },
         message,
         status,
       } = await API.login(values.email, values.password);
 
       if (status === true) {
-        const { data: profile } = await API.getUserProfile({ token: Token, uid: UID });
+        const { data: profile } = await API.getUserProfile({ token: token, uid: uid });
         setLoading(false);
         setErrorMessage('');
-        setAuthToken(jwt.sign({ ...profile, role: Role, token: Token }, 'tour-guide-pal'));
-        if (queryStr.uid.length > 0) {
-          navigate(`/tour?uid=${queryStr.uid}&id=${queryStr.id}`);
-        }
+
+        //setAuthToken(jwt.sign({ ...profile, role: Role, token: Token }, 'tour-guide-pal'));
+        //if (queryStr.uid.length > 0) {
+        //  navigate(`/tour?uid=${queryStr.uid}&id=${queryStr.id}`);
+        //}
+
+        setAuthToken(jwt.sign({ ...profile, role: role, token: token }, 'tour-guide-pal'));
         navigate('/');
       } else {
         setLoading(false);
